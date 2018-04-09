@@ -41,6 +41,25 @@ gr1 = GRanges(df)
 
 gr2 = GRanges(df2)
 
+print(gr1)
++----|--------------|---------|-------+
+|    | Chromosome   |   Start |   End |
+|----|--------------|---------|-------|
+|  0 | chr1         |       3 |     6 |
+|  1 | chr1         |       5 |     7 |
+|  2 | chr1         |       8 |     9 |
++----|--------------|---------|-------+
+GRanges object with 3 sequences from 1 chromosomes.
+
+print(gr2)
++----|--------------|---------|-------+
+|    | Chromosome   |   Start |   End |
+|----|--------------|---------|-------|
+|  0 | chr1         |       1 |     2 |
+|  1 | chr1         |       6 |     6 |
++----|--------------|---------|-------+
+GRanges object with 2 sequences from 1 chromosomes.
+
 gr1 - gr2
 <pyranges.pyranges.GRanges at 0x11299b198>
 
