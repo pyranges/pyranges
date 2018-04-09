@@ -131,3 +131,8 @@ gr.Score.head()
 4    0.892526
 Name: Score, dtype: float64
 ```
+
+# See also
+
+https://github.com/endrebak/pyrle
+https://github.com/vsbuffalo/BioRanges/tree/master/BioRanges
