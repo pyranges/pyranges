@@ -1,0 +1,5 @@
+
+workflow/data
+*#*
+*.pyc
+*cache/
