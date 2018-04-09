@@ -20,18 +20,46 @@ are used to perform quick range operations on the GRange and will therefore lead
 erroneus results.
 
 ```
-In [1]: from pyranges import GRanges
+from pyranges import GRanges
 
-In [2]: import pandas as pd
+import pandas as pd
+from io import StringIO
 
-In [3]: df = pd.read_table("example_data/lamina.bed", sep="\s+", header=None, names="Chromosome Start End Score".split(), skiprows=1)
+c = """Chromosome Start End
+chr1 3 6
+chr1 5 7
+chr1 8 9"""
 
-In [4]: gr = GRanges(df)
+df = pd.read_table(StringIO(c), sep="\s+", header=0)
 
-In [5]: gr
-Out[5]: <pyranges.pyranges.GRanges at 0x112341f60>
+c = """Chromosome Start End
+chr1 1 2
+chr1 6 6"""
+df2 = pd.read_table(StringIO(c), sep="\s+", header=0)
 
-In [6]: print(gr)
+gr1 = GRanges(df)
+
+gr2 = GRanges(df2)
+
+gr1 - gr2
+<pyranges.pyranges.GRanges at 0x11299b198>
+
+print(gr1 - gr2)
++----|--------------|---------|-------+
+|    | Chromosome   |   Start |   End |
+|----|--------------|---------|-------|
+|  0 | chr1         |       8 |     9 |
++----|--------------|---------|-------+
+GRanges object with 1 sequences from 1 chromosomes.
+
+df = pd.read_table("example_data/lamina.bed", sep="\s+", header=None, names="Chromosome Start End Score".split(), skiprows=1)
+
+gr = GRanges(df)
+
+gr
+<pyranges.pyranges.GRanges at 0x112341f60>
+
+print(gr)
 +------|--------------|----------|----------|--------------------+
 |      | Chromosome   | Start    | End      | Score              |
 |------|--------------|----------|----------|--------------------|
@@ -45,9 +73,9 @@ In [6]: print(gr)
 +------|--------------|----------|----------|--------------------+
 GRanges object with 1344 sequences from 24 chromosomes.
 
-In [7]: subset_gr = gr[:111617177]
+subset_gr = gr[:111617177]
 
-In [8]: print(subset_gr)
+print(subset_gr)
 +-----|--------------|-----------|-----------|--------------------+
 |     | Chromosome   | Start     | End       | Score              |
 |-----|--------------|-----------|-----------|--------------------|
@@ -61,7 +89,7 @@ In [8]: print(subset_gr)
 +-----|--------------|-----------|-----------|--------------------+
 GRanges object with 992 sequences from 24 chromosomes.
 
-In [9]: print(subset_gr["chr1"])
+print(subset_gr["chr1"])
 +-----|--------------|-----------|-----------|--------------------+
 |     | Chromosome   | Start     | End       | Score              |
 |-----|--------------|-----------|-----------|--------------------|
@@ -75,8 +103,8 @@ In [9]: print(subset_gr["chr1"])
 +-----|--------------|-----------|-----------|--------------------+
 GRanges object with 48 sequences from 1 chromosomes.
 
-In [10]: gr.Score.head()
-Out[10]:
+gr.Score.head()
+
 0    0.862170
 1    0.934891
 2    0.945946
