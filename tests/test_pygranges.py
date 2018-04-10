@@ -6,6 +6,7 @@ import pandas as pd
 
 from io import StringIO
 
+
 @pytest.fixture
 def simple_gr1():
 
@@ -54,7 +55,7 @@ chr1	56953387	57050584	0.91304347826087"""
 
 
 @pytest.fixture
-def expected_result_intersect_simple_granges():
+def expected_result_subtract_simple_granges():
 
     c = """Chromosome Start End
 chr1 8 9"""
@@ -62,12 +63,31 @@ chr1 8 9"""
     return GRanges(df)
 
 
-def test_intersect_simple_granges(simple_gr1, simple_gr2, expected_result_intersect_simple_granges):
+def test_subtract_simple_granges(simple_gr1, simple_gr2, expected_result_subtract_simple_granges):
 
     print(simple_gr1[9:])
-    assert 0
-    result = simple_gr1 ^ simple_gr2
+    result = simple_gr1 - simple_gr2
 
+    print(result)
+
+    assert result.df.equals(expected_result_subtract_simple_granges.df)
+
+
+
+@pytest.fixture
+def expected_result_intersect_simple_granges():
+
+    c = """Chromosome Start End
+chr1 3 6
+chr1 5 7"""
+
+    df = pd.read_table(StringIO(c), sep="\s+", header=0)
+    return GRanges(df)
+
+
+def test_intersect_simple_granges(simple_gr1, simple_gr2, expected_result_intersect_simple_granges):
+
+    result = simple_gr1 | simple_gr2
     print(result)
 
     assert result.df.equals(expected_result_intersect_simple_granges.df)

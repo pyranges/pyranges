@@ -6,6 +6,7 @@ from quicksect import IntervalTree
 
 from tabulate import tabulate
 
+
 class GRanges():
 
     def __init__(self, df):
@@ -47,21 +48,39 @@ These are the columns it contains: {}""".format(" ".join(df.columns))
         return GRanges(self.df.loc[indexes_of_nonoverlapping])
 
 
-    def __xor__(self, other):
+    def __or__(self, other):
 
-        "Want all intervals in self that do not overlap with other."
+        "Want all intervals in self that overlap with other."
 
-        indexes_of_nonoverlapping = []
+        indexes_of_overlapping = []
         for chromosome, cdf in self.df.groupby("Chromosome"):
 
             it = other.__intervaltrees__[chromosome]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(), cdf.End.tolist()):
 
-                if not it.search(start, end):
-                    indexes_of_nonoverlapping.append(idx)
+                if it.search(start, end):
+                    indexes_of_overlapping.append(idx)
 
-        return GRanges(self.df.loc[indexes_of_nonoverlapping])
+        return GRanges(self.df.loc[indexes_of_overlapping])
+
+
+    def __and__(self, other):
+
+        "Want all union of intervals in self that overlap with other."
+
+        indexes_of_overlapping = []
+        for chromosome, cdf in self.df.groupby("Chromosome"):
+
+            it = other.__intervaltrees__[chromosome]
+
+            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(), cdf.End.tolist()):
+
+                if it.search(start, end):
+                    indexes_of_overlapping.append(idx)
+
+        return GRanges(self.df.loc[indexes_of_overlapping])
+
 
     def __getitem__(self, val):
 
