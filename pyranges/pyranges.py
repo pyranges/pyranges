@@ -6,6 +6,8 @@ from quicksect import IntervalTree
 
 from tabulate import tabulate
 
+from natsort import natsorted
+
 
 class GRanges():
 
@@ -14,6 +16,13 @@ class GRanges():
         assert "Start" in df and "End" in df and "Chromosome" in df, \
         """DataFrame missing at least one of Start, End or Chromosome columns.
 These are the columns it contains: {}""".format(" ".join(df.columns))
+
+        df.Chromosome = df.Chromosome.astype("category")
+        df.Chromosome.cat.reorder_categories(natsorted(df.Chromosome.drop_duplicates()), inplace=True,
+                                             ordered=True)
+
+        df = df.sort_values(["Chromosome", "Start", "End"])
+        df.Chromosome = df.Chromosome.astype(str)
 
         df = df.reset_index(drop=True)
 
@@ -65,21 +74,23 @@ These are the columns it contains: {}""".format(" ".join(df.columns))
         return GRanges(self.df.loc[indexes_of_overlapping])
 
 
-    def __and__(self, other):
+    # def __and__(self, other):
 
-        "Want all union of intervals in self that overlap with other."
+    #     "Want all union of intervals in self that overlap with other."
 
-        indexes_of_overlapping = []
-        for chromosome, cdf in self.df.groupby("Chromosome"):
+    #     clustertrees = defaultdict(lambda: ClusterTree(0, 1))
 
-            it = other.__intervaltrees__[chromosome]
+    #     indexes_of_overlapping = []
+    #     for chromosome, cdf in self.df.groupby("Chromosome"):
 
-            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(), cdf.End.tolist()):
+    #         it = other.__intervaltrees__[chromosome]
 
-                if it.search(start, end):
-                    indexes_of_overlapping.append(idx)
+    #         for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(), cdf.End.tolist()):
 
-        return GRanges(self.df.loc[indexes_of_overlapping])
+    #             if it.search(start, end):
+    #                 indexes_of_overlapping.append(idx)
+
+    #     return GRanges(self.df.loc[indexes_of_overlapping])
 
 
     def __getitem__(self, val):
