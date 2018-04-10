@@ -1,7 +1,7 @@
 # pyranges
 
 Not optimized, not ready for use, only the "in self but not in other" operator
-(-) and intersection operator implemented.
+(-) and intersection operator (|) implemented.
 
 The input dataframe needs at least the columns Chromome, Start, End. The rest are arbitrary.
 

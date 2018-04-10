@@ -114,3 +114,12 @@ def test_str_rep_grange(gr):
 GRanges object with 15 sequences from 1 chromosomes."""
 
     assert result == expected_result
+
+def test_intersection_introns_exons(introns, exons):
+
+    igr = introns | exons
+    print(igr)
+
+    igr = introns - exons
+    print(igr)
+    assert 0
