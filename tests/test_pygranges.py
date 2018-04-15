@@ -115,11 +115,30 @@ GRanges object with 15 sequences from 1 chromosomes."""
 
     assert result == expected_result
 
+
 def test_intersection_introns_exons(introns, exons):
 
     igr = introns | exons
-    print(igr)
 
-    igr = introns - exons
-    print(igr)
-    assert 0
+    # bedtools agrees
+    assert igr.df.empty
+
+
+
+def test_intersection_introns_exons(introns, exons):
+
+    igr = introns | exons
+
+    # bedtools agrees
+    assert igr.df.empty
+
+
+@pytest.fixture
+def expected_result_f1_f2():
+
+    c = """Chromosome  Start  End  Name Score Strand
+1      1    2  .  0  +"""
+
+    df = pd.read_table(StringIO(c), sep="\s+")
+
+    return df
