@@ -109,7 +109,7 @@ class GRanges():
                 return GRanges(self.df.loc[idxes])
 
             # "chr1", "+"
-            if len(val) == 2 and val[0] in "+ -".split():
+            if len(val) == 2 and val[1] in "+ -".split():
 
                 chromosome, strand = val
 
@@ -159,7 +159,7 @@ class GRanges():
         else:
             s = self.df
 
-        str_repr = tabulate(s, headers='keys', tablefmt='psql') + "\nGRanges object with {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
+        str_repr = tabulate(s, headers='keys', tablefmt='psql', showindex=False) + "\nGRanges object with {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
         return str_repr
 
     def __repr__(self):

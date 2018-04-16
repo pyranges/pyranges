@@ -11,6 +11,7 @@ Welcome to pyranges's documentation!
    :caption: Ranges:
 
    ranges_intro
+   ranges_subset
 
 .. toctree::
    :maxdepth: 2
