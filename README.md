@@ -33,6 +33,8 @@ erroneus results.
 * Add continuous integration
 * Merge pyrle and pyranges
 * Write biorxiv paper
+* Add dtypes to GRanges-header?
+* Multithread operations
 
 ```
 from pyranges import GRanges
