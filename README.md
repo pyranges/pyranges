@@ -19,6 +19,21 @@ and End columns does not change the datastructures in the GRanges object that
 are used to perform quick range operations on the GRange and will therefore lead to
 erroneus results.
 
+### TODO
+
+* Write non-shitty readme.md
+* Write more docs
+* Add invert-method
+* Add intersection
+* Look at GRanges/bedtools for more inspiration
+* Cythonize slowest parts
+* Add visualization capabilites?
+* Enable annotation with featurefetch?
+* Implement overlap -wab like in bedtools
+* Add continuous integration
+* Merge pyrle and pyranges
+* Write biorxiv paper
+
 ```
 from pyranges import GRanges
 

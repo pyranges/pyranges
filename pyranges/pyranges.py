@@ -8,7 +8,7 @@ from tabulate import tabulate
 
 from natsort import natsorted
 
-from pyranges.methods import (_intersection, _cluster, _tile)
+from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection)
 
 
 class GRanges():
@@ -34,7 +34,7 @@ class GRanges():
                 it = IntervalTree()
                 for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                         (cdf.End - 1).tolist()):
-                    it.add(start, end, idx)
+                    it.add(start, end, (start, end, idx))
 
                 self.__intervaltrees__[chromosome, "+"] = it
 
@@ -45,17 +45,28 @@ class GRanges():
                 it = IntervalTree()
                 for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                         (cdf.End - 1).tolist()):
-                    it.add(start, end, idx)
+                    it.add(start, end, (start, end, idx))
 
                 self.__intervaltrees__[chromosome, strand] = it
 
 
-    def intersection(self, other, strandedness="same", invert=False):
+    def overlap(self, other, strandedness=False, invert=False):
 
-        "Want all intervals in self that do not overlap with other."
+        "Want all intervals in self that overlap with other."
 
-        df = _intersection(self, other, strandedness, invert)
+        df = _overlap(self, other, strandedness, invert)
         return GRanges(df)
+
+
+    def intersection(self, other, strandedness=False, invert=False):
+
+        "Want the parts of the intervals in self that overlap with other."
+
+        if invert:
+            df = _inverse_intersection(self, other, strandedness, invert)
+
+        return GRanges(df)
+
 
     def cluster(self, strand=None):
 

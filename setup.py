@@ -17,7 +17,7 @@ install_requires = ["pandas"]
 setup(
     name="pyranges",
     packages=find_packages(),
-
+    package_data={'pyranges': ['example_data/*.bed']},
     # scripts=["bin/featurefetch"],
     version=__version__,
     description="GRanges for Python.",
