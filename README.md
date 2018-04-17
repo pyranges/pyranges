@@ -23,8 +23,6 @@ erroneus results.
 
 * Write non-shitty readme.md
 * Write more docs
-* Add invert-method
-* Add intersection
 * Look at GRanges/bedtools for more inspiration
 * Cythonize slowest parts
 * Add visualization capabilites?

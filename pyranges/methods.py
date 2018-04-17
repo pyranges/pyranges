@@ -259,3 +259,13 @@ def _intersection(self, other, strandedness=False):
     outdf = s_e_df.join(df.drop("Chromosome Start End".split(), axis=1))
 
     return outdf
+
+
+def _coverage(ranges, value_col=None):
+
+    try:
+        import pyrle as rle
+    except ImportError:
+        raise Exception("Using the coverage method requires that pyrle is installed.")
+
+    return rle.coverage(ranges)

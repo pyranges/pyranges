@@ -8,7 +8,8 @@ from tabulate import tabulate
 
 from natsort import natsorted
 
-from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection, _intersection)
+from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
+                              _intersection, _coverage)
 
 
 class GRanges():
@@ -83,11 +84,13 @@ class GRanges():
         df = _tile(self, tile_size)
         return GRanges(df)
 
-    def __or__(self, other):
 
-        "Want all intervals in self that overlap with other."
+    def coverage(self, value_col=None):
+
+        return _coverage(self, value_col)
 
 
+    #     _o
 
     def __getitem__(self, val):
 
@@ -176,6 +179,7 @@ class GRanges():
 
         str_repr = tabulate(s, headers='keys', tablefmt='psql', showindex=False) + "\nGRanges object with {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
         return str_repr
+
 
     def __repr__(self):
 
