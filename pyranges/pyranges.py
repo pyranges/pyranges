@@ -8,7 +8,7 @@ from tabulate import tabulate
 
 from natsort import natsorted
 
-from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection)
+from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection, _intersection)
 
 
 class GRanges():
@@ -19,6 +19,8 @@ class GRanges():
         df.Chromosome.cat.reorder_categories(natsorted(df.Chromosome.drop_duplicates()), inplace=True, ordered=True)
 
         df = df.sort_values(["Chromosome", "Start", "End"])
+
+        # so that we can be sure that an integer representation of chromosomes won't be promoted to floats
         df.Chromosome = df.Chromosome.astype(str)
 
         df = df.reset_index(drop=True)
@@ -63,7 +65,9 @@ class GRanges():
         "Want the parts of the intervals in self that overlap with other."
 
         if invert:
-            df = _inverse_intersection(self, other, strandedness, invert)
+            df = _inverse_intersection(self, other, strandedness)
+        else:
+            df = _intersection(self, other, strandedness)
 
         return GRanges(df)
 

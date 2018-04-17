@@ -47,6 +47,11 @@ def test_overlap_invert_simple_granges(simple_gr1, simple_gr2, expected_result_s
     result = simple_gr1.overlap(simple_gr2, invert=True, strandedness=False)
 
     print(result)
+    print(expected_result_subtract_simple_granges)
+
+
+    print(result.df.dtypes)
+    print(expected_result_subtract_simple_granges.df.dtypes)
 
     assert result.df.equals(expected_result_subtract_simple_granges.df)
 

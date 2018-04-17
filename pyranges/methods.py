@@ -105,7 +105,7 @@ def invert(self):
     pass
 
 
-def _inverse_intersection(self, other, strandedness=False, invert=False):
+def _inverse_intersection(self, other, strandedness=False):
 
     indexes_of_overlapping = []
     df = self.df
@@ -188,6 +188,74 @@ def _inverse_intersection(self, other, strandedness=False, invert=False):
 
 
     s_e_df = pd.DataFrame.from_dict(rowdicts).set_index("Index")["Chromosome Start End".split()]
+    outdf = s_e_df.join(df.drop("Chromosome Start End".split(), axis=1))
+
+    return outdf
+
+
+def _intersection(self, other, strandedness=False):
+
+    indexes_of_overlapping = []
+    df = self.df
+
+    other_strand = {"+": "-", "-": "+"}
+    same_strand = {"+": "+", "-": "-"}
+
+    if strandedness == "same":
+        strand_dict = same_strand
+    elif strandedness == "opposite":
+        strand_dict = other_strand
+
+    if "Strand" in df and "Strand" in other.df and strandedness:
+
+        rowdicts = []
+        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
+
+            strand = strand_dict[strand]
+
+            it = other.__intervaltrees__[chromosome, strand]
+
+            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
+                                       (cdf.End - 1).tolist()):
+
+                hits = it.search(start, end)
+
+                # print("idx, start, end")
+                # print(idx, start, end)
+                for i in hits:
+
+                    ostart, oend, oindex = i.data
+                    # print("ostart, oend, oindex")
+                    # print(ostart, oend, oindex)
+                    rowdicts.append({"Chromosome": chromosome, "Start":
+                                     max(start, ostart), "End": min(end, oend) + 1,
+                                     "Index": idx})
+
+    else:
+
+        rowdicts = []
+        for chromosome, cdf in df.groupby("Chromosome"):
+
+            it = other.__intervaltrees__[chromosome, "+"]
+            it2 = other.__intervaltrees__[chromosome, "-"]
+
+            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
+                                       (cdf.End - 1).tolist()):
+
+                hits = it.search(start, end) + it2.search(start, end)
+                for i in hits:
+
+                    ostart, oend, oindex = i.data
+                    rowdicts.append({"Chromosome": chromosome, "Start": max(start, ostart),
+                                     "End": min(end, oend) + 1, "Index": idx})
+
+
+    s_e_df = pd.DataFrame.from_dict(rowdicts)
+
+    if s_e_df.empty:
+        return pd.DataFrame(columns="Chromosome Start End".split())
+
+    s_e_df = s_e_df.set_index("Index")["Chromosome Start End".split()]
     outdf = s_e_df.join(df.drop("Chromosome Start End".split(), axis=1))
 
     return outdf
