@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 import itertools
 
@@ -323,7 +324,33 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None):
     idx_df = pd.DataFrame.from_dict(indexes_of_overlapping).set_index("IndexSelf")
 
     idx_df = idx_df.join(self.df, how="right")
-    idx_df = idx_df.merge(other.df.drop("Chromosome", axis=1), left_on="IndexOther", right_index=True, suffixes=["", "_" + other.gr_name])
-    idx_df = idx_df.drop("IndexOther", axis=1)
+
+    other_suffix = "_" + other.gr_name
+    if not new_pos:
+        suffixes = ["", other_suffix]
+        to_drop = ["IndexOther", "Chromosome" + other_suffix]
+        self_suffix = ""
+        to_rename = {}
+    else:
+        self_suffix = "_" + self.gr_name
+        suffixes = [self_suffix, other_suffix]
+        to_drop = ["IndexOther", "Chromosome" + other_suffix]
+        to_rename = {"Chromosome" + self_suffix: "Chromosome"}
+
+    idx_df = idx_df.merge(other.df, left_on="IndexOther", right_index=True, suffixes=suffixes)
+    idx_df = idx_df.drop(to_drop, axis=1)
+    idx_df = idx_df.rename(to_rename, axis="columns")
+
+    if new_pos == "intersect":
+        new_starts = np.where(idx_df["Start" + self_suffix] > idx_df["Start" + other_suffix], idx_df["Start" + self_suffix], idx_df["Start" + other_suffix])
+        new_ends = np.where(idx_df["End" + self_suffix] < idx_df["End" + other_suffix], idx_df["End" + self_suffix], idx_df["End" + other_suffix])
+        idx_df.insert(1, "Start", new_starts)
+        idx_df.insert(2, "End", new_ends)
+
+    if new_pos == "union":
+        new_starts = np.where(idx_df["Start" + self_suffix] < idx_df["Start" + other_suffix], idx_df["Start" + self_suffix], idx_df["Start" + other_suffix])
+        new_ends = np.where(idx_df["End" + self_suffix] > idx_df["End" + other_suffix], idx_df["End" + self_suffix], idx_df["End" + other_suffix])
+        idx_df.insert(1, "Start", new_starts)
+        idx_df.insert(2, "End", new_ends)
 
     return idx_df
