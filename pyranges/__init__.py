@@ -11,7 +11,7 @@ def load_dataset(basename):
     df = pd.read_table(full_path, header=None,
                        names="Chromosome Start End Name Score Strand".split())
 
-    return GRanges(df)
+    return GRanges(df, name=basename)
 
 
 def list_datasets():

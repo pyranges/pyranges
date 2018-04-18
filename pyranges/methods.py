@@ -269,3 +269,61 @@ def _coverage(ranges, value_col=None):
         raise Exception("Using the coverage method requires that pyrle is installed.")
 
     return rle.coverage(ranges)
+
+
+def _overlap_write_both(self, other, strandedness=False, new_pos=None):
+
+    indexes_of_overlapping = []
+    df = self.df
+    other_strand = {"+": "-", "-": "+"}
+
+    if "Strand" in df and "Strand" in other.df and strandedness == "same":
+
+        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
+            it = other.__intervaltrees__[chromosome, strand]
+
+            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
+                                       (cdf.End - 1).tolist()):
+
+                for hit in it.search(start, end):
+                    oidx = hit.data[2]
+                    indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
+
+
+    elif "Strand" in df and "Strand" in other.df and strandedness == "opposite":
+
+        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
+            opposite_strand = other_strand[strand]
+            it = other.__intervaltrees__[chromosome, opposite_strand]
+
+            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
+                                       (cdf.End - 1).tolist()):
+
+                for hit in it.search(start, end):
+                    oidx = hit.data[2]
+                    indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
+
+    else:
+
+        for chromosome, cdf in df.groupby("Chromosome"):
+
+            it = other.__intervaltrees__[chromosome, "+"]
+            it2 = other.__intervaltrees__[chromosome, "-"]
+
+            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
+                                       (cdf.End - 1).tolist()):
+
+                for hit in it.search(start, end) + it2.search(start, end):
+                    oidx = hit.data[2]
+                    indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
+
+    if not indexes_of_overlapping:
+        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+
+    idx_df = pd.DataFrame.from_dict(indexes_of_overlapping).set_index("IndexSelf")
+
+    idx_df = idx_df.join(self.df, how="right")
+    idx_df = idx_df.merge(other.df.drop("Chromosome", axis=1), left_on="IndexOther", right_index=True, suffixes=["", "_" + other.gr_name])
+    idx_df = idx_df.drop("IndexOther", axis=1)
+
+    return idx_df

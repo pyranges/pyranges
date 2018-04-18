@@ -9,12 +9,14 @@ from tabulate import tabulate
 from natsort import natsorted
 
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
-                              _intersection, _coverage)
+                              _intersection, _coverage, _overlap_write_both)
 
 
 class GRanges():
 
-    def __init__(self, df):
+    def __init__(self, df, name=None):
+
+        self.gr_name = name or "unnamed"
 
         df.Chromosome = df.Chromosome.astype("category")
         df.Chromosome.cat.reorder_categories(natsorted(df.Chromosome.drop_duplicates()), inplace=True, ordered=True)
@@ -73,6 +75,13 @@ class GRanges():
         return GRanges(df)
 
 
+    def overlap_join(self, other, strandedness=False, new_pos=None):
+
+        df = _overlap_write_both(self, other, strandedness, new_pos)
+
+        return GRanges(df)
+
+
     def cluster(self, strand=None):
 
         df = _cluster(self, strand)
@@ -89,8 +98,6 @@ class GRanges():
 
         return _coverage(self, value_col)
 
-
-    #     _o
 
     def __getitem__(self, val):
 
