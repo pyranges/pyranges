@@ -1,8 +1,5 @@
 # pyranges
 
-Not optimized, not ready for use, only the "in self but not in other" operator
-(-) and intersection operator (|) implemented.
-
 The input dataframe needs at least the columns Chromome, Start, End. The rest are arbitrary.
 
 Using all operations on the GRanges object return a new GRanges object, not a
@@ -21,18 +18,22 @@ erroneus results.
 
 ### TODO
 
+* Allow writing to different UCSC genome-browser compatible formats such as
+  bigwig, bedgraph, histograms, colored bed etc
 * Write non-shitty readme.md
 * Write more docs
 * Look at GRanges/bedtools for more inspiration
 * Cythonize slowest parts
 * Add visualization capabilites?
 * Enable annotation with featurefetch?
-* Implement overlap -wab like in bedtools
 * Add continuous integration
-* Merge pyrle and pyranges
 * Write biorxiv paper
+* Add support for reading filetypes directly into GRanges
 * Add dtypes to GRanges-header?
 * Multithread operations
+* Write snakemakefile to write docs
+* Add Rledict which supports +-/*
+* Rledict to GRanges-function
 
 ```
 from pyranges import GRanges
@@ -149,5 +150,9 @@ Name: Score, dtype: float64
 
 # See also
 
-https://github.com/endrebak/pyrle
-https://github.com/vsbuffalo/BioRanges/tree/master/BioRanges
+* https://github.com/endrebak/pyrle
+* https://github.com/vsbuffalo/BioRanges/tree/master/BioRanges
+* https://github.com/daler/pybedtools
+* http://bedtools.readthedocs.io/en/latest/
+* https://github.com/phaverty/RLEVectors.jl
+* https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html
