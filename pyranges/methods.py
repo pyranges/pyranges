@@ -325,14 +325,14 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None):
 
     idx_df = idx_df.join(self.df, how="right")
 
-    other_suffix = "_" + other.gr_name
+    self_suffix, other_suffix = "_a", "_b"
+
     if not new_pos:
         suffixes = ["", other_suffix]
         to_drop = ["IndexOther", "Chromosome" + other_suffix]
         self_suffix = ""
         to_rename = {}
     else:
-        self_suffix = "_" + self.gr_name
         suffixes = [self_suffix, other_suffix]
         to_drop = ["IndexOther", "Chromosome" + other_suffix]
         to_rename = {"Chromosome" + self_suffix: "Chromosome"}

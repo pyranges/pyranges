@@ -25,7 +25,7 @@ def bg():
 @pytest.fixture
 def expected_result_regular_overlap():
 
-    c = """Chromosome Start End Name Score Strand Start_chipseq_background End_chipseq_background Name_chipseq_background Score_chipseq_background Strand_chipseq_background
+    c = """Chromosome Start End Name Score Strand Start_b End_b Name_b Score_b Strand_b
 chr8	38747226	38747251	U0	0	-	38747236	38747261	U0	0	+
 chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-
 chr15	26105515	26105540	U0	0	+	26105493	26105518	U0	0	+"""
@@ -47,7 +47,7 @@ def test_advanced_overlap(cs, bg, expected_result_regular_overlap):
 @pytest.fixture
 def expected_result_regular_overlap_intersection():
 
-    c = """Chromosome Start End Start_chipseq End_chipseq Name_chipseq Score_chipseq Strand_chipseq Start_chipseq_background End_chipseq_background Name_chipseq_background Score_chipseq_background Strand_chipseq_background
+    c = """Chromosome Start End Start_a End_a Name_a Score_a Strand_a Start_b End_b Name_b Score_b Strand_b
 chr1 226987603 226987617 226987592 226987617 U0 0 + 226987603 226987628 U0 0 -
 chr8 38747236 38747251 38747226 38747251 U0 0 - 38747236 38747261 U0 0 +
 chr15 26105515 26105518 26105515 26105540 U0 0 + 26105493 26105518 U0 0 +"""
@@ -70,7 +70,7 @@ def test_advanced_overlap_new_pos_intersect(cs, bg, expected_result_regular_over
 @pytest.fixture
 def expected_result_overlap_same_strand():
 
-    c = """Chromosome Start End Name Score Strand Start_chipseq_background End_chipseq_background Name_chipseq_background Score_chipseq_background Strand_chipseq_background
+    c = """Chromosome Start End Name Score Strand Start_b End_b Name_b Score_b Strand_b
 chr15	26105515	26105540	U0	0	+	26105493	26105518	U0	0	+"""
 
     df = pd.read_table(StringIO(c), header=0, sep="\s+")
@@ -91,7 +91,7 @@ def test_advanced_overlap_stranded(cs, bg, expected_result_overlap_same_strand):
 @pytest.fixture
 def expected_result_overlap_opposite_strand():
 
-    c = """Chromosome Start End Name Score Strand Start_chipseq_background End_chipseq_background Name_chipseq_background Score_chipseq_background Strand_chipseq_background
+    c = """Chromosome Start End Name Score Strand Start_b End_b Name_b Score_b Strand_b
 chr8	38747226	38747251	U0	0	-	38747236	38747261	U0	0	+
 chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-"""
 
@@ -111,7 +111,7 @@ def test_advanced_overlap_opposite_stranded(cs, bg, expected_result_overlap_oppo
 @pytest.fixture
 def expected_result_regular_overlap_union():
 
-    c = """Chromosome Start End Start_chipseq End_chipseq Name_chipseq Score_chipseq Strand_chipseq Start_chipseq_background End_chipseq_background Name_chipseq_background Score_chipseq_background Strand_chipseq_background
+    c = """Chromosome Start End Start_a End_a Name_a Score_a Strand_a Start_b End_b Name_b Score_b Strand_b
 0 chr1 226987592 226987628 226987592 226987617 U0 0 + 226987603 226987628 U0 0 -
 1 chr8 38747226 38747261 38747226 38747251 U0 0 - 38747236 38747261 U0 0 +
 2 chr15 26105493 26105540 26105515 26105540 U0 0 + 26105493 26105518 U0 0 +"""

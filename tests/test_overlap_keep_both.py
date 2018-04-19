@@ -46,7 +46,7 @@ chr1	8	9	+ 1"""
 @pytest.fixture
 def expected_result_overlap_same_strand_simple_granges():
 
-    c = """Chromosome Start End Score Strand Start_unnamed End_unnamed Score_unnamed Strand_unnamed
+    c = """Chromosome Start End Score Strand Start_b End_b Score_b Strand_b
 chr1	5	7	7	-	6	7	2	-"""
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
     return GRanges(df)
@@ -86,11 +86,3 @@ def test_default_overlap_simple_granges(simple_gr1, simple_gr2, expected_result_
     print(simple_gr2)
 
     result = simple_gr1.overlap_join(simple_gr2)
-
-#     print(result.df.dtypes)
-#     print(expected_result_overlap_same_strand_simple_granges.df.dtypes)
-
-#     print(result.df.index)
-#     print(expected_result_overlap_same_strand_simple_granges.df.index)
-
-#     assert result.df.equals(expected_result_overlap_same_strand_simple_granges.df)

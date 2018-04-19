@@ -12,11 +12,10 @@ from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both)
 
 
+
 class GRanges():
 
-    def __init__(self, df, name=None):
-
-        self.gr_name = name or "unnamed"
+    def __init__(self, df):
 
         df.Chromosome = df.Chromosome.astype("category")
         df.Chromosome.cat.reorder_categories(natsorted(df.Chromosome.drop_duplicates()), inplace=True, ordered=True)
@@ -138,7 +137,6 @@ class GRanges():
 
                 chromosome, strand = val
 
-                print(chromosome, strand)
                 return GRanges(self.df.loc[(self.df.Chromosome == chromosome) & (self.df.Strand == strand)])
 
             # "chr1", "+", 5:10
@@ -169,7 +167,7 @@ class GRanges():
         try:
             return self.df[col]
         except:
-            raise Exception("Column {} not found.".format(col))
+            raise Exception("GRanges has no attribute {}.".format(col))
 
 
     def __str__(self):
@@ -184,7 +182,8 @@ class GRanges():
         else:
             s = self.df
 
-        str_repr = tabulate(s, headers='keys', tablefmt='psql', showindex=False) + "\nGRanges object with {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
+        str_repr = tabulate(s, headers='keys', tablefmt='psql', showindex=False) + \
+                                        "\nGRanges object has {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
         return str_repr
 
 
