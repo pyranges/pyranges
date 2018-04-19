@@ -18,22 +18,28 @@ erroneus results.
 
 ### TODO
 
-* Allow writing to different UCSC genome-browser compatible formats such as
-  bigwig, bedgraph, histograms, colored bed etc
+Necessary for paper:
+
+* Add continuous integration
+* Write biorxiv paper
+* Add Rledict which supports +-/*
+* Rledict to GRanges-function
+* Write snakemakefile to write docs
 * Write non-shitty readme.md
 * Write more docs
+
+For the future:
+
+* Report nearest feature (like intersect but not necessarily overlapping).
+* Allow writing to different UCSC genome-browser compatible formats such as
+  bigwig, bedgraph, histograms, colored bed etc
 * Look at GRanges/bedtools for more inspiration
 * Cythonize slowest parts
 * Add visualization capabilites?
 * Enable annotation with featurefetch?
-* Add continuous integration
-* Write biorxiv paper
-* Add support for reading filetypes directly into GRanges
 * Add dtypes to GRanges-header?
 * Multithread operations
-* Write snakemakefile to write docs
-* Add Rledict which supports +-/*
-* Rledict to GRanges-function
+* Find sequences of ranges with pyfaidx
 
 ```
 from pyranges import GRanges
