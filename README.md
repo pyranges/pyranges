@@ -20,6 +20,8 @@ erroneus results.
 
 Necessary for paper:
 
+* Write even more tests
+* Benchmarks comparing with Bioconductor GRanges
 * Add continuous integration
 * Write biorxiv paper
 * Add Rledict which supports +-/*
