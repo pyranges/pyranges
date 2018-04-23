@@ -30,7 +30,7 @@ def read_bed(f):
 
     df.columns = columns[:df.shape[1]]
 
-    if df.Strand.str.contains("\."):
+    if df.Strand.str.contains("\.").any():
         print("Bed file contains '.' strands and is considered unstranded.", file=sys.stderr)
 
     return GRanges(df)
@@ -87,7 +87,7 @@ def read_gtf(f):
 
     extract.ExonNumber = extract.ExonNumber.astype(float)
 
-    df = pd.concat([df["Chromosome Feature Source Start End Score Strand Frame".split()],
+    df = pd.concat([df["Chromosome Start End Strand Feature Source Score Frame".split()],
                         extract], axis=1)
 
     return GRanges(df)
