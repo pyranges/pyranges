@@ -74,9 +74,9 @@ class GRanges():
         return GRanges(df)
 
 
-    def overlap_join(self, other, strandedness=False, new_pos=None):
+    def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
 
-        df = _overlap_write_both(self, other, strandedness, new_pos)
+        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes)
 
         return GRanges(df)
 
