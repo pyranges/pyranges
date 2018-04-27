@@ -12,6 +12,16 @@ from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both)
 
 
+from src.intervaltree import create_intervaltree
+
+try:
+    dummy = profile
+except:
+    profile = lambda x: x
+
+
+# def init(df):
+
 
 class GRanges():
 
@@ -35,23 +45,22 @@ class GRanges():
 
             for chromosome, cdf in df.groupby("Chromosome"):
 
-                it = IntervalTree()
-                for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-                                        (cdf.End - 1).tolist()):
-                    it.add(start, end, (start, end, idx))
+                indexes = cdf.index.values
+                starts = cdf.start.values
+                ends = cdf.end.values
 
-                self.__intervaltrees__[chromosome, "+"] = it
+                print(indexes)
+                self.__intervaltrees__[chromosome, "+"] = create_intervaltree(indexes, starts, ends)
 
         else:
 
             for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
 
-                it = IntervalTree()
-                for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-                                        (cdf.End - 1).tolist()):
-                    it.add(start, end, (start, end, idx))
+                indexes = cdf.index.values
+                starts = cdf.Start.values
+                ends = cdf.End.values
 
-                self.__intervaltrees__[chromosome, strand] = it
+                self.__intervaltrees__[chromosome, strand] = create_intervaltree(indexes, starts, ends)
 
 
     def overlap(self, other, strandedness=False, invert=False):
