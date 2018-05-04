@@ -13,13 +13,13 @@ if __name__ == "__main__":
     test_file = "/mnt/scratch/endrebak/genomes/chip/UCSD.Aorta.Input.STL002.bed.gz"
 
     df = pd.read_table(test_file, sep="\t", usecols=[0, 1, 2, 5], header=None,
-                       names="Chromosome Start End Strand".split(), nrows=int(1e6))
+                       names="Chromosome Start End Strand".split(), nrows=None)
 
 
     print("Done reading")
     start = time()
 
-    result = GRanges(df) #, n_jobs=1)
+    result = GRanges(df)
 
     end = time()
     total = end - start

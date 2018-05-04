@@ -3,37 +3,14 @@ import sys
 
 from distutils.core import setup
 from setuptools import find_packages, Extension, Command
-from Cython.Build import cythonize
 
-install_requires = ["pandas"]
-# try:
-#     os.getenv("TRAVIS")
-#     install_requires.append("coveralls")
-# except:
-#     pass
-
-# if sys.version_info[0] == 2:
-#     install_requires.append("functools32")
-
-macros = [("CYTHON_TRACE", "1")]
-# macros = Nonec
-
-if macros:
-    from Cython.Compiler.Options import get_directive_defaults
-    directive_defaults = get_directive_defaults()
-    directive_defaults['linetrace'] = True
-    directive_defaults['binding'] = True
-
-
-e1 = Extension("src.intervaltree", ["src/intervaltree.pyx"], define_macros = macros)
-
-extensions = [e1]
+install_requires = ["pandas", "kerneltree"]
 
 setup(
     name="pyranges",
     packages=find_packages(),
     package_data={'pyranges': ['example_data/*.bed']},
-    ext_modules=cythonize(extensions),
+    # ext_modules=cythonize(extensions),
     include_dirs=["."],
     version="0.0.1",
     description="GRanges for Python.",

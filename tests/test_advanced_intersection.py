@@ -36,7 +36,9 @@ def test_advanced_intersection(cs, bg, expected_result_regular_intersection):
 
     result = cs.intersection(bg)
 
+    print("Actual")
     print(result.df)
+    print("Expected")
     print(expected_result_regular_intersection)
 
     assert expected_result_regular_intersection.equals(result.df)

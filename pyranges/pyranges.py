@@ -2,8 +2,6 @@
 import pandas as pd
 from collections import defaultdict
 
-from quicksect import IntervalTree
-
 from tabulate import tabulate
 
 from natsort import natsorted
@@ -12,15 +10,13 @@ from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both)
 
 
-from src.intervaltree import create_intervaltree
+from kerneltree import IntervalTree
 
 try:
     dummy = profile
 except:
     profile = lambda x: x
 
-
-# def init(df):
 
 
 class GRanges():
@@ -46,11 +42,12 @@ class GRanges():
             for chromosome, cdf in df.groupby("Chromosome"):
 
                 indexes = cdf.index.values
-                starts = cdf.start.values
-                ends = cdf.end.values
+                starts = cdf.Start.values
+                ends = cdf.End.values
 
-                print(indexes)
-                self.__intervaltrees__[chromosome, "+"] = create_intervaltree(indexes, starts, ends)
+                it = IntervalTree()
+                it.build(starts, ends, indexes)
+                self.__intervaltrees__[chromosome, "+"] = it
 
         else:
 
@@ -60,7 +57,10 @@ class GRanges():
                 starts = cdf.Start.values
                 ends = cdf.End.values
 
-                self.__intervaltrees__[chromosome, strand] = create_intervaltree(indexes, starts, ends)
+                it = IntervalTree()
+                it.build(starts, ends, indexes)
+
+                self.__intervaltrees__[chromosome, strand] = it
 
 
     def overlap(self, other, strandedness=False, invert=False):
@@ -125,8 +125,8 @@ class GRanges():
                 chromosome, loc = val
                 start = loc.start or 0
                 stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-                idxes = [r.data for r in self.__intervaltrees__[chromosome, "+"].search(start, stop)] + \
-                        [r.data for r in self.__intervaltrees__[chromosome, "-"].search(start, stop)]
+                idxes = [r[2] for r in self.__intervaltrees__[chromosome, "+"].search(start, stop)] + \
+                        [r[2] for r in self.__intervaltrees__[chromosome, "-"].search(start, stop)]
 
                 return GRanges(self.df.loc[idxes])
 
@@ -137,7 +137,7 @@ class GRanges():
                 stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
                 idxes = []
                 for chromosome in self.df.Chromosome.drop_duplicates():
-                    idxes.extend([r.data for r in self.__intervaltrees__[chromosome, strand].search(start, stop)])
+                    idxes.extend([r[2] for r in self.__intervaltrees__[chromosome, strand].search(start, stop)])
 
                 return GRanges(self.df.loc[idxes])
 
@@ -154,7 +154,7 @@ class GRanges():
                 chromosome, strand, loc = val
                 start = loc.start or 0
                 stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-                idxes = [r.data for r in self.__intervaltrees__[chromosome, strand].search(start, stop)]
+                idxes = [r[2] for r in self.__intervaltrees__[chromosome, strand].search(start, stop)]
 
                 return GRanges(self.df.loc[idxes])
 
@@ -165,7 +165,7 @@ class GRanges():
 
             idxes = []
             for it in self.__intervaltrees__.values():
-                idxes.extend([r.data for r in it.search(start, stop)])
+                idxes.extend([r[2] for r in it.search(start, stop)])
 
             return GRanges(self.df.loc[idxes])
 

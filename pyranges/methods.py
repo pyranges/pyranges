@@ -133,26 +133,16 @@ def _inverse_intersection(self, other, strandedness=False):
 
                 hits = it.search(start, end)
 
-                # print("idx, start, end")
-                # print(idx, start, end)
-                for i in hits:
+                for ostart, oend, _ in hits:
 
-                    ostart, oend, oindex = i.data
-                    # print("ostart, oend, oindex")
-                    # print(ostart, oend, oindex)
                     if start - ostart < 0:
-                        # print("if start - ostart < 0")
-                        # print(start, ostart)
                         rowdicts.append({"Chromosome": chromosome, "Start":
                                          start, "End": ostart, "Index": idx})
                     elif end - oend > 0:
-                        # print("end - oend > 0")
-                        # print(end, oend)
                         rowdicts.append({"Chromosome": chromosome, "Start":
-                                         end, "End": oend, "Index": idx})
+                                         end, "End": oend - 1, "Index": idx})
 
                 if not hits:
-                    # print(idx, start, end)
                     rowdicts.append({"Chromosome": chromosome, "Start": start,
                                      "End": end + 1, "Index": idx})
 
@@ -168,22 +158,16 @@ def _inverse_intersection(self, other, strandedness=False):
                                        (cdf.End - 1).tolist()):
 
                 hits = it.search(start, end) + it2.search(start, end)
-                for i in hits:
+                for ostart, oend, _ in hits:
 
-                    ostart, oend, oindex = i.data
                     if start - ostart < 0:
-                        # print("if start - ostart < 0")
-                        # print(start, ostart)
                         rowdicts.append({"Chromosome": chromosome, "Start":
                                          start, "End": ostart, "Index": idx})
                     elif end - oend > 0:
-                        # print("end - oend > 0")
-                        # print(end, oend)
                         rowdicts.append({"Chromosome": chromosome, "Start":
-                                         end, "End": oend, "Index": idx})
+                                         end, "End": oend - 1, "Index": idx})
 
                 if not hits:
-                    # print(idx, start, end)
                     rowdicts.append({"Chromosome": chromosome, "Start": start,
                                      "End": end + 1, "Index": idx})
 
@@ -221,15 +205,9 @@ def _intersection(self, other, strandedness=False):
 
                 hits = it.search(start, end)
 
-                # print("idx, start, end")
-                # print(idx, start, end)
-                for i in hits:
-
-                    ostart, oend, oindex = i.data
-                    # print("ostart, oend, oindex")
-                    # print(ostart, oend, oindex)
+                for ostart, oend, _ in hits:
                     rowdicts.append({"Chromosome": chromosome, "Start":
-                                     max(start, ostart), "End": min(end, oend) + 1,
+                                     max(start, ostart), "End": min(end, oend - 1) + 1,
                                      "Index": idx})
 
     else:
@@ -244,11 +222,9 @@ def _intersection(self, other, strandedness=False):
                                        (cdf.End - 1).tolist()):
 
                 hits = it.search(start, end) + it2.search(start, end)
-                for i in hits:
-
-                    ostart, oend, oindex = i.data
+                for ostart, oend, _ in hits:
                     rowdicts.append({"Chromosome": chromosome, "Start": max(start, ostart),
-                                     "End": min(end, oend) + 1, "Index": idx})
+                                     "End": min(end, oend - 1) + 1, "Index": idx})
 
 
     s_e_df = pd.DataFrame.from_dict(rowdicts)
@@ -325,7 +301,7 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
                                        (cdf.End - 1).tolist()):
 
                 for hit in it.search(start, end):
-                    oidx = hit.data[2]
+                    oidx = hit[2]
                     indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
 
 
@@ -339,7 +315,7 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
                                        (cdf.End - 1).tolist()):
 
                 for hit in it.search(start, end):
-                    oidx = hit.data[2]
+                    oidx = hit[2]
                     indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
 
     else:
@@ -353,7 +329,7 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
                                        (cdf.End - 1).tolist()):
 
                 for hit in it.search(start, end) + it2.search(start, end):
-                    oidx = hit.data[2]
+                    oidx = hit[2]
                     indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
 
     if not indexes_of_overlapping:
@@ -362,7 +338,6 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
     idx_df = pd.DataFrame.from_dict(indexes_of_overlapping).set_index("IndexSelf")
 
     idx_df = idx_df.join(self.df, how="right")
-
 
     idx_df = _keep_both(idx_df, other, suffixes, new_pos)
 
