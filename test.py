@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # test_file = "/local/home/endrebak/large_data/consensus_epigenome/epigenome_roadmap/H3K9me3/data/hg38/bed/Ovary_1_Input.bed"
     # test_file = "shuffled_input.bed"
 
-    nrows = None
+    nrows = int(1e7)
     df = pd.read_table(test_file, sep="\t", usecols=[0, 1, 2, 5], header=None,
                        names="Chromosome Start End Strand".split(), nrows=nrows)
 

@@ -10,7 +10,7 @@ from natsort import natsorted
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both)
 
-from joblib import Parallel, delayed
+# from joblib import Parallel, delayed
 
 from ncls import NCLS
 
@@ -20,17 +20,11 @@ except:
     profile = lambda x: x
 
 
-def create_ncls(key, cdf, n):
+def create_ncls(cdf):
 
-    # copy to avoid "ValueError: buffer source array is read-only"
-    if n > 1:
-        return key, NCLS(np.copy(cdf.Start.values),
-                         np.copy(cdf.End.values),
-                         np.copy(cdf.index.values))
-    else:
-        return key, NCLS(cdf.Start.values,
-                         cdf.End.values,
-                         cdf.index.values)
+    return NCLS(cdf.Start.values,
+                cdf.End.values,
+                cdf.index.values)
 
 
 def create_ncls_dict(df, n):
@@ -40,9 +34,9 @@ def create_ncls_dict(df, n):
     else:
         grpby = df.groupby("Chromosome Strand".split())
 
-    nclses = Parallel(n_jobs=n)(delayed(create_ncls)(key, cdf, n) for key, cdf in grpby)
+    nclses = {key: create_ncls(cdf) for (key, cdf) in grpby}
 
-    return {k: ncls for (k, ncls) in nclses}
+    return nclses
 
 
 
@@ -53,8 +47,9 @@ class GRanges():
 
         self.df = df
 
-        print("Using multithread")
         self.__ncls__ = create_ncls_dict(df, n)
+
+        print(self.__ncls__)
 
 
 
