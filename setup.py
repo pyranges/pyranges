@@ -4,7 +4,7 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages, Extension, Command
 
-install_requires = ["pandas", "kerneltree"]
+install_requires = ["pandas", "ncls"]
 
 setup(
     name="pyranges",

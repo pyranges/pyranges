@@ -13,12 +13,12 @@ def _overlap(self, other, strandedness=False, invert=False):
     if "Strand" in df and "Strand" in other.df and strandedness == "same":
 
         for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-            it = other.__intervaltrees__[chromosome, strand]
+            it = other.__ncls__[chromosome, strand]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                if it.search(start, end):
+                if it.find_overlap(start, end):
                     indexes_of_overlapping.append(idx)
 
 
@@ -26,25 +26,25 @@ def _overlap(self, other, strandedness=False, invert=False):
 
         for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
             opposite_strand = other_strand[strand]
-            it = other.__intervaltrees__[chromosome, opposite_strand]
+            it = other.__ncls__[chromosome, opposite_strand]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                if it.search(start, end):
+                if it.find_overlap(start, end):
                     indexes_of_overlapping.append(idx)
 
     else:
 
         for chromosome, cdf in df.groupby("Chromosome"):
 
-            it = other.__intervaltrees__[chromosome, "+"]
-            it2 = other.__intervaltrees__[chromosome, "-"]
+            it = other.__ncls__[chromosome, "+"]
+            it2 = other.__ncls__[chromosome, "-"]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                if it.search(start, end) or it2.search(start, end):
+                if it.find_overlap(start, end) or it2.find_overlap(start, end):
                     indexes_of_overlapping.append(idx)
 
     # https://stackoverflow.com/a/7961425/992687
@@ -126,12 +126,12 @@ def _inverse_intersection(self, other, strandedness=False):
 
             strand = strand_dict[strand]
 
-            it = other.__intervaltrees__[chromosome, strand]
+            it = other.__ncls__[chromosome, strand]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                hits = it.search(start, end)
+                hits = it.find_overlap(start, end)
 
                 for ostart, oend, _ in hits:
 
@@ -151,13 +151,13 @@ def _inverse_intersection(self, other, strandedness=False):
         rowdicts = []
         for chromosome, cdf in df.groupby("Chromosome"):
 
-            it = other.__intervaltrees__[chromosome, "+"]
-            it2 = other.__intervaltrees__[chromosome, "-"]
+            it = other.__ncls__[chromosome, "+"]
+            it2 = other.__ncls__[chromosome, "-"]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                hits = it.search(start, end) + it2.search(start, end)
+                hits = it.find_overlap(start, end) + it2.find_overlap(start, end)
                 for ostart, oend, _ in hits:
 
                     if start - ostart < 0:
@@ -198,12 +198,12 @@ def _intersection(self, other, strandedness=False):
 
             strand = strand_dict[strand]
 
-            it = other.__intervaltrees__[chromosome, strand]
+            it = other.__ncls__[chromosome, strand]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                hits = it.search(start, end)
+                hits = it.find_overlap(start, end)
 
                 for ostart, oend, _ in hits:
                     rowdicts.append({"Chromosome": chromosome, "Start":
@@ -215,13 +215,13 @@ def _intersection(self, other, strandedness=False):
         rowdicts = []
         for chromosome, cdf in df.groupby("Chromosome"):
 
-            it = other.__intervaltrees__[chromosome, "+"]
-            it2 = other.__intervaltrees__[chromosome, "-"]
+            it = other.__ncls__[chromosome, "+"]
+            it2 = other.__ncls__[chromosome, "-"]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                hits = it.search(start, end) + it2.search(start, end)
+                hits = it.find_overlap(start, end) + it2.find_overlap(start, end)
                 for ostart, oend, _ in hits:
                     rowdicts.append({"Chromosome": chromosome, "Start": max(start, ostart),
                                      "End": min(end, oend - 1) + 1, "Index": idx})
@@ -295,12 +295,12 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
     if "Strand" in df and "Strand" in other.df and strandedness == "same":
 
         for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-            it = other.__intervaltrees__[chromosome, strand]
+            it = other.__ncls__[chromosome, strand]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                for hit in it.search(start, end):
+                for hit in it.find_overlap(start, end):
                     oidx = hit[2]
                     indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
 
@@ -309,12 +309,12 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
 
         for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
             opposite_strand = other_strand[strand]
-            it = other.__intervaltrees__[chromosome, opposite_strand]
+            it = other.__ncls__[chromosome, opposite_strand]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                for hit in it.search(start, end):
+                for hit in it.find_overlap(start, end):
                     oidx = hit[2]
                     indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
 
@@ -322,13 +322,13 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
 
         for chromosome, cdf in df.groupby("Chromosome"):
 
-            it = other.__intervaltrees__[chromosome, "+"]
-            it2 = other.__intervaltrees__[chromosome, "-"]
+            it = other.__ncls__[chromosome, "+"]
+            it2 = other.__ncls__[chromosome, "-"]
 
             for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
                                        (cdf.End - 1).tolist()):
 
-                for hit in it.search(start, end) + it2.search(start, end):
+                for hit in it.find_overlap(start, end) + it2.find_overlap(start, end):
                     oidx = hit[2]
                     indexes_of_overlapping.append({"IndexSelf": idx, "IndexOther": oidx})
 

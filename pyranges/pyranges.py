@@ -10,7 +10,7 @@ from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both)
 
 
-from kerneltree import IntervalTree
+from ncls import NCLS
 
 try:
     dummy = profile
@@ -23,19 +23,9 @@ class GRanges():
 
     def __init__(self, df):
 
-        df.Chromosome = df.Chromosome.astype("category")
-        df.Chromosome.cat.reorder_categories(natsorted(df.Chromosome.drop_duplicates()), inplace=True, ordered=True)
-
-        df = df.sort_values(["Chromosome", "Start", "End"])
-
-        # so that we can be sure that an integer representation of chromosomes won't be promoted to floats
-        df.Chromosome = df.Chromosome.astype(str)
-
-        df = df.reset_index(drop=True)
-
         self.df = df
 
-        self.__intervaltrees__ = defaultdict(IntervalTree)
+        self.__ncls__ = dict()
 
         if "Strand" not in df:
 
@@ -45,9 +35,7 @@ class GRanges():
                 starts = cdf.Start.values
                 ends = cdf.End.values
 
-                it = IntervalTree()
-                it.build(starts, ends, indexes)
-                self.__intervaltrees__[chromosome, "+"] = it
+                self.__ncls__[chromosome, "+"] = NCLS(starts, ends, indexes)
 
         else:
 
@@ -57,10 +45,7 @@ class GRanges():
                 starts = cdf.Start.values
                 ends = cdf.End.values
 
-                it = IntervalTree()
-                it.build(starts, ends, indexes)
-
-                self.__intervaltrees__[chromosome, strand] = it
+                self.__ncls__[chromosome, strand] = NCLS(starts, ends, indexes)
 
 
     def overlap(self, other, strandedness=False, invert=False):
@@ -125,8 +110,8 @@ class GRanges():
                 chromosome, loc = val
                 start = loc.start or 0
                 stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-                idxes = [r[2] for r in self.__intervaltrees__[chromosome, "+"].search(start, stop)] + \
-                        [r[2] for r in self.__intervaltrees__[chromosome, "-"].search(start, stop)]
+                idxes = [r[2] for r in self.__ncls__[chromosome, "+"].find_overlap(start, stop)] + \
+                        [r[2] for r in self.__ncls__[chromosome, "-"].find_overlap(start, stop)]
 
                 return GRanges(self.df.loc[idxes])
 
@@ -137,7 +122,7 @@ class GRanges():
                 stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
                 idxes = []
                 for chromosome in self.df.Chromosome.drop_duplicates():
-                    idxes.extend([r[2] for r in self.__intervaltrees__[chromosome, strand].search(start, stop)])
+                    idxes.extend([r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)])
 
                 return GRanges(self.df.loc[idxes])
 
@@ -154,7 +139,7 @@ class GRanges():
                 chromosome, strand, loc = val
                 start = loc.start or 0
                 stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-                idxes = [r[2] for r in self.__intervaltrees__[chromosome, strand].search(start, stop)]
+                idxes = [r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)]
 
                 return GRanges(self.df.loc[idxes])
 
@@ -164,8 +149,8 @@ class GRanges():
             stop = val.stop or max(self.df.End.max(), start)
 
             idxes = []
-            for it in self.__intervaltrees__.values():
-                idxes.extend([r[2] for r in it.search(start, stop)])
+            for it in self.__ncls__.values():
+                idxes.extend([r[2] for r in it.find_overlap(start, stop)])
 
             return GRanges(self.df.loc[idxes])
 
