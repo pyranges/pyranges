@@ -1,5 +1,6 @@
 
 import pandas as pd
+import numpy as np
 from collections import defaultdict
 
 from tabulate import tabulate
@@ -9,6 +10,7 @@ from natsort import natsorted
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both)
 
+from joblib import Parallel, delayed
 
 from ncls import NCLS
 
@@ -18,34 +20,42 @@ except:
     profile = lambda x: x
 
 
+def create_ncls(key, cdf, n):
+
+    # copy to avoid "ValueError: buffer source array is read-only"
+    if n > 1:
+        return key, NCLS(np.copy(cdf.Start.values),
+                         np.copy(cdf.End.values),
+                         np.copy(cdf.index.values))
+    else:
+        return key, NCLS(cdf.Start.values,
+                         cdf.End.values,
+                         cdf.index.values)
+
+
+def create_ncls_dict(df, n):
+
+    if "Strand" not in df:
+        grpby = df.groupby("Chromosome")
+    else:
+        grpby = df.groupby("Chromosome Strand".split())
+
+    nclses = Parallel(n_jobs=n)(delayed(create_ncls)(key, cdf, n) for key, cdf in grpby)
+
+    return {k: ncls for (k, ncls) in nclses}
+
+
+
 
 class GRanges():
 
-    def __init__(self, df):
+    def __init__(self, df, n=1):
 
         self.df = df
 
-        self.__ncls__ = dict()
+        print("Using multithread")
+        self.__ncls__ = create_ncls_dict(df, n)
 
-        if "Strand" not in df:
-
-            for chromosome, cdf in df.groupby("Chromosome"):
-
-                indexes = cdf.index.values
-                starts = cdf.Start.values
-                ends = cdf.End.values
-
-                self.__ncls__[chromosome, "+"] = NCLS(starts, ends, indexes)
-
-        else:
-
-            for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-
-                indexes = cdf.index.values
-                starts = cdf.Start.values
-                ends = cdf.End.values
-
-                self.__ncls__[chromosome, strand] = NCLS(starts, ends, indexes)
 
 
     def overlap(self, other, strandedness=False, invert=False):

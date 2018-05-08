@@ -10,12 +10,14 @@ if __name__ == "__main__":
 
     import pandas as pd
 
-    # test_file = "/mnt/scratch/endrebak/genomes/chip/UCSD.Aorta.Input.STL002.bed.gz"
+    test_file = "/mnt/scratch/endrebak/genomes/chip/UCSD.Aorta.Input.STL002.bed.gz"
+    test_file = "/mnt/scratch/endrebak/genomes/chip/shuffled_Aorta_Input.gz"
     # test_file = "/local/home/endrebak/large_data/consensus_epigenome/epigenome_roadmap/H3K9me3/data/hg38/bed/Ovary_1_Input.bed"
-    test_file = "shuffled_input.bed"
+    # test_file = "shuffled_input.bed"
 
+    nrows = None
     df = pd.read_table(test_file, sep="\t", usecols=[0, 1, 2, 5], header=None,
-                       names="Chromosome Start End Strand".split(), nrows=None)
+                       names="Chromosome Start End Strand".split(), nrows=nrows)
 
 
     print("Done reading")
@@ -91,3 +93,11 @@ if __name__ == "__main__":
 #     58        36       4757.0    132.1      0.0                  ends = cdf.End.values
 #     59
 #     60        36    2721420.0  75595.0      6.9                  self.__ncls__[chromosome, strand] = NCLS(starts, ends, indexes)
+
+
+# df = fread("zcat /mnt/scratch/endrebak/genomes/chip/shuffled_Aorta_Input.gz | cut -f 1-3,6")
+# start.time <- Sys.time()
+# gr = GRanges(seqnames=df$V1, IRanges(start=df$V2, end=df$V3), strand=df$V4)
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken

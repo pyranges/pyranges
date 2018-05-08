@@ -30,9 +30,9 @@ Necessary for paper:
 * Write non-shitty readme.md
 * Write more docs
 
-
 For the future:
 
+* Speed up intervaltree creation by allowing parallelism or testing nested containment lists
 * Report nearest feature (like intersect but not necessarily overlapping).
 * Allow writing to different UCSC genome-browser compatible formats such as
   bigwig, bedgraph, histograms, colored bed etc
