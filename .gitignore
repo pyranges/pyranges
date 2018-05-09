@@ -5,3 +5,10 @@ workflow/data
 *#*
 *.pyc
 *cache/
+
+*.txt
+*.so
+*.cpp
+*.html
+*.lprof
+*.egg-*

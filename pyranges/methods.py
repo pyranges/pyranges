@@ -3,56 +3,65 @@ import numpy as np
 
 import itertools
 
+try:
+    dummy = profile
+except:
+    profile = lambda x: x
 
+from pyranges.src.overlap import c_overlap
+
+
+
+# @profile
 def _overlap(self, other, strandedness=False, invert=False):
 
-    indexes_of_overlapping = []
-    df = self.df
-    other_strand = {"+": "-", "-": "+"}
+    return c_overlap(self, other, strandedness, invert)
+    # indexes_of_overlapping = []
+    # df = self.df
+    # other_strand = {"+": "-", "-": "+"}
 
-    if "Strand" in df and "Strand" in other.df and strandedness == "same":
+    # if "Strand" in df and "Strand" in other.df and strandedness == "same":
 
-        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-            it = other.__ncls__[chromosome, strand]
+    #     for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
+    #         it = other.__ncls__[chromosome, strand]
 
-            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-                                       (cdf.End).tolist()):
+    #         for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
+    #                                    (cdf.End).tolist()):
 
-                if it.find_overlap_list(start, end):
-                    indexes_of_overlapping.append(idx)
+    #             if it.find_overlap_list(start, end):
+    #                 indexes_of_overlapping.append(idx)
 
 
-    elif "Strand" in df and "Strand" in other.df and strandedness == "opposite":
+    # elif "Strand" in df and "Strand" in other.df and strandedness == "opposite":
 
-        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-            opposite_strand = other_strand[strand]
-            it = other.__ncls__[chromosome, opposite_strand]
+    #     for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
+    #         opposite_strand = other_strand[strand]
+    #         it = other.__ncls__[chromosome, opposite_strand]
 
-            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-                                       (cdf.End).tolist()):
+    #         for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
+    #                                    (cdf.End).tolist()):
 
-                if it.find_overlap_list(start, end):
-                    indexes_of_overlapping.append(idx)
+    #             if it.find_overlap_list(start, end):
+    #                 indexes_of_overlapping.append(idx)
 
-    else:
+    # else:
 
-        for chromosome, cdf in df.groupby("Chromosome"):
+    #     for chromosome, cdf in df.groupby("Chromosome"):
 
-            it = other.__ncls__[chromosome, "+"]
-            it2 = other.__ncls__[chromosome, "-"]
+    #         it = other.__ncls__[chromosome, "+"]
+    #         it2 = other.__ncls__[chromosome, "-"]
 
-            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-                                       (cdf.End).tolist()):
+    #         for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(), cdf.End.tolist()):
 
-                if it.find_overlap_list(start, end) or it2.find_overlap_list(start, end):
-                    indexes_of_overlapping.append(idx)
+    #             if it.find_overlap_list(start, end) or it2.find_overlap_list(start, end):
+    #                 indexes_of_overlapping.append(idx)
 
-    # https://stackoverflow.com/a/7961425/992687
-    indexes_of_overlapping = list(dict.fromkeys(indexes_of_overlapping))
-    if not invert:
-        return df.loc[indexes_of_overlapping]
-    else:
-        return df[~df.index.isin(indexes_of_overlapping)]
+    # # https://stackoverflow.com/a/7961425/992687
+    # indexes_of_overlapping = list(dict.fromkeys(indexes_of_overlapping))
+    # if not invert:
+    #     return df.loc[indexes_of_overlapping]
+    # else:
+    #     return df[~df.index.isin(indexes_of_overlapping)]
 
 # def _intersection_cut():
 
