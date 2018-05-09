@@ -1,5 +1,6 @@
 import pytest
 
+from tests.helpers import assert_df_equal
 from pyranges.pyranges import GRanges
 
 import pandas as pd
@@ -47,9 +48,7 @@ def test_intersect_invert_simple_granges(simple_gr1, simple_gr2, expected_result
 
     result = simple_gr1.intersection(simple_gr2, invert=True, strandedness=False)
 
-    print(result)
-
-    assert result.df.equals(expected_result_inverse_intersection_simple_granges.df)
+    assert assert_df_equal(result.df, expected_result_inverse_intersection_simple_granges.df)
 
 
 @pytest.fixture
@@ -70,7 +69,7 @@ def test_intersect_invert_same_strand_simple_granges(simple_gr1, simple_gr2, exp
 
     print(result)
 
-    assert expected_result_same_strand_inverse_intersection_simple_granges.df.equals(result.df)
+    assert assert_df_equal(result.df, expected_result_same_strand_inverse_intersection_simple_granges.df)
 
 
 
@@ -92,4 +91,4 @@ def test_intersect_invert_opposite_strand_simple_granges(simple_gr1, simple_gr2,
 
     print(result)
 
-    assert expected_result_opposite_strand_inverse_intersection_simple_granges.df.equals(result.df)
+    assert assert_df_equal(result.df, expected_result_opposite_strand_inverse_intersection_simple_granges.df)

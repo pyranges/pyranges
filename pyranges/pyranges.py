@@ -10,8 +10,6 @@ from natsort import natsorted
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both)
 
-# from joblib import Parallel, delayed
-
 from ncls import NCLS
 
 try:
@@ -35,66 +33,45 @@ def create_ncls_dict(df, n):
         grpby = df.groupby("Chromosome Strand".split())
 
     nclses = {key: create_ncls(cdf) for (key, cdf) in grpby}
+    dd = defaultdict(NCLS)
+    dd.update(nclses)
 
-    return nclses
+    return dd
 
 
 
 
 class GRanges():
 
+    df = None
+
     def __init__(self, df, n=1):
 
-        self.df = df
+        df.index = range(len(df))
 
-        self.__ncls__ = create_ncls_dict(df, n)
+        # using __dict__ to avoid invoking setattr
 
-        print(self.__ncls__)
+        self.__dict__["df"] = df
 
+        self.__dict__["__ncls__"] = create_ncls_dict(df, n)
 
+    def __len__(self):
+        return self.df.shape[0]
 
-    def overlap(self, other, strandedness=False, invert=False):
+    def __setattr__(self, column_name, column):
 
-        "Want all intervals in self that overlap with other."
+        if not len(self.df) == len(column):
+            raise Exception("DataFrame and column must be same length.")
 
-        df = _overlap(self, other, strandedness, invert)
-        return GRanges(df)
+        column.index = self.df.index
+        self.df.insert(self.df.shape[1], column_name, column)
 
+    def __getattr__(self, column_name):
 
-    def intersection(self, other, strandedness=False, invert=False):
+        if column_name in self.df:
+            return self.df[column_name]
 
-        "Want the parts of the intervals in self that overlap with other."
-
-        if invert:
-            df = _inverse_intersection(self, other, strandedness)
-        else:
-            df = _intersection(self, other, strandedness)
-
-        return GRanges(df)
-
-
-    def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
-
-        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes)
-
-        return GRanges(df)
-
-
-    def cluster(self, strand=None):
-
-        df = _cluster(self, strand)
-        return GRanges(df)
-
-
-    def tile(self, tile_size=50):
-
-        df = _tile(self, tile_size)
-        return GRanges(df)
-
-
-    def coverage(self, value_col=None):
-
-        return _coverage(self, value_col)
+        raise IndexError("Column name {} not in df.".format(column_name))
 
 
     def __getitem__(self, val):
@@ -161,13 +138,6 @@ class GRanges():
 
         pd.options.mode.chained_assignment = "warn"
 
-    def __getattr__(self, col):
-
-        try:
-            return self.df[col]
-        except:
-            raise Exception("GRanges has no attribute {}.".format(col))
-
 
     def __str__(self):
 
@@ -189,3 +159,48 @@ class GRanges():
     def __repr__(self):
 
         return str(self)
+
+
+    def overlap(self, other, strandedness=False, invert=False):
+
+        "Want all intervals in self that overlap with other."
+
+        df = _overlap(self, other, strandedness, invert)
+        return GRanges(df)
+
+
+    def intersection(self, other, strandedness=False, invert=False):
+
+        "Want the parts of the intervals in self that overlap with other."
+
+        if invert:
+            df = _inverse_intersection(self, other, strandedness)
+        else:
+            df = _intersection(self, other, strandedness)
+
+        df.index.name = ""
+        return GRanges(df)
+
+
+    def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
+
+        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes)
+
+        return GRanges(df)
+
+
+    def cluster(self, strand=None):
+
+        df = _cluster(self, strand)
+        return GRanges(df)
+
+
+    def tile(self, tile_size=50):
+
+        df = _tile(self, tile_size)
+        return GRanges(df)
+
+
+    def coverage(self, value_col=None):
+
+        return _coverage(self, value_col)

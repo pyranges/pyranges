@@ -3,6 +3,7 @@ import pytest
 
 from pyranges.pyranges import GRanges
 
+from tests.helpers import assert_df_equal
 import pandas as pd
 
 from io import StringIO
@@ -46,9 +47,12 @@ def test_intersect_simple_granges(simple_gr1, simple_gr2, expected_result_inters
 
     result = simple_gr1.intersection(simple_gr2, invert=False, strandedness=False)
 
-    print(result)
+    print("result\n", result.df)
+    print("expected_result_intersection_simple_granges\n",
+          expected_result_intersection_simple_granges.df)
 
-    assert result.df.equals(expected_result_intersection_simple_granges.df)
+    assert assert_df_equal(result.df, expected_result_intersection_simple_granges.df)
+
 
 @pytest.fixture
 def expected_result_same_strand_intersection_simple_granges():
@@ -66,7 +70,7 @@ def test_intersect_same_strand_simple_granges(simple_gr1, simple_gr2, expected_r
 
     print(result)
 
-    assert expected_result_same_strand_intersection_simple_granges.df.equals(result.df)
+    assert assert_df_equal(expected_result_same_strand_intersection_simple_granges.df, result.df)
 
 
 

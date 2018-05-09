@@ -1,5 +1,6 @@
 import pytest
 
+from tests.helpers import assert_df_equal
 from pyranges.pyranges import GRanges
 import pyranges as pr
 
@@ -39,7 +40,7 @@ def test_advanced_overlap(cs, bg, expected_result_regular_overlap):
     print(result.df)
     print(expected_result_regular_overlap)
 
-    assert expected_result_regular_overlap.equals(result.df)
+    assert assert_df_equal(expected_result_regular_overlap, result.df)
 
 @pytest.fixture
 def expected_result_overlap_same_strand():
@@ -55,7 +56,7 @@ def test_advanced_overlap_stranded(cs, bg, expected_result_overlap_same_strand):
     print(result.df)
     print(expected_result_overlap_same_strand)
 
-    assert expected_result_overlap_same_strand.equals(result.df)
+    assert assert_df_equal(expected_result_overlap_same_strand, result.df)
 
 
 @pytest.fixture
@@ -74,4 +75,4 @@ def test_advanced_overlap_opposite_stranded(cs, bg, expected_result_overlap_oppo
     print(result.df)
     print(expected_result_overlap_opposite_strand)
 
-    assert expected_result_overlap_opposite_strand.equals(result.df)
+    assert assert_df_equal(expected_result_overlap_opposite_strand, result.df)

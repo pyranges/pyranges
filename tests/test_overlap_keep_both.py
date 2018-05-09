@@ -1,5 +1,6 @@
 import pytest
 
+from tests.helpers import assert_df_equal
 from pyranges.pyranges import GRanges
 from pyranges.methods import _overlap_write_both
 
@@ -67,7 +68,7 @@ def test_overlap_same_strand_simple_granges(simple_gr1, simple_gr2, expected_res
     print("actual")
     print(result)
 
-    assert result.df.equals(expected_result_overlap_same_strand_simple_granges.df)
+    assert assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)
 
 
 
@@ -86,3 +87,5 @@ def test_default_overlap_simple_granges(simple_gr1, simple_gr2, expected_result_
     print(simple_gr2)
 
     result = simple_gr1.overlap_join(simple_gr2)
+
+    assert assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)

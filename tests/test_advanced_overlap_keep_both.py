@@ -1,5 +1,6 @@
 import pytest
 
+from tests.helpers import assert_df_equal
 from pyranges.pyranges import GRanges
 import pyranges as pr
 
@@ -42,7 +43,7 @@ def test_advanced_overlap(cs, bg, expected_result_regular_overlap):
     print("expected_result_regular_overlap")
     print(expected_result_regular_overlap)
 
-    assert expected_result_regular_overlap.df.equals(result.df)
+    assert assert_df_equal(expected_result_regular_overlap.df, result.df)
 
 @pytest.fixture
 def expected_result_regular_overlap_intersection():
@@ -63,7 +64,8 @@ def test_advanced_overlap_new_pos_intersect(cs, bg, expected_result_regular_over
     print("expected_result_regular_overlap")
     print(expected_result_regular_overlap_intersection)
 
-    assert expected_result_regular_overlap_intersection.df.equals(result.df)
+    assert assert_df_equal(expected_result_regular_overlap_intersection.df, result.df)
+    # assert expected_result_regular_overlap_intersection.df.equals(result.df)
 
 
 
@@ -85,7 +87,7 @@ def test_advanced_overlap_stranded(cs, bg, expected_result_overlap_same_strand):
     print("expected result")
     print(expected_result_overlap_same_strand)
 
-    assert expected_result_overlap_same_strand.df.equals(result.df)
+    assert assert_df_equal(expected_result_overlap_same_strand.df, result.df)
 
 
 @pytest.fixture
@@ -105,7 +107,7 @@ def test_advanced_overlap_opposite_stranded(cs, bg, expected_result_overlap_oppo
     print(result.df)
     print(expected_result_overlap_opposite_strand)
 
-    assert expected_result_overlap_opposite_strand.df.equals(result.df)
+    assert assert_df_equal(expected_result_overlap_opposite_strand.df, result.df)
 
 
 
@@ -126,7 +128,7 @@ def test_advanced_overlap_opposite_stranded_suffixes(cs, bg, expected_result_ove
     print(result.df)
     print(expected_result_overlap_opposite_strand_suffixes)
 
-    assert expected_result_overlap_opposite_strand_suffixes.df.equals(result.df)
+    assert assert_df_equal(expected_result_overlap_opposite_strand_suffixes.df, result.df)
 
 
 @pytest.fixture
@@ -148,4 +150,4 @@ def test_advanced_overlap_new_pos_union(cs, bg, expected_result_regular_overlap_
     print("expected_result_regular_overlap")
     print(expected_result_regular_overlap_union)
 
-    assert expected_result_regular_overlap_union.df.equals(result.df)
+    assert assert_df_equal(expected_result_regular_overlap_union.df, result.df)
