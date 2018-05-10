@@ -8,62 +8,13 @@ try:
 except:
     profile = lambda x: x
 
-from pyranges.src.overlap import c_overlap
+from pyranges.src.cython_methods import c_overlap, both_indexes
 
 
-
-# @profile
 def _overlap(self, other, strandedness=False, invert=False):
 
     return c_overlap(self, other, strandedness, invert)
-    # indexes_of_overlapping = []
-    # df = self.df
-    # other_strand = {"+": "-", "-": "+"}
 
-    # if "Strand" in df and "Strand" in other.df and strandedness == "same":
-
-    #     for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-    #         it = other.__ncls__[chromosome, strand]
-
-    #         for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-    #                                    (cdf.End).tolist()):
-
-    #             if it.find_overlap_list(start, end):
-    #                 indexes_of_overlapping.append(idx)
-
-
-    # elif "Strand" in df and "Strand" in other.df and strandedness == "opposite":
-
-    #     for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-    #         opposite_strand = other_strand[strand]
-    #         it = other.__ncls__[chromosome, opposite_strand]
-
-    #         for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-    #                                    (cdf.End).tolist()):
-
-    #             if it.find_overlap_list(start, end):
-    #                 indexes_of_overlapping.append(idx)
-
-    # else:
-
-    #     for chromosome, cdf in df.groupby("Chromosome"):
-
-    #         it = other.__ncls__[chromosome, "+"]
-    #         it2 = other.__ncls__[chromosome, "-"]
-
-    #         for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(), cdf.End.tolist()):
-
-    #             if it.find_overlap_list(start, end) or it2.find_overlap_list(start, end):
-    #                 indexes_of_overlapping.append(idx)
-
-    # # https://stackoverflow.com/a/7961425/992687
-    # indexes_of_overlapping = list(dict.fromkeys(indexes_of_overlapping))
-    # if not invert:
-    #     return df.loc[indexes_of_overlapping]
-    # else:
-    #     return df[~df.index.isin(indexes_of_overlapping)]
-
-# def _intersection_cut():
 
 def _cluster(self, strand=False):
 
@@ -194,69 +145,73 @@ def _inverse_intersection(self, other, strandedness=False):
     return outdf
 
 
-def _intersection(self, other, strandedness=False):
+@profile
+def _intersection(self, other, strandedness=None, njobs=1):
 
-    indexes_of_overlapping = []
-    df = self.df
-    columns = list(df.columns)
-    rest_of_cols = [c for c in df.columns if c not in "Chromosome Start End".split()]
+    sidx, oidx = both_indexes(self, other, strandedness)
 
-    other_strand = {"+": "-", "-": "+"}
-    same_strand = {"+": "+", "-": "-"}
-
-    if strandedness == "same":
-        strand_dict = same_strand
-    elif strandedness == "opposite":
-        strand_dict = other_strand
-
-    if "Strand" in df and "Strand" in other.df and strandedness:
-
-        rowdicts = []
-        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
-
-            strand = strand_dict[strand]
-
-            it = other.__ncls__[chromosome, strand]
-
-            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-                                       (cdf.End).tolist()):
-
-                hits = it.find_overlap_list(start, end)
-
-                for ostart, oend, _ in hits:
-                    rowdicts.append({"Chromosome": chromosome, "Start":
-                                     max(start, ostart), "End": min(end, oend),
-                                     "Index": idx})
-
+    dfs = []
+    if len(list(sidx.keys())[0]) == 2: # chromosome and strand
+        grpby_key = "Chromosome Strand".split()
     else:
+        grpby_key = "Chromosome"
 
-        rowdicts = []
-        for chromosome, cdf in df.groupby("Chromosome"):
+    other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
 
-            it = other.__ncls__[chromosome, "+"]
-            it2 = other.__ncls__[chromosome, "-"]
+    for key, scdf in self.df.groupby(grpby_key):
 
-            for idx, start, end in zip(cdf.index.tolist(), cdf.Start.tolist(),
-                                       (cdf.End).tolist()):
+        print("starting with", key)
+        if not key in other_dfs:
+            continue
 
-                hits = it.find_overlap_list(start, end) + it2.find_overlap_list(start, end)
-                for ostart, oend, _ in hits:
-                    rowdicts.append({"Chromosome": chromosome, "Start": max(start, ostart),
-                                     "End": min(end, oend), "Index": idx})
+        ocdf = other_dfs[key]
+
+        scidx = sidx[key]
+        ocidx = oidx[key]
+
+        scdf = scdf.loc[scidx]
+        ocdf = ocdf.loc[ocidx, ["Start", "End"]]
+
+        new_starts = pd.Series(
+            np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
+            index=scdf.index, dtype=np.long)
+
+        new_ends = pd.Series(
+            np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
+            index=scdf.index, dtype=np.long)
+
+        pd.options.mode.chained_assignment = None  # default='warn'
+        scdf.loc[:, "Start"] = new_starts
+        scdf.loc[:, "End"] = new_ends
+        pd.options.mode.chained_assignment = 'warn'
+
+        dfs.append(scdf)
+
+        print("done with", key)
+
+    df = pd.concat(dfs)
+
+    return df
 
 
-    s_e_df = pd.DataFrame.from_dict(rowdicts)
 
-    if s_e_df.empty:
-        return pd.DataFrame(columns=columns)
 
-    s_e_df = s_e_df.set_index("Index")["Chromosome Start End".split()]
 
-    rest_df = df.loc[s_e_df.index, rest_of_cols]
+    # if len(sidx) == 0:
+    #     return pd.DataFrame(columns="Chromosome Start End".split())
 
-    outdf = pd.concat([s_e_df, rest_df], axis=1)
+    # sdf = self.df.loc[sidx]
+    # odf = other.df.loc[oidx, ["Start", "End"]]
 
-    return outdf
+    # new_starts = pd.Series(np.where(sdf.Start.values > odf.Start.values, sdf.Start, odf.Start), index=sdf.index, dtype=np.long)
+    # new_ends = pd.Series(np.where(sdf.End.values < odf.End.values, sdf.End, odf.End), index=sdf.index, dtype=np.long)
+
+    # pd.options.mode.chained_assignment = None  # default='warn'
+    # sdf.loc[:, "Start"] = new_starts
+    # sdf.loc[:, "End"] = new_ends
+    # pd.options.mode.chained_assignment = "warn"  # default='warn'
+
+    # return sdf
 
 
 def _coverage(ranges, value_col=None):

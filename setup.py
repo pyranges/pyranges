@@ -17,7 +17,7 @@ if macros:
 
 install_requires = ["pandas", "ncls"]
 
-extensions = [Extension("pyranges.src.overlap", ["pyranges/src/overlap.pyx"], define_macros=macros, language="c++", extra_compile_args=["-O3"])]
+extensions = [Extension("pyranges.src.cython_methods", ["pyranges/src/cython_methods.pyx"], define_macros=macros)]
 
 setup(
     name="pyranges",
