@@ -14,4 +14,16 @@ def assert_df_equal(df1, df2):
     print("Expected")
     print(df2)
 
+    print("Actual dtypes")
+    print(df1.dtypes)
+    print("Expected dtypes")
+    print(df2.dtypes)
+    print("dtypes equal", df1.dtypes == df2.dtypes)
+
+    print("Actual index")
+    print(df1.index)
+    print("Expected index")
+    print(df2.index)
+    print("index equal", df1.index == df2.index)
+
     return df1.equals(df2)
