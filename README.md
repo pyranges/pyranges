@@ -1,25 +1,14 @@
 # pyranges
 
-The input dataframe needs at least the columns Chromome, Start, End. The rest are arbitrary.
+GRanges for Python. Not ready for use, but I am very close. Watch this space.
 
-Using all operations on the GRanges object return a new GRanges object, not a
-view. (Execpt those that just change the underlying dataframe, which is
-accessible with gr.df)
-
-Columns in the dataframe given to the constructor are available as an attribute
-of the object. I.e. gr.Score returns the Score series in the example below.
-
-You can add columns to the underlying dataframe just fine and change all columns
-except Chromosome, Start and End. If you want to change those columns you should
-create a new GRanges object with the new values. Note: Changing the Chromosome, Start
-and End columns does not change the datastructures in the GRanges object that
-are used to perform quick range operations on the GRange and will therefore lead to
-erroneus results.
+(The GRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
 
 ### TODO
 
 Necessary for paper:
 
+* Do set intersection, set union and set subtraction like genomicranges (easy peasy)
 * Write even more tests
 * Benchmarks comparing with Bioconductor GRanges
 * Add continuous integration
@@ -32,16 +21,14 @@ Necessary for paper:
 
 For the future:
 
-* Speed up intervaltree creation by allowing parallelism or testing nested containment lists
 * Report nearest feature (like intersect but not necessarily overlapping).
+* Subtraction operation
 * Allow writing to different UCSC genome-browser compatible formats such as
   bigwig, bedgraph, histograms, colored bed etc
 * Look at GRanges/bedtools for more inspiration
-* Cythonize slowest parts
 * Add visualization capabilites?
 * Enable annotation with featurefetch?
 * Add dtypes to GRanges-header?
-* Multithread operations
 * Find sequences of ranges with pyfaidx
 
 ```

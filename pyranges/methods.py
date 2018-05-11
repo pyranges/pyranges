@@ -148,10 +148,8 @@ def _cluster(self, strand=False):
         grp = "Chromosome"
 
     clusters = []
-    i = 0
-    for _, cdf in df.groupby(grp):
+    for i, (_, cdf) in enumerate(df.groupby(grp)):
         for _, cluster_df in cdf.groupby((cdf.End.shift() - cdf.Start).lt(0).cumsum()):
-            i += 1
             clusters.append(["{}".format(i)] * cluster_df.shape[0])
 
     clusters = pd.Series(list(itertools.chain.from_iterable(clusters)))
