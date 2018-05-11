@@ -17,13 +17,13 @@ if macros:
 
 install_requires = ["pandas", "ncls"]
 
-extensions = [Extension("pyranges.src.cython_methods", ["pyranges/src/cython_methods.pyx"], define_macros=macros)]
+# extensions = [Extension("pyranges.src.cython_methods", ["pyranges/src/cython_methods.pyx"], define_macros=macros)]
 
 setup(
     name="pyranges",
     packages=find_packages(),
     package_data={'pyranges': ['example_data/*.bed']},
-    ext_modules=cythonize(extensions),
+    # ext_modules=cythonize(extensions),
     include_dirs=["."],
     version="0.0.1",
     description="GRanges for Python.",

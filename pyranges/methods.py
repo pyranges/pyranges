@@ -3,17 +3,139 @@ import numpy as np
 
 import itertools
 
+# import multiprocessing
+# from multiprocessing import Process
+# from joblib import Parallel, delayed
+
+
+from collections import OrderedDict
+
 try:
     dummy = profile
 except:
     profile = lambda x: x
 
-from pyranges.src.cython_methods import c_overlap, both_indexes
+# from pyranges.src.cython_methods import c_overlap, both_indexes
+
+from time import time
+import datetime
+
+from collections import defaultdict
+
+@profile
+def pick_out_indexes_possibly_nonunique(df, indexes, invert=False):
+
+    if isinstance(indexes, list):
+        concat = np.concatenate(indexes)
+        indexes = np.unique(concat)
+
+    if not invert:
+        return df.loc[df.index.isin(indexes)]
+    else:
+        return df.loc[~df.index.isin(indexes)]
 
 
-def _overlap(self, other, strandedness=False, invert=False):
+@profile
+def _overlap(self, other, strandedness, invert):
 
-    return c_overlap(self, other, strandedness, invert)
+    assert strandedness in ["same", "opposite", False, None]
+
+    df = self.df
+    other_strand = {"+": "-", "-": "+"}
+    same_strand = {"+": "+", "-": "-"}
+
+    if strandedness == "same":
+        strand_dict = same_strand
+    elif strandedness == "opposite":
+        strand_dict = other_strand
+
+    dfs = OrderedDict()
+
+    if "Strand" in df and "Strand" in other.df and strandedness:
+
+        indexes_of_overlapping = []
+        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
+
+            starts = cdf.Start.values
+            ends = cdf.End.values
+            indexes = cdf.index.values
+
+            strand = strand_dict[strand]
+            it = other.__ncls__[chromosome, strand]
+            indexes = it.has_overlaps(starts, ends, indexes)
+
+            dfs[chromosome, strand] = pick_out_indexes_possibly_nonunique(cdf, indexes, invert)
+
+    else:
+
+        for chromosome, cdf in df.groupby("Chromosome"):
+
+            starts = cdf.Start.values
+            ends = cdf.End.values
+            indexes = cdf.index.values
+
+            it = other.__ncls__[chromosome, "+"]
+            it2 = other.__ncls__[chromosome, "-"]
+
+            idx1 = it.has_overlaps(starts, ends, indexes)
+            idx2 = it2.has_overlaps(starts, ends, indexes)
+
+            dfs[chromosome] = pick_out_indexes_possibly_nonunique(cdf, [idx1, idx2], invert)
+
+    return pd.concat(dfs.values())
+
+
+def both_indexes(self, other, strandedness):
+
+    assert strandedness in ["same", "opposite", False, None]
+
+    df = self.df
+
+    other_strand = {"+": "-", "-": "+"}
+    same_strand = {"+": "+", "-": "-"}
+
+    if strandedness == "same":
+        strand_dict = same_strand
+    elif strandedness == "opposite":
+        strand_dict = other_strand
+
+    self_d = defaultdict(list)
+    other_d = defaultdict(list)
+
+    if "Strand" in df and "Strand" in other.df and strandedness:
+
+        for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
+
+            starts = cdf.Start.values
+            ends = cdf.End.values
+            indexes = cdf.index.values
+
+            strand = strand_dict[strand]
+            it = other.__ncls__[chromosome, strand]
+
+            _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
+            self_d[chromosome, strand].extend(_self_indexes)
+            other_d[chromosome, strand].extend(_other_indexes)
+
+    else:
+
+        for chromosome, cdf in df.groupby("Chromosome"):
+
+            it = other.__ncls__[chromosome, "+"]
+            it2 = other.__ncls__[chromosome, "-"]
+
+            starts = cdf.Start.values
+            ends = cdf.End.values
+            indexes = cdf.index.values
+
+            for _it in [it, it2]:
+                _self_indexes, _other_indexes = _it.all_overlaps_both(starts, ends, indexes)
+                self_d[chromosome].extend(_self_indexes)
+                other_d[chromosome].extend(_other_indexes)
+
+
+    return self_d, other_d
+
 
 
 def _cluster(self, strand=False):
@@ -144,13 +266,13 @@ def _inverse_intersection(self, other, strandedness=False):
 
     return outdf
 
-
 @profile
 def _intersection(self, other, strandedness=None, njobs=1):
 
     sidx, oidx = both_indexes(self, other, strandedness)
 
-    dfs = []
+    other_strand = {"+": "-", "-": "+"}
+
     if len(list(sidx.keys())[0]) == 2: # chromosome and strand
         grpby_key = "Chromosome Strand".split()
     else:
@@ -158,9 +280,13 @@ def _intersection(self, other, strandedness=None, njobs=1):
 
     other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
 
+    dfs = []
+
     for key, scdf in self.df.groupby(grpby_key):
 
-        print("starting with", key)
+        if len(key) == 2 and strandedness == "opposite":
+            key = key[0], other_strand[key[1]]
+
         if not key in other_dfs:
             continue
 
@@ -187,12 +313,9 @@ def _intersection(self, other, strandedness=None, njobs=1):
 
         dfs.append(scdf)
 
-        print("done with", key)
-
     df = pd.concat(dfs)
 
     return df
-
 
 
 
@@ -318,3 +441,54 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
     idx_df = _keep_both(idx_df, other, suffixes, new_pos)
 
     return idx_df
+
+
+
+
+# def __intersection(scdf, ocdf, scidx, ocidx):
+
+#     scdf = scdf.loc[scidx]
+#     ocdf = ocdf.loc[ocidx, ["Start", "End"]]
+
+
+#     new_starts = pd.Series(
+#         np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
+#         index=scdf.index, dtype=np.long)
+
+#     new_ends = pd.Series(
+#         np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
+#         index=scdf.index, dtype=np.long)
+
+#     pd.options.mode.chained_assignment = None  # default='warn'
+#     scdf.loc[:, "Start"] = new_starts
+#     scdf.loc[:, "End"] = new_ends
+#     pd.options.mode.chained_assignment = 'warn'
+
+#     return scdf
+
+# def _intersection(self, other, strandedness=None, njobs=1):
+
+
+#     sidx, oidx = both_indexes(self, other, strandedness)
+
+#     dfs = []
+#     if len(list(sidx.keys())[0]) == 2: # chromosome and strand
+#         grpby_key = ("Chromosome", "Strand")
+#     else:
+#         grpby_key = "Chromosome"
+
+#     other_dfs = defaultdict(lambda: default, {k: d for k, d in other.df.groupby(grpby_key)})
+#     other_keys = set(other_dfs)
+
+#     if not grpby_key in other_keys and len(grpby_key) == 2:
+#         default = pd.DataFrame(columns="Chromosome Start End Strand".split())
+#     elif not grpby_key in other_keys:
+#         default = pd.DataFrame(columns="Chromosome Start End".split())
+
+#     dfs = Parallel(n_jobs=1)(
+#         delayed(__intersection)(cdf, other_dfs[key], sidx[key], oidx[key])
+#                                   for (key, cdf) in self.df.groupby(grpby_key))
+
+#     df = pd.concat(dfs)
+
+#     return df
