@@ -8,7 +8,7 @@ from natsort import natsorted
 
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both,
-                              _set_intersection, _set_union)
+                              _set_intersection, _set_union, _difference)
 
 from ncls import NCLS
 
@@ -194,6 +194,11 @@ class GRanges():
         si = _set_union(self, other, strand)
 
         return GRanges(si)
+
+
+    def difference(self, other, strand=False):
+
+        return GRanges(_difference(self, other, strand))
 
 
     def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):

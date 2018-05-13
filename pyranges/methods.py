@@ -560,3 +560,139 @@ def _set_union(self, other, strand):
     df = pd.concat(dfs)[columns]
 
     return df
+
+
+    # s = self.cluster()
+    # o = other.cluster()
+
+def _difference(self, other, strandedness):
+
+    other = other.cluster()
+
+    if strandedness:
+        assert "Strand" in self.df and "Strand" in other.df, \
+            "Can only do stranded set difference when both GRanges contain strand info."
+
+    self_stranded = len(list(self.__ncls__.keys())[0]) == 2
+    other_stranded = len(list(other.__ncls__.keys())[0]) == 2
+
+    print("self", self.__ncls__.keys())
+    print("other", other.__ncls__.keys())
+
+    if strandedness == "same":
+        strand_dict = same_strand
+    elif strandedness == "opposite":
+        strand_dict = other_strand
+
+    if strandedness and self_stranded: # chromosome and strand
+        grpby_key = "Chromosome Strand".split()
+        columns = "Chromosome Start End Strand".split()
+    else:
+        grpby_key = "Chromosome"
+        columns = "Chromosome Start End".split()
+
+    other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
+
+    dfs = []
+
+    idx_counter, current_end = 0, 0
+    for key, scdf in self.df.groupby(grpby_key):
+
+        if len(key) == 2:
+            key = key[0], strand_dict[key[1]]
+
+        if not key in other_dfs:
+            dfs.append(scdf)
+            continue
+
+        odf = other_dfs[key]
+
+        if not self_stranded:
+            idx_self, idx_other, overlap_type = self.__ncls__[key].set_difference_helper(
+                odf.Start.values,
+                odf.End.values,
+                odf.index.values)
+
+        else:
+            idx_self1, idx_other1, overlap_type1 = self.__ncls__[key, "+"].set_difference_helper(
+                odf.Start.values,
+                odf.End.values,
+                odf.index.values)
+            idx_self2, idx_other2, overlap_type2 = self.__ncls__[key, "-"].set_difference_helper(
+                odf.Start.values,
+                odf.End.values,
+                odf.index.values)
+
+            idx_self = np.concatenate([idx_self1, idx_self2])
+
+            if not idx_self.dtype == np.int64:
+                idx_self = np.array(idx_self, dtype=np.int64)
+
+            idx_other = np.concatenate([idx_other1, idx_other2])
+            overlap_type = np.concatenate([overlap_type1, overlap_type2])
+
+        starts = np.where(overlap_type == 0, scdf.loc[idx_self, "Start"], odf.loc[idx_other, "End"])
+        ends = np.where(overlap_type == 0, odf.loc[idx_other, "Start"], scdf.loc[idx_self, "End"])
+        starts = pd.Series(starts, index=idx_self)
+        ends = pd.Series(ends, index=idx_self)
+
+        if not other_stranded and self_stranded:
+            ix_has_overlaps = other.__ncls__[key].has_overlaps(scdf.Start.values, scdf.End.values, scdf.index.values)
+        elif other_stranded and not self_stranded:
+            ix1 = other.__ncls__[key, "+"].has_overlaps(scdf.Start.values, scdf.End.values, scdf.index.values)
+            ix2 = other.__ncls__[key, "-"].has_overlaps(scdf.Start.values, scdf.End.values, scdf.index.values)
+            ix_has_overlaps = np.concat([ix1, ix2])
+        elif other_stranded and self_stranded and not strandedness:
+            # print("key")
+            # print(key)
+            ix_has_overlaps1 = other.__ncls__[key, "+"].has_overlaps(scdf.Start.values, scdf.End.values, scdf.index.values)
+            ix_has_overlaps2 = other.__ncls__[key, "-"].has_overlaps(scdf.Start.values, scdf.End.values, scdf.index.values)
+            ix_has_overlaps = np.unique(np.concatenate([ix_has_overlaps1, ix_has_overlaps2]))
+
+        # print("len(idx_other)", len(idx_other))
+        # print("len(idx_self)", len(idx_self))
+        # print("ix_has_overlaps", len(ix_has_overlaps))
+        ix_no_overlaps = np.setdiff1d(scdf.index.values, ix_has_overlaps)
+
+        # no_overlaps = cdf.loc[ix_no_overlaps]
+        idx = np.unique(np.concatenate([ix_no_overlaps, idx_self]))
+        idx.sort(kind="mergesort")
+        # print(idx)
+
+        # print(scdf)
+        scdf = scdf.loc[idx]
+        scdf.loc[idx_self, "Start"] = starts
+        scdf.loc[idx_self, "End"] = ends
+        # print(scdf)
+
+        scdf = scdf.sort_values(["Start", "End"])
+        dfs.append(scdf)
+
+    return pd.concat(dfs)
+        # print(scdf.loc[idx])
+        # print(scdf)
+
+
+
+
+
+
+
+
+            # print()
+            # print(len(starts))
+            # print(len(idx_self))
+
+            # print((overlap_type == 2).sum())
+
+            # ends.loc[idx_self[overlap_type == 1]] = odf[idx_other[overlap_type==1], "Start"]
+
+            # print(starts)
+            # print(ends)
+
+            # starts.loc[]
+
+        # print(idx_self)
+        # print(idx_other)
+        # print(overlap_type)
+        # print("idx_self")
