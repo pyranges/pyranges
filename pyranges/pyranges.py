@@ -7,7 +7,8 @@ from tabulate import tabulate
 from natsort import natsorted
 
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
-                              _intersection, _coverage, _overlap_write_both)
+                              _intersection, _coverage, _overlap_write_both,
+                              _set_intersection, _set_union)
 
 from ncls import NCLS
 
@@ -181,6 +182,20 @@ class GRanges():
         return GRanges(df)
 
 
+    def set_intersection(self, other, strandedness=False):
+
+        si = _set_intersection(self, other, strandedness)
+
+        return GRanges(si)
+
+
+    def set_union(self, other, strand=False):
+
+        si = _set_union(self, other, strand)
+
+        return GRanges(si)
+
+
     def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
 
         df = _overlap_write_both(self, other, strandedness, new_pos, suffixes)
@@ -188,10 +203,15 @@ class GRanges():
         return GRanges(df)
 
 
-    def cluster(self, strand=None):
+    def cluster(self, strand=None, df_only=False, max_dist=0, min_nb=1):
 
-        df = _cluster(self, strand)
-        return GRanges(df)
+        df = _cluster(self, strand, max_dist, min_nb)
+
+        if not df_only:
+            return GRanges(df)
+        else:
+            return df
+
 
 
     def tile(self, tile_size=50):
