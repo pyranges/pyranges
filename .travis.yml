@@ -28,6 +28,5 @@ install:
   - python --version
   - python -c 'import pandas as pd; print(pd.__version__)'
   - ls tests
-  - ls -latrh examples
 
 script: py.test tests
