@@ -3,8 +3,13 @@ import pandas as pd
 
 def assert_df_equal(df1, df2):
 
-    df1 = df1.sort_values("Chromosome Start End".split())
-    df2 = df2.sort_values("Chromosome Start End".split())
+    if "Strand" in df1 and "Strand" in df2:
+        sort_on = "Chromosome Start End Strand".split()
+    else:
+        sort_on = "Chromosome Start End".split()
+
+    df1 = df1.sort_values(sort_on)
+    df2 = df2.sort_values(sort_on)
 
     df1 = df1.reset_index(drop=True)
     df2 = df2.reset_index(drop=True)

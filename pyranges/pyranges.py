@@ -8,7 +8,7 @@ from natsort import natsorted
 
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both,
-                              _set_intersection, _set_union, _difference)
+                              _set_intersection, _set_union, _subtraction)
 
 from ncls import NCLS
 
@@ -25,9 +25,9 @@ def create_ncls(cdf):
                 cdf.index.values)
 
 
-def create_ncls_dict(df, n):
+def create_ncls_dict(df, strand):
 
-    if "Strand" not in df:
+    if "Strand" not in df or not strand:
         grpby = df.groupby("Chromosome")
     else:
         grpby = df.groupby("Chromosome Strand".split())
@@ -45,7 +45,7 @@ class GRanges():
 
     df = None
 
-    def __init__(self, df, n=1):
+    def __init__(self, df, strand=True):
 
         df.index = range(len(df))
 
@@ -53,7 +53,7 @@ class GRanges():
 
         self.__dict__["df"] = df
 
-        self.__dict__["__ncls__"] = create_ncls_dict(df, n)
+        self.__dict__["__ncls__"] = create_ncls_dict(df, strand)
 
     def __len__(self):
         return self.df.shape[0]
@@ -196,9 +196,9 @@ class GRanges():
         return GRanges(si)
 
 
-    def difference(self, other, strand=False):
+    def subtraction(self, other, strandedness=False):
 
-        return GRanges(_difference(self, other, strand))
+        return GRanges(_subtraction(self, other, strandedness))
 
 
     def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
@@ -217,6 +217,9 @@ class GRanges():
         else:
             return df
 
+    # def subtraction(self, other, df_only=False, max_dist=0, min_nb=1):
+
+    #     _subtra
 
 
     def tile(self, tile_size=50):

@@ -2,28 +2,14 @@ import os
 import sys
 
 from distutils.core import setup
-from setuptools import find_packages, Extension, Command
-from Cython.Build import cythonize
+from setuptools import find_packages
 
-macros = [("CYTHON_TRACE", "1")]
-macros = []
-
-if macros:
-    from Cython.Compiler.Options import get_directive_defaults
-    directive_defaults = get_directive_defaults()
-    directive_defaults['linetrace'] = True
-    directive_defaults['binding'] = True
-
-
-install_requires = ["pandas", "ncls"]
-
-# extensions = [Extension("pyranges.src.cython_methods", ["pyranges/src/cython_methods.pyx"], define_macros=macros)]
+install_requires = ["pandas", "ncls", "clustertree"]
 
 setup(
     name="pyranges",
     packages=find_packages(),
     package_data={'pyranges': ['example_data/*.bed']},
-    # ext_modules=cythonize(extensions),
     include_dirs=["."],
     version="0.0.1",
     description="GRanges for Python.",
@@ -45,4 +31,4 @@ setup(
         "Topic :: Scientific/Engineering"
     ],
     long_description=
-    ("Pythonic Genomic Ranges."))
+    ("Performant Pythonic Genomic Ranges."))

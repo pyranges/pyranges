@@ -19,6 +19,11 @@ def exons():
 
 
 @pytest.fixture
+def names():
+    return "Chromosome  Start  End  Name Score Strand".split()
+
+
+@pytest.fixture
 def introns():
 
     df = pd.read_table("tests/intron.txt", sep="\t", header=None)
@@ -42,7 +47,7 @@ def f1():
 @pytest.fixture
 def f2():
 
-    df = pd.read_table("tests/f2.bed", sep="\t", header=None, names="Chromosome  Start  End  Name Score Strand".split())
+    df = pd.read_table("tests/f2.bed", sep="\t", header=None, names=names)
 
     return GRanges(df)
 
@@ -53,3 +58,44 @@ def assert_df_equal(df1, df2):
     df2 = df2.reset_index(drop=True)
 
     return df1.equals(df2)
+
+
+@pytest.fixture
+def chip_10(names):
+
+    df = pd.read_table("tests/chip_10.bed", header=None, names=names)
+
+    return GRanges(df)
+
+
+@pytest.fixture
+def chip_10_plus_one(names):
+
+    df = pd.read_table("tests/chip_10_plus_one.bed", header=None, names=names)
+
+    return GRanges(df)
+
+
+@pytest.fixture
+def input_10(names):
+
+    df = pd.read_table("tests/input_10.bed", header=None, names=names)
+
+    return GRanges(df)
+
+
+
+@pytest.fixture
+def chip_10_no_strand(names):
+
+    df = pd.read_table("tests/chip_10.bed", header=None, names=names)
+
+    return GRanges(df, strand=False)
+
+
+@pytest.fixture
+def input_10_no_strand(names):
+
+    df = pd.read_table("tests/input_10.bed", header=None, names=names)
+
+    return GRanges(df, strand=False)
