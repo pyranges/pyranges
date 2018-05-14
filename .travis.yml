@@ -31,5 +31,3 @@ install:
   - ls -latrh examples
 
 script: py.test tests
-
-after_success: coveralls
