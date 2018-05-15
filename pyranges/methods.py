@@ -49,7 +49,7 @@ def _overlap(self, other, strandedness, invert):
 
     dfs = OrderedDict()
 
-    if "Strand" in df and "Strand" in other.df and strandedness:
+    if self.stranded and other.stranded and strandedness:
 
         indexes_of_overlapping = []
         for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
@@ -88,7 +88,7 @@ def both_indexes(self, other, strandedness):
     assert strandedness in ["same", "opposite", False, None]
 
     if strandedness:
-        assert "Strand" in self.df and "Strand" in other.df, \
+        assert self.stranded and other.stranded, \
             "Can only do stranded searches when both PyRanges contain strand info"
 
     df = self.df
@@ -119,7 +119,8 @@ def both_indexes(self, other, strandedness):
             self_d[chromosome, strand].extend(_self_indexes)
             other_d[chromosome, strand].extend(_other_indexes)
 
-    if "Strand" in other.df:
+    # if not strandedness, and other df has strand, need to search both ncls
+    elif other.stranded:
 
         for chromosome, cdf in df.groupby("Chromosome"):
 
@@ -136,7 +137,8 @@ def both_indexes(self, other, strandedness):
                 self_d[chromosome].extend(_self_indexes)
                 other_d[chromosome].extend(_other_indexes)
 
-    if not "Strand" in other.df:
+    # if not strandedness, and other df has no strand info, need to search one ncls
+    elif not other.stranded:
 
         for chromosome, cdf in df.groupby("Chromosome"):
 

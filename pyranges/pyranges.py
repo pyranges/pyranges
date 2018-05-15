@@ -25,7 +25,7 @@ def create_ncls(cdf):
 
 def create_ncls_dict(df, strand):
 
-    if "Strand" not in df or not strand:
+    if not strand:
         grpby = df.groupby("Chromosome")
     else:
         grpby = df.groupby("Chromosome Strand".split())
@@ -85,7 +85,7 @@ class PyRanges():
 
         self.__dict__["df"] = df
 
-        self.__dict__["__ncls__"] = create_ncls_dict(df, self.__dict__["stranded"])
+        self.__dict__["__ncls__"] = create_ncls_dict(df, self.stranded)
 
 
     def __len__(self):
@@ -110,8 +110,6 @@ class PyRanges():
             return self.df[name]
         else:
             self.__dict__[name]
-
-        # raise IndexError("Column name {} not in df.".format(column_name))
 
 
     def __getitem__(self, val):
