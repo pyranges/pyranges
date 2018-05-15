@@ -3,3 +3,5 @@ pyranges
 clustertree
 ncls
 cython
+pandas
+numpy
