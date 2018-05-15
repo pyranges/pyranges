@@ -10,10 +10,10 @@ from pyranges.methods import (_overlap, _cluster, _tile, _intersection,
 
 from ncls import NCLS
 
-try:
-    dummy = profile
-except:
-    profile = lambda x: x
+# try:
+#     dummy = profile
+# except:
+#     profile = lambda x: x
 
 
 def create_ncls(cdf):
