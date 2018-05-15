@@ -64,10 +64,8 @@ Examples
 
    >>> gr1.intersection(gr2, strandedness=False)
 
-The range objects also contain other convenience functions.
+   >>> # The range objects also contain other convenience functions.
 
-.. runblock:: pycon
+   >>> gr1.tile(tile_size=5)
 
-      >>> gr1.tile(tile_size=5)
-
-      >>> gr1.cluster()
+   >>> gr1.cluster()

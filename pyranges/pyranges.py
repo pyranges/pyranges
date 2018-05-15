@@ -4,8 +4,8 @@ from collections import defaultdict
 
 from tabulate import tabulate
 
-from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
-                              _intersection, _coverage, _overlap_write_both,
+from pyranges.methods import (_overlap, _cluster, _tile, _intersection,
+                              _coverage, _overlap_write_both,
                               _set_intersection, _set_union, _subtraction)
 
 from ncls import NCLS
