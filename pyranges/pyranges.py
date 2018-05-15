@@ -74,7 +74,8 @@ class PyRanges():
         if df is False or df is None:
             df = create_pyranges_df(seqnames, starts, ends, strands)
         else:
-            pass
+            assert "Chromosome" in df and "Start" in df and "End" in df
+            df.index = range(len(df))
 
         # using __dict__ to avoid invoking setattr
         if "Strand" not in df:

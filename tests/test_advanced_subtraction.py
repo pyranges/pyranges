@@ -19,6 +19,20 @@ chr1    9978    9988    HWI-ST216_313:3:1204:5599:113305        1       -"""
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
     return PyRanges(df)
 
+
+@pytest.fixture
+def expected_result_self_unstranded(names):
+
+    c = """chr1    9916    9988    HWI-ST216_313:3:1203:10227:6568 1
+chr1    9939    9988    HWI-ST216_313:3:2301:15791:16298        1
+chr1    9951    9988    HWI-ST216_313:3:2205:20086:33508        1
+chr1    9953    9988    HWI-ST216_313:3:1305:6975:102491        1
+chr1    9978    9988    HWI-ST216_313:3:1204:5599:113305        1"""
+
+    df = pd.read_table(StringIO(c), sep="\s+", names=names[:-1], header=None)
+    return PyRanges(df)
+
+
 @pytest.fixture
 def expected_result_no_strand_plus_one(names):
 
@@ -143,11 +157,11 @@ def test_advanced_subtraction_opposite_strand_plus_one(chip_10_plus_one, input_1
     assert_df_equal(result.df, expected_result_opposite_strand_plus_one.df)
 
 
-def test_advanced_subtraction_unstranded_self_no_strand(chip_10_no_strand, input_10, expected_result_unstranded):
+def test_advanced_subtraction_unstranded_self_no_strand(chip_10_no_strand, input_10, expected_result_self_unstranded):
 
     result = chip_10_no_strand.subtraction(input_10)
 
-    assert_df_equal(result.df, expected_result_unstranded.df)
+    assert_df_equal(result.df, expected_result_self_unstranded.df)
 
 
 def test_advanced_subtraction_unstranded_other_no_strand(chip_10, input_10_no_strand, expected_result_unstranded):

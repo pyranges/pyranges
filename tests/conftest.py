@@ -65,7 +65,11 @@ def chip_10(names):
 
     df = pd.read_table("tests/chip_10.bed", header=None, names=names)
 
-    return PyRanges(df)
+    gr = PyRanges(df)
+
+    assert gr.stranded
+
+    return gr
 
 
 @pytest.fixture
@@ -73,7 +77,11 @@ def chip_10_plus_one(names):
 
     df = pd.read_table("tests/chip_10_plus_one.bed", header=None, names=names)
 
-    return PyRanges(df)
+    gr = PyRanges(df)
+
+    assert gr.stranded
+
+    return gr
 
 
 @pytest.fixture
@@ -81,7 +89,11 @@ def input_10(names):
 
     df = pd.read_table("tests/input_10.bed", header=None, names=names)
 
-    return PyRanges(df)
+    gr = PyRanges(df)
+
+    assert gr.stranded
+
+    return gr
 
 
 
@@ -89,13 +101,15 @@ def input_10(names):
 def chip_10_no_strand(names):
 
     df = pd.read_table("tests/chip_10.bed", header=None, names=names)
+    df = df.drop("Strand", 1)
 
-    return PyRanges(df, strand=False)
+    return PyRanges(df)
 
 
 @pytest.fixture
 def input_10_no_strand(names):
 
     df = pd.read_table("tests/input_10.bed", header=None, names=names)
+    df = df.drop("Strand", 1)
 
-    return PyRanges(df, strand=False)
+    return PyRanges(df)
