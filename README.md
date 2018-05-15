@@ -10,7 +10,6 @@ PyRanges for Python. Not ready for use, but I am very close. Watch this space.
 
 Necessary for paper:
 
-* Do set intersection, set union and set subtraction like genomicranges (easy peasy)
 * Write even more tests
 * Benchmarks comparing with Bioconductor PyRanges
 * Add continuous integration
