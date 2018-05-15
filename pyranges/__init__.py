@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import pandas as pd
 
 import pkg_resources
@@ -33,7 +35,7 @@ def read_bed(f):
     if df.Strand.str.contains("\.").any():
         print("Bed file contains '.' strands and is considered unstranded.", file=sys.stderr)
 
-    return PyRanges(df)
+    return PyRanges(df, strand=False)
 
 
 def read_bam(f):
