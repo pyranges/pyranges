@@ -42,3 +42,29 @@ Examples
    >>> gr1 = PyRanges(df1)
 
    >>> gr1
+   >>> gr1["chr1", 0:5]
+
+   >>> gr1["chr1", "-", 6:100]
+
+   >>> gr1.Score
+
+   >>> f2 = """Chromosome Start End Score Strand
+   >>> chr1 5 6 -0.01 -
+   >>> chr1 9 12 200 +
+   >>> chr3 0 14 21.21 -"""
+
+   >>> df2 = pd.read_table(StringIO(f2), sep="\s+")
+
+   >>> gr2 = PyRanges(df2)
+
+   >>> gr2
+
+   >>> gr1.intersection(gr2, strandedness="opposite")
+
+   >>> gr1.intersection(gr2, strandedness=False)
+
+   >>> # The range objects also contain other convenience functions.
+
+   >>> gr1.tile(tile_size=5)
+
+   >>> gr1.cluster()

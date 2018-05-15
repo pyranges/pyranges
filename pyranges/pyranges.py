@@ -4,16 +4,16 @@ from collections import defaultdict
 
 from tabulate import tabulate
 
-from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
-                              _intersection, _coverage, _overlap_write_both,
+from pyranges.methods import (_overlap, _cluster, _tile, _intersection,
+                              _coverage, _overlap_write_both,
                               _set_intersection, _set_union, _subtraction)
 
 from ncls import NCLS
 
-try:
-    dummy = profile
-except:
-    profile = lambda x: x
+# try:
+#     dummy = profile
+# except:
+#     profile = lambda x: x
 
 
 def create_ncls(cdf):
@@ -37,21 +37,55 @@ def create_ncls_dict(df, strand):
     return dd
 
 
+def create_pyranges_df(seqnames, starts, ends, strands=None):
+
+    if isinstance(seqnames, str):
+        seqnames = [seqnames] * len(starts)
+
+    if isinstance(strands, str):
+        strands = [strands] * len(starts)
+
+    if strands != None and strands != False:
+        columns = [seqnames, starts, ends, strands]
+        assert set(len(s) for s in columns) == 1, "seqnames, starts, ends and strands must be of equal length"
+    else:
+        columns = [seqnames, starts, ends]
+        assert set(len(s) for s in columns) == 1, "seqnames, starts and ends must be of equal length"
+
+    idx = range(len(starts))
+    series_to_concat = []
+    for s in columns:
+        s = pd.Series(s, index=idx)
+        series_to_concat.append(s)
+
+    df = pd.concat(series_to_concat, axis=1)
+    df.columns = "Chromosome Start End Strand".split()
+
+    return df
+
 
 
 class PyRanges():
 
     df = None
 
-    def __init__(self, df, strand=True):
+    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None):
 
-        df.index = range(len(df))
+        if df is False or df is None:
+            df = create_pyranges_df(seqnames, starts, ends, strands)
+        else:
+            pass
 
         # using __dict__ to avoid invoking setattr
+        if "Strand" not in df:
+            self.__dict__["stranded"] = False
+        else:
+            self.__dict__["stranded"] = True
 
         self.__dict__["df"] = df
 
-        self.__dict__["__ncls__"] = create_ncls_dict(df, strand)
+        self.__dict__["__ncls__"] = create_ncls_dict(df, self.__dict__["stranded"])
+
 
     def __len__(self):
         return self.df.shape[0]
