@@ -56,7 +56,7 @@ def test_intersect_granges(chip, background, expected_result_regular_intersectio
     print("expected_result " * 3)
     print(expected_result_regular_intersection)
 
-    result = chip.intersection(background, invert=False, strandedness=False)
+    result = chip.intersection(background, strandedness=False)
 
     print(result)
 

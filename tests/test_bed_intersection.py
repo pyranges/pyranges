@@ -1,4 +1,3 @@
-
 import pytest
 from tests.helpers import assert_df_equal
 
@@ -10,7 +9,7 @@ import pandas as pd
 from io import StringIO
 
 @pytest.fixture
-def expected_result_intersection():
+def expected_result_intersection(names):
 
     c = """chr1	9988	10115	HWI-ST216_313:3:1203:10227:6568	1	-
 chr1	10073	10115	HWI-ST216_313:3:1203:10227:6568	1	-
@@ -132,18 +131,18 @@ def test_intersect_bed_unstranded(chip_10, input_10, expected_result_intersectio
 
     result = chip_10.intersection(input_10, strandedness=False)
 
-    assert assert_df_equal(result.df, expected_result_intersection.df)
+    assert assert_df_equal(result.df, expected_result_intersection)
 
 
 def test_intersect_bed_same_strand(chip_10, input_10, expected_result_intersection_same_strand):
 
     result = chip_10.intersection(input_10, strandedness="same")
 
-    assert assert_df_equal(result.df, expected_result_intersection_same_strand.df)
+    assert assert_df_equal(result.df, expected_result_intersection_same_strand)
 
 
 def test_intersect_bed_opposite_strand(chip_10, input_10, expected_result_intersection_opposite_strand):
 
     result = chip_10.intersection(input_10, strandedness="opposite")
 
-    assert assert_df_equal(result.df, expected_result_intersection_opposite_strand.df)
+    assert assert_df_equal(result.df, expected_result_intersection_opposite_strand)

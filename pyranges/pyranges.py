@@ -58,7 +58,7 @@ class PyRanges():
 
     def __setattr__(self, column_name, column):
 
-        if column_name is in "Chromosome Start End Strand".split():
+        if column_name in "Chromosome Start End Strand".split():
             raise Exception("The columns Chromosome, Start, End or Strand can not be reset.")
 
         if not len(self.df) == len(column):
@@ -172,14 +172,11 @@ class PyRanges():
         return PyRanges(df)
 
 
-    def intersection(self, other, strandedness=False, invert=False):
+    def intersection(self, other, strandedness=False):
 
         "Want the parts of the intervals in self that overlap with other."
 
-        if invert:
-            df = _inverse_intersection(self, other, strandedness)
-        else:
-            df = _intersection(self, other, strandedness)
+        df = _intersection(self, other, strandedness)
 
         df.index.name = ""
         return PyRanges(df)
