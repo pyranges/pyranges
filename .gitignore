@@ -5,6 +5,9 @@ workflow/data
 *#*
 *.pyc
 *cache/
+build/
+dist/
+
 
 *.txt
 *.so
