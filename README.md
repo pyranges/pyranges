@@ -1,10 +1,10 @@
 # pyranges
 
+[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges)
+
 PyRanges for Python. Not ready for use, but I am very close. Watch this space.
 
 (The PyRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
-
-[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges)
 
 ### TODO
 
