@@ -1,7 +1,7 @@
 
 import pytest
 
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 
 from tests.helpers import assert_df_equal
 import pandas as pd
@@ -18,7 +18,7 @@ chr1 5 7 - 7
 chr1 8 9 + 1"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 
@@ -29,7 +29,7 @@ def simple_gr2():
 chr1 1 2 + 1
 chr1 6 7 - 2"""
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 @pytest.fixture
@@ -39,13 +39,13 @@ def expected_result_intersection_simple_granges():
 chr1    6   7   - 7"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 
 def test_intersect_simple_granges(simple_gr1, simple_gr2, expected_result_intersection_simple_granges):
 
-    result = simple_gr1.intersection(simple_gr2, invert=False, strandedness=False)
+    result = simple_gr1.intersection(simple_gr2, strandedness=False)
 
     print("result\n", result.df)
     print("expected_result_intersection_simple_granges\n",
@@ -61,12 +61,12 @@ def expected_result_same_strand_intersection_simple_granges():
 chr1    6   7   - 7"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 def test_intersect_same_strand_simple_granges(simple_gr1, simple_gr2, expected_result_same_strand_intersection_simple_granges):
 
-    result = simple_gr1.intersection(simple_gr2, invert=False, strandedness="same")
+    result = simple_gr1.intersection(simple_gr2, strandedness="same")
 
     print(result)
 
@@ -83,12 +83,12 @@ def test_intersect_same_strand_simple_granges(simple_gr1, simple_gr2, expected_r
 # chr1	8	9	+ 1"""
 
 #     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-#     return GRanges(df)
+#     return PyRanges(df)
 
 
 def test_intersect_opposite_strand_simple_granges(simple_gr1, simple_gr2):
 
-    result = simple_gr1.intersection(simple_gr2, invert=False, strandedness="opposite")
+    result = simple_gr1.intersection(simple_gr2, strandedness="opposite")
 
     print(result)
 

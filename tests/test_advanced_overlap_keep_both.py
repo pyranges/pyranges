@@ -1,7 +1,7 @@
 import pytest
 
 from tests.helpers import assert_df_equal
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 import pyranges as pr
 
 import pandas as pd
@@ -31,7 +31,7 @@ chr8	38747226	38747251	U0	0	-	38747236	38747261	U0	0	+
 chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-
 chr15	26105515	26105540	U0	0	+	26105493	26105518	U0	0	+"""
 
-    return GRanges(pd.read_table(StringIO(c), sep="\s+"))
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+"))
 
 
 def test_advanced_overlap(cs, bg, expected_result_regular_overlap):
@@ -53,7 +53,7 @@ chr1 226987603 226987617 226987592 226987617 U0 0 + 226987603 226987628 U0 0 -
 chr8 38747236 38747251 38747226 38747251 U0 0 - 38747236 38747261 U0 0 +
 chr15 26105515 26105518 26105515 26105540 U0 0 + 26105493 26105518 U0 0 +"""
 
-    return GRanges(pd.read_table(StringIO(c), sep="\s+"))
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+"))
 
 def test_advanced_overlap_new_pos_intersect(cs, bg, expected_result_regular_overlap_intersection):
 
@@ -71,7 +71,7 @@ def expected_result_overlap_same_strand():
 chr15	26105515	26105540	U0	0	+	26105493	26105518	U0	0	+"""
 
     df = pd.read_table(StringIO(c), header=0, sep="\s+")
-    return GRanges(df)
+    return PyRanges(df)
 
 def test_advanced_overlap_stranded(cs, bg, expected_result_overlap_same_strand):
 
@@ -92,7 +92,7 @@ def expected_result_overlap_opposite_strand():
 chr8	38747226	38747251	U0	0	-	38747236	38747261	U0	0	+
 chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-"""
 
-    return GRanges(pd.read_table(StringIO(c), sep="\s+"))
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+"))
 
 
 def test_advanced_overlap_opposite_stranded(cs, bg, expected_result_overlap_opposite_strand):
@@ -113,7 +113,7 @@ def expected_result_overlap_opposite_strand_suffixes():
 chr8	38747226	38747251	U0	0	-	38747236	38747261	U0	0	+
 chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-"""
 
-    return GRanges(pd.read_table(StringIO(c), sep="\s+"))
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+"))
 
 
 def test_advanced_overlap_opposite_stranded_suffixes(cs, bg, expected_result_overlap_opposite_strand_suffixes):
@@ -134,7 +134,7 @@ def expected_result_regular_overlap_union():
 1 chr8 38747226 38747261 38747226 38747251 U0 0 - 38747236 38747261 U0 0 +
 2 chr15 26105493 26105540 26105515 26105540 U0 0 + 26105493 26105518 U0 0 +"""
 
-    return GRanges(pd.read_table(StringIO(c), sep="\s+"))
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+"))
 
 def test_advanced_overlap_new_pos_union(cs, bg, expected_result_regular_overlap_union):
 

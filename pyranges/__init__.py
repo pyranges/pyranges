@@ -2,7 +2,7 @@ import pandas as pd
 
 import pkg_resources
 
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 
 
 def load_dataset(basename):
@@ -12,7 +12,7 @@ def load_dataset(basename):
     df = pd.read_table(full_path, header=None,
                        names="Chromosome Start End Name Score Strand".split())
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 def list_datasets():
@@ -33,7 +33,7 @@ def read_bed(f):
     if df.Strand.str.contains("\.").any():
         print("Bed file contains '.' strands and is considered unstranded.", file=sys.stderr)
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 def read_bam(f):
@@ -58,7 +58,7 @@ def read_bam(f):
     df = pd.DataFrame({"Chromosome": chromosomes, "Start": starts, "End": ends,
                        "Sequence": sequences, "Strand": strands, "Name": names})["Chromosome Start End Sequence Name Strand".split()]
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 def _fetch_gene_transcript_exon_id(attribute):
@@ -90,4 +90,4 @@ def read_gtf(f):
     df = pd.concat([df["Chromosome Start End Strand Feature Source Score Frame".split()],
                         extract], axis=1)
 
-    return GRanges(df)
+    return PyRanges(df)

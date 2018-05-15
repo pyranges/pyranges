@@ -4,8 +4,6 @@ from collections import defaultdict
 
 from tabulate import tabulate
 
-from natsort import natsorted
-
 from pyranges.methods import (_overlap, _cluster, _tile, _inverse_intersection,
                               _intersection, _coverage, _overlap_write_both,
                               _set_intersection, _set_union, _subtraction)
@@ -41,7 +39,7 @@ def create_ncls_dict(df, strand):
 
 
 
-class GRanges():
+class PyRanges():
 
     df = None
 
@@ -60,18 +58,23 @@ class GRanges():
 
     def __setattr__(self, column_name, column):
 
+        if column_name is in "Chromosome Start End Strand".split():
+            raise Exception("The columns Chromosome, Start, End or Strand can not be reset.")
+
         if not len(self.df) == len(column):
             raise Exception("DataFrame and column must be same length.")
 
         column.index = self.df.index
         self.df.insert(self.df.shape[1], column_name, column)
 
-    def __getattr__(self, column_name):
+    def __getattr__(self, name):
 
-        if column_name in self.df:
-            return self.df[column_name]
+        if name in self.df:
+            return self.df[name]
+        else:
+            self.__dict__[name]
 
-        raise IndexError("Column name {} not in df.".format(column_name))
+        # raise IndexError("Column name {} not in df.".format(column_name))
 
 
     def __getitem__(self, val):
@@ -79,11 +82,11 @@ class GRanges():
         pd.options.mode.chained_assignment = None
         if isinstance(val, str):
             if val in set(self.df.Chromosome):
-                return GRanges(self.df.loc[self.df.Chromosome == val])
+                return PyRanges(self.df.loc[self.df.Chromosome == val])
             elif val in "+ -".split():
-                return GRanges(self.df.loc[self.df.Strand == val])
+                return PyRanges(self.df.loc[self.df.Strand == val])
             else:
-                raise Exception("Invalid choice for string subsetting GRanges: {}. Must be either strand or chromosome".format(val))
+                raise Exception("Invalid choice for string subsetting PyRanges: {}. Must be either strand or chromosome".format(val))
 
         elif isinstance(val, tuple):
 
@@ -95,7 +98,7 @@ class GRanges():
                 idxes = [r[2] for r in self.__ncls__[chromosome, "+"].find_overlap(start, stop)] + \
                         [r[2] for r in self.__ncls__[chromosome, "-"].find_overlap(start, stop)]
 
-                return GRanges(self.df.loc[idxes])
+                return PyRanges(self.df.loc[idxes])
 
             # "+", 5:10
             if len(val) == 2 and val[0] in "+ -".split() and isinstance(val[1], slice):
@@ -106,14 +109,14 @@ class GRanges():
                 for chromosome in self.df.Chromosome.drop_duplicates():
                     idxes.extend([r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)])
 
-                return GRanges(self.df.loc[idxes])
+                return PyRanges(self.df.loc[idxes])
 
             # "chr1", "+"
             if len(val) == 2 and val[1] in "+ -".split():
 
                 chromosome, strand = val
 
-                return GRanges(self.df.loc[(self.df.Chromosome == chromosome) & (self.df.Strand == strand)])
+                return PyRanges(self.df.loc[(self.df.Chromosome == chromosome) & (self.df.Strand == strand)])
 
             # "chr1", "+", 5:10
             elif len(val) == 3 and val[0] in self.df.Chromosome.values and val[1] in "+ -".split():
@@ -123,7 +126,7 @@ class GRanges():
                 stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
                 idxes = [r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)]
 
-                return GRanges(self.df.loc[idxes])
+                return PyRanges(self.df.loc[idxes])
 
         elif isinstance(val, slice):
 
@@ -134,7 +137,7 @@ class GRanges():
             for it in self.__ncls__.values():
                 idxes.extend([r[2] for r in it.find_overlap(start, stop)])
 
-            return GRanges(self.df.loc[idxes])
+            return PyRanges(self.df.loc[idxes])
 
         pd.options.mode.chained_assignment = "warn"
 
@@ -152,7 +155,7 @@ class GRanges():
             s = self.df
 
         str_repr = tabulate(s, headers='keys', tablefmt='psql', showindex=False) + \
-                                        "\nGRanges object has {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
+                                        "\nPyRanges object has {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
         return str_repr
 
 
@@ -166,7 +169,7 @@ class GRanges():
         "Want all intervals in self that overlap with other."
 
         df = _overlap(self, other, strandedness, invert)
-        return GRanges(df)
+        return PyRanges(df)
 
 
     def intersection(self, other, strandedness=False, invert=False):
@@ -179,33 +182,33 @@ class GRanges():
             df = _intersection(self, other, strandedness)
 
         df.index.name = ""
-        return GRanges(df)
+        return PyRanges(df)
 
 
     def set_intersection(self, other, strandedness=False):
 
         si = _set_intersection(self, other, strandedness)
 
-        return GRanges(si)
+        return PyRanges(si)
 
 
     def set_union(self, other, strand=False):
 
         si = _set_union(self, other, strand)
 
-        return GRanges(si)
+        return PyRanges(si)
 
 
     def subtraction(self, other, strandedness=False):
 
-        return GRanges(_subtraction(self, other, strandedness))
+        return PyRanges(_subtraction(self, other, strandedness))
 
 
     def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
 
         df = _overlap_write_both(self, other, strandedness, new_pos, suffixes)
 
-        return GRanges(df)
+        return PyRanges(df)
 
 
     def cluster(self, strand=None, df_only=False, max_dist=0, min_nb=1):
@@ -213,7 +216,7 @@ class GRanges():
         df = _cluster(self, strand, max_dist, min_nb)
 
         if not df_only:
-            return GRanges(df)
+            return PyRanges(df)
         else:
             return df
 
@@ -225,7 +228,7 @@ class GRanges():
     def tile(self, tile_size=50):
 
         df = _tile(self, tile_size)
-        return GRanges(df)
+        return PyRanges(df)
 
 
     def coverage(self, value_col=None):

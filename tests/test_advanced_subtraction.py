@@ -1,7 +1,7 @@
 from io import StringIO
 
 from tests.helpers import assert_df_equal
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 
 import pandas as pd
 
@@ -17,7 +17,7 @@ chr1    9953    9988    HWI-ST216_313:3:1305:6975:102491        1       +
 chr1    9978    9988    HWI-ST216_313:3:1204:5599:113305        1       -"""
 
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
-    return GRanges(df)
+    return PyRanges(df)
 
 @pytest.fixture
 def expected_result_no_strand_plus_one(names):
@@ -30,7 +30,7 @@ chr1    9978    9988    HWI-ST216_313:3:1204:5599:113305        1       -
 chr1    10348   10445   HWI-ST216_313:3:1207:4315:142177        1       +"""
 
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 
@@ -47,7 +47,7 @@ chr1    10348   10440   HWI-ST216_313:3:1302:4516:156396        1       -
 chr1    10272   10280   HWI-ST216_313:3:1207:4315:142177        1       +"""
 
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
-    return GRanges(df)
+    return PyRanges(df)
 
 @pytest.fixture
 def expected_result_same_strand_plus_one(names):
@@ -63,7 +63,7 @@ chr1    10272   10280   HWI-ST216_313:3:1207:4315:142177        1       +
 chr1    10348   10445   HWI-ST216_313:3:1207:4315:142177        1       +"""
 
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
-    return GRanges(df)
+    return PyRanges(df)
 
 @pytest.fixture
 def expected_result_opposite_strand(names):
@@ -80,7 +80,7 @@ chr1    10348   10445   HWI-ST216_313:3:1207:4315:142177        1       +"""
 
 
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
-    return GRanges(df)
+    return PyRanges(df)
 
 @pytest.fixture
 def expected_result_opposite_strand_plus_one(names):
@@ -98,7 +98,7 @@ chr1    110246  110445  HWI-ST216_313:3:1207:4315:142177        1       +"""
 
 
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 

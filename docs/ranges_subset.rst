@@ -1,7 +1,7 @@
 Subsetting Ranges
 =================
 
-There are many ways to subset a GRanges object. Each returns a new GRanges object and does not change the old one.
+There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.
 
 .. code-block:: python
 
@@ -21,7 +21,7 @@ There are many ways to subset a GRanges object. Each returns a new GRanges objec
    # | chrY         | 22054002 | 22054027 | U0     | 0       | -        |
    # | chrY         | 22210637 | 22210662 | U0     | 0       | -        |
    # +--------------+----------+----------+--------+---------+----------+
-   # GRanges object with 10000 sequences from 24 chromosomes.
+   # PyRanges object with 10000 sequences from 24 chromosomes.
 
 
 Chromosome only
@@ -42,7 +42,7 @@ Chromosome only
    # | chrX         | 153632850 | 153632875 | U0     | 0       | +        |
    # | chrX         | 153874106 | 153874131 | U0     | 0       | +        |
    # +--------------+-----------+-----------+--------+---------+----------+
-   # GRanges object with 282 sequences from 1 chromosomes.
+   # PyRanges object with 282 sequences from 1 chromosomes.
 
 Chromosome and Strand
 ~~~~~~~~~~~~~~~~~~~~~
@@ -62,7 +62,7 @@ Chromosome and Strand
    # | chrX         | 153037423 | 153037448 | U0     | 0       | -        |
    # | chrX         | 153255924 | 153255949 | U0     | 0       | -        |
    # +--------------+-----------+-----------+--------+---------+----------+
-   # GRanges object with 151 sequences from 1 chromosomes.
+   # PyRanges object with 151 sequences from 1 chromosomes.
 
 
 Chromosome and Slice
@@ -83,7 +83,7 @@ Chromosome and Slice
    # | chrX         | 153632850 | 153632875 | U0     | 0       | +        |
    # | chrX         | 153874106 | 153874131 | U0     | 0       | +        |
    # +--------------+-----------+-----------+--------+---------+----------+
-   # GRanges object with 8 sequences from 1 chromosomes.
+   # PyRanges object with 8 sequences from 1 chromosomes.
 
 Chromosome, Strand and Slice
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -100,7 +100,7 @@ Chromosome, Strand and Slice
    # | chrX         | 153037423 | 153037448 | U0     |       0 | -        |
    # | chrX         | 153255924 | 153255949 | U0     |       0 | -        |
    # +--------------+-----------+-----------+--------+---------+----------+
-   # GRanges object with 4 sequences from 1 chromosomes.
+   # PyRanges object with 4 sequences from 1 chromosomes.
 
 Slice
 ~~~~~
@@ -120,7 +120,7 @@ Only using slices returns all ranges from all chromosomes and strands within tho
    # | chr3         |   87179 | 87204 | U0     |       0 | +        |
    # | chr4         |   45413 | 45438 | U0     |       0 | -        |
    # +--------------+---------+-------+--------+---------+----------+
-   # GRanges object with 5 sequences from 3 chromosomes.
+   # PyRanges object with 5 sequences from 3 chromosomes.
 
 Strand
 ~~~~~~
@@ -140,7 +140,7 @@ Strand
    # | chrY         | 15548022 | 15548047 | U0     | 0       | +        |
    # | chrY         | 21559181 | 21559206 | U0     | 0       | +        |
    # +--------------+----------+----------+--------+---------+----------+
-   # GRanges object with 5050 sequences from 24 chromosomes.
+   # PyRanges object with 5050 sequences from 24 chromosomes.
 
 
 Slice and Strand
@@ -156,6 +156,6 @@ Slice and Strand
    # | chr2         |   33241 | 33266 | U0     |       0 | +        |
    # | chr3         |   87179 | 87204 | U0     |       0 | +        |
    # +--------------+---------+-------+--------+---------+----------+
-   # GRanges object with 2 sequences from 2 chromosomes.
+   # PyRanges object with 2 sequences from 2 chromosomes.
 
 .. [#] But under the hood a range object has associated high-performance datastructures to support overlapping operations and slicing.

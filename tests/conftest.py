@@ -2,7 +2,7 @@ import pytest
 
 from tests.helpers import assert_df_equal
 
-from pyranges import GRanges
+from pyranges import PyRanges
 
 import pandas as pd
 
@@ -15,7 +15,7 @@ def exons():
     df = pd.read_table("tests/exon.txt", sep="\t", header=None)
     df.columns = "Chromosome Start End".split() + list(df.columns[3:])
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def introns():
     df.columns = "Chromosome Start End".split() + list(df.columns[3:])
     print(df.columns)
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 @pytest.fixture
@@ -41,7 +41,7 @@ def f1():
 
     df = pd.read_table("tests/f1.bed", sep="\t", header=None, names="Chromosome  Start  End  Name Score Strand".split())
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 @pytest.fixture
@@ -49,7 +49,7 @@ def f2():
 
     df = pd.read_table("tests/f2.bed", sep="\t", header=None, names=names)
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 def assert_df_equal(df1, df2):
@@ -65,7 +65,7 @@ def chip_10(names):
 
     df = pd.read_table("tests/chip_10.bed", header=None, names=names)
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 @pytest.fixture
@@ -73,7 +73,7 @@ def chip_10_plus_one(names):
 
     df = pd.read_table("tests/chip_10_plus_one.bed", header=None, names=names)
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 @pytest.fixture
@@ -81,7 +81,7 @@ def input_10(names):
 
     df = pd.read_table("tests/input_10.bed", header=None, names=names)
 
-    return GRanges(df)
+    return PyRanges(df)
 
 
 
@@ -90,7 +90,7 @@ def chip_10_no_strand(names):
 
     df = pd.read_table("tests/chip_10.bed", header=None, names=names)
 
-    return GRanges(df, strand=False)
+    return PyRanges(df, strand=False)
 
 
 @pytest.fixture
@@ -98,4 +98,4 @@ def input_10_no_strand(names):
 
     df = pd.read_table("tests/input_10.bed", header=None, names=names)
 
-    return GRanges(df, strand=False)
+    return PyRanges(df, strand=False)

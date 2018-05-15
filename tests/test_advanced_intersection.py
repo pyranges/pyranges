@@ -1,7 +1,7 @@
 import pytest
 from tests.helpers import assert_df_equal
 
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 import pyranges as pr
 
 import pandas as pd

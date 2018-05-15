@@ -1,4 +1,4 @@
-from pyranges import GRanges
+from pyranges import PyRanges
 
 
 if __name__ == "__main__":
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     print("Done reading")
     start = time()
 
-    result = GRanges(df)
+    result = PyRanges(df)
 
     end = time()
     total = end - start
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 # | chr2         | 31725688 | 31725888 | -        |
 # | chr2         | 31725778 | 31725978 | -        |
 # +--------------+----------+----------+----------+
-# GRanges object has 10000000 sequences from 28 chromosomes.
+# PyRanges object has 10000000 sequences from 28 chromosomes.
 # Wrote profile results to test.py.lprof
 # Timer unit: 1e-06 s
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
 # df = fread("zcat /mnt/scratch/endrebak/genomes/chip/shuffled_Aorta_Input.gz | cut -f 1-3,6")
 # start.time <- Sys.time()
-# gr = GRanges(seqnames=df$V1, IRanges(start=df$V2, end=df$V3), strand=df$V4)
+# gr = PyRanges(seqnames=df$V1, IRanges(start=df$V2, end=df$V3), strand=df$V4)
 # end.time <- Sys.time()
 # time.taken <- end.time - start.time
 # time.taken

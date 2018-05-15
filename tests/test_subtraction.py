@@ -1,7 +1,7 @@
 import pytest
 
 from tests.helpers import assert_df_equal
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 
 import pandas as pd
 
@@ -17,7 +17,7 @@ chr1 5 7 - 7
 chr1 8 9 + 1"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 
@@ -28,7 +28,7 @@ def simple_gr2():
 chr1 1 2 + 1
 chr1 6 7 - 2"""
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ chr1    5   6   - 7
 chr1	8	9	+ 1"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 
@@ -60,7 +60,7 @@ chr1    5   6   - 7
 chr1	8	9	+ 1"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 def test_intersect_invert_same_strand_simple_granges(simple_gr1, simple_gr2, expected_result_same_strand_inverse_subtraction_simple_granges):
@@ -82,7 +82,7 @@ chr1    5   7   - 7
 chr1	8	9	+ 1"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 def test_intersect_invert_opposite_strand_simple_granges(simple_gr1, simple_gr2, expected_result_opposite_strand_inverse_subtraction_simple_granges):

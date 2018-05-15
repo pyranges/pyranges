@@ -1,4 +1,4 @@
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 
 from tests.helpers import assert_df_equal
 import pytest
@@ -18,7 +18,7 @@ chr15	26105493	26105518	U0	0	+"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
     print(df)
-    return GRanges(df)
+    return PyRanges(df)
 
 @pytest.fixture
 def chip():
@@ -31,7 +31,7 @@ chr15	26105515	26105540	U0	0	+"""
 
     df = pd.read_table(StringIO(c), sep="\s+", header=0)
     # print(df)
-    return GRanges(df)
+    return PyRanges(df)
 
 
 
@@ -42,7 +42,7 @@ def expected_result_regular_intersection():
 chr8	38747236	38747251	U0	0	-
 chr15	26105515	26105518	U0	0	+"""
 
-    return GRanges(pd.read_table(StringIO(c), header=None, names="Chromosome Start End Name Score Strand".split()))
+    return PyRanges(pd.read_table(StringIO(c), header=None, names="Chromosome Start End Name Score Strand".split()))
 
 
 def test_intersect_granges(chip, background, expected_result_regular_intersection):

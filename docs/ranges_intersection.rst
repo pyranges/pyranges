@@ -1,7 +1,7 @@
 Intersecting Ranges
 ===================
 
-GRanges objects have an intersection method to find overlaps with other GRanges.
+PyRanges objects have an intersection method to find overlaps with other PyRanges.
 It has several options to control how the intersections are performed.
 
 .. code-block:: python

@@ -91,7 +91,7 @@ def both_indexes(self, other, strandedness):
 
     if strandedness:
         assert "Strand" in self.df and "Strand" in other.df, \
-            "Can only do stranded searches when both GRanges contain strand info"
+            "Can only do stranded searches when both PyRanges contain strand info"
 
     df = self.df
 
@@ -507,7 +507,7 @@ def _set_union(self, other, strand):
 
     if strand:
         assert "Strand" in self.df and "Strand" in other.df, \
-            "Can only do stranded set union when both GRanges contain strand info."
+            "Can only do stranded set union when both PyRanges contain strand info."
 
     from clustertree import find_clusters
 
@@ -567,7 +567,7 @@ def _subtraction(self, other, strandedness):
     strand = False
     if strandedness:
         assert "Strand" in self.df and "Strand" in other.df, \
-            "Can only do stranded set difference when both GRanges contain strand info."
+            "Can only do stranded set difference when both PyRanges contain strand info."
         strand = True
 
     other = other.cluster(strand=strand)

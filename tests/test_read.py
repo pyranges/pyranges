@@ -1,6 +1,6 @@
 import pytest
 
-from pyranges.pyranges import GRanges
+from pyranges.pyranges import PyRanges
 import pyranges as pr
 
 import pandas as pd

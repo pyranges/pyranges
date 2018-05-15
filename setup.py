@@ -4,7 +4,7 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
-install_requires = ["pandas", "ncls", "clustertree"]
+install_requires = ["pandas", "ncls", "clustertree", "tabulate", "pysam"]
 
 setup(
     name="pyranges",
@@ -12,7 +12,7 @@ setup(
     package_data={'pyranges': ['example_data/*.bed']},
     include_dirs=["."],
     version="0.0.1",
-    description="GRanges for Python.",
+    description="PyRanges for Python.",
     author="Endre Bakken Stovner",
     author_email="endrebak85@gmail.com",
     url="http://github.com/endrebak/pyranges",

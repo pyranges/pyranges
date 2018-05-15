@@ -2,7 +2,7 @@
 from time import time
 import datetime
 
-from pyranges import GRanges
+from pyranges import PyRanges
 
 import pandas as pd
 
@@ -17,13 +17,13 @@ b = pd.read_table(background, sep="\t", usecols=[0, 1, 2, 5], header=None, names
 
 print("done reading")
 start = time()
-c_gr = GRanges(c)
+c_gr = PyRanges(c)
 
 print("first range finished")
 
 end = time()
 
-b_gr = GRanges(b)
+b_gr = PyRanges(b)
 
 print("second range finished")
 end2 = time()

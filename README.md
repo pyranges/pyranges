@@ -1,8 +1,8 @@
 # pyranges
 
-GRanges for Python. Not ready for use, but I am very close. Watch this space.
+PyRanges for Python. Not ready for use, but I am very close. Watch this space.
 
-(The GRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
+(The PyRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
 
 ### TODO
 
@@ -10,11 +10,11 @@ Necessary for paper:
 
 * Do set intersection, set union and set subtraction like genomicranges (easy peasy)
 * Write even more tests
-* Benchmarks comparing with Bioconductor GRanges
+* Benchmarks comparing with Bioconductor PyRanges
 * Add continuous integration
 * Write biorxiv paper
 * Add Rledict which supports +-/*
-* Rledict to GRanges-function
+* Rledict to PyRanges-function
 * Write snakemakefile to write docs
 * Write non-shitty readme.md
 * Write more docs
@@ -25,14 +25,14 @@ For the future:
 * Subtraction operation
 * Allow writing to different UCSC genome-browser compatible formats such as
   bigwig, bedgraph, histograms, colored bed etc
-* Look at GRanges/bedtools for more inspiration
+* Look at PyRanges/bedtools for more inspiration
 * Add visualization capabilites?
 * Enable annotation with featurefetch?
-* Add dtypes to GRanges-header?
+* Add dtypes to PyRanges-header?
 * Find sequences of ranges with pyfaidx
 
 ```
-from pyranges import GRanges
+from pyranges import PyRanges
 
 import pandas as pd
 from io import StringIO
@@ -49,9 +49,9 @@ chr1 1 2
 chr1 6 6"""
 df2 = pd.read_table(StringIO(c), sep="\s+", header=0)
 
-gr1 = GRanges(df)
+gr1 = PyRanges(df)
 
-gr2 = GRanges(df2)
+gr2 = PyRanges(df2)
 
 print(gr1)
 +----|--------------|---------|-------+
@@ -61,7 +61,7 @@ print(gr1)
 |  1 | chr1         |       5 |     7 |
 |  2 | chr1         |       8 |     9 |
 +----|--------------|---------|-------+
-GRanges object with 3 sequences from 1 chromosomes.
+PyRanges object with 3 sequences from 1 chromosomes.
 
 print(gr2)
 +----|--------------|---------|-------+
@@ -70,10 +70,10 @@ print(gr2)
 |  0 | chr1         |       1 |     2 |
 |  1 | chr1         |       6 |     6 |
 +----|--------------|---------|-------+
-GRanges object with 2 sequences from 1 chromosomes.
+PyRanges object with 2 sequences from 1 chromosomes.
 
 gr1 - gr2
-<pyranges.pyranges.GRanges at 0x11299b198>
+<pyranges.pyranges.PyRanges at 0x11299b198>
 
 print(gr1 - gr2)
 +----|--------------|---------|-------+
@@ -81,14 +81,14 @@ print(gr1 - gr2)
 |----|--------------|---------|-------|
 |  0 | chr1         |       8 |     9 |
 +----|--------------|---------|-------+
-GRanges object with 1 sequences from 1 chromosomes.
+PyRanges object with 1 sequences from 1 chromosomes.
 
 df = pd.read_table("example_data/lamina.bed", sep="\s+", header=None, names="Chromosome Start End Score".split(), skiprows=1)
 
-gr = GRanges(df)
+gr = PyRanges(df)
 
 gr
-<pyranges.pyranges.GRanges at 0x112341f60>
+<pyranges.pyranges.PyRanges at 0x112341f60>
 
 print(gr)
 +------|--------------|----------|----------|--------------------+
@@ -102,7 +102,7 @@ print(gr)
 | 1342 | chrY         | 14113371 | 15137286 | 0.9364089775561101 |
 | 1343 | chrY         | 15475619 | 19472504 | 0.8138424821002389 |
 +------|--------------|----------|----------|--------------------+
-GRanges object with 1344 sequences from 24 chromosomes.
+PyRanges object with 1344 sequences from 24 chromosomes.
 
 subset_gr = gr[:111617177]
 
@@ -118,7 +118,7 @@ print(subset_gr)
 | 990 | chr5         | 108850224 | 109049698 | 1.0                |
 | 991 | chr5         | 111540207 | 112050044 | 0.9844054580896691 |
 +-----|--------------|-----------|-----------|--------------------+
-GRanges object with 992 sequences from 24 chromosomes.
+PyRanges object with 992 sequences from 24 chromosomes.
 
 print(subset_gr["chr1"])
 +-----|--------------|-----------|-----------|--------------------+
@@ -132,7 +132,7 @@ print(subset_gr["chr1"])
 | 46  | chr1         | 108566438 | 108844851 | 1.0                |
 | 47  | chr1         | 111580508 | 111778144 | 0.9533678756476679 |
 +-----|--------------|-----------|-----------|--------------------+
-GRanges object with 48 sequences from 1 chromosomes.
+PyRanges object with 48 sequences from 1 chromosomes.
 
 gr.Score.head()
 
