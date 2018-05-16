@@ -36,7 +36,7 @@ chr15	26105515	26105540	U0	0	+	26105493	26105518	U0	0	+"""
 
 def test_advanced_overlap(cs, bg, expected_result_regular_overlap):
 
-    result = cs.overlap_join(bg)
+    result = cs.join(bg)
 
     print("result")
     print(result)
@@ -57,7 +57,7 @@ chr15 26105515 26105518 26105515 26105540 U0 0 + 26105493 26105518 U0 0 +"""
 
 def test_advanced_overlap_new_pos_intersect(cs, bg, expected_result_regular_overlap_intersection):
 
-    result = cs.overlap_join(bg, new_pos="intersection")
+    result = cs.join(bg, new_pos="intersection")
 
     assert assert_df_equal(result.df, expected_result_regular_overlap_intersection.df)
     # assert expected_result_regular_overlap_intersection.df.equals(result.df)
@@ -75,7 +75,7 @@ chr15	26105515	26105540	U0	0	+	26105493	26105518	U0	0	+"""
 
 def test_advanced_overlap_stranded(cs, bg, expected_result_overlap_same_strand):
 
-    result = cs.overlap_join(bg, strandedness="same")
+    result = cs.join(bg, strandedness="same")
 
     print("result")
     print(result)
@@ -97,7 +97,7 @@ chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-"""
 
 def test_advanced_overlap_opposite_stranded(cs, bg, expected_result_overlap_opposite_strand):
 
-    result = cs.overlap_join(bg, strandedness="opposite")
+    result = cs.join(bg, strandedness="opposite")
 
     print(result.df)
     print(expected_result_overlap_opposite_strand)
@@ -118,7 +118,7 @@ chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-"""
 
 def test_advanced_overlap_opposite_stranded_suffixes(cs, bg, expected_result_overlap_opposite_strand_suffixes):
 
-    result = cs.overlap_join(bg, strandedness="opposite", suffixes=["", "hiya"])
+    result = cs.join(bg, strandedness="opposite", suffixes=["", "hiya"])
 
     print(result.df)
     print(expected_result_overlap_opposite_strand_suffixes)
@@ -138,7 +138,7 @@ def expected_result_regular_overlap_union():
 
 def test_advanced_overlap_new_pos_union(cs, bg, expected_result_regular_overlap_union):
 
-    result = cs.overlap_join(bg, new_pos="union")
+    result = cs.join(bg, new_pos="union")
 
     print("result")
     print(result.df.to_csv(sep=" "))

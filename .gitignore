@@ -1,4 +1,6 @@
 
+*.RData
+*.Rhistory
 build/
 _build/
 workflow/data

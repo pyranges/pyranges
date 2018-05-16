@@ -1,12 +1,34 @@
 Intersecting Ranges
 ===================
 
-PyRanges objects have an intersection method to find overlaps with other PyRanges.
-It has several options to control how the intersections are performed.
+PyRanges objects can be intersected with other PyRanges to find the subset of
+the genome that is contained in both. The regular intersection-method finds the
+intersection of all combinations of ranges: [#]_
 
-.. code-block:: python
+.. runblock:: pycon
 
-import pyranges as pr
+   >>> import pyranges as pr
+   >>> gr = pr.load_dataset("aorta")
+   >>> gr2 = pr.load_dataset("aorta2")
+   >>> gr.intersection(gr2)
 
-csgr = pr.load_dataset("chipseq")
-bggr = pr.load_dataset("chipseq_background")
+The set_intersection method clusters the intervals (i.e. merges them into one) before finding the intersection: [#]_
+
+.. runblock:: pycon
+
+   >>> import pyranges as pr # ignore
+   >>> gr = pr.load_dataset("aorta") # ignore
+   >>> gr2 = pr.load_dataset("aorta2") # ignore
+   >>> gr.set_intersection(gr2)
+
+Both methods also take a strandedness option, which can either be :code:`"same"`, :code:`"opposite"` or :code:`False`/:code:`None`
+
+.. runblock:: pycon
+
+   >>> import pyranges as pr # ignore
+   >>> gr = pr.load_dataset("aorta") # ignore
+   >>> gr2 = pr.load_dataset("aorta2") # ignore
+   >>> gr.set_intersection(gr2, strandedness="opposite")
+
+.. [#] This is the same behavior as bedtools intersect.
+.. [#] This is the same behavior as Bioconductor GenomicRanges intersect.
