@@ -1,6 +1,6 @@
 
 requirements_file:
-  requirements/docs.txt
+  docs/requirements.txt
 
 
 conda:
