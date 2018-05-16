@@ -1,5 +1,5 @@
 cython
-sphinx_autorun
+sphinx_autorun_ebs
 pyranges
 clustertree
 ncls
