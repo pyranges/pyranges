@@ -9,3 +9,6 @@ dependencies:
 - numpy
 - pandas
 - sphinx-autorun=1.1.0=py36h5809654_0
+- pip:
+    - clustertree
+    - pyranges
