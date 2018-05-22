@@ -191,6 +191,8 @@ def _cluster(self, strand=False, maxdist=0, minnb=1):
 
 def _tile(self, tile_size=50):
 
+    "No no no this is slow! Write in C."
+
     df = self.df.copy()
 
     df.Start = df.Start - (df.Start % tile_size)
@@ -203,7 +205,6 @@ def _tile(self, tile_size=50):
             d2 = d.copy()
             d2["Start"], d2["End"] = tile, tile + tile_size - 1
             rows.append(d2)
-
 
     df = pd.DataFrame.from_dict(rows)[df.columns]
 
@@ -395,12 +396,13 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
     return df
 
 
-def _set_intersection(self, other, strand):
+def _set_intersection(self, other, strandedness=None):
 
-    s = self.cluster()
-    o = other.cluster()
+    strand = True if strandedness else False
+    s = self.cluster(strand=strand)
+    o = other.cluster(strand=strand)
 
-    return _intersection(s, o, strand)
+    return _intersection(s, o, strandedness)
 
 
 def _set_union(self, other, strand):
@@ -435,15 +437,11 @@ def _set_union(self, other, strand):
                 self_dfs[key].End.values,
                 other_dfs[key].End.values])
         elif key in self_dfs and not key in other_dfs:
-            _starts = np.concatenate([
-                self_dfs[key].Start.values])
-            _ends = np.concatenate([
-                self_dfs[key].End.values])
+            _starts = self_dfs[key].Start.values
+            _ends = self_dfs[key].End.values
         elif key in other_dfs and not key in self_dfs:
-            _starts = np.concatenate([
-                other_dfs[key].Start.values])
-            _ends = np.concatenate([
-                other_dfs[key].End.values])
+            _starts = other_dfs[key].Start.values
+            _ends = other_dfs[key].End.values
 
         starts, ends = find_clusters(0, 1, _starts, _ends)
         idx_end += len(starts)

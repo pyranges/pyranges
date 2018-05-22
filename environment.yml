@@ -8,7 +8,7 @@ dependencies:
 - python=3.6
 - numpy
 - pandas
-- sphinx-autorun=1.1.0=py36h5809654_0
 - pip:
     - clustertree
     - pyranges
+    - sphinx_autorun_ebs

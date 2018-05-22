@@ -12,10 +12,14 @@ Welcome to pyranges's documentation!
 
    ranges_intro
    ranges_subset
+   ranges_intersection
+   ranges_overlap
+   ranges_join
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Runlengths:
+..
+   .. toctree::
+      :maxdepth: 2
+      :caption: Runlengths:
 
 
 

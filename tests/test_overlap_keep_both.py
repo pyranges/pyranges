@@ -63,7 +63,7 @@ def test_overlap_same_strand_simple_granges(simple_gr1, simple_gr2, expected_res
 
     print("expected")
     print(expected_result_overlap_same_strand_simple_granges)
-    result = simple_gr1.overlap_join(simple_gr2, strandedness="same")
+    result = simple_gr1.join(simple_gr2, strandedness="same")
 
     print("actual")
     print(result)
@@ -74,7 +74,7 @@ def test_overlap_same_strand_simple_granges(simple_gr1, simple_gr2, expected_res
 
 def test_overlap_opposite_strand_simple_granges(simple_gr1, simple_gr2):
 
-    result = simple_gr1.overlap_join(simple_gr2, strandedness="opposite")
+    result = simple_gr1.join(simple_gr2, strandedness="opposite")
 
     print(result)
 
@@ -86,6 +86,6 @@ def test_default_overlap_simple_granges(simple_gr1, simple_gr2, expected_result_
     print(simple_gr1)
     print(simple_gr2)
 
-    result = simple_gr1.overlap_join(simple_gr2)
+    result = simple_gr1.join(simple_gr2)
 
     assert assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)

@@ -48,10 +48,12 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
 
     if strands != None and strands != False:
         columns = [seqnames, starts, ends, strands]
-        assert set(len(s) for s in columns) == 1, "seqnames, starts, ends and strands must be of equal length"
+        lengths = list(str(len(s)) for s in columns)
+        assert len(set(lengths)) == 1, "seqnames, starts, ends and strands must be of equal length. But are {}".format(", ".join(lengths))
     else:
         columns = [seqnames, starts, ends]
-        assert set(len(s) for s in columns) == 1, "seqnames, starts and ends must be of equal length"
+        lengths = list(str(len(s)) for s in columns)
+        assert len(set(lengths)) == 1, "seqnames, starts and ends must be of equal length. But are {}".format(", ".join(lengths))
 
     idx = range(len(starts))
     series_to_concat = []
@@ -99,11 +101,16 @@ class PyRanges():
         if column_name == "stranded":
             raise Exception("The stranded attribute is read-only. Create a new PyRanges object instead.")
 
-        if not len(self.df) == len(column):
-            raise Exception("DataFrame and column must be same length.")
+        if not isinstance(column, str):
+            if not len(self.df) == len(column):
+                raise Exception("DataFrame and column must be same length.")
 
-        column.index = self.df.index
-        self.df.insert(self.df.shape[1], column_name, column)
+            column_to_insert = pd.Series(column, index=self.df.index)
+        else:
+            column_to_insert = pd.Series(column, index=self.df.index)
+
+        self.df.insert(self.df.shape[1], column_name, column_to_insert)
+
 
     def __getattr__(self, name):
 
@@ -245,7 +252,7 @@ class PyRanges():
         return PyRanges(_subtraction(self, other, strandedness))
 
 
-    def overlap_join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
+    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
 
         df = _overlap_write_both(self, other, strandedness, new_pos, suffixes)
 

@@ -3,10 +3,26 @@ import pytest
 from tests.helpers import assert_df_equal
 
 from pyranges import PyRanges
+import pyranges as pr
 
 import pandas as pd
 
 from io import StringIO
+
+
+@pytest.fixture
+def cs():
+
+    cs = pr.load_dataset("chipseq")
+    return cs
+
+
+
+@pytest.fixture
+def bg():
+
+    bg = pr.load_dataset("chipseq_background")
+    return bg
 
 
 @pytest.fixture
