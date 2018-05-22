@@ -6,12 +6,15 @@ from setuptools import find_packages
 
 install_requires = ["cython", "pandas", "ncls", "clustertree", "tabulate", "pysam", "sorted_nearest"]
 
+
+
 setup(
     name="pyranges",
     packages=find_packages(),
-    package_data={'pyranges': ['example_data/*.bed']},
+    package_data={'pyranges': ['example_data/*.bed', 'example_data/*.gtf',
+                               'example_data/*.bam', 'example_data/*.bam.bai']},
     include_dirs=["."],
-    version="0.0.2",
+    version="0.0.4",
     description="PyRanges for Python.",
     author="Endre Bakken Stovner",
     author_email="endrebak85@gmail.com",

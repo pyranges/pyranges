@@ -30,7 +30,7 @@ chr1 110246 110445 HWI-ST216_313:3:1207:4315:142177 1 + chr1 19958 20157 HWI-ST2
 
 def test_nearest_bed_unstranded(chip_10_plus_one, input_10, expected_result_unstranded):
 
-    result = chip_10_plus_one.nearest(input_10, strandedness=False)
+    result = chip_10_plus_one.nearest(input_10, strandedness=False, suffix="_b")
 
     print(result.df.to_csv(sep=" "))
 
@@ -59,7 +59,7 @@ chr1 10241 10440 HWI-ST216_313:3:1302:4516:156396 1 - chr1 10079 10278 HWI-ST216
 
 def test_nearest_bed_same_stranded(chip_10_plus_one, input_10, expected_result_same_stranded):
 
-    result = chip_10_plus_one.nearest(input_10, strandedness="same")
+    result = chip_10_plus_one.nearest(input_10, strandedness="same", suffix="_b")
 
     print(result.df.to_csv(sep=" "))
 
@@ -87,7 +87,7 @@ chr1 10241 10440 HWI-ST216_313:3:1302:4516:156396 1 - chr1 10073 10272 HWI-ST216
 
 def test_nearest_bed_opposite_stranded(chip_10_plus_one, input_10, expected_result_opposite_stranded):
 
-    result = chip_10_plus_one.nearest(input_10, strandedness="opposite")
+    result = chip_10_plus_one.nearest(input_10, strandedness="opposite", suffix="_b")
 
     print(result.df.to_csv(sep=" "))
 

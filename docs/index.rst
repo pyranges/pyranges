@@ -7,14 +7,16 @@ Welcome to pyranges's documentation!
 ====================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Ranges:
 
    ranges_intro
+   ranges_read
    ranges_subset
    ranges_intersection
    ranges_overlap
    ranges_join
+   ranges_nearest
 
 ..
    .. toctree::

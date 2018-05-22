@@ -7,6 +7,7 @@ import pkg_resources
 from pyranges.pyranges import PyRanges
 
 
+
 def load_dataset(basename):
 
     full_path = pkg_resources.resource_filename("pyranges", "example_data/{}.bed".format(basename))
@@ -93,3 +94,13 @@ def read_gtf(f):
                         extract], axis=1)
 
     return PyRanges(df)
+
+
+def get_example_path(basename):
+
+    full_path = pkg_resources.resource_filename("pyranges", "example_data/{}".format(basename))
+
+    if full_path.endswith(".bam"):
+        _hack_to_load_idx = pkg_resources.resource_filename("pyranges", "example_data/{}.bai".format(basename))
+
+    return full_path

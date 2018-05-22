@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges)
 
-PyRanges for Python. Not ready for use, but I am very close. Watch this space.
+GenomicRanges for Python.
 
 (The PyRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
 
@@ -11,14 +11,10 @@ PyRanges for Python. Not ready for use, but I am very close. Watch this space.
 Necessary for paper:
 
 * Write even more tests
-* Benchmarks comparing with Bioconductor PyRanges
-* Add continuous integration
+* Benchmarks comparing with Bioconductor GenomicRanges
 * Write biorxiv paper
 * Add Rledict which supports +-/*
 * Rledict to PyRanges-function
-* Write snakemakefile to write docs
-* Write non-shitty readme.md
-* Write more docs
 
 For the future:
 

@@ -460,7 +460,7 @@ def _set_union(self, other, strand):
     return df
 
 
-def _nearest(self, other, strandedness, suffix="_b"):
+def _nearest(self, other, strandedness, suffix="_b", is_sorted=False):
 
     try:
         from sorted_nearest import nearest
@@ -490,12 +490,15 @@ def _nearest(self, other, strandedness, suffix="_b"):
 
         ocdf = other_dfs[key]
 
-        if strandedness:
-            ocdf.index = range(len(ocdf))
+        if not is_sorted:
+            ocdf = ocdf.sort_values("Start End".split())
+            scdf = scdf.sort_values("Start End".split())
+
+        ocdf.index = range(len(ocdf))
 
         r_idx, dist = nearest(scdf.Start.values, scdf.End.values, ocdf.Start.values, ocdf.End.values)
 
-        ocdf = ocdf.loc[r_idx]
+        ocdf = ocdf.loc[pd.Series(r_idx)]
         ocdf.index = scdf.index
         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index))
 

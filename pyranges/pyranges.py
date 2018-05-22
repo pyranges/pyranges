@@ -214,11 +214,12 @@ class PyRanges():
         df = _overlap(self, other, strandedness, invert)
         return PyRanges(df)
 
-    def nearest(self, other, strandedness=False):
 
-        "Want all intervals in self that overlap with other."
+    def nearest(self, other, strandedness=False, is_sorted=False, suffix="_b"):
 
-        df = _nearest(self, other, strandedness)
+        "Find the nearest feature in other."
+
+        df = _nearest(self, other, strandedness, suffix, is_sorted)
 
         return PyRanges(df)
 
