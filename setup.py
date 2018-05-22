@@ -11,7 +11,7 @@ setup(
     packages=find_packages(),
     package_data={'pyranges': ['example_data/*.bed']},
     include_dirs=["."],
-    version="0.0.1",
+    version="0.0.2",
     description="PyRanges for Python.",
     author="Endre Bakken Stovner",
     author_email="endrebak85@gmail.com",
