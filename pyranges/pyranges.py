@@ -6,7 +6,8 @@ from tabulate import tabulate
 
 from pyranges.methods import (_overlap, _cluster, _tile, _intersection,
                               _coverage, _overlap_write_both,
-                              _set_intersection, _set_union, _subtraction)
+                              _set_intersection, _set_union, _subtraction,
+                              _nearest)
 
 from ncls import NCLS
 
@@ -204,6 +205,14 @@ class PyRanges():
         "Want all intervals in self that overlap with other."
 
         df = _overlap(self, other, strandedness, invert)
+        return PyRanges(df)
+
+    def nearest(self, other, strandedness=False):
+
+        "Want all intervals in self that overlap with other."
+
+        df = _nearest(self, other, strandedness)
+
         return PyRanges(df)
 
 

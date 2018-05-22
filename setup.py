@@ -4,7 +4,7 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
-install_requires = ["cython", "pandas", "ncls", "clustertree", "tabulate", "pysam"]
+install_requires = ["cython", "pandas", "ncls", "clustertree", "tabulate", "pysam", "sorted_nearest"]
 
 setup(
     name="pyranges",

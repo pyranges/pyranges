@@ -462,6 +462,52 @@ def _set_union(self, other, strand):
     return df
 
 
+def _nearest(self, other, strandedness, suffix="_b"):
+
+    try:
+        from sorted_nearest import nearest
+    except:
+        raise ImportError("Cannot find package sorted_nearest")
+
+    sidx, oidx = both_indexes(self, other, strandedness)
+
+    other_strand = {"+": "-", "-": "+"}
+
+    if len(list(sidx.keys())[0]) == 2: # chromosome and strand
+        grpby_key = "Chromosome Strand".split()
+    else:
+        grpby_key = "Chromosome"
+
+    other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
+
+    dfs = []
+
+    for key, scdf in self.df.groupby(grpby_key):
+
+        if len(key) == 2 and strandedness == "opposite":
+            key = key[0], other_strand[key[1]]
+
+        if not key in other_dfs:
+            continue
+
+        ocdf = other_dfs[key]
+
+        if strandedness:
+            ocdf.index = range(len(ocdf))
+
+        r_idx, dist = nearest(scdf.Start.values, scdf.End.values, ocdf.Start.values, ocdf.End.values)
+
+        ocdf = ocdf.loc[r_idx]
+        ocdf.index = scdf.index
+        ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index))
+
+        result = scdf.join(ocdf, rsuffix=suffix)
+
+        dfs.append(result)
+
+    return pd.concat(dfs)
+
+
 def _subtraction(self, other, strandedness):
 
     strand = False
