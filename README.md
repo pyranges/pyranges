@@ -6,6 +6,12 @@ GenomicRanges for Python.
 
 (The PyRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
 
+### Install
+
+```bash
+pip install pyranges=="0.0.4"
+```
+
 ### TODO
 
 Necessary for paper:
@@ -149,3 +155,4 @@ Name: Score, dtype: float64
 * http://bedtools.readthedocs.io/en/latest/
 * https://github.com/phaverty/RLEVectors.jl
 * https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html
+* https://bedops.readthedocs.io/en/latest/
