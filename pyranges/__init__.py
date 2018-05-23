@@ -6,6 +6,8 @@ import pkg_resources
 
 from pyranges.pyranges import PyRanges
 
+from pyrle import PyRles, Rle
+
 
 
 def load_dataset(basename):

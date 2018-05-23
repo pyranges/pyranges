@@ -6,3 +6,4 @@ ncls
 pandas
 numpy
 sorted_nearest
+pyrle

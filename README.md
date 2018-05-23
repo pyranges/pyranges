@@ -9,7 +9,7 @@ GenomicRanges for Python.
 ### Install
 
 ```bash
-pip install pyranges=="0.0.4"
+pip install pyranges=="0.0.5"
 ```
 
 ### TODO
@@ -24,8 +24,6 @@ Necessary for paper:
 
 For the future:
 
-* Report nearest feature (like intersect but not necessarily overlapping).
-* Subtraction operation
 * Allow writing to different UCSC genome-browser compatible formats such as
   bigwig, bedgraph, histograms, colored bed etc
 * Look at PyRanges/bedtools for more inspiration

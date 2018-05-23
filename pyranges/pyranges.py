@@ -269,10 +269,6 @@ class PyRanges():
         else:
             return df
 
-    # def subtraction(self, other, df_only=False, max_dist=0, min_nb=1):
-
-    #     _subtra
-
 
     def tile(self, tile_size=50):
 
@@ -280,6 +276,6 @@ class PyRanges():
         return PyRanges(df)
 
 
-    def coverage(self, value_col=None):
+    def coverage(self, value_col=None, stranded=False):
 
-        return _coverage(self, value_col)
+        return _coverage(self, value_col, stranded=stranded)

@@ -7,7 +7,7 @@ Welcome to pyranges's documentation!
 ====================================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
    :caption: Ranges:
 
    ranges_intro
@@ -18,10 +18,12 @@ Welcome to pyranges's documentation!
    ranges_join
    ranges_nearest
 
-..
-   .. toctree::
-      :maxdepth: 2
-      :caption: Runlengths:
+.. toctree::
+  :maxdepth: 0
+  :caption: Runlengths:
+
+  runlengths_intro
+  runlengths_dict
 
 
 

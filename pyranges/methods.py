@@ -267,14 +267,14 @@ def _intersection(self, other, strandedness=None):
 
 
 
-def _coverage(ranges, value_col=None):
+def _coverage(ranges, value_col=None, stranded=False):
 
     try:
         import pyrle as rle
     except ImportError:
         raise Exception("Using the coverage method requires that pyrle is installed.")
 
-    return rle.coverage(ranges)
+    return rle.rledict.PyRles(ranges, value_col=value_col, stranded=stranded)
 
 
 def _keep_both(idx_df, other, suffixes, new_pos):

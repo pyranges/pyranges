@@ -4,7 +4,7 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
-install_requires = ["cython", "pandas", "ncls", "clustertree", "tabulate", "pysam", "sorted_nearest"]
+install_requires = ["cython", "pandas", "ncls", "clustertree", "tabulate", "pysam", "sorted_nearest", "pyrle"]
 
 
 
@@ -14,7 +14,7 @@ setup(
     package_data={'pyranges': ['example_data/*.bed', 'example_data/*.gtf',
                                'example_data/*.bam', 'example_data/*.bam.bai']},
     include_dirs=["."],
-    version="0.0.4",
+    version="0.0.5",
     description="PyRanges for Python.",
     author="Endre Bakken Stovner",
     author_email="endrebak85@gmail.com",
