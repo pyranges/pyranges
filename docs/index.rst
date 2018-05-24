@@ -11,8 +11,10 @@ Welcome to pyranges's documentation!
    :caption: Ranges:
 
    ranges_intro
+   ranges_instantiation
    ranges_read
    ranges_subset
+   ranges_manipulation
    ranges_intersection
    ranges_overlap
    ranges_join

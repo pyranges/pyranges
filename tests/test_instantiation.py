@@ -27,3 +27,13 @@ def test_instantiation_with_str_for_strands_seqnames(chip_10_plus_one):
     strands = "+"
 
     pr = PyRanges(seqnames=seqnames, starts=starts, ends=ends, strands=strands)
+
+
+def test_instantiation_without_strand(chip_10_plus_one):
+
+    # mix series, lists and array
+    seqnames = chip_10_plus_one.Chromosome.values
+    starts = chip_10_plus_one.Start.values
+    ends = chip_10_plus_one.End
+
+    pr = PyRanges(seqnames=seqnames, starts=starts, ends=ends)

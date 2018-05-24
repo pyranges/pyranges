@@ -50,10 +50,12 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
         columns = [seqnames, starts, ends, strands]
         lengths = list(str(len(s)) for s in columns)
         assert len(set(lengths)) == 1, "seqnames, starts, ends and strands must be of equal length. But are {}".format(", ".join(lengths))
+        colnames = "Chromosome Start End Strand".split()
     else:
         columns = [seqnames, starts, ends]
         lengths = list(str(len(s)) for s in columns)
         assert len(set(lengths)) == 1, "seqnames, starts and ends must be of equal length. But are {}".format(", ".join(lengths))
+        colnames = "Chromosome Start End".split()
 
     idx = range(len(starts))
     series_to_concat = []
@@ -62,7 +64,7 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
         series_to_concat.append(s)
 
     df = pd.concat(series_to_concat, axis=1)
-    df.columns = "Chromosome Start End Strand".split()
+    df.columns = colnames
 
     return df
 
@@ -100,7 +102,6 @@ class PyRanges():
             raise Exception("The columns Chromosome, Start, End or Strand can not be reset.")
         if column_name == "stranded":
             raise Exception("The stranded attribute is read-only. Create a new PyRanges object instead.")
-
         if not isinstance(column, str):
             if not len(self.df) == len(column):
                 raise Exception("DataFrame and column must be same length.")
@@ -109,7 +110,12 @@ class PyRanges():
         else:
             column_to_insert = pd.Series(column, index=self.df.index)
 
-        self.df.insert(self.df.shape[1], column_name, column_to_insert)
+        pos = self.df.shape[1]
+        if column_name in self.df:
+            pos = list(self.df.columns).index(column_name)
+            self.df.drop(column_name, inplace=True, axis=1)
+
+        self.df.insert(pos, column_name, column_to_insert)
 
 
     def __getattr__(self, name):

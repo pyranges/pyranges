@@ -9,18 +9,14 @@ GenomicRanges for Python.
 ### Install
 
 ```bash
-pip install pyranges=="0.0.5"
+pip install pyranges=="0.0.6"
 ```
 
 ### TODO
 
-Necessary for paper:
+Necessary for biorxiv-paper:
 
-* Write even more tests
 * Benchmarks comparing with Bioconductor GenomicRanges
-* Write biorxiv paper
-* Add Rledict which supports +-/*
-* Rledict to PyRanges-function
 
 For the future:
 
