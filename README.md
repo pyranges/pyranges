@@ -6,7 +6,7 @@ GenomicRanges for Python.
 
 This library tries to be a thin, but extremely useful wrapper around genomic data contained in pandas dataframes. This allows for all the wonderful functionality of bedtools/bedops and/or GenomicRanges, while being able to use the the enormous universe of Python datascience libraries to manipulate and do computations on the data.
 
-(The PyRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
+PyRanges also contains a run-length encoding library for extremely efficient arithmetic computation of scores associated with genomic intervals.
 
 ### Install
 
