@@ -3,10 +3,7 @@ An introduction to Rles
 
 Rles are runlengths - a datastructure that can compactly describe the coverage
 of a genome (or some other score that is associated with each nucleotide). It is
-also used for efficient genomewide arithmetic operations on these scores.
-
-Examples
-~~~~~~~~
+used for efficient genomewide arithmetic operations on these scores.
 
 .. runblock:: pycon
 
@@ -31,7 +28,7 @@ Examples
    >>> r1.runs
    >>> r1.values
 
-   >>> r1.values += 5
+   >>> r1 = r1 + 5
    >>> r1
 
    >>> r2 / r1

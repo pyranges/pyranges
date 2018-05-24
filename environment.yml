@@ -2,7 +2,6 @@ channels:
 - conda-forge
 - bioconda
 - r
-- jkroes
 dependencies:
 - cython
 - python=3.6
