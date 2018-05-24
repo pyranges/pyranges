@@ -12,3 +12,5 @@ dependencies:
     - clustertree
     - pyranges
     - sphinx_autorun_ebs
+    - pyrle
+    - sorted_nearest
