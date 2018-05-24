@@ -9,7 +9,6 @@ from pyranges.pyranges import PyRanges
 from pyrle import PyRles, Rle
 
 
-
 def load_dataset(basename):
 
     full_path = pkg_resources.resource_filename("pyranges", "example_data/{}.bed".format(basename))

@@ -1,15 +1,16 @@
 An introduction to Rles
 =======================
 
-Rles are runlengths - a datastructure that can compactly describe the coverage of a genome (or some other score that is associated with each nucleotide). It is also used for efficient genomewide arithmetic operations on these scores.
+Rles are runlengths - a datastructure that can compactly describe the coverage
+of a genome (or some other score that is associated with each nucleotide). It is
+also used for efficient genomewide arithmetic operations on these scores.
 
 Examples
 ~~~~~~~~
 
 .. runblock:: pycon
 
-   >>> import pyranges as pr
-   >>> from pyranges import Rle
+   >>> from pyrle import Rle # or: from pyranges import Rle
 
    >>> runs = [10, 10, 10, 10]
    >>> values = [0, 1, 0, 0]
@@ -31,5 +32,6 @@ Examples
    >>> r1.values
 
    >>> r1.values += 5
+   >>> r1
 
    >>> r2 / r1
