@@ -1,8 +1,10 @@
 # pyranges
 
-[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges)
+[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![Documentation Status](https://readthedocs.org/projects/pyranges/badge/?version=latest)](https://pyranges.readthedocs.io/?badge=latest)
 
 GenomicRanges for Python.
+
+This library tries to be a thin, but extremely useful wrapper around genomic data contained in pandas dataframes. This allows for all the wonderful functionality of bedtools/bedops and/or GenomicRanges, while being able to use the the enormous universe of Python datascience libraries to manipulate and do computations on the data.
 
 (The PyRanges are also just a small part of it; I have written several generally useful high performance libraries in C/Cython that pyranges uses.)
 
@@ -20,125 +22,120 @@ Necessary for biorxiv-paper:
 
 For the future:
 
+* Add contained_within method (like overlap, but require containment).
+* Add more options to nearest function (left, right, n-nearest, all-nearest)
 * Allow writing to different UCSC genome-browser compatible formats such as
   bigwig, bedgraph, histograms, colored bed etc
-* Look at PyRanges/bedtools for more inspiration
 * Add visualization capabilites?
 * Enable annotation with featurefetch?
 * Add dtypes to PyRanges-header?
 * Find sequences of ranges with pyfaidx
 
 ```
-from pyranges import PyRanges
+import pyranges as pr
 
-import pandas as pd
-from io import StringIO
+>>> cs = pr.load_dataset("chipseq")
 
-c = """Chromosome Start End
-chr1 3 6
-chr1 5 7
-chr1 8 9"""
+>>> cs
 
-df = pd.read_table(StringIO(c), sep="\s+", header=0)
++--------------|-----------|-----------|--------|---------|----------+
+| Chromosome   | Start     | End       | Name   | Score   | Strand   |
+|--------------|-----------|-----------|--------|---------|----------|
+| chr8         | 28510032  | 28510057  | U0     | 0       | -        |
+| chr7         | 107153363 | 107153388 | U0     | 0       | -        |
+| chr5         | 135821802 | 135821827 | U0     | 0       | -        |
+| ...          | ...       | ...       | ...    | ...     | ...      |
+| chr6         | 89296757  | 89296782  | U0     | 0       | -        |
+| chr1         | 194245558 | 194245583 | U0     | 0       | +        |
+| chr8         | 57916061  | 57916086  | U0     | 0       | +        |
++--------------|-----------|-----------|--------|---------|----------+
+PyRanges object has 10000 sequences from 24 chromosomes.
 
-c = """Chromosome Start End
-chr1 1 2
-chr1 6 6"""
-df2 = pd.read_table(StringIO(c), sep="\s+", header=0)
+>>> bg = pr.load_dataset("chipseq_background")
 
-gr1 = PyRanges(df)
+>>> cs.nearest(bg, suffix="_IP")
 
-gr2 = PyRanges(df2)
++--------------|----------|----------|--------|---------|----------|-----------------|------------|----------|-----------|------------|-------------|------------+
+| Chromosome   | Start    | End      | Name   | Score   | Strand   | Chromosome_IP   | Start_IP   | End_IP   | Name_IP   | Score_IP   | Strand_IP   | Distance   |
+|--------------|----------|----------|--------|---------|----------|-----------------|------------|----------|-----------|------------|-------------|------------|
+| chr1         | 1325303  | 1325328  | U0     | 0       | -        | chr1            | 1041102    | 1041127  | U0        | 0          | +           | 284176     |
+| chr1         | 1541598  | 1541623  | U0     | 0       | +        | chr1            | 1770383    | 1770408  | U0        | 0          | -           | 228760     |
+| chr1         | 1599121  | 1599146  | U0     | 0       | +        | chr1            | 1770383    | 1770408  | U0        | 0          | -           | 171237     |
+| ...          | ...      | ...      | ...    | ...     | ...      | ...             | ...        | ...      | ...       | ...        | ...         | ...        |
+| chrY         | 21910706 | 21910731 | U0     | 0       | -        | chrY            | 20557165   | 20557190 | U0        | 0          | +           | 1353516    |
+| chrY         | 22054002 | 22054027 | U0     | 0       | -        | chrY            | 20557165   | 20557190 | U0        | 0          | +           | 1496812    |
+| chrY         | 22210637 | 22210662 | U0     | 0       | -        | chrY            | 20557165   | 20557190 | U0        | 0          | +           | 1653447    |
++--------------|----------|----------|--------|---------|----------|-----------------|------------|----------|-----------|------------|-------------|------------+
+PyRanges object has 10000 sequences from 24 chromosomes.
 
-print(gr1)
-+----|--------------|---------|-------+
-|    | Chromosome   |   Start |   End |
-|----|--------------|---------|-------|
-|  0 | chr1         |       3 |     6 |
-|  1 | chr1         |       5 |     7 |
-|  2 | chr1         |       8 |     9 |
-+----|--------------|---------|-------+
-PyRanges object with 3 sequences from 1 chromosomes.
+>>> cs.set_intersection(bg, strandedness="opposite")
 
-print(gr2)
-+----|--------------|---------|-------+
-|    | Chromosome   |   Start |   End |
-|----|--------------|---------|-------|
-|  0 | chr1         |       1 |     2 |
-|  1 | chr1         |       6 |     6 |
-+----|--------------|---------|-------+
-PyRanges object with 2 sequences from 1 chromosomes.
++--------------|-----------|-----------|----------+
+| Chromosome   |     Start |       End | Strand   |
+|--------------|-----------|-----------|----------|
+| chr1         | 226987603 | 226987617 | +        |
+| chr8         |  38747236 |  38747251 | -        |
++--------------|-----------|-----------|----------+
+PyRanges object has 2 sequences from 2 chromosomes.
 
-gr1 - gr2
-<pyranges.pyranges.PyRanges at 0x11299b198>
+>>> cv = cs.coverage(stranded=True)
+>>> cv
 
-print(gr1 - gr2)
-+----|--------------|---------|-------+
-|    | Chromosome   |   Start |   End |
-|----|--------------|---------|-------|
-|  0 | chr1         |       8 |     9 |
-+----|--------------|---------|-------+
-PyRanges object with 1 sequences from 1 chromosomes.
+chr1 +
++--------|-----------|------|---------|------|-----------|---------|------|-----------|------|-----------|------+
+| Runs   |   1541598 |   25 |   57498 |   25 |   1904886 |  ...    |   25 |   2952580 |   25 |   1156833 |   25 |
+|--------|-----------|------|---------|------|-----------|---------|------|-----------|------|-----------|------|
+| Values |         0 |    1 |       0 |    1 |         0 | ...     |    1 |         0 |    1 |         0 |    1 |
++--------|-----------|------|---------|------|-----------|---------|------|-----------|------|-----------|------+
+Rle of length 247134924 containing 894 elements
+...
+chrY -
++--------|-----------|------|----------|------|----------|---------|------|----------|------|----------|------+
+| Runs   |   7046809 |   25 |   358542 |   25 |   296582 |  ...    |   25 |   143271 |   25 |   156610 |   25 |
+|--------|-----------|------|----------|------|----------|---------|------|----------|------|----------|------|
+| Values |         0 |    1 |        0 |    1 |        0 | ...     |    1 |        0 |    1 |        0 |    1 |
++--------|-----------|------|----------|------|----------|---------|------|----------|------|----------|------+
+Rle of length 22210662 containing 32 elements
+PyRles object with 48 chromosomes/strand pairs.
 
-df = pd.read_table("example_data/lamina.bed", sep="\s+", header=None, names="Chromosome Start End Score".split(), skiprows=1)
+>>> cv + 10.42
 
-gr = PyRanges(df)
+chr1 +
++--------|-----------|-------|---------|-------|-----------|---------|-------|-----------|-------|-----------|-------+
+| Runs   |   1541598 |    25 |   57498 |    25 |   1904886 |  ...    |    25 |   2952580 |    25 |   1156833 |    25 |
+|--------|-----------|-------|---------|-------|-----------|---------|-------|-----------|-------|-----------|-------|
+| Values |     10.42 | 11.42 |   10.42 | 11.42 |     10.42 | ...     | 11.42 |     10.42 | 11.42 |     10.42 | 11.42 |
++--------|-----------|-------|---------|-------|-----------|---------|-------|-----------|-------|-----------|-------+
+Rle of length 247134924 containing 894 elements
+...
+chrY -
++--------|-----------|-------|----------|-------|----------|---------|-------|----------|-------|----------|-------+
+| Runs   |   7046809 |    25 |   358542 |    25 |   296582 |  ...    |    25 |   143271 |    25 |   156610 |    25 |
+|--------|-----------|-------|----------|-------|----------|---------|-------|----------|-------|----------|-------|
+| Values |     10.42 | 11.42 |    10.42 | 11.42 |    10.42 | ...     | 11.42 |    10.42 | 11.42 |    10.42 | 11.42 |
++--------|-----------|-------|----------|-------|----------|---------|-------|----------|-------|----------|-------+
+Rle of length 22210662 containing 32 elements
+PyRles object with 48 chromosomes/strand pairs.
 
-gr
-<pyranges.pyranges.PyRanges at 0x112341f60>
+>>> bg_cv = bg.coverage()
 
-print(gr)
-+------|--------------|----------|----------|--------------------+
-|      | Chromosome   | Start    | End      | Score              |
-|------|--------------|----------|----------|--------------------|
-| 0    | chr1         | 11323785 | 11617177 | 0.86217008797654   |
-| 1    | chr1         | 12645605 | 13926923 | 0.9348914858096831 |
-| 2    | chr1         | 14750216 | 15119039 | 0.9459459459459459 |
-| ...  | ...          | ...      | ...      | ...                |
-| 1341 | chrY         | 13556427 | 13843364 | 0.892655367231638  |
-| 1342 | chrY         | 14113371 | 15137286 | 0.9364089775561101 |
-| 1343 | chrY         | 15475619 | 19472504 | 0.8138424821002389 |
-+------|--------------|----------|----------|--------------------+
-PyRanges object with 1344 sequences from 24 chromosomes.
-
-subset_gr = gr[:111617177]
-
-print(subset_gr)
-+-----|--------------|-----------|-----------|--------------------+
-|     | Chromosome   | Start     | End       | Score              |
-|-----|--------------|-----------|-----------|--------------------|
-| 0   | chr15        | 50892438  | 53249359  | 0.920298879202989  |
-| 1   | chr15        | 23238025  | 23460157  | 0.8214285714285708 |
-| 2   | chr15        | 20639479  | 22659952  | 0.8454692556634301 |
-| ... | ...          | ...       | ...       | ...                |
-| 989 | chr5         | 107749740 | 107997497 | 0.9004975124378108 |
-| 990 | chr5         | 108850224 | 109049698 | 1.0                |
-| 991 | chr5         | 111540207 | 112050044 | 0.9844054580896691 |
-+-----|--------------|-----------|-----------|--------------------+
-PyRanges object with 992 sequences from 24 chromosomes.
-
-print(subset_gr["chr1"])
-+-----|--------------|-----------|-----------|--------------------+
-|     | Chromosome   | Start     | End       | Score              |
-|-----|--------------|-----------|-----------|--------------------|
-| 0   | chr1         | 95358151  | 96453308  | 0.952742616033755  |
-| 1   | chr1         | 38272060  | 39078902  | 0.940932642487047  |
-| 2   | chr1         | 12645605  | 13926923  | 0.9348914858096831 |
-| ... | ...          | ...       | ...       | ...                |
-| 45  | chr1         | 110470808 | 110667025 | 0.7201646090534979 |
-| 46  | chr1         | 108566438 | 108844851 | 1.0                |
-| 47  | chr1         | 111580508 | 111778144 | 0.9533678756476679 |
-+-----|--------------|-----------|-----------|--------------------+
-PyRanges object with 48 sequences from 1 chromosomes.
-
-gr.Score.head()
-
-0    0.862170
-1    0.934891
-2    0.945946
-3    0.895175
-4    0.892526
-Name: Score, dtype: float64
+>>> cv - bg_cv
+chr1
++--------|----------|------|----------|------|---------|---------|------|----------|------|----------|------+
+| Runs   |   887771 |   25 |   106864 |   25 |   46417 |  ...    |   25 |   730068 |   25 |   259250 |   25 |
+|--------|----------|------|----------|------|---------|---------|------|----------|------|----------|------|
+| Values |        0 |   -1 |        0 |   -1 |       0 | ...     |    1 |        0 |   -1 |        0 |    1 |
++--------|----------|------|----------|------|---------|---------|------|----------|------|----------|------+
+Rle of length 247134924 containing 3242 elements
+...
+chrY
++--------|-----------|------|----------|------|----------|---------|------|----------|------|------------|------+
+| Runs   |   7046809 |   25 |   147506 |   25 |   211011 |  ...    |   25 |   156610 |   25 |   35191552 |   25 |
+|--------|-----------|------|----------|------|----------|---------|------|----------|------|------------|------|
+| Values |         0 |    1 |        0 |    1 |        0 | ...     |    1 |        0 |    1 |          0 |   -1 |
++--------|-----------|------|----------|------|----------|---------|------|----------|------|------------|------+
+Rle of length 57402239 containing 60 elements
+Unstranded PyRles object with 25 chromosomes.
 ```
 
 # See also

@@ -33,7 +33,7 @@ stranded PyRle is automatically demoted to an unstranded PyRle.
 
    >>> cs = gr.coverage() # ignore
 
-   >>> bg_stranded = gr_bg.coverage(strand=True)
+   >>> bg_stranded = gr_bg.coverage(stranded=True)
    >>> bg_stranded
 
    >>> cs + bg_stranded
