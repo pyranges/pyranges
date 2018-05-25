@@ -1,6 +1,6 @@
 # pyranges
 
-[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![Documentation Status](https://readthedocs.org/projects/pyranges/badge/?version=latest)](https://pyranges.readthedocs.io/?badge=latest)
+[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![Documentation Status](https://readthedocs.org/projects/pyranges/badge/?version=latest)](https://pyranges.readthedocs.io/?badge=latest) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
 
 GenomicRanges for Python.
 
@@ -8,10 +8,16 @@ This library tries to be a thin, but extremely useful wrapper around genomic dat
 
 PyRanges also contains a run-length encoding library for extremely efficient arithmetic computation of scores associated with genomic intervals.
 
+### Paper
+
+Being written here: https://github.com/endrebak/pyranges-paper
+
+Timings will be added to docs when ready.
+
 ### Install
 
 ```bash
-pip install pyranges=="0.0.6"
+pip install pyranges
 ```
 
 ### TODO
