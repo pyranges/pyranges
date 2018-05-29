@@ -221,11 +221,11 @@ class PyRanges():
         return PyRanges(df)
 
 
-    def nearest(self, other, strandedness=False, is_sorted=False, suffix="_b"):
+    def nearest(self, other, strandedness=False, is_sorted=False, suffix="_b", how=None):
 
         "Find the nearest feature in other."
 
-        df = _nearest(self, other, strandedness, suffix, is_sorted)
+        df = _nearest(self, other, strandedness, suffix, is_sorted, how)
 
         return PyRanges(df)
 

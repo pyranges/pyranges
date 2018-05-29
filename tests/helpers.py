@@ -15,9 +15,9 @@ def assert_df_equal(df1, df2):
     df2 = df2.reset_index(drop=True)
 
     print("Actual")
-    print(df1)
+    print(df1.to_csv(sep=" "))
     print("Expected")
-    print(df2)
+    print(df2.to_csv(sep=" "))
 
     print("Actual dtypes")
     print(df1.dtypes)

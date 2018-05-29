@@ -53,7 +53,7 @@ def introns():
 
 
 @pytest.fixture
-def f1():
+def f1(names):
 
     df = pd.read_table("tests/f1.bed", sep="\t", header=None, names="Chromosome  Start  End  Name Score Strand".split())
 
@@ -61,7 +61,7 @@ def f1():
 
 
 @pytest.fixture
-def f2():
+def f2(names):
 
     df = pd.read_table("tests/f2.bed", sep="\t", header=None, names=names)
 

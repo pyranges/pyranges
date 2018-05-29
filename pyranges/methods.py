@@ -7,6 +7,9 @@ import itertools
 # from multiprocessing import Process
 # from joblib import Parallel, delayed
 
+from sorted_nearest import (nearest, nearest_nonoverlapping,
+                            nearest_previous_nonoverlapping, nearest_next_nonoverlapping, nearest_next,
+                            nearest_previous)
 
 from collections import OrderedDict
 
@@ -15,7 +18,6 @@ from collections import OrderedDict
 # except:
 #     profile = lambda x: x
 
-# from pyranges.src.cython_methods import c_overlap, both_indexes
 
 from time import time
 import datetime
@@ -460,12 +462,18 @@ def _set_union(self, other, strand):
     return df
 
 
-def _nearest(self, other, strandedness, suffix="_b", is_sorted=False):
+how_nearest={None: nearest,
+             False: nearest,
+             "nonoverlapping": nearest_nonoverlapping,
+             "previous_nonoverlapping": nearest_previous_nonoverlapping,
+             "next_nonoverlapping": nearest_next_nonoverlapping,
+             "next": nearest_next,
+             "previous": nearest_previous}
 
-    try:
-        from sorted_nearest import nearest
-    except:
-        raise ImportError("Cannot find package sorted_nearest")
+
+def _nearest(self, other, strandedness, suffix="_b", is_sorted=False, how=None):
+
+    func = how_nearest[how]
 
     sidx, oidx = both_indexes(self, other, strandedness)
 
@@ -496,17 +504,28 @@ def _nearest(self, other, strandedness, suffix="_b", is_sorted=False):
 
         ocdf.index = range(len(ocdf))
 
-        r_idx, dist = nearest(scdf.Start.values, scdf.End.values, ocdf.Start.values, ocdf.End.values)
+        if how == "next_nonoverlapping":
+            r_idx, dist = func(scdf.End.values, ocdf.Start.values)
+        elif how == "previous_nonoverlapping":
+            r_idx, dist = func(scdf.Start.values, ocdf.End.values)
+        else:
+            r_idx, dist = func(scdf.Start.values, scdf.End.values, ocdf.Start.values, ocdf.End.values)
 
+        print(r_idx)
+        print(key)
         ocdf = ocdf.loc[pd.Series(r_idx)]
         ocdf.index = scdf.index
         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index))
+        ocdf.drop("Chromosome", axis=1, inplace=True)
 
         result = scdf.join(ocdf, rsuffix=suffix)
+        print(result)
 
         dfs.append(result)
 
     return pd.concat(dfs)
+
+
 
 
 def _subtraction(self, other, strandedness):
