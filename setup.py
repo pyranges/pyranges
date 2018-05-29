@@ -14,7 +14,7 @@ setup(
     package_data={'pyranges': ['example_data/*.bed', 'example_data/*.gtf',
                                'example_data/*.bam', 'example_data/*.bam.bai']},
     include_dirs=["."],
-    version="0.0.7",
+    version="0.0.8",
     description="PyRanges for Python.",
     author="Endre Bakken Stovner",
     author_email="endrebak85@gmail.com",

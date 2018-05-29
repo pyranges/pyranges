@@ -119,3 +119,37 @@ def test_nearest_other_unstranded(chip_10_plus_one, input_10_no_strand, expected
     print(result.df.to_csv(sep=" "))
 
     assert assert_df_equal(result.df, expected_result_other_no_strand.df)
+
+
+@pytest.fixture
+def expected_result_self_no_strand():
+
+    c = """Chromosome Start End Name Score Start_b End_b Name_b Score_b Strand Distance
+0 chr1 9916 10115 HWI-ST216_313:3:1203:10227:6568 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+1 chr1 9939 10138 HWI-ST216_313:3:2301:15791:16298 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+2 chr1 9951 10150 HWI-ST216_313:3:2205:20086:33508 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+3 chr1 9953 10152 HWI-ST216_313:3:1305:6975:102491 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+4 chr1 9978 10177 HWI-ST216_313:3:1204:5599:113305 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+5 chr1 10001 10200 HWI-ST216_313:3:1102:14019:151362 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+6 chr1 10024 10223 HWI-ST216_313:3:2201:5209:155139 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+7 chr1 10127 10326 HWI-ST216_313:3:2207:7406:122346 1 9988 10187 HWI-ST216:427:D29R1ACXX:2:1205:6095:16532 1 - 0
+8 chr1 10241 10440 HWI-ST216_313:3:1302:4516:156396 1 10073 10272 HWI-ST216:427:D29R1ACXX:2:2302:14161:85418 1 + 0
+9 chr1 10246 10445 HWI-ST216_313:3:1207:4315:142177 1 10073 10272 HWI-ST216:427:D29R1ACXX:2:2302:14161:85418 1 + 0"""
+
+    return PyRanges(pd.read_table(StringIO(c), sep=" "))
+
+
+def test_nearest_self_unstranded(chip_10_no_strand, input_10, expected_result_self_no_strand):
+
+    result = chip_10_no_strand.nearest(input_10, strandedness=False, suffix="_b")
+
+    print(result.df.to_csv(sep=" "))
+
+    assert assert_df_equal(result.df, expected_result_self_no_strand.df)
+
+
+
+def test_nearest_self_unstranded_strandedness(chip_10_no_strand, input_10, expected_result_self_no_strand):
+
+    with pytest.raises(AssertionError):
+        result = chip_10_no_strand.nearest(input_10, strandedness="opposite", suffix="_b")

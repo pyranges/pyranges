@@ -511,15 +511,15 @@ def _nearest(self, other, strandedness, suffix="_b", is_sorted=False, how=None):
         else:
             r_idx, dist = func(scdf.Start.values, scdf.End.values, ocdf.Start.values, ocdf.End.values)
 
-        print(r_idx)
-        print(key)
-        ocdf = ocdf.loc[pd.Series(r_idx)]
+        ocdf = ocdf.reindex(r_idx, fill_value=0) # instead of np.nan, so ints are not promoted
         ocdf.index = scdf.index
         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index))
         ocdf.drop("Chromosome", axis=1, inplace=True)
 
+        r_idx = pd.Series(r_idx, index=scdf.index)
+        scdf.drop(r_idx[r_idx == -1].index, inplace=True)
+
         result = scdf.join(ocdf, rsuffix=suffix)
-        print(result)
 
         dfs.append(result)
 
