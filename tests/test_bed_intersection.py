@@ -146,3 +146,11 @@ def test_intersect_bed_opposite_strand(chip_10, input_10, expected_result_inters
     result = chip_10.intersection(input_10, strandedness="opposite")
 
     assert assert_df_equal(result.df, expected_result_intersection_opposite_strand)
+
+
+
+def test_intersect_bed_opposite_strand_containment(chip_10, input_10, expected_result_intersection_opposite_strand):
+
+    result = chip_10.intersection(input_10, strandedness="opposite", how="containment")
+
+    assert result.df.empty

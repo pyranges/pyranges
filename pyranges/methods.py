@@ -85,7 +85,7 @@ def _overlap(self, other, strandedness, invert):
     return pd.concat(dfs.values())
 
 
-def both_indexes(self, other, strandedness):
+def both_indexes(self, other, strandedness, how=None):
 
     assert strandedness in ["same", "opposite", False, None]
 
@@ -117,7 +117,12 @@ def both_indexes(self, other, strandedness):
             strand = strand_dict[strand]
             it = other.__ncls__[chromosome, strand]
 
-            _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
+
+            if not how:
+                _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
+            else:
+                _self_indexes, _other_indexes = it.all_containments_both(starts, ends, indexes)
+
             self_d[chromosome, strand].extend(_self_indexes)
             other_d[chromosome, strand].extend(_other_indexes)
 
@@ -135,7 +140,11 @@ def both_indexes(self, other, strandedness):
 
             for _it in [it, it2]:
 
-                _self_indexes, _other_indexes = _it.all_overlaps_both(starts, ends, indexes)
+                if not how:
+                    _self_indexes, _other_indexes = _it.all_overlaps_both(starts, ends, indexes)
+                else:
+                    _self_indexes, _other_indexes = _it.all_containments_both(starts, ends, indexes)
+
                 self_d[chromosome].extend(_self_indexes)
                 other_d[chromosome].extend(_other_indexes)
 
@@ -150,7 +159,11 @@ def both_indexes(self, other, strandedness):
             ends = cdf.End.values
             indexes = cdf.index.values
 
-            _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
+            if not how:
+                _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
+            else:
+                _self_indexes, _other_indexes = it.all_containments_both(starts, ends, indexes)
+
             self_d[chromosome].extend(_self_indexes)
             other_d[chromosome].extend(_other_indexes)
 
@@ -217,9 +230,9 @@ def invert(self):
 
     pass
 
-def _intersection(self, other, strandedness=None):
+def _intersection(self, other, strandedness=None, how=None):
 
-    sidx, oidx = both_indexes(self, other, strandedness)
+    sidx, oidx = both_indexes(self, other, strandedness, how)
 
     other_strand = {"+": "-", "-": "+"}
 
@@ -317,11 +330,11 @@ def _keep_both(idx_df, other, suffixes, new_pos):
     return idx_df
 
 
-def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
+def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], how=None):
 
     assert new_pos in ["intersection", "union", False, None]
 
-    sidx, oidx = both_indexes(self, other, strandedness)
+    sidx, oidx = both_indexes(self, other, strandedness, how)
 
     other_strand = {"+": "-", "-": "+"}
 

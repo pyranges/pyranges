@@ -93,3 +93,13 @@ def test_intersect_opposite_strand_simple_granges(simple_gr1, simple_gr2):
     print(result)
 
     assert result.df.empty
+
+
+
+def test_intersect_unstranded_simple_granges_containment(simple_gr1, simple_gr2):
+
+    result = simple_gr1.intersection(simple_gr2, strandedness=None, how="containment")
+
+    print(result)
+
+    assert result.df.empty

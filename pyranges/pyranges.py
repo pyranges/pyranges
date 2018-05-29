@@ -230,11 +230,11 @@ class PyRanges():
         return PyRanges(df)
 
 
-    def intersection(self, other, strandedness=False):
+    def intersection(self, other, strandedness=False, how=None):
 
         "Want the parts of the intervals in self that overlap with other."
 
-        df = _intersection(self, other, strandedness)
+        df = _intersection(self, other, strandedness, how)
 
         df.index.name = ""
         return PyRanges(df)
@@ -259,9 +259,9 @@ class PyRanges():
         return PyRanges(_subtraction(self, other, strandedness))
 
 
-    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"]):
+    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], how=None):
 
-        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes)
+        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes, how)
 
         return PyRanges(df)
 

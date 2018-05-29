@@ -136,6 +136,7 @@ def expected_result_regular_overlap_union():
 
     return PyRanges(pd.read_table(StringIO(c), sep="\s+"))
 
+
 def test_advanced_overlap_new_pos_union(cs, bg, expected_result_regular_overlap_union):
 
     result = cs.join(bg, new_pos="union")

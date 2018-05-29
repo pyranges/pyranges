@@ -20,3 +20,16 @@ The nearest method takes a strandedness option, which can either be
    >>> gr = pr.load_dataset("chipseq") # ignore
    >>> gr2 = pr.load_dataset("chipseq_background") # ignore
    >>> gr.nearest(gr2, suffix="_Input", strandedness="opposite")
+
+The nearest method also takes a variable how, which can take the values
+:code:`"nonoverlapping"`, :code:`"next"`, :code:`"previous"`, :code:`"next_nonoverlapping"`, :code:`"previous_nonoverlapping"`:
+
+.. runblock:: pycon
+
+   >>> import pyranges as pr # ignore
+   >>> f1 = pr.load_dataset("f1")
+   >>> f1
+   >>> f2 = pr.load_dataset("f2")
+   >>> f2
+   >>> f2.nearest(f1, strandedness="opposite", how="next")
+   >>> f2.nearest(f1, strandedness="opposite", how="next_nonoverlapping")
