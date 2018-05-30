@@ -28,8 +28,7 @@ Necessary for biorxiv-paper:
 
 For the future:
 
-* Add contained_within method (like overlap, but require containment).
-* Add more options to nearest function (left, right, n-nearest, all-nearest)
+* Test code with hypothesis (https://hypothesis.readthedocs.io/en/latest/index.html)
 * Allow writing to different UCSC genome-browser compatible formats such as
   bigwig, bedgraph, histograms, colored bed etc
 * Add visualization capabilites?

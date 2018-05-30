@@ -36,7 +36,7 @@ def pick_out_indexes_possibly_nonunique(df, indexes, invert=False):
         return df.loc[~df.index.isin(indexes)]
 
 
-def _overlap(self, other, strandedness, invert):
+def _overlap(self, other, strandedness, invert, how=None):
 
     assert strandedness in ["same", "opposite", False, None]
 
@@ -62,7 +62,10 @@ def _overlap(self, other, strandedness, invert):
 
             strand = strand_dict[strand]
             it = other.__ncls__[chromosome, strand]
-            indexes = it.has_overlaps(starts, ends, indexes)
+            if how == "containment":
+                indexes = has_containment(starts, ends, indexes)
+            else:
+                indexes = it.has_overlaps(starts, ends, indexes)
 
             dfs[chromosome, strand] = pick_out_indexes_possibly_nonunique(cdf, indexes, invert)
 
@@ -77,8 +80,12 @@ def _overlap(self, other, strandedness, invert):
             it = other.__ncls__[chromosome, "+"]
             it2 = other.__ncls__[chromosome, "-"]
 
-            idx1 = it.has_overlaps(starts, ends, indexes)
-            idx2 = it2.has_overlaps(starts, ends, indexes)
+            if how == "containment":
+                idx1 = it.has_containments(starts, ends, indexes)
+                idx2 = it2.has_containments(starts, ends, indexes)
+            else:
+                idx1 = it.has_overlaps(starts, ends, indexes)
+                idx2 = it2.has_overlaps(starts, ends, indexes)
 
             dfs[chromosome] = pick_out_indexes_possibly_nonunique(cdf, [idx1, idx2], invert)
 
@@ -411,13 +418,13 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
     return df
 
 
-def _set_intersection(self, other, strandedness=None):
+def _set_intersection(self, other, strandedness=None, how=None):
 
     strand = True if strandedness else False
     s = self.cluster(strand=strand)
     o = other.cluster(strand=strand)
 
-    return _intersection(s, o, strandedness)
+    return _intersection(s, o, strandedness, how)
 
 
 def _set_union(self, other, strand):
@@ -554,14 +561,6 @@ def _subtraction(self, other, strandedness):
     self_stranded = len(list(self.__ncls__.keys())[0]) == 2
     other_stranded = len(list(other.__ncls__.keys())[0]) == 2
 
-    # print("self", self.__ncls__.keys())
-    # print("other", other.__ncls__.keys())
-
-    # print("self")
-    # print(self)
-    # print("other")
-    # print(other)
-
     other_strand = {"+": "-", "-": "+"}
     same_strand = {"+": "+", "-": "-"}
 
@@ -649,54 +648,22 @@ def _subtraction(self, other, strandedness):
             # print("other_stranded", other_stranded, "self_stranded", self_stranded)
             ix_has_overlaps = other.__ncls__[key].has_overlaps(scdf.Start.values, scdf.End.values, scdf.index.values)
 
-        # print("self\n", self)
-        # print("other\n", other)
-        # print("idx_self", idx_self)
-        # print("scdf", scdf)
-        # print("idx_other", idx_other)
-        # print("odf", odf)
 
         if strandedness == "opposite":
             scdf = self_dfs[old_key]
-        else:
-            pass
 
         starts = np.where(overlap_type == 0, scdf.loc[idx_self, "Start"], odf.loc[idx_other, "End"])
         ends = np.where(overlap_type == 0, odf.loc[idx_other, "Start"], scdf.loc[idx_self, "End"])
         starts = pd.Series(starts, index=idx_self)
         ends = pd.Series(ends, index=idx_self)
 
-        # print("starts\n", starts)
-        # print("ends\n", ends)
-
-        # if len(key) == 2:
-        #     # need to swtich back in case opposite strand
-        #     _idxes[(key[0], strand_dict[key[1]]), "idx_self"] = idx_self
-        #     _idxes[(key[0], strand_dict[key[1]]), "idx_other"] = idx_other
-        #     _idxes[(key[0], strand_dict[key[1]]), "overlap_type"] = overlap_type
-        #     _idxes[(key[0], strand_dict[key[1]]), "ix_has_overlaps"] = ix_has_overlaps
-        # else:
-        #     _idxes[key, "idx_self"] = idx_self
-        #     _idxes[key, "idx_other"] = idx_other
-        #     _idxes[key, "overlap_type"] = overlap_type
-        #     _idxes[key, "ix_has_overlaps"] = ix_has_overlaps
-
-
         ix_no_overlaps = np.setdiff1d(scdf.index.values, ix_has_overlaps)
-        # print(scdf.index.values)
-        # print(ix_no_overlaps)
-
-        # no_overlaps = cdf.loc[ix_no_overlaps]
         idx = np.unique(np.concatenate([ix_no_overlaps, idx_self]))
         idx.sort(kind="mergesort")
-        # print(idx)
 
-        # print(scdf)
         scdf = scdf.loc[idx]
         scdf.loc[idx_self, "Start"] = starts
         scdf.loc[idx_self, "End"] = ends
-        # print("scdf", scdf)
-        # print(scdf)
 
         scdf = scdf.sort_values(["Start", "End"])
         dfs.append(scdf)

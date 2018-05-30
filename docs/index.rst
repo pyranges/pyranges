@@ -15,10 +15,13 @@ Welcome to pyranges's documentation!
    ranges_read
    ranges_subset
    ranges_manipulation
+   ranges_methods
    ranges_intersection
    ranges_overlap
    ranges_join
    ranges_nearest
+   ranges_set_operations
+   ranges_coverage
 
 .. toctree::
   :maxdepth: 0

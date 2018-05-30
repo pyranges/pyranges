@@ -213,11 +213,12 @@ class PyRanges():
         return str(self)
 
 
-    def overlap(self, other, strandedness=False, invert=False):
+    def overlap(self, other, strandedness=False, invert=False, how=None):
 
         "Want all intervals in self that overlap with other."
 
-        df = _overlap(self, other, strandedness, invert)
+        df = _overlap(self, other, strandedness, invert, how)
+
         return PyRanges(df)
 
 
@@ -240,9 +241,9 @@ class PyRanges():
         return PyRanges(df)
 
 
-    def set_intersection(self, other, strandedness=False):
+    def set_intersection(self, other, strandedness=False, how=None):
 
-        si = _set_intersection(self, other, strandedness)
+        si = _set_intersection(self, other, strandedness, how)
 
         return PyRanges(si)
 

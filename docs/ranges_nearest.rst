@@ -22,7 +22,9 @@ The nearest method takes a strandedness option, which can either be
    >>> gr.nearest(gr2, suffix="_Input", strandedness="opposite")
 
 The nearest method also takes a variable how, which can take the values
-:code:`"nonoverlapping"`, :code:`"next"`, :code:`"previous"`, :code:`"next_nonoverlapping"`, :code:`"previous_nonoverlapping"`:
+:code:`"nonoverlapping"`, :code:`"next"`, :code:`"previous"`,
+:code:`"next_nonoverlapping"`, :code:`"previous_nonoverlapping"`:. The default
+is to find the nearest overlapping interval, no matter which direction.
 
 .. runblock:: pycon
 

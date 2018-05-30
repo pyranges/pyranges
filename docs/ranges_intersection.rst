@@ -32,3 +32,16 @@ Both methods also take a strandedness option, which can either be :code:`"same"`
 
 .. [#] This is the same behavior as bedtools intersect.
 .. [#] This is the same behavior as Bioconductor GenomicRanges intersect.
+
+The intersection method also takes a how argument, which currently accepts the
+option :code:`"containment"`, which requires that the intervals in self be
+completely within the intervals in other.
+
+.. runblock:: pycon
+
+   >>> import pyranges as pr # ignore
+   >>> f1 = pr.load_dataset("f1")
+   >>> f1
+   >>> f2 = pr.load_dataset("f2")
+   >>> f2
+   >>> f2.intersection(f1, how="containment")
