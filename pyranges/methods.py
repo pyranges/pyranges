@@ -283,7 +283,10 @@ def _intersection(self, other, strandedness=None, how=None):
 
         dfs.append(scdf)
 
-    df = pd.concat(dfs)
+    if dfs:
+        df = pd.concat(dfs)
+    else:
+        df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
     return df
 
@@ -430,10 +433,15 @@ def _set_intersection(self, other, strandedness=None, how=None):
 def _set_union(self, other, strand):
 
     if strand:
-        assert "Strand" in self.df and "Strand" in other.df, \
+        assert self.stranded and other.stranded, \
             "Can only do stranded set union when both PyRanges contain strand info."
 
     from clustertree import find_clusters
+
+    if len(self) == 0:
+        return _cluster(other, strand=strand)
+    elif len(other) == 0:
+        return _cluster(self, strand=strand)
 
     dfs = []
 

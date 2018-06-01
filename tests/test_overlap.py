@@ -57,6 +57,20 @@ def test_overlap_invert_simple_granges(simple_gr1, simple_gr2, expected_result_s
     assert assert_df_equal(result.df, expected_result_subtract_simple_granges.df)
 
 
+def test_overlap_invert_simple_granges_return_df(simple_gr1, simple_gr2, expected_result_subtract_simple_granges):
+
+    result = simple_gr1.overlap(simple_gr2, invert=True, strandedness=False, df_only=True)
+
+    print(result)
+    print(expected_result_subtract_simple_granges)
+
+
+    print(result.dtypes)
+    print(expected_result_subtract_simple_granges.df.dtypes)
+
+    assert assert_df_equal(result, expected_result_subtract_simple_granges.df)
+
+
 
 @pytest.fixture
 def expected_result_overlap_same_strand_simple_granges():

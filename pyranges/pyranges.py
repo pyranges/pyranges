@@ -11,11 +11,6 @@ from pyranges.methods import (_overlap, _cluster, _tile, _intersection,
 
 from ncls import NCLS
 
-# try:
-#     dummy = profile
-# except:
-#     profile = lambda x: x
-
 
 def create_ncls(cdf):
 
@@ -68,6 +63,59 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
 
     return df
 
+
+def return_empty_if_one_empty(func):
+
+    def extended_func(self, other, **kwargs):
+
+        if len(self) == 0 or len(other) == 0:
+            df = pd.DataFrame(columns="Chromosome Start End Strand".split())
+        else:
+            df = func(self, other, **kwargs)
+
+        return df
+
+    return extended_func
+
+
+def return_empty_if_both_empty(func):
+
+    def extended_func(self, other, **kwargs):
+
+        if len(self) == 0 and len(other) == 0:
+            df = pd.DataFrame(columns="Chromosome Start End Strand".split())
+        else:
+            df = func(self, other, **kwargs)
+
+        return df
+
+    return extended_func
+
+
+def pyrange_or_df(func):
+
+    def extension(self, other, **kwargs):
+        df = func(self, other, **kwargs)
+
+        if kwargs.get("df_only"):
+            return df
+
+        return PyRanges(df)
+
+    return extension
+
+
+def pyrange_or_df_single(func):
+
+    def extension(self, **kwargs):
+        df = func(self, **kwargs)
+
+        if kwargs.get("df_only"):
+            return df
+
+        return PyRanges(df)
+
+    return extension
 
 
 class PyRanges():
@@ -125,6 +173,9 @@ class PyRanges():
         else:
             self.__dict__[name]
 
+    def __eq__(self, other):
+
+        return self.df.equals(other.df)
 
     def __getitem__(self, val):
 
@@ -213,74 +264,80 @@ class PyRanges():
         return str(self)
 
 
-    def overlap(self, other, strandedness=False, invert=False, how=None):
+    @pyrange_or_df
+    @return_empty_if_one_empty
+    def overlap(self, other, strandedness=False, invert=False, how=None, **kwargs):
 
         "Want all intervals in self that overlap with other."
 
         df = _overlap(self, other, strandedness, invert, how)
 
-        return PyRanges(df)
+        return df
 
-
-    def nearest(self, other, strandedness=False, is_sorted=False, suffix="_b", how=None):
+    @pyrange_or_df
+    @return_empty_if_one_empty
+    def nearest(self, other, strandedness=False, is_sorted=False, suffix="_b", how=None, **kwargs):
 
         "Find the nearest feature in other."
 
         df = _nearest(self, other, strandedness, suffix, is_sorted, how)
 
-        return PyRanges(df)
+        return df
 
-
+    @pyrange_or_df
+    @return_empty_if_one_empty
     def intersection(self, other, strandedness=False, how=None):
 
         "Want the parts of the intervals in self that overlap with other."
 
         df = _intersection(self, other, strandedness, how)
 
-        df.index.name = ""
-        return PyRanges(df)
+        return df
 
-
+    @pyrange_or_df
+    @return_empty_if_one_empty
     def set_intersection(self, other, strandedness=False, how=None):
 
         si = _set_intersection(self, other, strandedness, how)
 
-        return PyRanges(si)
+        return si
 
-
+    @pyrange_or_df
+    @return_empty_if_both_empty
     def set_union(self, other, strand=False):
 
         si = _set_union(self, other, strand)
 
-        return PyRanges(si)
+        return si
 
 
+    @pyrange_or_df
     def subtraction(self, other, strandedness=False):
 
-        return PyRanges(_subtraction(self, other, strandedness))
+        return _subtraction(self, other, strandedness)
 
 
+    @pyrange_or_df
+    @return_empty_if_one_empty
     def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], how=None):
 
         df = _overlap_write_both(self, other, strandedness, new_pos, suffixes, how)
 
-        return PyRanges(df)
+        return df
 
 
+    @pyrange_or_df_single
     def cluster(self, strand=None, df_only=False, max_dist=0, min_nb=1):
 
         df = _cluster(self, strand, max_dist, min_nb)
 
-        if not df_only:
-            return PyRanges(df)
-        else:
-            return df
+        return df
 
-
+    @pyrange_or_df_single
     def tile(self, tile_size=50):
 
         df = _tile(self, tile_size)
-        return PyRanges(df)
+        return df
 
 
     def coverage(self, value_col=None, stranded=False):
