@@ -564,6 +564,9 @@ def _subtraction(self, other, strandedness):
             "Can only do stranded set difference when both PyRanges contain strand info."
         strand = True
 
+    if len(self) == 0:
+        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+
     other = other.cluster(strand=strand)
 
     self_stranded = len(list(self.__ncls__.keys())[0]) == 2
