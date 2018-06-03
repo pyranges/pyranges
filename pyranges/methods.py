@@ -26,7 +26,7 @@ from collections import defaultdict
 
 def pick_out_indexes_possibly_nonunique(df, indexes, invert=False):
 
-    if isinstance(indexes, list):
+    if isinstance(indexes, list) and indexes:
         concat = np.concatenate(indexes)
         indexes = np.unique(concat)
 
@@ -416,7 +416,10 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
         dfs.append(_df)
 
 
-    df = pd.concat(dfs)
+    if dfs:
+        df = pd.concat(dfs)
+    else:
+        return pd.DataFrame(columns="Chromosome Start End Strand".split())
 
     return df
 
@@ -451,7 +454,6 @@ def _set_union(self, other, strand):
     else:
         grpby_key = "Chromosome"
         columns = "Chromosome Start End".split()
-
 
     self_dfs =  {k: d for k, d in self.df.groupby(grpby_key)}
     other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
@@ -551,7 +553,11 @@ def _nearest(self, other, strandedness, suffix="_b", is_sorted=False, how=None):
 
         dfs.append(result)
 
-    return pd.concat(dfs)
+
+    if dfs:
+        return pd.concat(dfs)
+    else:
+        return pd.DataFrame(columns="Chromosome Start End Strand".split())
 
 
 
@@ -566,6 +572,8 @@ def _subtraction(self, other, strandedness):
 
     if len(self) == 0:
         return pd.DataFrame(columns="Chromosome Start End Strand".split())
+    if len(other) == 0:
+        return self.df
 
     other = other.cluster(strand=strand)
 
@@ -679,4 +687,10 @@ def _subtraction(self, other, strandedness):
         scdf = scdf.sort_values(["Start", "End"])
         dfs.append(scdf)
 
-    return pd.concat(dfs)
+
+    if dfs:
+        df = pd.concat(dfs)
+    else:
+        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+
+    return df
