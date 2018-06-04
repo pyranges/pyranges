@@ -1,5 +1,5 @@
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.extra.pandas import data_frames, columns, range_indexes
 import hypothesis.strategies as st
 
@@ -35,8 +35,8 @@ df_large_or_small = st.one_of(dfs, large_dfs)
 strandedness = [False, "same", "opposite"]
 methods = ["set_intersection", "subtraction", "join", "intersection", "overlap"]
 
-@settings(deadline=300)
 @pytest.mark.parametrize("strandedness,method", product(strandedness, methods))
+@settings(deadline=300)
 @given(df=dfs, df2=dfs)
 def test_methods(df, df2, strandedness, method):
 
@@ -50,8 +50,8 @@ def test_methods(df, df2, strandedness, method):
 
 how = [False, "nonoverlapping", "previous_nonoverlapping", "next_nonoverlapping", "next", "previous"]
 
-@settings(deadline=300)
 @pytest.mark.parametrize("strandedness,how", product(strandedness, how))
+@settings(deadline=300)
 @given(df=dfs, df2=dfs)
 def test_nearest_methods_dont_fail(df, df2, strandedness, how):
 
