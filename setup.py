@@ -14,8 +14,8 @@ setup(
     package_data={'pyranges': ['example_data/*.bed', 'example_data/*.gtf',
                                'example_data/*.bam', 'example_data/*.bam.bai']},
     include_dirs=["."],
-    version="0.0.11",
-    description="PyRanges for Python.",
+    version="0.0.12",
+    description="GenomicRanges for Python.",
     author="Endre Bakken Stovner",
     author_email="endrebak85@gmail.com",
     url="http://github.com/endrebak/pyranges",
@@ -34,4 +34,4 @@ setup(
         "Topic :: Scientific/Engineering"
     ],
     long_description=
-    ("Performant Pythonic Genomic Ranges."))
+    ("Performant Pythonic GenomicRanges."))
