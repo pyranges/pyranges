@@ -1,5 +1,5 @@
 import pytest
-from hypothesis import given, settings, reproduce_failure
+from hypothesis import given, settings, reproduce_failure, unlimited
 from hypothesis.extra.pandas import data_frames, columns, range_indexes, column
 from hypothesis.extra.numpy import arrays
 import hypothesis.strategies as st
@@ -8,6 +8,14 @@ from itertools import product
 import tempfile
 import subprocess
 from io import StringIO
+
+from os import environ
+
+if environ.get("TRAVIS"):
+    max_examples = 100
+else:
+    max_examples = 500
+
 
 def mysort(tp):
 
@@ -21,13 +29,29 @@ def mysort(tp):
 chromosomes = st.sampled_from(["chr{}".format(str(e)) for e in list(range(1, 23)) + "X Y M".split()])
 
 positions = st.integers(min_value=0, max_value=int(1e7))
+lengths = st.integers(min_value=1, max_value=int(1e7))
 strands = st.sampled_from("+ -".split())
+
+
 dfs = data_frames(columns=columns("Chromosome Start End Strand".split(),
                                   dtype=int), rows=st.tuples(chromosomes, positions, positions,
                                                              strands).map(mysort))
 
 df_minsize = 1
 nonempty_dfs = data_frames(index=range_indexes(min_size=df_minsize),
+                           columns=columns("Chromosome Start End Strand".split(), dtype=int),
+                           rows=st.tuples(chromosomes, positions, positions, strands).map(mysort))
+
+
+better_df_minsize = 1
+better_dfs = data_frames(index=range_indexes(min_size=better_df_minsize),
+                         columns=[column("Chromosome", chromosomes),
+                                  column("Start", elements=positions),
+                                  column("End", elements=lengths),
+                                  column("Strand", strands)])
+
+large_df_minsize = 5
+large_dfs = data_frames(index=range_indexes(min_size=large_df_minsize),
                            columns=columns("Chromosome Start End Strand".split(), dtype=int),
                            rows=st.tuples(chromosomes, positions, positions, strands).map(mysort))
 
@@ -60,7 +84,7 @@ strandedness = [False, "same", "opposite"]
 methods = ["set_intersection", "subtraction", "join", "intersection", "overlap"]
 
 @pytest.mark.parametrize("strandedness,method", product(strandedness, methods))
-@settings(deadline=300)
+@settings(max_examples=max_examples, deadline=400, timeout=unlimited)
 @given(df=dfs, df2=dfs)
 def test_methods(df, df2, strandedness, method):
 
@@ -75,7 +99,7 @@ def test_methods(df, df2, strandedness, method):
 how = [False, "nonoverlapping", "previous_nonoverlapping", "next_nonoverlapping", "next", "previous"]
 
 @pytest.mark.parametrize("strandedness,how", product(strandedness, how))
-@settings(deadline=300)
+@settings(max_examples=max_examples, deadline=400, timeout=unlimited)
 @given(df=dfs, df2=dfs)
 def test_nearest_methods_dont_fail(df, df2, strandedness, how):
 
@@ -89,7 +113,7 @@ def test_nearest_methods_dont_fail(df, df2, strandedness, how):
 rle_commute_how = ["__add__", "__mul__"]
 
 @pytest.mark.parametrize("how", rle_commute_how)
-@settings(deadline=300)
+@settings(max_examples=max_examples, deadline=400, timeout=unlimited)
 @given(df=nonempty_dfs, df2=nonempty_dfs)
 def test_commutative_rles(df, df2, how):
 
@@ -107,7 +131,7 @@ def test_commutative_rles(df, df2, how):
 rle_inverse_how = [["__add__", "__sub__"], ["__truediv__", "__mul__"]]
 
 # @pytest.mark.parametrize("hows", rle_inverse_how)
-@settings(deadline=300)
+@settings(max_examples=max_examples, deadline=400, timeout=unlimited)
 @given(df=runlengths_same_length_integers)
 def test_inverse_div_mul_rles(df):
 
@@ -125,7 +149,7 @@ mul then div not being equal to identity function because of float equality."""
     assert np.all(np.equal(result2.runs, cv.runs))
     assert np.allclose(result2.values, cv.values)
 
-@settings(deadline=300)
+@settings(max_examples=max_examples, deadline=400, timeout=unlimited)
 @given(df=runlengths_same_length_integers)
 def test_inverse_add_sub_rles(df):
 
@@ -144,37 +168,82 @@ mul then div not being equal to identity function because of float equality."""
     assert np.allclose(result2.values, cv.values)
 
 
-# @settings(deadline=300)
-# @given(df=nonempty_dfs, df2=nonempty_dfs)
-# @reproduce_failure('3.57.0', b'AXicY2CAAUYoDQAAGgAC')
-# def test_nearest_equal_to_bedtools(df, df2):
+@settings(max_examples=max_examples, deadline=400, timeout=unlimited)
+@given(df=nonempty_dfs, df2=nonempty_dfs)
+def test_nearest_equal_to_bedtools(df, df2):
 
-#     result_df = None
-#     with tempfile.TemporaryDirectory() as temp_dir:
-#         f1 = "{}/f1.bed".format(temp_dir)
-#         f2 = "{}/f2.bed".format(temp_dir)
-#         df.to_csv(f1, sep="\t", header=False, index=False)
-#         df2.to_csv(f2, sep="\t", header=False, index=False)
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        df.to_csv(f1, sep="\t", header=False, index=False)
+        df2.to_csv(f2, sep="\t", header=False, index=False)
 
-#         cmd = "bedtools closest -d -a {} -b {}".format(f1, f2)
-#         result = subprocess.check_output(cmd, shell=True).decode()
+        cmd = "bedtools closest -t first -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})".format(f1, f2)
+        # print(cmd)
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
-#         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="C S E St C2 S2 E2 St2 Distance".split())
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="C S E St C2 S2 E2 St2 Distance".split())
 
-#         distances_bedtools = list(bedtools_df.Distance.values)
+        distances_bedtools = bedtools_df.Distance.values
+        distances_bedtools = [d for d in distances_bedtools if d >= 0]
 
-#     gr = pr.PyRanges(df)
-#     gr2 = pr.PyRanges(df2)
+    gr = pr.PyRanges(df)
+    gr2 = pr.PyRanges(df2)
 
-#     result = gr.nearest(gr2)
+    result = gr.nearest(gr2)
 
-#     if not result.df.empty:
-#         pyranges_distances = list(result.df.Distance.values)
-#     else:
-#         pyranges_distances = []
+    if not result.df.empty:
+        pyranges_distances = result.df.Distance.values
+    else:
+        pyranges_distances = []
 
-#     print("bedtools", distances_bedtools)
-#     print("bedtools_df", bedtools_df)
-#     print("pyranges", pyranges_distances)
 
-#     assert distances_bedtools == pyranges_distances
+    # print("bedtools", distances_bedtools)
+    # print("bedtools_df", bedtools_df)
+    # print("pyranges", pyranges_distances)
+    # print("pyranges_df", result)
+
+    assert sorted(distances_bedtools) == sorted(pyranges_distances)
+
+
+
+@settings(max_examples=max_examples, deadline=400, timeout=unlimited)
+@given(df=better_dfs, df2=better_dfs)
+def test_better_nearest_equal_to_bedtools(df, df2):
+
+    df.loc[:, "End"] += df.Start
+    df2.loc[:, "End"] += df2.Start
+
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        df.to_csv(f1, sep="\t", header=False, index=False)
+        df2.to_csv(f2, sep="\t", header=False, index=False)
+
+        cmd = "bedtools closest -t first -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})".format(f1, f2)
+        # print(cmd)
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="C S E St C2 S2 E2 St2 Distance".split())
+
+        distances_bedtools = bedtools_df.Distance.values
+        distances_bedtools = [d for d in distances_bedtools if d >= 0]
+
+    gr = pr.PyRanges(df)
+    gr2 = pr.PyRanges(df2)
+
+    result = gr.nearest(gr2)
+
+    if not result.df.empty:
+        pyranges_distances = result.df.Distance.values
+    else:
+        pyranges_distances = []
+
+    # print("bedtools", distances_bedtools)
+    # print("bedtools_df", bedtools_df)
+    # print("pyranges", pyranges_distances)
+    # print("pyranges_df", result)
+
+    assert sorted(distances_bedtools) == sorted(pyranges_distances)
