@@ -208,3 +208,127 @@ def test_simple_bed_with_scores(simple_bed, expected_result_simple_bed_values):
     print(result.values, expected_result_simple_bed_values.values)
     assert list(result.runs) == list(expected_result_simple_bed_values.runs)
     assert np.allclose(result.values, expected_result_simple_bed_values.values)
+
+# df = read.table("test.bed", header=FALSE)
+# bg_df = read.table("control.bed", header=FALSE)
+# > gr = GRanges(seqnames = df$V1,
+# +              ranges = IRanges(start = df$V2, end = df$V3), strand = df$V6)
+# >
+# > gr
+# GRanges object with 10000 ranges and 0 metadata columns:
+#           seqnames                 ranges strand
+#              <Rle>              <IRanges>  <Rle>
+#       [1]     chr8 [ 28510032,  28510057]      -
+#       [2]     chr7 [107153363, 107153388]      -
+#       [3]     chr5 [135821802, 135821827]      -
+#       [4]    chr14 [ 19418999,  19419024]      -
+#       [5]    chr12 [106679761, 106679786]      -
+#       ...      ...                    ...    ...
+#    [9996]     chr4 [153155301, 153155326]      +
+#    [9997]     chr9 [120803448, 120803473]      +
+#    [9998]     chr6 [ 89296757,  89296782]      -
+#    [9999]     chr1 [194245558, 194245583]      +
+#   [10000]     chr8 [ 57916061,  57916086]      +
+#   -------
+#   seqinfo: 24 sequences from an unspecified genome; no seqlengths
+# > bg_df
+# > bg_gr = GRanges(seqnames = bg_df$V1,
+# +              ranges = IRanges(start = bg_df$V2, end = bg_df$V3), strand = bg_df$V6)
+# >
+# > cbg = coverage(bg_gr)
+# > c = coverage(gr)
+# > c + cbg
+# RleList of length 25
+# $chr1
+# integer-Rle of length 247134924 with 3242 runs
+#   Lengths: 887770     26 106863     26  46416 ... 730067     26 259249     26
+#   Values :      0      1      0      1      0 ...      0      1      0      1
+
+# $chr10
+# integer-Rle of length 135184308 with 1830 runs
+#   Lengths: 122196     26 183504     26  44691 ...  43354     26  80887     26
+#   Values :      0      1      0      1      0 ...      0      1      0      1
+
+# $chr11
+# integer-Rle of length 134407943 with 1884 runs
+#   Lengths: 183570     26 114611     26  19735 ...   2576     26  97466     26
+#   Values :      0      1      0      1      0 ...      0      1      0      1
+
+# $chr12
+# integer-Rle of length 132153042 with 1916 runs
+#   Lengths: 124014     26 464843     26  32405 ...  16454     26   2826     26
+#   Values :      0      1      0      1      0 ...      0      1      0      1
+
+# $chr13
+# integer-Rle of length 114064253 with 1236 runs
+#   Lengths: 18236898       26   157375       26 ...       26    29952       26
+#   Values :        0        1        0        1 ...        1        0        1
+
+# ...
+# <20 more elements>
+# There were 26 warnings (use warnings() to see them)
+# > result = c + cbg
+# There were 26 warnings (use warnings() to see them)
+# > result["chrY"]
+# RleList of length 1
+# $chrY
+# integer-Rle of length 153847044 with 1096 runs
+#   Lengths: 2820035      26   34804      26 ...  113694      26   16734      26
+#   Values :       0       1       0       2 ...       0       1       0       1
+
+# > runValues(result["chrY"])
+# Error: could not find function "runValues"
+# > runValue(result["chrY"])
+# IntegerList of length 1
+# [["chrY"]] 0 1 0 2 0 2 0 2 0 1 0 1 0 1 0 1 ... 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+# > runValue(result[["chrY"]])
+#    [1] 0 1 0 2 0 2 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#   [38] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#   [75] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [112] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [149] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0
+#  [186] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [223] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [260] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1
+#  [297] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [334] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [371] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [408] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [445] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [482] 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [519] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [556] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [593] 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 2 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [630] 2 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 2 0 1 0 1
+#  [667] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [704] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 2
+#  [741] 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [778] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [815] 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [852] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 2 0 1 0 1
+#  [889] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+#  [926] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+#  [963] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+# [1000] 1 0 1 0 2 0 1 0 1 0 1 0 1 0 2 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+# [1037] 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2 0 1 0
+# [1074] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+# > sum(runLength(c))
+#      chr1     chr10     chr11     chr12     chr13     chr14     chr15     chr16
+# 247134924 135184308 134310451 130956155 114064253 106021297  99484340  87620182
+#     chr17     chr18     chr19      chr2     chr20     chr21     chr22      chr3
+#  76607176  76034254  63775899 242351150  62164654  45986669  48886512 199362640
+#      chr4      chr5      chr6      chr7      chr8      chr9      chrX      chrY
+# 190843795 180513820 169893543 158684288 146247528 140101127 153874131  22210662
+# > sum(runLength(c["chrY"]))
+#     chrY
+# 22210662
+# > sum(runLength(cbg["chrY"]))
+#     chrY
+# 57402239
+# > sum(runLength(cbg["chrY"])) - sum(runLength(cbg["chrY"]))
+# chrY
+#    0
+# > sum(runLength(cbg["chrY"])) - sum(runLength(c["chrY"]))
+#     chrY
+# 35191577
+# > Rlec["chrY"]
