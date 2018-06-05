@@ -5,6 +5,9 @@ from hypothesis.extra.numpy import arrays
 import hypothesis.strategies as st
 
 from itertools import product
+import tempfile
+import subprocess
+from io import StringIO
 
 def mysort(tp):
 
@@ -139,3 +142,39 @@ mul then div not being equal to identity function because of float equality."""
 
     assert np.all(np.equal(result2.runs, cv.runs))
     assert np.allclose(result2.values, cv.values)
+
+
+# @settings(deadline=300)
+# @given(df=nonempty_dfs, df2=nonempty_dfs)
+# @reproduce_failure('3.57.0', b'AXicY2CAAUYoDQAAGgAC')
+# def test_nearest_equal_to_bedtools(df, df2):
+
+#     result_df = None
+#     with tempfile.TemporaryDirectory() as temp_dir:
+#         f1 = "{}/f1.bed".format(temp_dir)
+#         f2 = "{}/f2.bed".format(temp_dir)
+#         df.to_csv(f1, sep="\t", header=False, index=False)
+#         df2.to_csv(f2, sep="\t", header=False, index=False)
+
+#         cmd = "bedtools closest -d -a {} -b {}".format(f1, f2)
+#         result = subprocess.check_output(cmd, shell=True).decode()
+
+#         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="C S E St C2 S2 E2 St2 Distance".split())
+
+#         distances_bedtools = list(bedtools_df.Distance.values)
+
+#     gr = pr.PyRanges(df)
+#     gr2 = pr.PyRanges(df2)
+
+#     result = gr.nearest(gr2)
+
+#     if not result.df.empty:
+#         pyranges_distances = list(result.df.Distance.values)
+#     else:
+#         pyranges_distances = []
+
+#     print("bedtools", distances_bedtools)
+#     print("bedtools_df", bedtools_df)
+#     print("pyranges", pyranges_distances)
+
+#     assert distances_bedtools == pyranges_distances

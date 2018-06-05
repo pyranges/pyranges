@@ -13,7 +13,7 @@ from io import StringIO
 def expected_result_unstranded():
 
  c = """Chromosome Start End Name Score Strand Start_b End_b Name_b Score_b Strand_b Distance
-0 chr1 3 6 h 0 + 6 7 f 0 - 0
+0 chr1 3 6 h 0 + 6 7 f 0 - 1
 1 chr1 5 7 h 0 - 6 7 f 0 - 0"""
 
  return PyRanges(pd.read_table(StringIO(c), sep=" "))
@@ -32,7 +32,7 @@ def test_nearest_bed_unstranded(f1, f2, expected_result_unstranded):
 def expected_result_opposite_stranded():
 
     c = """Chromosome Start End Name Score Strand Start_b End_b Name_b Score_b Strand_b Distance
-0 chr1 3 6 h 0 + 6 7 f 0 - 0"""
+0 chr1 3 6 h 0 + 6 7 f 0 - 1"""
 
     return PyRanges(pd.read_table(StringIO(c), sep=" "))
 

@@ -11,9 +11,8 @@ from tests.helpers import assert_df_equal
 @pytest.fixture
 def expected_result_previous_bed_opposite_stranded(names):
 
-    c = """chr1 3 6 h 0 + 6 7 f 0 - 0
-chr1 8 9 h 0 + 6 7 f 0 - 1
-chr1 5 7 h 0 - 1 2 f 0 + 3"""
+    c = """chr1 8 9 h 0 + 6 7 f 0 - 2
+chr1 5 7 h 0 - 1 2 f 0 + 4"""
 
     df = pd.read_table(StringIO(c), sep=" ", header=None, names="Chromosome  Start  End  Name Score Strand Start_b  End_b  Name_b Score_b Strand_b Distance".split())
     print(df)
@@ -35,9 +34,9 @@ def test_nearest_previous_bed_opposite_stranded(f1, f2, expected_result_previous
 @pytest.fixture
 def expected_result_previous_bed_same_stranded(names):
 
-    c = """0 chr1 3 6 h 0 + 1 2 f 0 + 1
+    c = """0 chr1 3 6 h 0 + 1 2 f 0 + 2
 1 chr1 5 7 h 0 - 6 7 f 0 - 0
-2 chr1 8 9 h 0 + 1 2 f 0 + 6"""
+2 chr1 8 9 h 0 + 1 2 f 0 + 7"""
 
     df = pd.read_table(StringIO(c), sep=" ", header=None, names="Chromosome  Start  End  Name Score Strand Start_b  End_b  Name_b Score_b Strand_b Distance".split())
     print(df)
@@ -56,9 +55,9 @@ def test_nearest_previous_bed_same_stranded(f1, f2, expected_result_previous_bed
 def expected_result_previous_bed_unstranded():
 
     c = """Chromosome Start End Name Score Strand Start_b End_b Name_b Score_b Strand_b Distance
-0 chr1 3 6 h 0 + 6 7 f 0 - 0
+0 chr1 3 6 h 0 + 1 2 f 0 + 2
 1 chr1 5 7 h 0 - 6 7 f 0 - 0
-2 chr1 8 9 h 0 + 6 7 f 0 - 1"""
+2 chr1 8 9 h 0 + 6 7 f 0 - 2"""
 
     df = pd.read_table(StringIO(c), sep=" ", header=0)
     print(df)

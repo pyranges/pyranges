@@ -535,11 +535,11 @@ def _nearest(self, other, strandedness, suffix="_b", is_sorted=False, how=None):
         ocdf.index = range(len(ocdf))
 
         if how == "next_nonoverlapping":
-            r_idx, dist = func(scdf.End.values, ocdf.Start.values)
+            r_idx, dist = func(scdf.End.values - 1, ocdf.Start.values)
         elif how == "previous_nonoverlapping":
-            r_idx, dist = func(scdf.Start.values, ocdf.End.values)
+            r_idx, dist = func(scdf.Start.values, ocdf.End.values - 1)
         else:
-            r_idx, dist = func(scdf.Start.values, scdf.End.values, ocdf.Start.values, ocdf.End.values)
+            r_idx, dist = func(scdf.Start.values, scdf.End.values - 1, ocdf.Start.values, ocdf.End.values - 1)
 
         ocdf = ocdf.reindex(r_idx, fill_value=0) # instead of np.nan, so ints are not promoted
         ocdf.index = scdf.index
