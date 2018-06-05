@@ -63,7 +63,7 @@ def _overlap(self, other, strandedness, invert, how=None):
             strand = strand_dict[strand]
             it = other.__ncls__[chromosome, strand]
             if how == "containment":
-                indexes = has_containment(starts, ends, indexes)
+                indexes = it.has_containment(starts, ends, indexes)
             else:
                 indexes = it.has_overlaps(starts, ends, indexes)
 
