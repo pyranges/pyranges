@@ -7,9 +7,9 @@ import itertools
 # from multiprocessing import Process
 # from joblib import Parallel, delayed
 
-from sorted_nearest import (nearest, nearest_nonoverlapping,
-                            nearest_previous_nonoverlapping, nearest_next_nonoverlapping, nearest_next,
-                            nearest_previous)
+from sorted_nearest import (nearest_previous_nonoverlapping, nearest_next_nonoverlapping)
+#nearest_next,
+# nearest_previous)(nearest, nearest_nonoverlapping,
 
 from collections import OrderedDict
 
@@ -492,16 +492,16 @@ def _set_union(self, other, strand):
     return df
 
 
-how_nearest={None: nearest,
-             False: nearest,
-             "nonoverlapping": nearest_nonoverlapping,
+how_nearest={#None: nearest,
+             #False: nearest,
+             #"nonoverlapping": nearest_nonoverlapping,
              "previous_nonoverlapping": nearest_previous_nonoverlapping,
-             "next_nonoverlapping": nearest_next_nonoverlapping,
-             "next": nearest_next,
-             "previous": nearest_previous}
+             "next_nonoverlapping": nearest_next_nonoverlapping}
+             #"next": nearest_next,
+             #"previous": nearest_previous}
 
 
-def _nearest(self, other, strandedness, suffix="_b", is_sorted=False, how=None):
+def _nearest(self, other, strandedness, suffix="_b", how=None):
 
     func = how_nearest[how]
 
@@ -528,26 +528,33 @@ def _nearest(self, other, strandedness, suffix="_b", is_sorted=False, how=None):
 
         ocdf = other_dfs[key]
 
-        if not is_sorted:
-            ocdf = ocdf.sort_values("Start End".split())
-            scdf = scdf.sort_values("Start End".split())
-
         ocdf.index = range(len(ocdf))
 
         if how == "next_nonoverlapping":
-            r_idx, dist = func(scdf.End.values - 1, ocdf.Start.values)
+            left_ends = scdf.End.sort_values()
+            r_idx, dist = func(left_ends.values - 1, ocdf.Start.values)
+            r_idx = pd.Series(r_idx, index=left_ends.index).sort_index()
+            dist = pd.Series(dist, index=left_ends.index).sort_index()
         elif how == "previous_nonoverlapping":
-            r_idx, dist = func(scdf.Start.values, ocdf.End.values - 1)
+            right_ends = ocdf.End.sort_values()
+            # print("right_ends\n", right_ends)
+            r_idx, dist = func(scdf.Start.values, right_ends.values - 1, right_ends.index.values)
+            print("r_idx\n", r_idx)
+            # r_idx = r_idx[r_idx != -1]
+            # dist = dist[dist != -1]
+            # right_ends = right_ends.loc[r_idx]
+            print("r_idx\n", r_idx)
+            print("dist\n", dist)
         else:
             r_idx, dist = func(scdf.Start.values, scdf.End.values - 1, ocdf.Start.values, ocdf.End.values - 1)
 
         ocdf = ocdf.reindex(r_idx, fill_value=0) # instead of np.nan, so ints are not promoted
         ocdf.index = scdf.index
-        ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index))
+        ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
         ocdf.drop("Chromosome", axis=1, inplace=True)
 
         r_idx = pd.Series(r_idx, index=scdf.index)
-        scdf.drop(r_idx[r_idx == -1].index, inplace=True)
+        # scdf.drop(r_idx[r_idx == -1].index, inplace=True)
 
         result = scdf.join(ocdf, rsuffix=suffix)
 

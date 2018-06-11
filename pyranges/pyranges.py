@@ -276,11 +276,11 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def nearest(self, other, strandedness=False, is_sorted=False, suffix="_b", how=None, **kwargs):
+    def nearest(self, other, strandedness=False, suffix="_b", how=None, **kwargs):
 
         "Find the nearest feature in other."
 
-        df = _nearest(self, other, strandedness, suffix, is_sorted, how)
+        df = _nearest(self, other, strandedness, suffix, how)
 
         return df
 
