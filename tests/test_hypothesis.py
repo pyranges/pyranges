@@ -183,10 +183,12 @@ mul then div not being equal to identity function because of float equality."""
 
 nearest_commands = ["bedtools closest -t first -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})",
                     "bedtools closest -t first -io -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"]
-nearest_hows = [None, "nonoverlapping"]
+nearest_hows = [None, None]
+overlaps = [True, False]
 
-nearest_commands = nearest_commands[1:]
-nearest_hows = nearest_hows[1:]
+nearest_commands = nearest_commands[:1]
+nearest_hows = nearest_hows[:1]
+overlaps = overlaps[:1]
 
 
 @pytest.mark.parametrize("nearest_command,nearest_how", zip(nearest_commands, nearest_hows))
@@ -229,11 +231,10 @@ def test_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how):
     assert sorted(distances_bedtools) == sorted(pyranges_distances)
 
 
-@pytest.mark.parametrize("nearest_command,nearest_how", zip(nearest_commands, nearest_hows))
+@pytest.mark.parametrize("nearest_command,nearest_how,overlap", zip(nearest_commands, nearest_hows,overlaps))
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(df=better_dfs_min, df2=better_dfs_min)
-def test_better_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how):
-
+def test_better_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how, overlap):
 
     df.loc[:, "End"] += df.Start
     df2.loc[:, "End"] += df2.Start
@@ -255,13 +256,15 @@ def test_better_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how)
 
         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="C S E St C2 S2 E2 St2 Distance".split())
 
-        distances_bedtools = bedtools_df.Distance.values
-        distances_bedtools = [d for d in distances_bedtools if d >= 0]
+        bedtools_distances = bedtools_df.Distance.values
+        bedtools_distances = [d for d in bedtools_distances if d >= 0]
 
     gr = pr.PyRanges(df)
     gr2 = pr.PyRanges(df2)
 
-    result = gr.nearest(gr2, how=nearest_how)
+    print("nearest_how", nearest_how)
+    print("overlap", overlap)
+    result = gr.nearest(gr2, how=nearest_how, overlap=overlap)
     result_df = result.df.copy()
 
     if not result.df.empty:
@@ -269,9 +272,52 @@ def test_better_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how)
     else:
         pyranges_distances = []
 
-    print("bedtools", distances_bedtools)
+    print("bedtools", bedtools_distances)
     print("bedtools_df", bedtools_df)
     print("pyranges", pyranges_distances)
     print("pyranges_df", result)
 
-    assert sorted(distances_bedtools) == sorted(pyranges_distances)
+    # assert bedtools_distances == pyranges_distances
+    # [x for _,x in sorted(zip(Y,X))]
+    # starts_pyranges = [x for _,x in sorted(zip(pyranges_distances, df.Start))]
+    # ends_pyranges = [x for _,x in sorted(zip(pyranges_distances, df.End))]
+    # starts_bedtools = [x for _,x in sorted(zip(bedtools_distances, df.Start))]
+    # ends_bedtools = [x for _,x in sorted(zip(bedtools_distances, df.End))]
+    assert sorted(bedtools_distances) == sorted(pyranges_distances)
+    # assert starts_pyranges == starts_bedtools
+    # assert ends_pyranges == ends_bedtools
+
+
+
+
+# @pytest.mark.parametrize("nearest_command,nearest_how,overlap", zip(nearest_commands, nearest_hows,overlaps))
+# @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+# @given(df=better_dfs_min, df2=better_dfs_min)
+# def test_better_nearest(df, df2, nearest_command, nearest_how, overlap):
+
+#     df.loc[:, "End"] += df.Start
+#     df2.loc[:, "End"] += df2.Start
+#     print("dfs")
+#     print(df.to_csv(sep="\t", header=False, index=False))
+#     print(df2.to_csv(sep="\t", header=False, index=False))
+
+#     gr = pr.PyRanges(df)
+#     gr2 = pr.PyRanges(df2)
+
+#     print("nearest_how", nearest_how)
+#     print("overlap", overlap)
+#     result = gr.nearest(gr2, how=nearest_how, overlap=overlap)
+#     result_df = result.df.copy()
+
+#     if not result.df.empty:
+#         pyranges_distances = result_df.Distance.tolist()
+#     else:
+#         pyranges_distances = []
+
+#     print("bedtools", distances_bedtools)
+#     print("bedtools_df", bedtools_df)
+#     print("pyranges", pyranges_distances)
+#     print("pyranges_df", result)
+
+#     # assert distances_bedtools == pyranges_distances
+#     assert sorted(distances_bedtools) == sorted(pyranges_distances)

@@ -87,7 +87,7 @@ chr1 10241 10440 HWI-ST216_313:3:1302:4516:156396 1 - 10073 10272 HWI-ST216:427:
 
 def test_nearest_bed_opposite_stranded(chip_10_plus_one, input_10, expected_result_opposite_stranded):
 
-    result = chip_10_plus_one.nearest(input_10, strandedness="opposite", suffix="_b")
+    result = chip_10_plus_one.nearest(input_10, strandedness="opposite", suffix="_b", overlap=True)
 
     print(result.df.to_csv(sep=" "))
 

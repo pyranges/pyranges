@@ -606,14 +606,14 @@ chr1    2       3       +"""
 @pytest.fixture()
 def expected_result_counterexample12():
 
-    c = """chr1  3  4  +  1   3   +         1
+    c = """chr1  3  4  +  2   3   +         1
 chr1  4  5  +  0   4   +         1"""
 
     return PyRanges(pd.read_table(StringIO(c), sep="\s+", header=None,
                                   names="Chromosome Start End Strand Start_b End_b Strand_b Distance".split()))
 
 
-def test_hypothesis_counterexample12(hyp25, hyp26, expected_result_counterexample10):
+def test_hypothesis_counterexample12(hyp25, hyp26, expected_result_counterexample12):
 
      print(hyp25)
      print(hyp26)
@@ -624,4 +624,63 @@ def test_hypothesis_counterexample12(hyp25, hyp26, expected_result_counterexampl
      # assert 0
      # print(PyRanges(result.df.tail()))
 
-     assert assert_df_equal(result.df, expected_result_counterexample10.df)
+     assert assert_df_equal(result.df, expected_result_counterexample12.df)
+
+
+
+@pytest.fixture()
+def expected_result_counterexample13():
+
+    c = """chr1 3538885 3832293 + 0 1 + 3538885
+chr1 4426346 9655531 + 0 1 + 4426346"""
+
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+", header=None,
+                                  names="Chromosome Start End Strand Start_b End_b Strand_b Distance".split()))
+
+
+@pytest.fixture()
+def hyp27():
+
+    c = """chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0  5726225      +
+chr1  3538885  3832293      +
+chr1  4426346  9655531      +"""
+
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+", header=None, names="Chromosome Start End Strand".split()))
+
+
+@pytest.fixture()
+def hyp28():
+
+    c = """chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1  5726225  5726228      +"""
+
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+", header=None, names="Chromosome Start End Strand".split()))
+
+def test_hypothesis_counterexample13(hyp27, hyp28, expected_result_counterexample13):
+
+     print(hyp27)
+     print(hyp2)
+
+     result = hyp27.nearest(hyp28, how="previous_nonoverlapping")
+
+     print(result)
+     # assert 0
+     # print(PyRanges(result.df.tail()))
+     assert assert_df_equal(result.df, expected_result_counterexample13.df)

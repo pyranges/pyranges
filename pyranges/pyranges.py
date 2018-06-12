@@ -6,8 +6,8 @@ from tabulate import tabulate
 
 from pyranges.methods import (_overlap, _cluster, _tile, _intersection,
                               _coverage, _overlap_write_both,
-                              _set_intersection, _set_union, _subtraction,
-                              _nearest)
+                              _set_intersection, _set_union, _subtraction, _nearest)
+
 
 from ncls import NCLS
 
@@ -276,11 +276,11 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def nearest(self, other, strandedness=False, suffix="_b", how=None, **kwargs):
+    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, **kwargs):
 
         "Find the nearest feature in other."
 
-        df = _nearest(self, other, strandedness, suffix, how)
+        df = _nearest(self, other, strandedness, suffix, how, overlap)
 
         return df
 

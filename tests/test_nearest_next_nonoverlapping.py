@@ -435,3 +435,70 @@ def test_hypothesis_counterexample6(hyp13, hyp14):
      # print(PyRanges(result.df.tail()))
 
      assert result.df.empty
+
+
+
+@pytest.fixture()
+def expected_result_counterexample6():
+
+    c = """chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 1 + 5726225 5726228 + 5726225
+chr1 0 5726225 + 5726225 5726228 + 1
+chr1 3538885 3832293 + 5726225 5726228 + 1893933"""
+
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+", header=None,
+                                  names="Chromosome Start End Strand Start_b End_b Strand_b Distance".split()))
+
+
+@pytest.fixture()
+def hyp15():
+
+    c = """chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0  5726225      +
+chr1  3538885  3832293      +
+chr1  4426346  9655531      +"""
+
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+", header=None, names="Chromosome Start End Strand".split()))
+
+
+@pytest.fixture()
+def hyp16():
+
+    c = """chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1        0        1      +
+chr1  5726225  5726228      +"""
+
+    return PyRanges(pd.read_table(StringIO(c), sep="\s+", header=None, names="Chromosome Start End Strand".split()))
+
+def test_hypothesis_counterexample6(hyp15, hyp16, expected_result_counterexample6):
+
+     print(hyp15)
+     print(hyp16)
+
+     result = hyp15.nearest(hyp16, how="next_nonoverlapping")
+
+     print(result)
+     # assert 0
+     # print(PyRanges(result.df.tail()))
+     assert assert_df_equal(result.df, expected_result_counterexample6.df)
