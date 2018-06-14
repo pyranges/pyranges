@@ -27,7 +27,7 @@ def test_nearest_bed_unstranded(f1, f2, expected_result_unstranded):
     print(f1)
     print(f2)
 
-    result = f1.nearest(f2, strandedness=False, suffix="_b", how="previous_nonoverlapping")
+    result = f1.nearest(f2, strandedness=False, suffix="_b", how="previous", overlap=False)
 
     print(result.df.to_csv(sep=" "))
 
@@ -46,7 +46,7 @@ def expected_result_opposite_stranded():
 
 def test_nearest_bed_opposite_stranded(chip_10_plus_one, input_10, expected_result_opposite_stranded):
 
-    result = chip_10_plus_one.nearest(input_10, strandedness="opposite", suffix="_b", how="previous_nonoverlapping")
+    result = chip_10_plus_one.nearest(input_10, strandedness="opposite", suffix="_b", how="previous", overlap=False)
 
     print("result", result.df.to_csv(sep=" "))
 
@@ -68,7 +68,7 @@ def test_nearest_bed_same_stranded(chip_10_plus_one, input_10, expected_result_s
     print(chip_10_plus_one)
     print(input_10)
 
-    result = chip_10_plus_one.nearest(input_10, strandedness="same", suffix="_b", how="previous_nonoverlapping")
+    result = chip_10_plus_one.nearest(input_10, strandedness="same", suffix="_b", how="previous", overlap=False)
 
     assert assert_df_equal(result.df, expected_result_same_stranded.df)
 
@@ -105,7 +105,7 @@ def test_hypothesis_counterexample(hyp1, hyp2, expected_result_counterexample1):
      print(hyp1)
      print(hyp2)
 
-     result = hyp1.nearest(hyp2, how="previous_nonoverlapping")
+     result = hyp1.nearest(hyp2, how="previous", overlap=False)
 
      print(result)
      # assert 0
@@ -144,7 +144,7 @@ def test_hypothesis_counterexample2(hyp3, hyp4, expected_result_counterexample2)
      print(hyp3)
      print(hyp4)
 
-     result = hyp3.nearest(hyp4, how="previous_nonoverlapping")
+     result = hyp3.nearest(hyp4, how="previous", overlap=False)
 
      print(result)
      # assert 0
@@ -173,7 +173,7 @@ def test_hypothesis_counterexample3(hyp5, hyp6):
      print(hyp5)
      print(hyp6)
 
-     result = hyp5.nearest(hyp6, how="previous_nonoverlapping")
+     result = hyp5.nearest(hyp6, how="previous", overlap=False)
 
      print(result)
      # assert 0
@@ -214,7 +214,7 @@ def test_hypothesis_counterexample4(hyp7, hyp8, expected_result_counterexample4)
      print(hyp7)
      print(hyp8)
 
-     result = hyp7.nearest(hyp8, how="previous_nonoverlapping")
+     result = hyp7.nearest(hyp8, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -244,7 +244,7 @@ def test_hypothesis_counterexample5(hyp9, hyp10):
      print(hyp9)
      print(hyp10)
 
-     result = hyp9.nearest(hyp10, how="previous_nonoverlapping")
+     result = hyp9.nearest(hyp10, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -284,7 +284,7 @@ def test_hypothesis_counterexample6(hyp11, hyp12, expected_result_counterexample
      print(hyp11)
      print(hyp12)
 
-     result = hyp11.nearest(hyp12, how="previous_nonoverlapping")
+     result = hyp11.nearest(hyp12, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -331,7 +331,7 @@ def test_minus(minus_chip, minus_input, expected_result_minus):
      print(minus_chip)
      print(minus_input)
 
-     result = minus_chip.nearest(minus_input, how="previous_nonoverlapping")
+     result = minus_chip.nearest(minus_input, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -382,7 +382,7 @@ def test_hypothesis_counterexample6(hyp13, hyp14, expected_result_counterexample
      print(hyp13)
      print(hyp14)
 
-     result = hyp13.nearest(hyp14, how="previous_nonoverlapping")
+     result = hyp13.nearest(hyp14, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -422,7 +422,7 @@ def test_hypothesis_counterexample7(hyp15, hyp16):
      print(hyp15)
      print(hyp16)
 
-     result = hyp15.nearest(hyp16, how="previous_nonoverlapping")
+     result = hyp15.nearest(hyp16, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -463,7 +463,7 @@ def test_hypothesis_counterexample8(hyp17, hyp18, expected_result_counterexample
      print(hyp17)
      print(hyp18)
 
-     result = hyp17.nearest(hyp18, how="previous_nonoverlapping")
+     result = hyp17.nearest(hyp18, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -503,7 +503,7 @@ def test_hypothesis_counterexample9(hyp19, hyp20, expected_result_counterexample
      print(hyp19)
      print(hyp20)
 
-     result = hyp19.nearest(hyp20, how="previous_nonoverlapping")
+     result = hyp19.nearest(hyp20, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -543,7 +543,7 @@ def test_hypothesis_counterexample10(hyp21, hyp22, expected_result_counterexampl
      print(hyp21)
      print(hyp22)
 
-     result = hyp21.nearest(hyp22, how="previous_nonoverlapping")
+     result = hyp21.nearest(hyp22, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -574,7 +574,7 @@ def test_hypothesis_counterexample11(hyp23, hyp24):
      print(hyp23)
      print(hyp24)
 
-     result = hyp23.nearest(hyp24, how="previous_nonoverlapping")
+     result = hyp23.nearest(hyp24, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -618,7 +618,7 @@ def test_hypothesis_counterexample12(hyp25, hyp26, expected_result_counterexampl
      print(hyp25)
      print(hyp26)
 
-     result = hyp25.nearest(hyp26, how="previous_nonoverlapping")
+     result = hyp25.nearest(hyp26, how="previous", overlap=False)
 
      print(result.df)
      # assert 0
@@ -678,7 +678,7 @@ def test_hypothesis_counterexample13(hyp27, hyp28, expected_result_counterexampl
      print(hyp27)
      print(hyp2)
 
-     result = hyp27.nearest(hyp28, how="previous_nonoverlapping")
+     result = hyp27.nearest(hyp28, how="previous", overlap=False)
 
      print(result)
      # assert 0

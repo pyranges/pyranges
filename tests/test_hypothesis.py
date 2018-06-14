@@ -9,6 +9,7 @@ import tempfile
 import subprocess
 from io import StringIO
 
+from pyranges import PyRanges
 
 
 from os import environ
@@ -17,7 +18,7 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 500000
+    max_examples = 5000
     deadline = None
 
 
@@ -63,6 +64,12 @@ better_dfs_min = data_frames(index=range_indexes(min_size=better_df_minsize),
                                       column("Strand", strands)])
 
 
+better_dfs_min_nostrand = data_frames(index=range_indexes(min_size=better_df_minsize),
+                             columns=[column("Chromosome", chromosomes_small),
+                                      column("Start", elements=small_lengths),
+                                      column("End", elements=small_lengths)])
+
+
 large_df_minsize = 5
 large_dfs = data_frames(index=range_indexes(min_size=large_df_minsize),
                            columns=columns("Chromosome Start End Strand".split(), dtype=int),
@@ -79,9 +86,9 @@ runlengths = data_frames(index=range_indexes(min_size=df_minsize),
 
 
 runlengths_same_length_integers = data_frames(index=range_indexes(min_size=df_minsize),
-                                              columns=[column("Runs", st.integers(min_value=1, max_value=int(1e5))),
-                                              column("Values", st.integers(min_value=1, max_value=int(1e5))),
-                                              column("Values2", st.integers(min_value=1, max_value=int(1e5)))])
+                                              columns=[column("Runs", st.integers(min_value=1, max_value=int(1e4))),
+                                              column("Values", st.integers(min_value=1, max_value=int(1e4))),
+                                              column("Values2", st.integers(min_value=1, max_value=int(1e4)))])
 
 
 # runs = arrays(st.integers(min_value=1, max_value=int(1e5)), shape=)
@@ -94,39 +101,147 @@ import numpy as np
 
 
 strandedness = [False, "same", "opposite"]
-methods = ["set_intersection", "subtraction", "join", "intersection", "overlap"]
+methods = ["join", "intersection", "overlap"]
 
-@pytest.mark.parametrize("strandedness,method", product(strandedness, methods))
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited)
-@given(df=dfs, df2=dfs)
-def test_methods(df, df2, strandedness, method):
+# strandedness = strandedness[1:2]
+# methods = methods[1:2]
+
+set_intersection_command = "bedtools intersect -a <(sort -k1,1 -k2,2n {} | bedtools merge -i -) -b <(sort -k1,1 -k2,2n {} | bedtools merge -i -)"
+
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(df=better_dfs_min_nostrand, df2=better_dfs_min_nostrand)
+def test_set_intersection(df, df2):
+
+    df.loc[:, "End"] += df.Start
+    df2.loc[:, "End"] += df2.Start
 
     gr = pr.PyRanges(df)
     gr2 = pr.PyRanges(df2)
 
-    method = getattr(gr, method)
-    result = method(gr2, strandedness=strandedness)
+    print(gr)
+    print(gr2)
 
-    assert isinstance(result, pr.PyRanges)
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        df.to_csv(f1, sep="\t", header=False, index=False)
+        df2.to_csv(f2, sep="\t", header=False, index=False)
+
+        cmd = set_intersection_command.format(f1, f2)
+
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End".split())
+
+    result = gr.set_intersection(gr2)
+    print("result\n", result.df)
+    print("bedtools_df\n", bedtools_df)
+
+    if not bedtools_df.empty:
+        assert bedtools_df.equals(result.df)
+    else:
+        assert bedtools_df.empty == result.df.empty
+
+
+set_union_command = "bedtools merge -i <(sort -k1,1 -k2,2n --merge <(sort -k1,1 -k2,2n {} | bedtools merge -i -) <(sort -k1,1 -k2,2n {} | bedtools merge -i -))"
+
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(df=better_dfs_min_nostrand, df2=better_dfs_min_nostrand)
+def test_set_union(df, df2):
+
+    df.loc[:, "End"] += df.Start
+    df2.loc[:, "End"] += df2.Start
+
+    gr = pr.PyRanges(df)
+    gr2 = pr.PyRanges(df2)
+
+    print(gr)
+    print(gr2)
+
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        df.to_csv(f1, sep="\t", header=False, index=False)
+        df2.to_csv(f2, sep="\t", header=False, index=False)
+
+        cmd = set_union_command.format(f1, f2)
+
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End".split())
+
+    result = gr.set_union(gr2)
+    print("result\n", result)
+    print("bedtools_df\n", PyRanges(bedtools_df))
+
+    if not bedtools_df.empty:
+        assert bedtools_df.equals(result.df)
+    else:
+        assert bedtools_df.empty == result.df.empty
+
+subtraction_command = "bedtools subtract -a {} -b {}"
+
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(df=better_dfs_min, df2=better_dfs_min)
+def test_subtraction(df, df2):
+
+    df.loc[:, "End"] += df.Start
+    df2.loc[:, "End"] += df2.Start
+
+    gr = pr.PyRanges(df)
+    gr2 = pr.PyRanges(df2)
+
+    print(gr)
+    print(gr2)
+
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        df.to_csv(f1, sep="\t", header=False, index=False)
+        df2.to_csv(f2, sep="\t", header=False, index=False)
+
+        cmd = subtraction_command.format(f1, f2)
+
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Strand".split())
+
+    result = gr.subtraction(gr2)
+    print("result\n", result)
+    print("bedtools_df\n", PyRanges(bedtools_df))
+
+    if not bedtools_df.empty:
+        assert bedtools_df.equals(result.df)
+    else:
+        assert bedtools_df.empty == result.df.empty
+
+# @pytest.mark.parametrize("strandedness,method", product(strandedness, methods))
+# @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited)
+# @given(df=dfs, df2=dfs)
+# def test_methods(df, df2, strandedness, method):
+
+#     gr = pr.PyRanges(df)
+#     gr2 = pr.PyRanges(df2)
+
+#     method = getattr(gr, method)
+#     result = method(gr2, strandedness=strandedness)
+
+#     print("\n" * 3)
+#     print(gr)
+#     print(gr2)
+#     print(result)
+
+#     assert isinstance(result, pr.PyRanges)
 
 how = [False, "nonoverlapping", "previous_nonoverlapping", "next_nonoverlapping", "next", "previous"]
-
-@pytest.mark.parametrize("strandedness,how", product(strandedness, how))
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited)
-@given(df=dfs, df2=dfs)
-def test_nearest_methods_dont_fail(df, df2, strandedness, how):
-
-    gr = pr.PyRanges(df)
-    gr2 = pr.PyRanges(df2)
-
-    result = gr.nearest(gr2, strandedness=strandedness, how=how)
-
-    assert isinstance(result, pr.PyRanges)
 
 rle_commute_how = ["__add__", "__mul__"]
 
 @pytest.mark.parametrize("how", rle_commute_how)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited)
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(df=nonempty_dfs, df2=nonempty_dfs)
 def test_commutative_rles(df, df2, how):
 
@@ -144,7 +259,7 @@ def test_commutative_rles(df, df2, how):
 rle_inverse_how = [["__add__", "__sub__"], ["__truediv__", "__mul__"]]
 
 # @pytest.mark.parametrize("hows", rle_inverse_how)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited)
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(df=runlengths_same_length_integers)
 def test_inverse_div_mul_rles(df):
 
@@ -155,14 +270,20 @@ mul then div not being equal to identity function because of float equality."""
 
     cv2 = Rle(np.random.permutation(df.Runs.values), df.Values2.values)
 
+    print(cv)
+    print(cv2)
+
     result = cv / cv2
 
     result2 = result * cv2
 
+    print(result)
+    print(result2)
+
     assert np.all(np.equal(result2.runs, cv.runs))
     assert np.allclose(result2.values, cv.values)
 
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited)
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(df=runlengths_same_length_integers)
 def test_inverse_add_sub_rles(df):
 
@@ -186,16 +307,15 @@ nearest_commands = ["bedtools closest -t first -d -a <(sort -k1,1 -k2,2n {}) -b 
 nearest_hows = [None, None]
 overlaps = [True, False]
 
-nearest_commands = nearest_commands[:1]
-nearest_hows = nearest_hows[:1]
-overlaps = overlaps[:1]
+# nearest_commands = nearest_commands[1:]
+# nearest_hows = nearest_hows[1:]
+# overlaps = overlaps[1:]
 
 
-@pytest.mark.parametrize("nearest_command,nearest_how", zip(nearest_commands, nearest_hows))
+@pytest.mark.parametrize("nearest_command,nearest_how,overlap", zip(nearest_commands, nearest_hows,overlaps))
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(df=nonempty_dfs, df2=nonempty_dfs)
-@reproduce_failure('3.57.0', b'AXicY2RgYGACIwZmIGJkAAMgkwHIZAQAATMAEg==')
-def test_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how):
+def test_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how, overlap):
 
     result_df = None
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -216,7 +336,11 @@ def test_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how):
     gr = pr.PyRanges(df)
     gr2 = pr.PyRanges(df2)
 
-    result = gr.nearest(gr2, how=nearest_how)
+    print(gr)
+    print(gr2)
+
+    result = gr.nearest(gr2, how=nearest_how, overlap=overlap)
+    print(result)
 
     if not result.df.empty:
         pyranges_distances = result.df.Distance.values
@@ -235,6 +359,7 @@ def test_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how):
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(df=better_dfs_min, df2=better_dfs_min)
 def test_better_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how, overlap):
+
 
     df.loc[:, "End"] += df.Start
     df2.loc[:, "End"] += df2.Start
@@ -321,3 +446,58 @@ def test_better_nearest_equal_to_bedtools(df, df2, nearest_command, nearest_how,
 
 #     # assert distances_bedtools == pyranges_distances
 #     assert sorted(distances_bedtools) == sorted(pyranges_distances)
+
+
+@pytest.mark.parametrize("nearest_command,nearest_how,overlap", zip(nearest_commands, nearest_hows,overlaps))
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(df=better_dfs_min, df2=better_dfs_min)
+def test_join(df, df2, nearest_command, nearest_how, overlap):
+
+    df.loc[:, "End"] += df.Start
+    df2.loc[:, "End"] += df2.Start
+    print("dfs")
+    print(df.to_csv(sep="\t", header=False, index=False))
+    print(df2.to_csv(sep="\t", header=False, index=False))
+
+
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        df.to_csv(f1, sep="\t", header=False, index=False)
+        df2.to_csv(f2, sep="\t", header=False, index=False)
+
+        cmd = nearest_command.format(f1, f2)
+        print(cmd)
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="C S E St C2 S2 E2 St2 Distance".split())
+
+        bedtools_distances = bedtools_df.Distance.values
+        bedtools_distances = [d for d in bedtools_distances if d >= 0]
+
+    gr = pr.PyRanges(df)
+    gr2 = pr.PyRanges(df2)
+
+    print("nearest_how", nearest_how)
+    print("overlap", overlap)
+    result = gr.nearest(gr2, how=nearest_how, overlap=overlap)
+    result_df = result.df.copy()
+
+    if not result.df.empty:
+        pyranges_distances = result_df.Distance.tolist()
+    else:
+        pyranges_distances = []
+
+    print("bedtools", bedtools_distances)
+    print("bedtools_df", bedtools_df)
+    print("pyranges", pyranges_distances)
+    print("pyranges_df", result)
+
+    # assert bedtools_distances == pyranges_distances
+    # [x for _,x in sorted(zip(Y,X))]
+    # starts_pyranges = [x for _,x in sorted(zip(pyranges_distances, df.Start))]
+    # ends_pyranges = [x for _,x in sorted(zip(pyranges_distances, df.End))]
+    # starts_bedtools = [x for _,x in sorted(zip(bedtools_distances, df.Start))]
+    # ends_bedtools = [x for _,x in sorted(zip(bedtools_distances, df.End))]
+    assert sorted(bedtools_distances) == sorted(pyranges_distances)

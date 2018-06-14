@@ -110,7 +110,6 @@ chr1    10272   10280   HWI-ST216_313:3:1302:4516:156396        1       -
 chr1    10348   10445   HWI-ST216_313:3:1207:4315:142177        1       +
 chr1    110246  110445  HWI-ST216_313:3:1207:4315:142177        1       +"""
 
-
     df = pd.read_table(StringIO(c), sep="\s+", names=names, header=None)
     return PyRanges(df)
 
