@@ -228,6 +228,7 @@ class PyRanges():
 
                 return PyRanges(self.df.loc[idxes])
 
+        # 100:999
         elif isinstance(val, slice):
 
             start = val.start or 0

@@ -8,6 +8,13 @@ def assert_df_equal(df1, df2):
     else:
         sort_on = "Chromosome Start End".split()
 
+    if "Strand_b" in df1:
+        sort_on += "Start_b End_b Strand_b".split()
+    elif "Start_b" in df2:
+        sort_on += "Start_b End_b".split()
+
+
+
     df1 = df1.sort_values(sort_on)
     df2 = df2.sort_values(sort_on)
 

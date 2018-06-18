@@ -32,7 +32,7 @@ def test_nearest_bed_unstranded(chip_10_plus_one, input_10, expected_result_unst
 
     result = chip_10_plus_one.nearest(input_10, strandedness=False, suffix="_b")
 
-    print(result.df.to_csv(sep=" "))
+    # print(result.df.to_csv(sep=" "))
 
     assert assert_df_equal(result.df, expected_result_unstranded.df)
 
