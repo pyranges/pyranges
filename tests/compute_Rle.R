@@ -11,7 +11,7 @@ print(args)
 print("We are starting in R! We are starting in R! We are starting in R! We are starting in R! We are starting in R! We are starting in R! We are starting in R! ")
 
 
-library(S4Vectors)
+suppressMessages(library(S4Vectors))
 
 
 df1 = read.table(f1, sep="\t", header=TRUE)

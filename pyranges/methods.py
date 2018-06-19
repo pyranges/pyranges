@@ -748,29 +748,29 @@ def _previous_nonoverlapping(left_starts, right_ends, right_indexes):
 
 
 def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
-    print("overlap " * 10, overlap)
-    print("how " * 10, how)
-    print("strandedness " * 10, strandedness)
+    # print("overlap " * 10, overlap)
+    # print("how " * 10, how)
+    # print("strandedness " * 10, strandedness)
 
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
     if overlap:
         sidx, oidx = both_indexes(self, other, strandedness, how="first")
-        print("sidx", sidx)
-        print("oidx", oidx)
+        # print("sidx", sidx)
+        # print("oidx", oidx)
         if list(oidx.values()):
             overlapping_ridx = np.concatenate(list(oidx.values()))
             idxs = np.concatenate(list(sidx.values()))
             missing_overlap = self.df.index[~self.df.index.isin(idxs)]
-            print("missing overlap", missing_overlap)
+            # print("missing overlap", missing_overlap)
             df_to_find_nearest_in = self.df.reindex(missing_overlap)
 
             odf = other.df.copy().reindex(np.concatenate(list(oidx.values())))
             odf.index = np.concatenate(list(sidx.values()))
             sdf = self.df.reindex(np.concatenate(list(sidx.values())))
-            print("sdf", sdf)
+            # print("sdf", sdf)
             nearest_df = sdf.join(odf, rsuffix=suffix).drop("Chromosome" + suffix, axis=1)
             nearest_df.insert(nearest_df.shape[1], "Distance", 0)
-            print("df_to_find_nearest_in", df_to_find_nearest_in)
+            # print("df_to_find_nearest_in", df_to_find_nearest_in)
             if df_to_find_nearest_in.empty or len(idxs) == len(self):
                 # print("df_to_find_nearest_in was empty" * 10)
                 return nearest_df

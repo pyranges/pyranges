@@ -20,7 +20,7 @@ from os import environ
 #     deadline = None
 # else:
 
-max_examples = 100
+max_examples = 10000
 deadline = None
 
 
@@ -61,7 +61,7 @@ better_dfs = data_frames(index=range_indexes(min_size=better_df_minsize),
 
 better_dfs_min = data_frames(index=range_indexes(min_size=better_df_minsize),
                              columns=[column("Chromosome", chromosomes_small),
-                                      column("Start", elements=small_lengths),
+                                      column("Start", elements=lengths),
                                       column("End", elements=small_lengths),
                                       column("Strand", strands)])
 
@@ -118,6 +118,44 @@ methods = ["join", "intersection", "overlap"]
 
 # strandedness = strandedness[1:2]
 # methods = methods[1:2]
+
+
+coverage_cmd = "Rscript --vanilla tests/compute_coverage.R {} {}"
+
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(df=dfs_min())
+def test_coverage(df):
+
+    print("---" * 10)
+    p = pr.PyRanges(df)
+    print("pyranges\n", p)
+
+    c = p.coverage()["chr1"]
+
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.txt".format(temp_dir)
+        outfile = "{}/result.txt".format(temp_dir)
+        R_df = df
+        R_df.End = R_df.End - 1
+        R_df.to_csv(f1, sep="\t", index=False)
+
+        cmd = coverage_cmd.format(f1, outfile)
+
+        subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        result = pd.read_table(outfile)[["Runs.value", "Values.value"]]
+        result.columns = "Runs Values".split()
+        result = pd.concat([pd.DataFrame(index=[0], data={"Runs": 1, "Values":0}), result], ignore_index=True)
+        s4vectors_result = Rle(result.Runs, result.Values)
+
+    print("pyranges result\n", c)
+    print("s4vectors result\n", s4vectors_result)
+    print(str(c == s4vectors_result) + " " * 10, c == s4vectors_result)
+
+    assert np.all(np.equal(c.runs, s4vectors_result.runs))
+    assert np.all(np.equal(c.values, s4vectors_result.values))
+
 
 rle_operations = "+ - / *".split()
 # rle_operations = ["/"]
