@@ -576,7 +576,7 @@ def _set_union(self, other, strand):
 
 def _subtraction(self, other, strandedness):
 
-    print(self.df.to_csv(sep=" "))
+    #print(self.df.to_csv(sep=" "))
     strand = False
     if strandedness:
         assert "Strand" in self.df and "Strand" in other.df, \
@@ -614,14 +614,14 @@ def _subtraction(self, other, strandedness):
 
     for key, scdf in self_dfs.items():
 
-        # # print("key before switch", key)
+        # # #print("key before switch", key)
         if len(key) == 2:
             old_key = key
             key = key[0], strand_dict[key[1]]
 
 
-        print("key", key)
-        # # print("key after switch", key)
+        #print("key", key)
+        # # #print("key after switch", key)
         if not key in other_dfs:
             dfs.append(scdf)
             continue
@@ -629,12 +629,12 @@ def _subtraction(self, other, strandedness):
         # scdf = self_dfs[key]
         ogr = pr.PyRanges(other_dfs[key])
 
-        print("scdf\n", scdf)
-        print("odf\n", ogr)
+        #print("scdf\n", scdf)
+        #print("odf\n", ogr)
 
         # check which self reads have partial overlap
         if not ogr.stranded and not strandedness:
-            print("1" * 100)
+            #print("1" * 100)
             idx_self, new_starts, new_ends = ogr.__ncls__[key].set_difference_helper(
                 scdf.Start.values,
                 scdf.End.values,
@@ -642,7 +642,7 @@ def _subtraction(self, other, strandedness):
 
         elif self.stranded and ogr.stranded and strandedness:
 
-            print("2" * 100)
+            #print("2" * 100)
             idx_self, new_starts, new_ends = ogr.__ncls__[key].set_difference_helper(
                 scdf.Start.values,
                 scdf.End.values,
@@ -650,7 +650,7 @@ def _subtraction(self, other, strandedness):
 
         elif ogr.stranded and not strandedness:
 
-            print("3" * 100)
+            #print("3" * 100)
             idx_self1, new_starts1, new_ends1 = ogr.__ncls__[key, "+"].set_difference_helper(
                 scdf.Start.values,
                 scdf.End.values,
@@ -668,15 +668,15 @@ def _subtraction(self, other, strandedness):
             new_starts = np.concatenate([new_starts1, new_starts2])
             new_ends = np.concatenate([new_ends1, new_ends2])
 
-        print("idx_self", idx_self)
-        print("new_starts", new_starts)
-        print("new_ends", new_ends)
+        #print("idx_self", idx_self)
+        #print("new_starts", new_starts)
+        #print("new_ends", new_ends)
 
-        print("scdf.index", scdf.index)
+        #print("scdf.index", scdf.index)
         missing_idx = pd.Index(scdf.index).difference(idx_self)
-        print("missing_idx " * 10, missing_idx)
+        #print("missing_idx " * 10, missing_idx)
         idx_to_drop = new_starts != -1
-        print(idx_to_drop)
+        #print(idx_to_drop)
         new_starts = new_starts[idx_to_drop]
         new_ends = new_ends[idx_to_drop]
         idx_self = idx_self[idx_to_drop]
@@ -684,20 +684,20 @@ def _subtraction(self, other, strandedness):
         scdf = scdf.reindex(missing_idx.union(idx_self))
 
         if len(idx_self):
-            print(scdf)
-            print(new_starts)
-            print(new_ends)
-            print(idx_self)
+            #print(scdf)
+            #print(new_starts)
+            #print(new_ends)
+            #print(idx_self)
             # why does boolean indexing work, but not regular?
 
             # pd.options.mode.chained_assignment = None  # default='warn'
-            print("idx_self", idx_self)
+            #print("idx_self", idx_self)
             scdf.loc[scdf.index.isin(idx_self), "Start"] = new_starts
             scdf.loc[scdf.index.isin(idx_self), "End"] = new_ends
 
         # find those in scdf that were not in idx_self
 
-        print("scdf", scdf)
+        #print("scdf", scdf)
 
         dfs.append(scdf)
 
@@ -706,8 +706,8 @@ def _subtraction(self, other, strandedness):
     else:
         return pd.DataFrame(columns="Chromosome Start End Strand".split())
 
-    print("dfs", dfs)
-    print("df", df)
+    #print("dfs", dfs)
+    #print("df", df)
     return df
 
 
@@ -747,35 +747,37 @@ def _previous_nonoverlapping(left_starts, right_ends, right_indexes):
 
 
 
-def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
-    # print("overlap " * 10, overlap)
-    # print("how " * 10, how)
-    # print("strandedness " * 10, strandedness)
+# from memory_profiler import profile
 
+
+def _overlapping_for_nearest(self, other, strandedness, suffix):
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
-    if overlap:
-        sidx, oidx = both_indexes(self, other, strandedness, how="first")
-        # print("sidx", sidx)
-        # print("oidx", oidx)
-        if list(oidx.values()):
-            overlapping_ridx = np.concatenate(list(oidx.values()))
-            idxs = np.concatenate(list(sidx.values()))
-            missing_overlap = self.df.index[~self.df.index.isin(idxs)]
-            # print("missing overlap", missing_overlap)
-            df_to_find_nearest_in = self.df.reindex(missing_overlap)
 
-            odf = other.df.copy().reindex(np.concatenate(list(oidx.values())))
-            odf.index = np.concatenate(list(sidx.values()))
-            sdf = self.df.reindex(np.concatenate(list(sidx.values())))
-            # print("sdf", sdf)
-            nearest_df = sdf.join(odf, rsuffix=suffix).drop("Chromosome" + suffix, axis=1)
-            nearest_df.insert(nearest_df.shape[1], "Distance", 0)
-            # print("df_to_find_nearest_in", df_to_find_nearest_in)
-            if df_to_find_nearest_in.empty or len(idxs) == len(self):
-                # print("df_to_find_nearest_in was empty" * 10)
-                return nearest_df
-        else:
-            df_to_find_nearest_in = self.df
+    sidx, oidx = both_indexes(self, other, strandedness, how="first")
+
+    if list(oidx.values()):
+        idxs = np.concatenate(list(sidx.values()))
+        missing_overlap = self.df.index[~self.df.index.isin(idxs)]
+        # print("missing overlap", missing_overlap)
+        df_to_find_nearest_in = self.df.reindex(missing_overlap)
+
+        odf = other.df.reindex(np.concatenate(list(oidx.values())))
+        odf.index = np.concatenate(list(sidx.values()))
+        sdf = self.df.reindex(np.concatenate(list(sidx.values())))
+
+        nearest_df = sdf.join(odf, rsuffix=suffix).drop("Chromosome" + suffix, axis=1)
+        nearest_df.insert(nearest_df.shape[1], "Distance", 0)
+    else:
+        df_to_find_nearest_in = self.df
+
+    return nearest_df, df_to_find_nearest_in
+
+
+def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
+
+
+    if overlap:
+        nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(self, other, strandedness, suffix)
     else:
         df_to_find_nearest_in = self.df
 
@@ -786,13 +788,10 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
     else:
         grpby_key = "Chromosome"
 
-    if overlap:
-        self_dfs = {k: d for k, d in self.df.groupby(grpby_key)}
     other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
 
     dfs = []
 
-    # print("df_to_find_nearest_in", df_to_find_nearest_in)
     for key, scdf in df_to_find_nearest_in.groupby(grpby_key):
 
         if len(key) == 2 and strandedness == "opposite":
@@ -800,38 +799,26 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
         else:
             other_key = key
 
-        if not key in other_dfs:
+        if not other_key in other_dfs:
             continue
 
         ocdf = other_dfs[other_key]
-        # print("scdf", scdf)
-        # print("ocdf", ocdf)
 
-        # ocdf.index = range(len(ocdf))
-
-        # print("key " * 10)
-        # print(key)
         if how == "next":
             r_idx, dist = _next_nonoverlapping(scdf.End, ocdf.Start, ocdf.index.values)
         elif how == "previous":
             r_idx, dist = _previous_nonoverlapping(scdf.Start, ocdf.End, ocdf.index.values)
         else:
             previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End, ocdf.index.values)
-            # print("previous_r_idx", previous_r_idx)
-            # print("previous_dist", previous_dist)
+
             next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start, ocdf.index.values)
-            # print("next_r_idx", next_r_idx)
-            # print("next_dist", next_dist)
+
             r_idx, dist = nearest_nonoverlapping(previous_r_idx,
                                                 previous_dist,
                                                 next_r_idx, next_dist)
 
-        # print("dist", dist)
-        # print("r_idx", r_idx)
-
         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
-        # print("ocdf", ocdf)
-        # print("scdf.index", scdf.index)
+
         ocdf.index = scdf.index
         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
         ocdf.drop("Chromosome", axis=1, inplace=True)
@@ -843,7 +830,6 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
 
         dfs.append(result)
 
-
     if dfs:
         df = pd.concat(dfs)
     else:
@@ -854,6 +840,5 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
         df = pd.concat([nearest_df, df])
     elif overlap and not nearest_df.empty:
         df = nearest_df
-
 
     return df

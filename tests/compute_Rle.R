@@ -20,6 +20,9 @@ df2 = read.table(f2, sep="\t", header=TRUE)
 sum1 = sum(df1$Runs)
 sum2 = sum(df2$Runs)
 
+df1$Values = df1$Values * 1.0
+df2$Values = df2$Values * 1.0
+
 print(sum1)
 print(sum2)
 print(sum2 > sum1)

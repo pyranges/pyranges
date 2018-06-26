@@ -30,7 +30,7 @@ def read_bed(f):
 
     columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split()
 
-    df = pd.read_table(f)
+    df = pd.read_table(f, dtype={"Chromosome": "category", "Strand": "category"})
 
     df.columns = columns[:df.shape[1]]
 

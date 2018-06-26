@@ -35,13 +35,15 @@ def create_ncls_dict(df, strand):
 
 def create_pyranges_df(seqnames, starts, ends, strands=None):
 
-    if isinstance(seqnames, str):
-        seqnames = [seqnames] * len(starts)
 
-    if isinstance(strands, str):
-        strands = [strands] * len(starts)
+    if isinstance(seqnames, str):
+        seqnames = pd.Series([seqnames] * len(starts), dtype="category")
 
     if strands != None and strands != False:
+
+        if isinstance(strands, str):
+            strands = pd.Series([strands] * len(starts), dtype="category")
+
         columns = [seqnames, starts, ends, strands]
         lengths = list(str(len(s)) for s in columns)
         assert len(set(lengths)) == 1, "seqnames, starts, ends and strands must be of equal length. But are {}".format(", ".join(lengths))
@@ -122,7 +124,9 @@ class PyRanges():
 
     df = None
 
-    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None):
+    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=True):
+
+        df_given = True if not df is None else False
 
         if df is False or df is None:
             df = create_pyranges_df(seqnames, starts, ends, strands)
@@ -135,6 +139,12 @@ class PyRanges():
             self.__dict__["stranded"] = False
         else:
             self.__dict__["stranded"] = True
+
+        if copy_df and df_given:
+            df = df.copy()
+            df.Chromosome = df.Chromosome.astype("category")
+            if "Strand" in df:
+                df.Strand = df.Strand.astype("category")
 
         self.__dict__["df"] = df
 

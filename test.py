@@ -10,20 +10,27 @@ if __name__ == "__main__":
 
     import pandas as pd
 
-    test_file = "/mnt/scratch/endrebak/genomes/chip/UCSD.Aorta.Input.STL002.bed.gz"
-    test_file = "/mnt/scratch/endrebak/genomes/chip/shuffled_Aorta_Input.gz"
+    # test_file = "/mnt/scratch/endrebak/genomes/chip/UCSD.Aorta.Input.STL002.bed.gz"
+    # test_file2 = "/mnt/scratch/endrebak/genomes/chip/shuffled_Aorta_Input.gz"
     # test_file = "/local/home/endrebak/large_data/consensus_epigenome/epigenome_roadmap/H3K9me3/data/hg38/bed/Ovary_1_Input.bed"
     # test_file = "shuffled_input.bed"
+    f1 = "/mnt/scratch/endrebak/pyranges_benchmark/data/download/chip_15000000.bed.gz"
+    f2 = "/mnt/scratch/endrebak/pyranges_benchmark/data/download/input_15000000.bed.gz"
 
-    nrows = int(1e7)
-    df = pd.read_table(test_file, sep="\t", usecols=[0, 1, 2, 5], header=None,
+    nrows = int(1e6) # None # int(1e6)
+    df = pd.read_table(f1, sep="\t", usecols=[0, 1, 2, 5], header=None,
                        names="Chromosome Start End Strand".split(), nrows=nrows)
+
+    df2 = pd.read_table(f2, sep="\t", usecols=[0, 1, 2, 5], header=None,
+                        names="Chromosome Start End Strand".split(), nrows=nrows)
 
 
     print("Done reading")
     start = time()
 
-    result = PyRanges(df)
+    a = PyRanges(df)
+    b = PyRanges(df2)
+    result = a.nearest(b)
 
     end = time()
     total = end - start

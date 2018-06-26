@@ -5,21 +5,26 @@ def assert_df_equal(df1, df2):
 
     if "Strand" in df1 and "Strand" in df2:
         sort_on = "Chromosome Start End Strand".split()
+        df1.Strand = df1.Strand.astype("object")
+        df2.Strand = df2.Strand.astype("object")
     else:
         sort_on = "Chromosome Start End".split()
 
     if "Strand_b" in df1:
         sort_on += "Start_b End_b Strand_b".split()
+        df1.Strand_b = df1.Strand_b.astype("object")
+        df2.Strand_b = df2.Strand_b.astype("object")
     elif "Start_b" in df2:
         sort_on += "Start_b End_b".split()
-
-
 
     df1 = df1.sort_values(sort_on)
     df2 = df2.sort_values(sort_on)
 
     df1 = df1.reset_index(drop=True)
     df2 = df2.reset_index(drop=True)
+
+    df1.Chromosome = df1.Chromosome.astype("object")
+    df2.Chromosome = df2.Chromosome.astype("object")
 
     print("Actual")
     print(df1.to_csv(sep=" "))
@@ -30,7 +35,9 @@ def assert_df_equal(df1, df2):
     print(df1.dtypes)
     print("Expected dtypes")
     print(df2.dtypes)
-    print("dtypes equal", df1.dtypes == df2.dtypes)
+    # print("dtypes Strand\n", "1",  df1.Strand.dtype, "2", df2.Strand.dtype)
+    # print("dtypes Strand\n", df1.Strand.dtype == df2.Strand.dtype)
+    # print("dtypes equal\n", df1.dtypes == df2.dtypes)
 
     print("Actual index")
     print(df1.index)

@@ -109,7 +109,7 @@ def test_advanced_overlap_opposite_stranded(cs, bg, expected_result_overlap_oppo
 @pytest.fixture
 def expected_result_overlap_opposite_strand_suffixes():
 
-    c = """Chromosome Start End Name Score Strand Starthiya Endhiya Namehiya Scorehiya Strandhiya
+    c = """Chromosome Start End Name Score Strand Start_b End_b Name_b Score_b Strand_b
 chr8	38747226	38747251	U0	0	-	38747236	38747261	U0	0	+
 chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-"""
 
@@ -118,7 +118,7 @@ chr1	226987592	226987617	U0	0	+	226987603	226987628	U0	0	-"""
 
 def test_advanced_overlap_opposite_stranded_suffixes(cs, bg, expected_result_overlap_opposite_strand_suffixes):
 
-    result = cs.join(bg, strandedness="opposite", suffixes=["", "hiya"])
+    result = cs.join(bg, strandedness="opposite", suffixes=["", "_b"])
 
     print(result.df)
     print(expected_result_overlap_opposite_strand_suffixes)

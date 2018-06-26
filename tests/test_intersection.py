@@ -45,6 +45,8 @@ chr1    6   7   - 7"""
 
 def test_intersect_simple_granges(simple_gr1, simple_gr2, expected_result_intersection_simple_granges):
 
+    print(simple_gr1)
+    print(simple_gr2)
     result = simple_gr1.intersection(simple_gr2, strandedness=False)
 
     print("result\n", result.df)
