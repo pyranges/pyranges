@@ -2,6 +2,22 @@
 
 [![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![hypothesis tested](https://img.shields.io/badge/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![Documentation Status](https://readthedocs.org/projects/pyranges/badge/?version=latest)](https://pyranges.readthedocs.io/?badge=latest) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [pyranges](#pyranges)
+    - [-](#-)
+    - [Paper](#paper)
+    - [Documentation](#documentation)
+    - [Install](#install)
+    - [Examples](#examples)
+    - [TODO](#todo)
+    - [Performance](#performance)
+- [See also](#see-also)
+
+<!-- markdown-toc end -->
+
+
 GenomicRanges for Python.
 
 This library is a thin, but extremely useful wrapper around genomic data
@@ -16,6 +32,10 @@ arithmetic computation of scores associated with genomic intervals.
 ### Paper
 
 Being written here: https://github.com/endrebak/pyranges-paper
+
+### Documentation
+
+http://pyranges.readthedocs.io/
 
 ### Install
 
