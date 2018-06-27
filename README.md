@@ -167,6 +167,10 @@ For the future:
 <img src="graphs/time.png" width="50%" height="50%" />
 <img src="graphs/memory.png" width="50%" height="50%" />
 
+See how the timings are performed here:
+https://github.com/endrebak/pyranges-paper I have tried to aggressively optimize
+the R GenomicRanges runs for both time and memory.
+
 ### See also
 
 * https://github.com/endrebak/pyrle
