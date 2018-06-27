@@ -6,7 +6,6 @@
 **Table of Contents**
 
 - [pyranges](#pyranges)
-    - [-](#-)
     - [Paper](#paper)
     - [Documentation](#documentation)
     - [Install](#install)
