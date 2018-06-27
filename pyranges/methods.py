@@ -253,7 +253,6 @@ def sort_one_by_one(d, col1, col2):
     d = d.sort_values(by=[col2])
     return d.sort_values(by=[col1], kind='mergesort')
 
-@profile
 def _cluster(self, strand=False, maxdist=0, minnb=1):
 
     dfs = []
@@ -499,7 +498,6 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
     return df
 
 
-@profile
 def _set_intersection(self, other, strandedness=None, how=None):
 
     strand = True if strandedness else False
