@@ -13,12 +13,6 @@ computations on the data.
 PyRanges also contains a run-length encoding library for extremely efficient
 arithmetic computation of scores associated with genomic intervals.
 
-### Performance
-
-![timing](graphs/time.png)
-![memory](graphs/memory.png)
-
-
 ### Paper
 
 Being written here: https://github.com/endrebak/pyranges-paper
@@ -28,7 +22,6 @@ Being written here: https://github.com/endrebak/pyranges-paper
 ```bash
 pip install pyranges
 ```
-
 
 ### Examples
 
@@ -149,6 +142,11 @@ For the future:
 * Enable annotation with featurefetch?
 * Add dtypes to PyRanges-header?
 * Find sequences of ranges with pyfaidx
+
+### Performance
+
+<img src="graphs/time.png" width="50%" height="50%" />
+<img src="graphs/memory.png" width="50%" height="50%" />
 
 # See also
 
