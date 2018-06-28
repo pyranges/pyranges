@@ -449,9 +449,9 @@ def test_nearest(df, df2, nearest_how, overlap, strandedness):
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[overlap]
 
-    print("dfs")
-    print(df.to_csv(sep="\t", header=False, index=False))
-    print(df2.to_csv(sep="\t", header=False, index=False))
+    # print("dfs")
+    # print(df.to_csv(sep="\t", header=False, index=False))
+    # print(df2.to_csv(sep="\t", header=False, index=False))
 
 
     result_df = None
@@ -462,31 +462,36 @@ def test_nearest(df, df2, nearest_how, overlap, strandedness):
         df2.to_csv(f2, sep="\t", header=False, index=False)
 
         cmd = nearest_command.format(bedtools_overlap, bedtools_strand, f1, f2)
-        print(cmd)
+        # print(cmd)
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
-        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="C S E St C2 S2 E2 St2 Distance".split())
-
-        bedtools_distances = bedtools_df.Distance.values
-        bedtools_distances = [d for d in bedtools_distances if d >= 0]
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Distance".split())
+        # print("bedtools_df", bedtools_df)
+        # raise
+        if not bedtools_df.empty:
+            bedtools_df = bedtools_df[bedtools_df.Distance != -1]["Chromosome Start End Strand Distance".split()].sort_values("Distance")
 
     gr = pr.PyRanges(df)
     gr2 = pr.PyRanges(df2)
 
     result = gr.nearest(gr2, overlap=overlap, strandedness=strandedness)
-    result_df = result.df.copy()
-
     if not result.df.empty:
-        pyranges_distances = result_df.Distance.tolist()
+        result_df = result.df.sort_values("Distance")["Chromosome Start End Strand Distance".split()]
+        print("bedtools_df", bedtools_df)
+        # print("pyranges", pyranges_distances)
+        print("pyranges_df", result)
+
+        assert assert_df_equal(result_df, bedtools_df)
     else:
-        pyranges_distances = []
+        result_df = pd.DataFrame(columns="Chromosome Start End Strand Distance".split())
+        assert bedtools_df.empty
 
-    print("bedtools", bedtools_distances)
-    print("bedtools_df", bedtools_df)
-    print("pyranges", pyranges_distances)
-    print("pyranges_df", result)
+    # if not result.df.empty:
+    #     pyranges_distances = result_df.Distance.tolist()
+    # else:
+    #     pyranges_distances = []
 
-    assert sorted(bedtools_distances) == sorted(pyranges_distances)
+    # print("bedtools", bedtools_distances)
 
 
 join_command = "bedtools intersect {} -wo -a {} -b {}"

@@ -1,7 +1,6 @@
 cython
 sphinx_autorun_ebs
 pyranges
-clustertree
 ncls
 pandas
 numpy
