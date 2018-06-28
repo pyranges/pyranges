@@ -21,10 +21,11 @@ The nearest method takes a strandedness option, which can either be
    >>> gr2 = pr.load_dataset("chipseq_background") # ignore
    >>> gr.nearest(gr2, suffix="_Input", strandedness="opposite")
 
-The nearest method also takes a variable how, which can take the values
-:code:`"nonoverlapping"`, :code:`"next"`, :code:`"previous"`,
-:code:`"next_nonoverlapping"`, :code:`"previous_nonoverlapping"`:. The default
-is to find the nearest overlapping interval, no matter which direction.
+The nearest method also takes two variables, namely how and overlap. How can
+take the values :code:`None`, :code:`"next"` and :code:`"previous"`. The default
+is :code:`None`, which means that PyRanges looks in both directions. The default
+is :code:`None`. The overlap argument is a bool which indicates whether you want
+to include overlaps or not.
 
 .. runblock:: pycon
 
@@ -34,4 +35,4 @@ is to find the nearest overlapping interval, no matter which direction.
    >>> f2 = pr.load_dataset("f2")
    >>> f2
    >>> f2.nearest(f1, strandedness="opposite", how="next")
-   >>> f2.nearest(f1, strandedness="opposite", how="next_nonoverlapping")
+   >>> f2.nearest(f1, strandedness="opposite", how="next", overlap=False)
