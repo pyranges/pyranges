@@ -786,27 +786,40 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
         else:
             previous_l_idx, previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
 
+            previous_r_idx = pd.Series(previous_r_idx, index=previous_l_idx).sort_index().values
+            previous_dist = pd.Series(previous_dist, index=previous_l_idx).sort_index().values
+            previous_l_idx = np.sort(previous_l_idx)
+
             next_l_idx, next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start)
+
+            next_r_idx = pd.Series(next_r_idx, index=next_l_idx).sort_index().values
+            next_dist = pd.Series(next_dist, index=next_l_idx).sort_index().values
+            next_l_idx = np.sort(next_l_idx)
 
             l_idx, r_idx, dist = nearest_nonoverlapping(previous_l_idx, previous_r_idx, previous_dist,
                                                         next_l_idx, next_r_idx, next_dist)
 
+        # print(l_idx, r_idx, dist)
 
-        r_idx = r_idx[r_idx != -1]
-        l_idx = l_idx[l_idx != -1]
+        r_idx = r_idx[dist != -1]
+        l_idx = l_idx[dist != -1]
         dist = dist[dist != -1]
 
         scdf = scdf.reindex(l_idx, fill_value=-1)
         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
+
+        # print("scdf", scdf)
+        # print("ocdf", ocdf)
 
         ocdf.index = scdf.index
         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
         ocdf.drop("Chromosome", axis=1, inplace=True)
 
         r_idx = pd.Series(r_idx, index=ocdf.index)
-        scdf = scdf.drop(r_idx.loc[r_idx == -1].index)
+        # if r_idx[r_idx == -1].any():
+        #     ocdf = ocdf.drop(r_idx.loc[r_idx == -1].index)
 
-        result = scdf.join(ocdf, rsuffix=suffix)
+        result = scdf.join(ocdf, rsuffix=suffix, how="left")
 
         dfs.append(result)
     if dfs:

@@ -408,11 +408,11 @@ rle_commute_how = ["__add__", "__mul__"]
 
 @pytest.mark.parametrize("how", rle_commute_how)
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
-@given(df=dfs_min(), df2=dfs_min())
-def test_commutative_rles(df, df2, how):
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_commutative_rles(gr, gr2, how):
 
-    cv = pr.PyRanges(df).coverage(stranded=True)
-    cv2 = pr.PyRanges(df2).coverage(stranded=True)
+    cv = gr.coverage(stranded=True)
+    cv2 = gr2.coverage(stranded=True)
 
     method = getattr(cv, how)
     method2 = getattr(cv2, how)
@@ -486,6 +486,8 @@ strandedness = [False, "same", "opposite"]
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
+    print(gr.df)
+    print(gr2.df)
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[overlap]
@@ -502,17 +504,18 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Distance".split())
-        # print("bedtools_df", bedtools_df)
+        print("bedtools_df", bedtools_df)
         # raise
         if not bedtools_df.empty:
             bedtools_df = bedtools_df[bedtools_df.Distance != -1]["Chromosome Start End Strand Distance".split()].sort_values("Distance")
 
     result = gr.nearest(gr2, overlap=overlap, strandedness=strandedness)
     if not result.df.empty:
+
+        print("pyranges_df", result.df)
         result_df = result.df.sort_values("Distance")["Chromosome Start End Strand Distance".split()]
-        print("bedtools_df", bedtools_df)
+        # print("bedtools_df", bedtools_df)
         # print("pyranges", pyranges_distances)
-        print("pyranges_df", result)
 
         assert_df_equal(result_df, bedtools_df)
     else:

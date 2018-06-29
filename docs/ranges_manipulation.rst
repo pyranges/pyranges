@@ -43,5 +43,5 @@ instantiate a new PyRanges object.
    >>> import pyranges as pr # ignore
    >>> gr = pr.load_dataset("chipseq") # ignore
    >>> import pandas as pd
-   >>> gr.Name = gr.Chromosome + "_" + pd.Series(range(len(gr))).astype(str)
+   >>> gr.Name = gr.Chromosome.astype(str) + "_" + pd.Series(range(len(gr))).astype(str)
    >>> gr
