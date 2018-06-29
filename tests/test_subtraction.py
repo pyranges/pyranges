@@ -48,7 +48,7 @@ def test_intersect_invert_simple_granges(simple_gr1, simple_gr2, expected_result
 
     result = simple_gr1.subtraction(simple_gr2, strandedness=False)
 
-    assert assert_df_equal(result.df, expected_result_inverse_subtraction_simple_granges.df)
+    assert_df_equal(result.df, expected_result_inverse_subtraction_simple_granges.df)
 
 
 @pytest.fixture
@@ -69,7 +69,7 @@ def test_intersect_invert_same_strand_simple_granges(simple_gr1, simple_gr2, exp
 
     print(result)
 
-    assert assert_df_equal(result.df, expected_result_same_strand_inverse_subtraction_simple_granges.df)
+    assert_df_equal(result.df, expected_result_same_strand_inverse_subtraction_simple_granges.df)
 
 
 
@@ -91,4 +91,4 @@ def test_intersect_invert_opposite_strand_simple_granges(simple_gr1, simple_gr2,
 
     print(result)
 
-    assert assert_df_equal(result.df, expected_result_opposite_strand_inverse_subtraction_simple_granges.df)
+    assert_df_equal(result.df, expected_result_opposite_strand_inverse_subtraction_simple_granges.df)

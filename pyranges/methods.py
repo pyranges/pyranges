@@ -612,14 +612,11 @@ def _subtraction(self, other, strandedness):
 
     for key, scdf in self_dfs.items():
 
-        # # #print("key before switch", key)
         if len(key) == 2:
             old_key = key
             key = key[0], strand_dict[key[1]]
 
 
-        #print("key", key)
-        # # #print("key after switch", key)
         if not key in other_dfs:
             dfs.append(scdf)
             continue
@@ -640,7 +637,6 @@ def _subtraction(self, other, strandedness):
 
         elif self.stranded and ogr.stranded and strandedness:
 
-            #print("2" * 100)
             idx_self, new_starts, new_ends = ogr.__ncls__[key].set_difference_helper(
                 scdf.Start.values,
                 scdf.End.values,
@@ -666,9 +662,7 @@ def _subtraction(self, other, strandedness):
             new_starts = np.concatenate([new_starts1, new_starts2])
             new_ends = np.concatenate([new_ends1, new_ends2])
 
-        #print("idx_self", idx_self)
-        #print("new_starts", new_starts)
-        #print("new_ends", new_ends)
+
 
         #print("scdf.index", scdf.index)
         missing_idx = pd.Index(scdf.index).difference(idx_self)
@@ -677,15 +671,15 @@ def _subtraction(self, other, strandedness):
         #print(idx_to_drop)
         new_starts = new_starts[idx_to_drop]
         new_ends = new_ends[idx_to_drop]
+
         idx_self = idx_self[idx_to_drop]
+        new_starts = pd.Series(new_starts, index=idx_self).sort_index()
+        new_ends = pd.Series(new_ends, index=idx_self).sort_index()
+        idx_self = np.sort(idx_self)
 
         scdf = scdf.reindex(missing_idx.union(idx_self))
 
         if len(idx_self):
-            #print(scdf)
-            #print(new_starts)
-            #print(new_ends)
-            #print(idx_self)
             # why does boolean indexing work, but not regular?
 
             # pd.options.mode.chained_assignment = None  # default='warn'
@@ -709,41 +703,22 @@ def _subtraction(self, other, strandedness):
     return df
 
 
-how_nearest={None: None,
-             False: False,
-             "nonoverlapping": nearest_nonoverlapping,
-             "previous_nonoverlapping": nearest_previous_nonoverlapping,
-             "next_nonoverlapping": nearest_next_nonoverlapping}
-             #"next": nearest_next,
-             #"previous": nearest_previous}
-
-def _next_nonoverlapping(left_ends, right_starts, right_indexes):
+def _next_nonoverlapping(left_ends, right_starts):
 
     left_ends = left_ends.sort_values()
     right_starts = right_starts.sort_values()
-    r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, right_starts.values, right_indexes)
-    r_idx = pd.Series(r_idx, index=left_ends.index).sort_index().values
-    dist = pd.Series(dist, index=left_ends.index).sort_index().values
+    l_idx, r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, left_ends.index.values, right_starts.values, right_starts.index.values)
 
-    return r_idx, dist
+    return l_idx, r_idx, dist
 
 
-def _previous_nonoverlapping(left_starts, right_ends, right_indexes):
+def _previous_nonoverlapping(left_starts, right_ends):
 
     left_starts = left_starts.sort_values()
     right_ends = right_ends.sort_values()
-    r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, right_ends.values - 1, right_ends.index.values)
-    # print("ridx before", r_idx)
-    r_idx = pd.Series(r_idx, index=left_starts.index).sort_index().values
-    dist = pd.Series(dist, index=left_starts.index).sort_index().values
-    # print("ridx after", r_idx)
+    l_idx, r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, left_starts.index.values, right_ends.values - 1, right_ends.index.values)
 
-    return r_idx, dist
-
-# def _nearest_nonoverlapping():
-
-
-
+    return l_idx, r_idx, dist
 
 # from memory_profiler import profile
 
@@ -773,7 +748,6 @@ def _overlapping_for_nearest(self, other, strandedness, suffix):
 
 def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
 
-
     if overlap:
         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(self, other, strandedness, suffix)
     else:
@@ -802,19 +776,27 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
 
         ocdf = other_dfs[other_key]
 
+        # print("scdf", scdf.to_csv(sep=" "))
+        # print("ocdf", ocdf.to_csv(sep=" "))
+
         if how == "next":
-            r_idx, dist = _next_nonoverlapping(scdf.End, ocdf.Start, ocdf.index.values)
+            l_idx, r_idx, dist = _next_nonoverlapping(scdf.End, ocdf.Start)
         elif how == "previous":
-            r_idx, dist = _previous_nonoverlapping(scdf.Start, ocdf.End, ocdf.index.values)
+            l_idx, r_idx, dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
         else:
-            previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End, ocdf.index.values)
+            previous_l_idx, previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
 
-            next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start, ocdf.index.values)
+            next_l_idx, next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start)
 
-            r_idx, dist = nearest_nonoverlapping(previous_r_idx,
-                                                previous_dist,
-                                                next_r_idx, next_dist)
+            l_idx, r_idx, dist = nearest_nonoverlapping(previous_l_idx, previous_r_idx, previous_dist,
+                                                        next_l_idx, next_r_idx, next_dist)
 
+
+        r_idx = r_idx[r_idx != -1]
+        l_idx = l_idx[l_idx != -1]
+        dist = dist[dist != -1]
+
+        scdf = scdf.reindex(l_idx, fill_value=-1)
         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
 
         ocdf.index = scdf.index
@@ -827,7 +809,6 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
         result = scdf.join(ocdf, rsuffix=suffix)
 
         dfs.append(result)
-
     if dfs:
         df = pd.concat(dfs)
     else:

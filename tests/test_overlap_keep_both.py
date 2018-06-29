@@ -68,7 +68,7 @@ def test_overlap_same_strand_simple_granges(simple_gr1, simple_gr2, expected_res
     print("actual")
     print(result)
 
-    assert assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)
+    assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)
 
 
 
@@ -88,4 +88,4 @@ def test_default_overlap_simple_granges(simple_gr1, simple_gr2, expected_result_
 
     result = simple_gr1.join(simple_gr2)
 
-    assert assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)
+    assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)

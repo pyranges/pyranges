@@ -61,7 +61,7 @@ def test_simple_containment(contained, container, expected_result_unstranded):
     result = contained.join(container, how="containment")
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_unstranded.df)
+    assert_df_equal(result.df, expected_result_unstranded.df)
 
 @pytest.fixture
 def expected_result_opposite_strand():
@@ -80,7 +80,7 @@ def test_simple_containment_opposite_strand(contained, container, expected_resul
     result = contained.join(container, strandedness="opposite", how="containment")
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_opposite_strand.df)
+    assert_df_equal(result.df, expected_result_opposite_strand.df)
 
 
 
@@ -101,4 +101,4 @@ def test_simple_containment_same_strand(contained, container, expected_result_sa
     result = contained.join(container, strandedness="same", how="containment")
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_same_strand.df)
+    assert_df_equal(result.df, expected_result_same_strand.df)

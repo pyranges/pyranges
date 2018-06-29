@@ -54,7 +54,7 @@ def test_overlap_invert_simple_granges(simple_gr1, simple_gr2, expected_result_s
     print(result.df.dtypes)
     print(expected_result_subtract_simple_granges.df.dtypes)
 
-    assert assert_df_equal(result.df, expected_result_subtract_simple_granges.df)
+    assert_df_equal(result.df, expected_result_subtract_simple_granges.df)
 
 
 def test_overlap_invert_simple_granges_return_df(simple_gr1, simple_gr2, expected_result_subtract_simple_granges):
@@ -68,7 +68,7 @@ def test_overlap_invert_simple_granges_return_df(simple_gr1, simple_gr2, expecte
     print(result.dtypes)
     print(expected_result_subtract_simple_granges.df.dtypes)
 
-    assert assert_df_equal(result, expected_result_subtract_simple_granges.df)
+    assert_df_equal(result, expected_result_subtract_simple_granges.df)
 
 
 
@@ -87,7 +87,7 @@ def test_overlap_same_strand_simple_granges(simple_gr1, simple_gr2, expected_res
 
     print(result)
 
-    assert assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)
+    assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)
 
 
 
@@ -113,4 +113,4 @@ def test_default_overlap_simple_granges(simple_gr1, simple_gr2, expected_result_
     print(result.df.index)
     print(expected_result_overlap_same_strand_simple_granges.df.index)
 
-    assert assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)
+    assert_df_equal(result.df, expected_result_overlap_same_strand_simple_granges.df)

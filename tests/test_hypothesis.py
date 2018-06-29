@@ -15,13 +15,15 @@ from pyranges import PyRanges
 # pyranges equal even if they have different sort order
 from tests.helpers import assert_df_equal
 
+import numpy as np
+
 from os import environ
 
 if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 100000
+    max_examples = 1000
     deadline = None
 
 
@@ -111,7 +113,15 @@ def dfs_min(draw):
     df.insert(3, "Name", "a")
     df.insert(4, "Score", 0)
 
-    return df
+    gr = PyRanges(df)
+
+    np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
+    # this is the same as allowing users to arbitrarily sort
+    # their underlying dataframes in whichever way they choose
+    # an the PyRanges functionality still works! Wowaweeva
+    gr.df = df.reindex(np.random.permutation(df.index.values))
+
+    return gr
 
 
 @st.composite
@@ -259,12 +269,11 @@ def name_score(df, df2):
 
 @pytest.mark.bedtools
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
-@given(df=dfs_min(), df2=dfs_min())
-def test_set_intersection(df, df2):
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_set_intersection(gr, gr2):
 
-
-    gr = pr.PyRanges(df)
-    gr2 = pr.PyRanges(df2)
+    # gr = pr.PyRanges(df)
+    # gr2 = pr.PyRanges(df2)
 
     print(gr)
     print(gr2)
@@ -273,8 +282,8 @@ def test_set_intersection(df, df2):
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
         f2 = "{}/f2.bed".format(temp_dir)
-        df.to_csv(f1, sep="\t", header=False, index=False)
-        df2.to_csv(f2, sep="\t", header=False, index=False)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
 
         cmd = set_intersection_command.format(f1, f2)
 
@@ -287,7 +296,44 @@ def test_set_intersection(df, df2):
     print("bedtools_df\n", bedtools_df)
 
     if not bedtools_df.empty:
-        assert bedtools_df.equals(result.df)
+        assert_df_equal(result.df, bedtools_df)
+    else:
+        assert bedtools_df.empty == result.df.empty
+
+
+intersection_command = "bedtools intersect {} -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
+
+@pytest.mark.bedtools
+@pytest.mark.parametrize("strandedness", strandedness)
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_intersection(gr, gr2, strandedness):
+
+    bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
+
+
+    print(gr.df)
+    print(gr2.df)
+
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
+
+        cmd = intersection_command.format(bedtools_strand, f1, f2)
+
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand".split())
+
+    result = gr.intersection(gr2, strandedness=strandedness)
+    # print("result\n", result.df)
+    # print("bedtools_df\n", bedtools_df)
+
+    if not bedtools_df.empty:
+        assert_df_equal(result.df, bedtools_df)
     else:
         assert bedtools_df.empty == result.df.empty
 
@@ -296,21 +342,15 @@ set_union_command = "bedtools merge -i <(sort -k1,1 -k2,2n --merge <(sort -k1,1 
 
 @pytest.mark.bedtools
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
-@given(df=dfs_min(), df2=dfs_min())
-def test_set_union(df, df2):
-
-    gr = pr.PyRanges(df)
-    gr2 = pr.PyRanges(df2)
-
-    print(gr)
-    print(gr2)
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_set_union(gr, gr2):
 
     result_df = None
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
         f2 = "{}/f2.bed".format(temp_dir)
-        df.to_csv(f1, sep="\t", header=False, index=False)
-        df2.to_csv(f2, sep="\t", header=False, index=False)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
 
         cmd = set_union_command.format(f1, f2)
 
@@ -323,41 +363,41 @@ def test_set_union(df, df2):
     print("bedtools_df\n", PyRanges(bedtools_df))
 
     if not bedtools_df.empty:
-        assert assert_df_equal(result.df, bedtools_df)
+        assert_df_equal(result.df, bedtools_df)
     else:
         assert bedtools_df.empty == result.df.empty
 
-subtraction_command = "bedtools subtract -a {} -b {}"
+subtraction_command = "bedtools subtract {} -a {} -b {}"
 
 @pytest.mark.bedtools
+@pytest.mark.parametrize("strandedness", strandedness)
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
-@given(df=dfs_min(), df2=dfs_min())
-def test_subtraction(df, df2):
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_subtraction(gr, gr2, strandedness):
 
-    gr = pr.PyRanges(df)
-    gr2 = pr.PyRanges(df2)
-    print(gr)
-    print(gr2)
+    print("gr\n", gr)
+    print("gr2\n", gr2)
+    bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
 
     result_df = None
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
         f2 = "{}/f2.bed".format(temp_dir)
-        df.to_csv(f1, sep="\t", header=False, index=False)
-        df2.to_csv(f2, sep="\t", header=False, index=False)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
 
-        cmd = subtraction_command.format(f1, f2)
+        cmd = subtraction_command.format(bedtools_strand, f1, f2)
 
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand".split())
 
-    result = gr.subtraction(gr2)
+    result = gr.subtraction(gr2, strandedness=strandedness)
     print("result\n", result)
     print("bedtools_df\n", PyRanges(bedtools_df))
 
     if not bedtools_df.empty:
-        assert assert_df_equal(result.df, bedtools_df)
+        assert_df_equal(result.df, bedtools_df)
     else:
         assert bedtools_df.empty == result.df.empty
 
@@ -443,23 +483,19 @@ strandedness = [False, "same", "opposite"]
 @pytest.mark.bedtools
 @pytest.mark.parametrize("nearest_how,overlap,strandedness", product(nearest_hows, overlaps, strandedness))
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
-@given(df=dfs_min(), df2=dfs_min())
-def test_nearest(df, df2, nearest_how, overlap, strandedness):
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
+
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[overlap]
-
-    # print("dfs")
-    # print(df.to_csv(sep="\t", header=False, index=False))
-    # print(df2.to_csv(sep="\t", header=False, index=False))
-
 
     result_df = None
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
         f2 = "{}/f2.bed".format(temp_dir)
-        df.to_csv(f1, sep="\t", header=False, index=False)
-        df2.to_csv(f2, sep="\t", header=False, index=False)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
 
         cmd = nearest_command.format(bedtools_overlap, bedtools_strand, f1, f2)
         # print(cmd)
@@ -471,9 +507,6 @@ def test_nearest(df, df2, nearest_how, overlap, strandedness):
         if not bedtools_df.empty:
             bedtools_df = bedtools_df[bedtools_df.Distance != -1]["Chromosome Start End Strand Distance".split()].sort_values("Distance")
 
-    gr = pr.PyRanges(df)
-    gr2 = pr.PyRanges(df2)
-
     result = gr.nearest(gr2, overlap=overlap, strandedness=strandedness)
     if not result.df.empty:
         result_df = result.df.sort_values("Distance")["Chromosome Start End Strand Distance".split()]
@@ -481,7 +514,7 @@ def test_nearest(df, df2, nearest_how, overlap, strandedness):
         # print("pyranges", pyranges_distances)
         print("pyranges_df", result)
 
-        assert assert_df_equal(result_df, bedtools_df)
+        assert_df_equal(result_df, bedtools_df)
     else:
         result_df = pd.DataFrame(columns="Chromosome Start End Strand Distance".split())
         assert bedtools_df.empty
@@ -500,23 +533,21 @@ join_strandedness = [False, "opposite", "same"]
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", join_strandedness)
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
-@given(df=dfs_min(), df2=dfs_min())
-def test_join(df, df2, strandedness):
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_join(gr, gr2, strandedness):
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
 
-    df.loc[:, "End"] += df.Start
-    df2.loc[:, "End"] += df2.Start
-    print("dfs")
-    print(df.to_csv(sep="\t", header=False, index=False))
-    print(df2.to_csv(sep="\t", header=False, index=False))
+    # print("dfs")
+    # print(df.to_csv(sep="\t", header=False, index=False))
+    # print(df2.to_csv(sep="\t", header=False, index=False))
 
     result_df = None
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
         f2 = "{}/f2.bed".format(temp_dir)
-        df.to_csv(f1, sep="\t", header=False, index=False)
-        df2.to_csv(f2, sep="\t", header=False, index=False)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
 
         cmd = join_command.format(bedtools_strand, f1, f2)
         print(cmd)
@@ -525,8 +556,6 @@ def test_join(df, df2, strandedness):
         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split())
         bedtools_df = bedtools_df.drop(["Overlap", "Chromosome_b"], 1)
 
-    gr = pr.PyRanges(df)
-    gr2 = pr.PyRanges(df2)
 
     print("gr\n", gr)
     print("gr2\n", gr2)
@@ -539,4 +568,4 @@ def test_join(df, df2, strandedness):
     if result.df.empty:
         assert bedtools_df.empty
     else:
-        assert assert_df_equal(result.df, bedtools_df)
+        assert_df_equal(result.df, bedtools_df)

@@ -43,7 +43,7 @@ def test_advanced_overlap(cs, bg, expected_result_regular_overlap):
     print("expected_result_regular_overlap")
     print(expected_result_regular_overlap)
 
-    assert assert_df_equal(expected_result_regular_overlap.df, result.df)
+    assert_df_equal(expected_result_regular_overlap.df, result.df)
 
 @pytest.fixture
 def expected_result_regular_overlap_intersection():
@@ -59,8 +59,8 @@ def test_advanced_overlap_new_pos_intersect(cs, bg, expected_result_regular_over
 
     result = cs.join(bg, new_pos="intersection")
 
-    assert assert_df_equal(result.df, expected_result_regular_overlap_intersection.df)
-    # assert expected_result_regular_overlap_intersection.df.equals(result.df)
+    assert_df_equal(result.df, expected_result_regular_overlap_intersection.df)
+    # expected_result_regular_overlap_intersection.df.equals(result.df)
 
 
 
@@ -82,7 +82,7 @@ def test_advanced_overlap_stranded(cs, bg, expected_result_overlap_same_strand):
     print("expected result")
     print(expected_result_overlap_same_strand)
 
-    assert assert_df_equal(expected_result_overlap_same_strand.df, result.df)
+    assert_df_equal(expected_result_overlap_same_strand.df, result.df)
 
 
 @pytest.fixture
@@ -102,7 +102,7 @@ def test_advanced_overlap_opposite_stranded(cs, bg, expected_result_overlap_oppo
     print(result.df)
     print(expected_result_overlap_opposite_strand)
 
-    assert assert_df_equal(expected_result_overlap_opposite_strand.df, result.df)
+    assert_df_equal(expected_result_overlap_opposite_strand.df, result.df)
 
 
 
@@ -123,7 +123,7 @@ def test_advanced_overlap_opposite_stranded_suffixes(cs, bg, expected_result_ove
     print(result.df)
     print(expected_result_overlap_opposite_strand_suffixes)
 
-    assert assert_df_equal(expected_result_overlap_opposite_strand_suffixes.df, result.df)
+    assert_df_equal(expected_result_overlap_opposite_strand_suffixes.df, result.df)
 
 
 @pytest.fixture
@@ -146,4 +146,4 @@ def test_advanced_overlap_new_pos_union(cs, bg, expected_result_regular_overlap_
     print("expected_result_regular_overlap")
     print(expected_result_regular_overlap_union)
 
-    assert assert_df_equal(expected_result_regular_overlap_union.df, result.df)
+    assert_df_equal(expected_result_regular_overlap_union.df, result.df)

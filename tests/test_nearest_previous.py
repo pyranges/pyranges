@@ -28,7 +28,7 @@ def test_nearest_previous_bed_opposite_stranded(f1, f2, expected_result_previous
 
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_previous_bed_opposite_stranded.df)
+    assert_df_equal(result.df, expected_result_previous_bed_opposite_stranded.df)
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def test_nearest_previous_bed_same_stranded(f1, f2, expected_result_previous_bed
 
     result = f1.nearest(f2, strandedness="same", suffix="_b", how="previous")
 
-    assert assert_df_equal(result.df, expected_result_previous_bed_same_stranded.df)
+    assert_df_equal(result.df, expected_result_previous_bed_same_stranded.df)
 
 
 @pytest.fixture
@@ -68,4 +68,4 @@ def test_nearest_previous_bed_unstranded(f1, f2, expected_result_previous_bed_un
 
     result = f1.nearest(f2, strandedness=None, suffix="_b", how="previous")
 
-    assert assert_df_equal(result.df, expected_result_previous_bed_unstranded.df)
+    assert_df_equal(result.df, expected_result_previous_bed_unstranded.df)

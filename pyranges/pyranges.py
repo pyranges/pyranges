@@ -160,6 +160,11 @@ class PyRanges():
             raise Exception("The columns Chromosome, Start, End or Strand can not be reset.")
         if column_name == "stranded":
             raise Exception("The stranded attribute is read-only. Create a new PyRanges object instead.")
+
+        if column_name == "df":
+            self.__dict__["df"] = column
+            return
+
         if not isinstance(column, str):
             if not len(self.df) == len(column):
                 raise Exception("DataFrame and column must be same length.")

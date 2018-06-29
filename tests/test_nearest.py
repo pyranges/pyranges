@@ -34,7 +34,7 @@ def test_nearest_bed_unstranded(chip_10_plus_one, input_10, expected_result_unst
 
     # print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_unstranded.df)
+    assert_df_equal(result.df, expected_result_unstranded.df)
 
 
 
@@ -63,7 +63,7 @@ def test_nearest_bed_same_stranded(chip_10_plus_one, input_10, expected_result_s
 
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_same_stranded.df)
+    assert_df_equal(result.df, expected_result_same_stranded.df)
 
 
 @pytest.fixture
@@ -91,7 +91,7 @@ def test_nearest_bed_opposite_stranded(chip_10_plus_one, input_10, expected_resu
 
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_opposite_stranded.df)
+    assert_df_equal(result.df, expected_result_opposite_stranded.df)
 
 
 @pytest.fixture
@@ -118,7 +118,7 @@ def test_nearest_other_unstranded(chip_10_plus_one, input_10_no_strand, expected
 
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_other_no_strand.df)
+    assert_df_equal(result.df, expected_result_other_no_strand.df)
 
 
 @pytest.fixture
@@ -145,7 +145,7 @@ def test_nearest_self_unstranded(chip_10_no_strand, input_10, expected_result_se
 
     print(result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_self_no_strand.df)
+    assert_df_equal(result.df, expected_result_self_no_strand.df)
 
 
 
@@ -252,9 +252,9 @@ def test_hypothesis_counterexample(hyp1, hyp2, expected_result_counterexample1):
      result = hyp1.nearest(hyp2)
 
      print(result)
-     # assert 0
+     # 0
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample1.df)
+     assert_df_equal(result.df, expected_result_counterexample1.df)
 
 
 
@@ -294,7 +294,7 @@ def test_hypothesis_counterexample2(hyp3, hyp4, expected_result_counterexample2)
 
      print(result)
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample2.df)
+     assert_df_equal(result.df, expected_result_counterexample2.df)
 
 
 
@@ -333,7 +333,7 @@ def test_hypothesis_counterexample3(hyp5, hyp6, expected_result_counterexample3)
 
      print(result)
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample3.df)
+     assert_df_equal(result.df, expected_result_counterexample3.df)
 
 
 
@@ -372,7 +372,7 @@ def test_hypothesis_counterexample4(hyp7, hyp8, expected_result_counterexample4)
 
      print(result)
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample4.df)
+     assert_df_equal(result.df, expected_result_counterexample4.df)
 
 
 
@@ -412,4 +412,4 @@ def test_hypothesis_counterexample5(hyp9, hyp10, expected_result_counterexample5
 
      print(result)
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample5.df)
+     assert_df_equal(result.df, expected_result_counterexample5.df)

@@ -60,4 +60,4 @@ def test_intersect_granges(chip, background, expected_result_regular_intersectio
 
     print(result)
 
-    assert assert_df_equal(result.df, expected_result_regular_intersection.df)
+    assert_df_equal(result.df, expected_result_regular_intersection.df)

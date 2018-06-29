@@ -24,7 +24,7 @@ def test_nearest_bed_unstranded(f1, f2, expected_result_unstranded):
     result = f1.nearest(f2, strandedness=False, suffix="_b", how="next", overlap=False)
 
 
-    assert assert_df_equal(result.df, expected_result_unstranded.df)
+    assert_df_equal(result.df, expected_result_unstranded.df)
 
 
 @pytest.fixture
@@ -42,7 +42,9 @@ def expected_result_opposite_stranded():
 8 chr1 10127 10326 HWI-ST216_313:3:2207:7406:122346 1 - 16056 16255 HWI-ST216:427:D29R1ACXX:2:1102:7604:12113 1 + 5731
 9 chr1 10241 10440 HWI-ST216_313:3:1302:4516:156396 1 - 16056 16255 HWI-ST216:427:D29R1ACXX:2:1102:7604:12113 1 + 5617"""
 
-    return PyRanges(pd.read_table(StringIO(c), sep=" "))
+    gr = PyRanges(pd.read_table(StringIO(c), sep=" "))
+
+    return gr
 
 
 def test_nearest_bed_opposite_stranded(chip_10_plus_one, input_10, expected_result_opposite_stranded):
@@ -51,7 +53,7 @@ def test_nearest_bed_opposite_stranded(chip_10_plus_one, input_10, expected_resu
 
     print("result", result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_opposite_stranded.df)
+    assert_df_equal(result.df, expected_result_opposite_stranded.df)
 
 
 @pytest.fixture
@@ -78,7 +80,7 @@ def test_nearest_bed_same_stranded(chip_10_plus_one, input_10, expected_result_s
 
     print("result", result.df.to_csv(sep=" "))
 
-    assert assert_df_equal(result.df, expected_result_same_stranded.df)
+    assert_df_equal(result.df, expected_result_same_stranded.df)
 
 
 
@@ -117,7 +119,7 @@ def test_hypothesis_counterexample(hyp1, hyp2, expected_result_counterexample1):
      print(result)
      # assert 0
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample1.df)
+     assert_df_equal(result.df, expected_result_counterexample1.df)
 
 
 
@@ -156,7 +158,7 @@ def test_hypothesis_counterexample2(hyp3, hyp4, expected_result_counterexample2)
      print(result)
      # assert 0
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample2.df)
+     assert_df_equal(result.df, expected_result_counterexample2.df)
 
 
 @pytest.fixture()
@@ -199,7 +201,7 @@ def test_hypothesis_counterexample3(hyp5, hyp6, expected_result_counterexample3)
      print(result)
      # assert 0
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample3.df)
+     assert_df_equal(result.df, expected_result_counterexample3.df)
 
 
 
@@ -239,7 +241,7 @@ def test_hypothesis_counterexample4(hyp7, hyp8, expected_result_counterexample4)
      # assert 0
      # print(PyRanges(result.df.tail()))
 
-     assert assert_df_equal(result.df, expected_result_counterexample4.df)
+     assert_df_equal(result.df, expected_result_counterexample4.df)
 
 
 
@@ -292,7 +294,7 @@ def test_minus(minus_chip, minus_input, expected_result_minus):
      # assert 0
      # print(PyRanges(result.df.tail()))
 
-     assert assert_df_equal(result.df, expected_result_minus.df)
+     assert_df_equal(result.df, expected_result_minus.df)
 
 
 # @pytest.fixture()
@@ -320,7 +322,7 @@ def test_minus(minus_chip, minus_input, expected_result_minus):
 #      # print(PyRanges(result.df.tail()))
 
 #      assert 0
-     # assert assert_df_equal(result.df, expected_result_minus.df)
+     # assert_df_equal(result.df, expected_result_minus.df)
 
 
 
@@ -364,7 +366,7 @@ def test_hypothesis_counterexample4(hyp9, hyp10, expected_result_counterexample4
      # assert 0
      # print(PyRanges(result.df.tail()))
 
-     assert assert_df_equal(result.df, expected_result_counterexample4.df)
+     assert_df_equal(result.df, expected_result_counterexample4.df)
 
 
 
@@ -404,7 +406,7 @@ def test_hypothesis_counterexample5(hyp11, hyp12, expected_result_counterexample
      # assert 0
      # print(PyRanges(result.df.tail()))
 
-     assert assert_df_equal(result.df, expected_result_counterexample5.df)
+     assert_df_equal(result.df, expected_result_counterexample5.df)
 
 
 
@@ -501,4 +503,4 @@ def test_hypothesis_counterexample6(hyp15, hyp16, expected_result_counterexample
      print(result)
      # assert 0
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample6.df)
+     assert_df_equal(result.df, expected_result_counterexample6.df)

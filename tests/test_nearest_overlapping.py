@@ -75,7 +75,7 @@ def test_hypothesis_counterexample(hyp1, hyp2, expected_result_counterexample1):
      print(result)
      # assert 0
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample1.df)
+     assert_df_equal(result.df, expected_result_counterexample1.df)
 
 
 def test_hypothesis_counterexample_nearest_next(hyp1, hyp2, expected_result_counterexample1):
@@ -87,7 +87,7 @@ def test_hypothesis_counterexample_nearest_next(hyp1, hyp2, expected_result_coun
 
      print(result)
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample1.df)
+     assert_df_equal(result.df, expected_result_counterexample1.df)
 
 
 @pytest.fixture()
@@ -118,4 +118,4 @@ def test_hypothesis_counterexample_nearest_previous(hyp1, hyp2, expected_result_
 
      print(result)
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_nearest_previous.df)
+     assert_df_equal(result.df, expected_result_nearest_previous.df)

@@ -22,7 +22,7 @@ def test_advanced_intersection(cs, bg, expected_result_regular_intersection):
 
     result = cs.intersection(bg)
 
-    assert assert_df_equal(result.df, expected_result_regular_intersection)
+    assert_df_equal(result.df, expected_result_regular_intersection)
 
 @pytest.fixture
 def expected_result_intersection_same_strand():
@@ -38,7 +38,7 @@ def test_advanced_intersection_stranded(cs, bg, expected_result_intersection_sam
     print(result.df)
     print(expected_result_intersection_same_strand)
 
-    assert assert_df_equal(expected_result_intersection_same_strand, result.df)
+    assert_df_equal(expected_result_intersection_same_strand, result.df)
 
 
 @pytest.fixture
@@ -59,4 +59,4 @@ def test_advanced_intersection_opposite_stranded(cs, bg, expected_result_interse
     print("expected result")
     print(expected_result_intersection_opposite_strand)
 
-    assert assert_df_equal(expected_result_intersection_opposite_strand, result.df)
+    assert_df_equal(expected_result_intersection_opposite_strand, result.df)

@@ -53,7 +53,7 @@ def test_intersect_simple_granges(simple_gr1, simple_gr2, expected_result_inters
     print("expected_result_intersection_simple_granges\n",
           expected_result_intersection_simple_granges.df)
 
-    assert assert_df_equal(result.df, expected_result_intersection_simple_granges.df)
+    assert_df_equal(result.df, expected_result_intersection_simple_granges.df)
 
 
 @pytest.fixture
@@ -72,7 +72,7 @@ def test_intersect_same_strand_simple_granges(simple_gr1, simple_gr2, expected_r
 
     print(result)
 
-    assert assert_df_equal(expected_result_same_strand_intersection_simple_granges.df, result.df)
+    assert_df_equal(expected_result_same_strand_intersection_simple_granges.df, result.df)
 
 
 

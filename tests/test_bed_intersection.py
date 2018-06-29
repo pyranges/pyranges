@@ -131,21 +131,21 @@ def test_intersect_bed_unstranded(chip_10, input_10, expected_result_intersectio
 
     result = chip_10.intersection(input_10, strandedness=False)
 
-    assert assert_df_equal(result.df, expected_result_intersection)
+    assert_df_equal(result.df, expected_result_intersection)
 
 
 def test_intersect_bed_same_strand(chip_10, input_10, expected_result_intersection_same_strand):
 
     result = chip_10.intersection(input_10, strandedness="same")
 
-    assert assert_df_equal(result.df, expected_result_intersection_same_strand)
+    assert_df_equal(result.df, expected_result_intersection_same_strand)
 
 
 def test_intersect_bed_opposite_strand(chip_10, input_10, expected_result_intersection_opposite_strand):
 
     result = chip_10.intersection(input_10, strandedness="opposite")
 
-    assert assert_df_equal(result.df, expected_result_intersection_opposite_strand)
+    assert_df_equal(result.df, expected_result_intersection_opposite_strand)
 
 
 

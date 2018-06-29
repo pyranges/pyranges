@@ -73,6 +73,6 @@ def test_hypothesis_counterexample(hyp1, hyp2, expected_result_counterexample1):
      result = hyp1.nearest(hyp2, overlap=False)
 
      print(result)
-     # assert 0
+     # 0
      # print(PyRanges(result.df.tail()))
-     assert assert_df_equal(result.df, expected_result_counterexample1.df)
+     assert_df_equal(result.df, expected_result_counterexample1.df)

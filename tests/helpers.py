@@ -45,4 +45,4 @@ def assert_df_equal(df1, df2):
     print(df2.index)
     print("index equal", df1.index == df2.index)
 
-    return df1.equals(df2)
+    pd.testing.assert_frame_equal(df1, df2)
