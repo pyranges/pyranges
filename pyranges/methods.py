@@ -308,6 +308,24 @@ def invert(self):
 
     pass
 
+
+def _multithreaded_intersection(scdf, ocdf, strandedness=None, how=None):
+
+    from joblib import delayed, Parallel
+
+    # is there anything to gain?
+
+    # create ncls
+
+    # both indexes
+
+    # intersect op
+
+
+
+
+
+
 def _intersection(self, other, strandedness=None, how=None):
 
     sidx, oidx = both_indexes(self, other, strandedness, how)
@@ -703,22 +721,45 @@ def _subtraction(self, other, strandedness):
     return df
 
 
-def _next_nonoverlapping(left_ends, right_starts):
+# def _next_nonoverlapping(left_ends, right_starts):
+
+#     left_ends = left_ends.sort_values()
+#     right_starts = right_starts.sort_values()
+#     l_idx, r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, left_ends.index.values, right_starts.values, right_starts.index.values)
+
+#     return l_idx, r_idx, dist
+
+
+# def _previous_nonoverlapping(left_starts, right_ends):
+
+#     left_starts = left_starts.sort_values()
+#     right_ends = right_ends.sort_values()
+#     l_idx, r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, left_starts.index.values, right_ends.values - 1, right_ends.index.values)
+
+#     return l_idx, r_idx, dist
+
+def _next_nonoverlapping(left_ends, right_starts, right_indexes):
 
     left_ends = left_ends.sort_values()
     right_starts = right_starts.sort_values()
-    l_idx, r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, left_ends.index.values, right_starts.values, right_starts.index.values)
+    r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, right_starts.values, right_indexes)
+    r_idx = pd.Series(r_idx, index=left_ends.index).sort_index().values
+    dist = pd.Series(dist, index=left_ends.index).sort_index().values
 
-    return l_idx, r_idx, dist
+    return r_idx, dist
 
 
-def _previous_nonoverlapping(left_starts, right_ends):
+def _previous_nonoverlapping(left_starts, right_ends, right_indexes):
 
     left_starts = left_starts.sort_values()
     right_ends = right_ends.sort_values()
-    l_idx, r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, left_starts.index.values, right_ends.values - 1, right_ends.index.values)
+    r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, right_ends.values - 1, right_ends.index.values)
+    # print("ridx before", r_idx)
+    r_idx = pd.Series(r_idx, index=left_starts.index).sort_index().values
+    dist = pd.Series(dist, index=left_starts.index).sort_index().values
+    # print("ridx after", r_idx)
 
-    return l_idx, r_idx, dist
+    return r_idx, dist
 
 # from memory_profiler import profile
 
@@ -748,6 +789,7 @@ def _overlapping_for_nearest(self, other, strandedness, suffix):
 
 def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
 
+
     if overlap:
         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(self, other, strandedness, suffix)
     else:
@@ -776,52 +818,34 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
 
         ocdf = other_dfs[other_key]
 
-        # print("scdf", scdf.to_csv(sep=" "))
-        # print("ocdf", ocdf.to_csv(sep=" "))
+        scdf.index = pd.Index(range(len(scdf)))
 
         if how == "next":
-            l_idx, r_idx, dist = _next_nonoverlapping(scdf.End, ocdf.Start)
+            r_idx, dist = _next_nonoverlapping(scdf.End, ocdf.Start, ocdf.index.values)
         elif how == "previous":
-            l_idx, r_idx, dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
+            r_idx, dist = _previous_nonoverlapping(scdf.Start, ocdf.End, ocdf.index.values)
         else:
-            previous_l_idx, previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
+            previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End, ocdf.index.values)
 
-            previous_r_idx = pd.Series(previous_r_idx, index=previous_l_idx).sort_index().values
-            previous_dist = pd.Series(previous_dist, index=previous_l_idx).sort_index().values
-            previous_l_idx = np.sort(previous_l_idx)
+            next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start, ocdf.index.values)
 
-            next_l_idx, next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start)
+            r_idx, dist = nearest_nonoverlapping(previous_r_idx,
+                                                 previous_dist,
+                                                 next_r_idx, next_dist)
 
-            next_r_idx = pd.Series(next_r_idx, index=next_l_idx).sort_index().values
-            next_dist = pd.Series(next_dist, index=next_l_idx).sort_index().values
-            next_l_idx = np.sort(next_l_idx)
-
-            l_idx, r_idx, dist = nearest_nonoverlapping(previous_l_idx, previous_r_idx, previous_dist,
-                                                        next_l_idx, next_r_idx, next_dist)
-
-        # print(l_idx, r_idx, dist)
-
-        r_idx = r_idx[dist != -1]
-        l_idx = l_idx[dist != -1]
-        dist = dist[dist != -1]
-
-        scdf = scdf.reindex(l_idx, fill_value=-1)
         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
-
-        # print("scdf", scdf)
-        # print("ocdf", ocdf)
 
         ocdf.index = scdf.index
         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
         ocdf.drop("Chromosome", axis=1, inplace=True)
 
         r_idx = pd.Series(r_idx, index=ocdf.index)
-        # if r_idx[r_idx == -1].any():
-        #     ocdf = ocdf.drop(r_idx.loc[r_idx == -1].index)
+        scdf = scdf.drop(r_idx.loc[r_idx == -1].index)
 
-        result = scdf.join(ocdf, rsuffix=suffix, how="left")
+        result = scdf.join(ocdf, rsuffix=suffix)
 
         dfs.append(result)
+
     if dfs:
         df = pd.concat(dfs)
     else:
@@ -834,3 +858,91 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
         df = nearest_df
 
     return df
+
+# @profile
+# def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
+
+#     if overlap:
+#         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(self, other, strandedness, suffix)
+#     else:
+#         df_to_find_nearest_in = self.df
+
+#     other_strand = {"+": "-", "-": "+"}
+
+#     if self.stranded and strandedness: # chromosome and strand
+#         grpby_key = "Chromosome Strand".split()
+#     else:
+#         grpby_key = "Chromosome"
+
+#     other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
+
+#     dfs = []
+
+#     for key, scdf in df_to_find_nearest_in.groupby(grpby_key):
+
+#         if len(key) == 2 and strandedness == "opposite":
+#             other_key = key[0], other_strand[key[1]]
+#         else:
+#             other_key = key
+
+#         if not other_key in other_dfs:
+#             continue
+
+#         ocdf = other_dfs[other_key]
+
+#         # print("scdf", scdf.to_csv(sep=" "))
+#         # print("ocdf", ocdf.to_csv(sep=" "))
+
+#         if how == "next":
+#             l_idx, r_idx, dist = _next_nonoverlapping(scdf.End, ocdf.Start)
+#         elif how == "previous":
+#             l_idx, r_idx, dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
+#         else:
+#             previous_l_idx, previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
+
+#             previous_r_idx = pd.Series(previous_r_idx, index=previous_l_idx).sort_index().values
+#             previous_dist = pd.Series(previous_dist, index=previous_l_idx).sort_index().values
+#             previous_l_idx = np.sort(previous_l_idx)
+
+#             next_l_idx, next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start)
+
+#             next_r_idx = pd.Series(next_r_idx, index=next_l_idx).sort_index().values
+#             next_dist = pd.Series(next_dist, index=next_l_idx).sort_index().values
+#             next_l_idx = np.sort(next_l_idx)
+
+#             l_idx, r_idx, dist = nearest_nonoverlapping(previous_l_idx, previous_r_idx, previous_dist,
+#                                                         next_l_idx, next_r_idx, next_dist)
+
+#         r_idx = r_idx[dist != -1]
+#         l_idx = l_idx[dist != -1]
+#         dist = dist[dist != -1]
+
+#         scdf = scdf.reindex(l_idx, fill_value=-1)
+#         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
+
+#         # print("scdf", scdf)
+#         # print("ocdf", ocdf)
+
+#         ocdf.index = scdf.index
+#         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
+#         ocdf.drop("Chromosome", axis=1, inplace=True)
+
+#         r_idx = pd.Series(r_idx, index=ocdf.index)
+#         # if r_idx[r_idx == -1].any():
+#         #     ocdf = ocdf.drop(r_idx.loc[r_idx == -1].index)
+
+#         result = scdf.join(ocdf, rsuffix=suffix, how="left")
+
+#         dfs.append(result)
+#     if dfs:
+#         df = pd.concat(dfs)
+#     else:
+#         df = pd.DataFrame(columns="Chromosome Start End Strand".split())
+
+
+#     if overlap and not df.empty and not nearest_df.empty:
+#         df = pd.concat([nearest_df, df])
+#     elif overlap and not nearest_df.empty:
+#         df = nearest_df
+
+#     return df

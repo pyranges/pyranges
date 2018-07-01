@@ -99,7 +99,7 @@ def chip_10_plus_one(names):
 
     assert gr.stranded
 
-    gr.df = gr.df.reindex(np.random.permutation(gr.df.index))
+    # gr.df = gr.df.reindex(np.random.permutation(gr.df.index))
 
     return gr
 

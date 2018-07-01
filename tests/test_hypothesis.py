@@ -475,7 +475,7 @@ mul then div not being equal to identity function because of float equality."""
 
 nearest_command = "bedtools closest {} {} -t first -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
                     # "bedtools closest {} -t first -io -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"]
-nearest_hows = [None, None]
+nearest_hows = [None, "previous", "next"]
 overlaps = [True, False]
 strandedness = [False, "same", "opposite"]
 
@@ -484,6 +484,7 @@ strandedness = [False, "same", "opposite"]
 @pytest.mark.parametrize("nearest_how,overlap,strandedness", product(nearest_hows, overlaps, strandedness))
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
+# @reproduce_failure('3.59.0', b'AXicY2RgZGSAABiNymRgAAAArAAG') #
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
     print(gr.df)
