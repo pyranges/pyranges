@@ -4,9 +4,10 @@ from collections import defaultdict
 
 from tabulate import tabulate
 
-from pyranges.methods import (_overlap, _cluster, _tile, _intersection,
-                              _coverage, _overlap_write_both,
-                              _set_intersection, _set_union, _subtraction, _nearest)
+from pyranges.methods import (_overlap, _cluster, _tile, _coverage, _overlap_write_both,
+                              _set_intersection, _set_union, _subtraction, _nearest, _intersection)
+
+# from pyranges.multithreaded import _intersection
 
 
 from ncls import NCLS
@@ -22,10 +23,11 @@ def create_ncls(cdf):
 def create_ncls_dict(df, strand):
 
     if not strand:
-        grpby = df.groupby("Chromosome")
+        grpby_key = "Chromosome"
     else:
-        grpby = df.groupby("Chromosome Strand".split())
+        grpby_key = "Chromosome Strand".split()
 
+    grpby = df.groupby(grpby_key)
     nclses = {key: create_ncls(cdf) for (key, cdf) in grpby}
     dd = defaultdict(NCLS)
     dd.update(nclses)
@@ -118,6 +120,7 @@ def pyrange_or_df_single(func):
         return PyRanges(df)
 
     return extension
+
 
 
 class PyRanges():
@@ -302,19 +305,22 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def intersection(self, other, strandedness=False, how=None):
+    def intersection(self, other, strandedness=False, how=None, nb_cpu=1):
 
         "Want the parts of the intervals in self that overlap with other."
 
-        df = _intersection(self, other, strandedness, how)
+        from pyranges.multithreaded import _intersection, pyrange_apply
+        df = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how, n_jobs=nb_cpu)
+        # df = _intersection(self, other, strandedness=strandedness, how=how)
 
         return df
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def set_intersection(self, other, strandedness=False, how=None):
+    def set_intersection(self, other, strandedness=False, how=None, nb_cpu=1):
 
-        si = _set_intersection(self, other, strandedness, how)
+        from pyranges.multithreaded import _set_intersection, pyrange_apply
+        si = pyrange_apply(_set_intersection, self, other, strandedness=strandedness, how=how, n_jobs=nb_cpu)
 
         return si
 

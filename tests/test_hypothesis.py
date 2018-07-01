@@ -23,7 +23,7 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 1000
+    max_examples = 100
     deadline = None
 
 
@@ -291,9 +291,9 @@ def test_set_intersection(gr, gr2):
 
         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End".split())
 
+    print("bedtools_df\n", bedtools_df)
     result = gr.set_intersection(gr2)
     print("result\n", result.df)
-    print("bedtools_df\n", bedtools_df)
 
     if not bedtools_df.empty:
         assert_df_equal(result.df, bedtools_df)
@@ -310,7 +310,6 @@ intersection_command = "bedtools intersect {} -a <(sort -k1,1 -k2,2n {}) -b <(so
 def test_intersection(gr, gr2, strandedness):
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
-
 
     print(gr.df)
     print(gr2.df)

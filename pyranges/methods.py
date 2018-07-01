@@ -309,45 +309,44 @@ def invert(self):
     pass
 
 
-def _multithreaded_intersection(c, s, scdf, ocdf, strandedness=None, how=None):
+# def _multithreaded_intersection(key, scdf, ocdf, strandedness=None, how=None):
 
 
-    # is there anything to gain?
+#     # is there anything to gain?
 
-    # create ncls
+#     # create ncls
 
-    # both indexes
+#     # both indexes
 
-    # intersect op
+#     # intersect op
 
-    starts = scdf.Start.values
-    ends = scdf.End.values
-    indexes = scdf.index.values
+#     # c, s = list(ocdf.head(0)["Chromosome Strand".split()].values)
 
-    if s:
-        it = pr.PyRanges(ocdf).__ncls__[c, s]
-    else:
-        it = pr.PyRanges(ocdf).__ncls__[c]
+#     starts = np.copy(scdf.Start.values)
+#     ends = np.copy(scdf.End.values)
+#     indexes = np.copy(scdf.index.values)
 
-    _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
+#     it = pr.PyRanges(ocdf).__ncls__[key]
 
-    scdf = scdf.loc[_self_indexes]
-    ocdf = ocdf.loc[_other_indexes, ["Start", "End"]]
+#     _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
 
-    new_starts = pd.Series(
-        np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
-        index=scdf.index, dtype=np.long)
+#     scdf = scdf.loc[_self_indexes]
+#     ocdf = ocdf.loc[_other_indexes, ["Start", "End"]]
 
-    new_ends = pd.Series(
-        np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
-        index=scdf.index, dtype=np.long)
+#     new_starts = pd.Series(
+#         np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
+#         index=scdf.index, dtype=np.long)
 
-    pd.options.mode.chained_assignment = None  # default='warn'
-    scdf.loc[:, "Start"] = new_starts
-    scdf.loc[:, "End"] = new_ends
-    pd.options.mode.chained_assignment = 'warn'
+#     new_ends = pd.Series(
+#         np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
+#         index=scdf.index, dtype=np.long)
 
-    return scdf
+#     pd.options.mode.chained_assignment = None  # default='warn'
+#     scdf.loc[:, "Start"] = new_starts
+#     scdf.loc[:, "End"] = new_ends
+#     pd.options.mode.chained_assignment = 'warn'
+
+#     return scdf
 
 
 
@@ -382,9 +381,6 @@ def _intersection(self, other, strandedness=None, how=None):
 
         scdf = scdf.loc[scidx]
         ocdf = ocdf.loc[ocidx, ["Start", "End"]]
-
-        # print(ocdf)
-        # print(scdf)
 
         new_starts = pd.Series(
             np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
@@ -814,7 +810,6 @@ def _overlapping_for_nearest(self, other, strandedness, suffix):
 
 
 def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
-
 
     if overlap:
         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(self, other, strandedness, suffix)
