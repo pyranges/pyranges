@@ -26,4 +26,4 @@ install:
   - Rscript install.R
   - ls tests
 
-script: py.test -sv tests # verbose to see that tests run and so that travis does not time out on hypothesis tests
+script: py.test -v tests # verbose to see that tests run and so that travis does not time out on hypothesis tests
