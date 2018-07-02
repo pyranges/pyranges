@@ -1,6 +1,6 @@
 # pyranges
 
-[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![hypothesis tested](https://img.shields.io/badge/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![Documentation Status](https://readthedocs.org/projects/pyranges/badge/?version=latest)](https://pyranges.readthedocs.io/?badge=latest) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
+[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![Documentation Status](https://readthedocs.org/projects/pyranges/badge/?version=latest)](https://pyranges.readthedocs.io/?badge=latest) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
