@@ -295,11 +295,12 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, **kwargs):
+    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, nb_cpu=1, **kwargs):
 
         "Find the nearest feature in other."
 
-        df = _nearest(self, other, strandedness, suffix, how, overlap)
+        from pyranges.multithreaded import _nearest, pyrange_apply
+        df = pyrange_apply(_nearest, self, other, strandedness=strandedness, suffix=suffix, how=how, overlap=overlap, n_jobs=nb_cpu)
 
         return df
 

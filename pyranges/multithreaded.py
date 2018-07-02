@@ -6,11 +6,9 @@ import pyranges as pr
 
 from joblib import Parallel, delayed
 
-from sorted_nearest import find_clusters
+from sorted_nearest import (find_clusters, nearest_previous_nonoverlapping,
+                            nearest_next_nonoverlapping, nearest_nonoverlapping, find_clusters)
 
-# (nearest_previous_nonoverlapping,
-#                             nearest_next_nonoverlapping,
-#                             nearest_nonoverlapping, find_clusters)
 from collections import defaultdict
 
 def pyrange_apply(function, self, other, **kwargs):
@@ -54,15 +52,13 @@ def pyrange_apply(function, self, other, **kwargs):
     outdfs = [df for df in outdfs if not df.empty]
 
     if outdfs:
-        print("returning outdfs " * 10)
         df = pd.concat(outdfs)
         return df
     else:
-        print("returning empty " * 10)
         return pd.DataFrame(columns="Chromosome Start End Strand".split())
 
 
-def _both_indexes(scdf, ocdf, strandedness=False, how=False, **kwargs):
+def _both_indexes(scdf, ocdf, how=False, **kwargs):
 
     assert how in "containment first".split() + [False, None]
     starts = scdf.Start.values
@@ -116,13 +112,10 @@ def _intersection(scdf, ocdf, **kwargs):
     scdf.loc[:, "End"] = new_ends
     pd.options.mode.chained_assignment = 'warn'
 
-    print("scdf")
-    print(scdf)
-
     return scdf
 
 
-def _cluster(df, strand=False, maxdist=0, minnb=1):
+def _cluster(df, strand=False):
 
     cdf = df.sort_values("Start")
     starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
@@ -142,30 +135,112 @@ def _cluster(df, strand=False, maxdist=0, minnb=1):
 @return_empty_if_one_empty
 def _set_intersection(scdf, ocdf, strandedness=None, how=None, **kwargs):
 
-    print("in set intersection with df " * 10)
-    print(scdf)
     strand = True if strandedness else False
     s = _cluster(scdf, strand=strand)
     o = _cluster(ocdf, strand=strand)
 
-    print("s " * 10)
-    print(s)
-    print("o " * 10)
-    print(o)
-
     return _intersection(s, o, strandedness=strandedness, how=how, **kwargs)
 
-# def pyrange_or_df_single(func):
 
-#     def extension(self, **kwargs):
-#         df = func(self, **kwargs)
+def _overlapping_for_nearest(scdf, ocdf, suffix, n_jobs=1, **kwargs):
 
-#         if kwargs.get("df_only"):
-#             return df
+    # scdf, ocdf = scdf.copy(), ocdf.copy()
 
-#         return PyRanges(df)
+    nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
-#     return extension
+    scdf2, ocdf2 = _both_indexes(scdf, ocdf, how="first")
+
+    if not ocdf2.empty:
+        # only copying data because of the eternal source buffer array is read only problem
+        if n_jobs > 1:
+            scdf = scdf.copy(deep=True)
+            original_idx = scdf.index.copy(deep=True)
+        else:
+            original_idx = scdf.index
+
+        idxs = scdf2.index
+        original_idx = scdf.index.copy(deep=True)
+        missing_idxs = ~original_idx.isin(idxs)
+        missing_overlap = scdf.index[missing_idxs]
+
+        df_to_find_nearest_in = scdf.reindex(missing_overlap)
+
+        odf = ocdf.reindex(ocdf2.index)
+        odf.index = idxs
+        sdf = scdf.reindex(idxs)
+
+        nearest_df = sdf.join(odf, rsuffix=suffix).drop("Chromosome" + suffix, axis=1)
+        nearest_df.insert(nearest_df.shape[1], "Distance", 0)
+    else:
+        df_to_find_nearest_in = scdf
+
+    return nearest_df, df_to_find_nearest_in
+
+
+def _next_nonoverlapping(left_ends, right_starts, right_indexes):
+
+    left_ends = left_ends.sort_values()
+    right_starts = right_starts.sort_values()
+    r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, right_starts.values, right_indexes)
+    r_idx = pd.Series(r_idx, index=left_ends.index).sort_index().values
+    dist = pd.Series(dist, index=left_ends.index).sort_index().values
+
+    return r_idx, dist
+
+
+def _previous_nonoverlapping(left_starts, right_ends):
+
+    left_starts = left_starts.sort_values()
+    right_ends = right_ends.sort_values()
+    r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, right_ends.values - 1, right_ends.index.values)
+    # print("ridx before", r_idx)
+    r_idx = pd.Series(r_idx, index=left_starts.index).sort_index().values
+    dist = pd.Series(dist, index=left_starts.index).sort_index().values
+    # print("ridx after", r_idx)
+
+    return r_idx, dist
+
+@return_empty_if_one_empty
+def _nearest(scdf, ocdf, suffix="_b", how=None, overlap=True, **kwargs):
+
+    if overlap:
+        nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(scdf, ocdf, suffix, **kwargs)
+    else:
+        df_to_find_nearest_in = scdf
+
+    df_to_find_nearest_in.index = pd.Index(range(len(df_to_find_nearest_in)))
+
+    if how == "next":
+        r_idx, dist = _next_nonoverlapping(df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values)
+    elif how == "previous":
+        r_idx, dist = _previous_nonoverlapping(df_to_find_nearest_in.Start, ocdf.End)
+    else:
+        previous_r_idx, previous_dist = _previous_nonoverlapping(df_to_find_nearest_in.Start, ocdf.End)
+
+        next_r_idx, next_dist = _next_nonoverlapping(df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values)
+
+        r_idx, dist = nearest_nonoverlapping(previous_r_idx,
+                                             previous_dist,
+                                             next_r_idx, next_dist)
+
+    ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
+
+    ocdf.index = df_to_find_nearest_in.index
+    ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
+    ocdf.drop("Chromosome", axis=1, inplace=True)
+
+    r_idx = pd.Series(r_idx, index=ocdf.index)
+    df_to_find_nearest_in = df_to_find_nearest_in.drop(r_idx.loc[r_idx == -1].index)
+
+    df = df_to_find_nearest_in.join(ocdf, rsuffix=suffix)
+
+    if overlap and not df.empty and not nearest_df.empty:
+        df = pd.concat([nearest_df, df])
+    elif overlap and not nearest_df.empty:
+        df = nearest_df
+
+    return df
+
 
 if __name__ == "__main__":
 
