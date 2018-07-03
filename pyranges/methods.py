@@ -253,6 +253,7 @@ def sort_one_by_one(d, col1, col2):
     d = d.sort_values(by=[col2])
     return d.sort_values(by=[col1], kind='mergesort')
 
+
 def _cluster(self, strand=False, maxdist=0, minnb=1):
 
     dfs = []
@@ -671,7 +672,7 @@ def _subtraction(self, other, strandedness):
         if not ogr.stranded and not strandedness:
             #print("1" * 100)
             idx_self, new_starts, new_ends = ogr.__ncls__[key].set_difference_helper(
-                scdf.Start.values,
+               scdf.Start.values,
                 scdf.End.values,
                 scdf.index.values)
 

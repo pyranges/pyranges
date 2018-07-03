@@ -4,12 +4,89 @@ from ncls import NCLS
 
 import pyranges as pr
 
+from natsort import natsorted
+
 from joblib import Parallel, delayed
 
 from sorted_nearest import (find_clusters, nearest_previous_nonoverlapping,
                             nearest_next_nonoverlapping, nearest_nonoverlapping, find_clusters)
 
 from collections import defaultdict
+
+def parse_grpby_key(grpby_key):
+
+    if isinstance(grpby_key, str):
+        return grpby_key, False
+    else:
+        return grpby_key[0], grpby_key[1]
+
+
+def return_empty_if_one_empty(func):
+
+    def extended_func(self, other, **kwargs):
+
+        if len(self) == 0 or len(other) == 0:
+            df = pd.DataFrame(columns="Chromosome Start End".split())
+        else:
+            df = func(self, other, **kwargs)
+
+        return df
+
+    return extended_func
+
+
+def _pyrange_apply(function, scdf, other_dfs, grpby_key, n_jobs=1, **kwargs):
+
+    if function.__name__ == "_set_union":
+        self_dfs =  {k: d for k, d in scdf.groupby(grpby_key)}
+        self_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), self_dfs)
+        keys_union = natsorted(list(set(self_dfs).union(other_dfs)))
+        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(self_dfs[key], other_dfs[key], key=key, **kwargs) for key in keys_union)
+
+    elif not function.__name__ == "join":
+        # for most methods, we do not need to know anything about other except start, end
+        # i.e. less data that needs to be sent to other processes
+        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key][["Start", "End"]], key=key, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
+
+    else:
+        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key], key=key **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
+
+    outdfs = [df for df in outdfs if not df.empty]
+
+    if outdfs:
+        df = pd.concat(outdfs)
+        return df
+    else:
+        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+
+
+def pyrange_apply_single(function, self, **kwargs):
+
+    strand = kwargs["strand"]
+    n_jobs = kwargs.get("n_jobs", 1)
+
+    print("Using {} cores and strand {}".format(n_jobs, strand))
+
+    if strand:
+        assert self.stranded, \
+            "Can only do stranded operation when PyRange contains strand info"
+
+    if self.stranded and strand:
+        grpby_key = ["Chromosome", "Strand"]
+    else:
+        grpby_key = "Chromosome"
+
+    outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, **kwargs) for key, scdf in natsorted(self.df.groupby(grpby_key)))
+
+
+    outdfs = [df for df in outdfs if not df.empty]
+
+    if outdfs:
+        df = pd.concat(outdfs)
+        return df
+    else:
+        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+
 
 def pyrange_apply(function, self, other, **kwargs):
 
@@ -22,7 +99,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
     if strandedness:
         assert self.stranded and other.stranded, \
-            "Can only do stranded searches when both PyRanges contain strand info"
+            "Can only do stranded operations when both PyRanges contain strand info"
 
     if self.stranded and other.stranded and strandedness:
         grpby_key = ["Chromosome", "Strand"]
@@ -37,28 +114,32 @@ def pyrange_apply(function, self, other, **kwargs):
         other_dfs = {key: v for key, v in other.df.groupby(grpby_key)}
         other_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), other_dfs)
 
+    return _pyrange_apply(function, self.df, other_dfs, grpby_key, **kwargs)
 
-    outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key], **kwargs) for key, scdf in self.df.groupby(grpby_key))
-    # else:
-    # outdfs = []
-    # for key, df in self.df.groupby(grpby_key):
-    #     print(key)
-    #     print(df)
-    #     print(other_dfs[key])
-    #     print("--"*100)
-    #     print(function)
 
-    #     outdfs.append(function(df, other_dfs[key], **kwargs))
-    outdfs = [df for df in outdfs if not df.empty]
+@return_empty_if_one_empty
+def _first_df(scdf, ocdf, how=False, **kwargs):
 
-    if outdfs:
-        df = pd.concat(outdfs)
-        return df
+    assert how in "containment first".split() + [False, None]
+    starts = scdf.Start.values
+    ends = scdf.End.values
+    indexes = scdf.index.values
+
+    it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
+
+    if not how:
+        _self_indexes, _ = it.all_overlaps_both(starts, ends, indexes)
+    elif how == "containment":
+        _self_indexes, _ = it.all_containments_both(starts, ends, indexes)
     else:
-        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+        _self_indexes, _ = it.first_overlap_both(starts, ends, indexes)
+
+    _self_indexes = _self_indexes
+
+    return scdf.loc[_self_indexes]
 
 
-def _both_indexes(scdf, ocdf, how=False, **kwargs):
+def _both_dfs(scdf, ocdf, how=False, **kwargs):
 
     assert how in "containment first".split() + [False, None]
     starts = scdf.Start.values
@@ -80,24 +161,12 @@ def _both_indexes(scdf, ocdf, how=False, **kwargs):
     return scdf.loc[_self_indexes], ocdf.loc[_other_indexes]
 
 
-def return_empty_if_one_empty(func):
-
-    def extended_func(self, other, **kwargs):
-
-        if len(self) == 0 or len(other) == 0:
-            df = pd.DataFrame(columns="Chromosome Start End".split())
-        else:
-            df = func(self, other, **kwargs)
-
-        return df
-
-    return extended_func
 
 
 @return_empty_if_one_empty
 def _intersection(scdf, ocdf, **kwargs):
 
-    scdf, ocdf = _both_indexes(scdf, ocdf, **kwargs)
+    scdf, ocdf = _both_dfs(scdf, ocdf, **kwargs)
 
     new_starts = pd.Series(
         np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
@@ -115,40 +184,46 @@ def _intersection(scdf, ocdf, **kwargs):
     return scdf
 
 
-def _cluster(df, strand=False):
-
-    cdf = df.sort_values("Start")
-    starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
+def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
 
     nidx = pd.Index(range(len(starts)))
     if strand:
-        chromosome, strand = df.head(1)[["Chromosome", "Strand"]].iloc[0]
         cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx),
                                    "Start": starts, "End": ends,
                                    "Strand": pd.Series(strand, dtype="category", index=nidx)})
     else:
-        chromosome = df.head(1)["Chromosome"].iloc[0]
         cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx), "Start": starts, "End": ends})
 
     return cluster_df
 
+
+def _cluster(df, chromosome, strand=False, **kwargs):
+
+    cdf = df.sort_values("Start")
+    starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
+
+    cluster_df = _create_df_from_starts_ends(starts, ends, chromosome, strand)
+
+    return cluster_df
+
+
 @return_empty_if_one_empty
 def _set_intersection(scdf, ocdf, strandedness=None, how=None, **kwargs):
 
+    chromosome, strand = parse_grpby_key(kwargs["key"])
+
     strand = True if strandedness else False
-    s = _cluster(scdf, strand=strand)
-    o = _cluster(ocdf, strand=strand)
+    s = _cluster(scdf, chromosome, strand=strand)
+    o = _cluster(ocdf, chromosome, strand=strand)
 
     return _intersection(s, o, strandedness=strandedness, how=how, **kwargs)
 
 
 def _overlapping_for_nearest(scdf, ocdf, suffix, n_jobs=1, **kwargs):
 
-    # scdf, ocdf = scdf.copy(), ocdf.copy()
-
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
-    scdf2, ocdf2 = _both_indexes(scdf, ocdf, how="first")
+    scdf2, ocdf2 = _both_dfs(scdf, ocdf, how="first")
 
     if not ocdf2.empty:
         # only copying data because of the eternal source buffer array is read only problem
@@ -193,12 +268,19 @@ def _previous_nonoverlapping(left_starts, right_ends):
     left_starts = left_starts.sort_values()
     right_ends = right_ends.sort_values()
     r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, right_ends.values - 1, right_ends.index.values)
-    # print("ridx before", r_idx)
+
     r_idx = pd.Series(r_idx, index=left_starts.index).sort_index().values
     dist = pd.Series(dist, index=left_starts.index).sort_index().values
-    # print("ridx after", r_idx)
 
     return r_idx, dist
+
+def sort_one_by_one(d, col1, col2):
+    """
+    Equivalent to pd.sort_values(by=[col1, col2]), but faster.
+    """
+    d = d.sort_values(by=[col2])
+    return d.sort_values(by=[col1], kind='mergesort')
+
 
 @return_empty_if_one_empty
 def _nearest(scdf, ocdf, suffix="_b", how=None, overlap=True, **kwargs):
@@ -208,6 +290,8 @@ def _nearest(scdf, ocdf, suffix="_b", how=None, overlap=True, **kwargs):
     else:
         df_to_find_nearest_in = scdf
 
+    df_to_find_nearest_in = sort_one_by_one(df_to_find_nearest_in, "Start", "End")
+    ocdf = sort_one_by_one(ocdf, "Start", "End")
     df_to_find_nearest_in.index = pd.Index(range(len(df_to_find_nearest_in)))
 
     if how == "next":
@@ -242,6 +326,136 @@ def _nearest(scdf, ocdf, suffix="_b", how=None, overlap=True, **kwargs):
     return df
 
 
+def _set_union(scdf, ocdf, **kwargs):
+
+    chromosome, strand = parse_grpby_key(kwargs["key"])
+
+    strandedness = kwargs["strandedness"]
+    strand = True if strandedness == "same" else False
+
+    if len(scdf) == 0:
+        return _cluster(ocdf, chromosome, strand=strand)
+    elif len(ocdf) == 0:
+        return _cluster(scdf, chromosome, strand=strand)
+
+    _starts = np.concatenate([
+        scdf.Start.values,
+        ocdf.Start.values])
+    _ends = np.concatenate([
+        scdf.End.values,
+        ocdf.End.values])
+
+    cdf = pd.DataFrame({"Start": _starts, "End": _ends})["Start End".split()]
+    cdf = cdf.sort_values("Start")
+    starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
+
+    chromosome = scdf.head(1)["Chromosome"].iloc[0]
+    if strandedness == "same":
+        _strand = scdf.head(1)["Strand"].iloc[0]
+    else:
+        _strand = False
+
+    cluster_df = _create_df_from_starts_ends(starts, ends, chromosome, _strand)
+
+    return cluster_df
+
+
+def _subtraction(scdf, ocdf, **kwargs):
+
+    chromosome, strand = parse_grpby_key(kwargs["key"])
+
+    if ocdf.empty or scdf.empty:
+        return scdf
+
+    strandedness = kwargs["strandedness"]
+    strand = True if strandedness else False
+
+    oc = _cluster(ocdf, chromosome, strand)
+    o = NCLS(oc.Start.values, oc.End.values, oc.index.values)
+
+    idx_self, new_starts, new_ends = o.set_difference_helper(
+        scdf.Start.values,
+        scdf.End.values,
+        scdf.index.values)
+
+    missing_idx = pd.Index(scdf.index).difference(idx_self)
+
+    idx_to_drop = new_starts != -1
+
+    new_starts = new_starts[idx_to_drop]
+    new_ends = new_ends[idx_to_drop]
+
+    idx_self = idx_self[idx_to_drop]
+    new_starts = pd.Series(new_starts, index=idx_self).sort_index()
+    new_ends = pd.Series(new_ends, index=idx_self).sort_index()
+    idx_self = np.sort(idx_self)
+
+    scdf = scdf.reindex(missing_idx.union(idx_self))
+
+    if len(idx_self):
+
+        scdf.loc[scdf.index.isin(idx_self), "Start"] = new_starts
+        scdf.loc[scdf.index.isin(idx_self), "End"] = new_ends
+
+    return scdf
+
+
+def _coverage(ranges, value_col=None, stranded=False, n_jobs=1, **coverage):
+
+    try:
+        from pyranges import PyRles
+    except ImportError:
+        raise Exception("Using the coverage method requires that pyrle is installed.")
+
+    return PyRles(ranges, value_col=value_col, stranded=stranded, nb_cpu=n_jobs)
+
+
+
+@return_empty_if_one_empty
+def _write_both(scdf, ocdf, new_pos=False, **kwargs):
+
+    suffixes = kwargs["suffixes"]
+
+    scdf, ocdf = _both_dfs(scdf, ocdf, **kwargs)
+    ocdf = ocdf.drop("Chromosome", 1)
+    nix = pd.Index(range(len(scdf)))
+    scdf.index = nix
+    ocdf.index = nix
+
+    if not new_pos:
+        df = scdf.join(ocdf, rsuffix=suffixes[1])
+
+    elif new_pos == "intersection":
+
+        new_starts = pd.Series(
+            np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
+            index=scdf.index, dtype=np.long)
+
+        new_ends = pd.Series(
+            np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
+            index=scdf.index, dtype=np.long)
+        df = scdf.join(ocdf, lsuffix=suffixes[0], rsuffix=suffixes[1])
+        df.insert(1, "Start", new_starts)
+        df.insert(2, "End", new_ends)
+        df.rename(index=str, columns={"Chromosome" + suffixes[0]: "Chromosome", "Strand" + suffixes[0]: "Strand"}, inplace=True)
+
+    elif new_pos == "union":
+
+        new_starts = pd.Series(
+            np.where(scdf.Start.values < ocdf.Start.values, scdf.Start, ocdf.Start),
+            index=scdf.index, dtype=np.long)
+
+        new_ends = pd.Series(
+            np.where(scdf.End.values > ocdf.End.values, scdf.End, ocdf.End),
+            index=scdf.index, dtype=np.long)
+        df = scdf.join(ocdf, lsuffix=suffixes[0], rsuffix=suffixes[1])
+        df.insert(1, "Start", new_starts)
+        df.insert(2, "End", new_ends)
+        df.rename(index=str, columns={"Chromosome" + suffixes[0]: "Chromosome", "Strand" + suffixes[0]: "Strand"}, inplace=True)
+
+    return df
+
+
 if __name__ == "__main__":
 
     chip_f = "/mnt/scratch/endrebak/pyranges_benchmark/data/download/chip_1000000.bed.gz"
@@ -259,5 +473,3 @@ if __name__ == "__main__":
                                 dtype={"Chromosome": "category", "Strand": "category"})
 
     bgr = pr.PyRanges(background, copy_df=False)
-
-    # result = cgr. bgr, _intersection, strandedness="same")
