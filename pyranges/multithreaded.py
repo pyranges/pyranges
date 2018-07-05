@@ -6,12 +6,14 @@ import pyranges as pr
 
 from natsort import natsorted
 
-from joblib import Parallel, delayed
+# from joblib import Parallel, delayed
 
 from sorted_nearest import (find_clusters, nearest_previous_nonoverlapping,
                             nearest_next_nonoverlapping, nearest_nonoverlapping, find_clusters)
 
 from collections import defaultdict
+
+from functools import wraps
 
 def parse_grpby_key(grpby_key):
 
@@ -23,6 +25,7 @@ def parse_grpby_key(grpby_key):
 
 def return_empty_if_one_empty(func):
 
+    @wraps(func)
     def extended_func(self, other, **kwargs):
 
         if len(self) == 0 or len(other) == 0:
@@ -35,21 +38,19 @@ def return_empty_if_one_empty(func):
     return extended_func
 
 
-def _pyrange_apply(function, scdf, other_dfs, grpby_key, n_jobs=1, **kwargs):
+def _pyrange_apply(function, scdf, other_dfs, grpby_key, **kwargs):
 
+    outdfs = []
     if function.__name__ == "_set_union":
         self_dfs =  {k: d for k, d in scdf.groupby(grpby_key)}
         self_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), self_dfs)
         keys_union = natsorted(list(set(self_dfs).union(other_dfs)))
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(self_dfs[key], other_dfs[key], key=key, **kwargs) for key in keys_union)
-
-    elif not function.__name__ == "join":
-        # for most methods, we do not need to know anything about other except start, end
-        # i.e. less data that needs to be sent to other processes
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key][["Start", "End"]], key=key, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
+        for key in keys_union:
+            outdfs.append(function(self_dfs[key], other_dfs[key], key=key, **kwargs))
 
     else:
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key], key=key **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
+        for key, df in natsorted(scdf.groupby(grpby_key)):
+            outdfs.append(function(df, other_dfs[key], key=key, **kwargs))
 
     outdfs = [df for df in outdfs if not df.empty]
 
@@ -63,9 +64,7 @@ def _pyrange_apply(function, scdf, other_dfs, grpby_key, n_jobs=1, **kwargs):
 def pyrange_apply_single(function, self, **kwargs):
 
     strand = kwargs["strand"]
-    n_jobs = kwargs.get("n_jobs", 1)
 
-    print("Using {} cores and strand {}".format(n_jobs, strand))
 
     if strand:
         assert self.stranded, \
@@ -76,10 +75,10 @@ def pyrange_apply_single(function, self, **kwargs):
     else:
         grpby_key = "Chromosome"
 
-    outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, **kwargs) for key, scdf in natsorted(self.df.groupby(grpby_key)))
+    outdfs = []
+    for df in natsorted(self.df.groupby(grpby_key)):
 
-
-    outdfs = [df for df in outdfs if not df.empty]
+        outdfs.append(function(df, **kwargs))
 
     if outdfs:
         df = pd.concat(outdfs)
@@ -91,9 +90,6 @@ def pyrange_apply_single(function, self, **kwargs):
 def pyrange_apply(function, self, other, **kwargs):
 
     strandedness = kwargs["strandedness"]
-    n_jobs = kwargs.get("n_jobs", 1)
-
-    print("Using {} cores and strandedness {}".format(n_jobs, strandedness))
 
     assert strandedness in ["same", "opposite", False, None]
 
@@ -117,8 +113,24 @@ def pyrange_apply(function, self, other, **kwargs):
     return _pyrange_apply(function, self.df, other_dfs, grpby_key, **kwargs)
 
 
+
+
+
+def pick_out_indexes_possibly_nonunique(df, indexes, invert=False):
+
+    if isinstance(indexes, list) and indexes:
+        concat = np.concatenate(indexes)
+        indexes = np.unique(concat)
+
+    if not invert:
+        return df.loc[df.index.isin(indexes)]
+    else:
+        return df.loc[~df.index.isin(indexes)]
+
+
+
 @return_empty_if_one_empty
-def _first_df(scdf, ocdf, how=False, **kwargs):
+def _first_df(scdf, ocdf, how=False, invert=False, **kwargs):
 
     assert how in "containment first".split() + [False, None]
     starts = scdf.Start.values
@@ -128,15 +140,15 @@ def _first_df(scdf, ocdf, how=False, **kwargs):
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how:
-        _self_indexes, _ = it.all_overlaps_both(starts, ends, indexes)
-    elif how == "containment":
-        _self_indexes, _ = it.all_containments_both(starts, ends, indexes)
+        _self_indexes = it.has_overlaps(starts, ends, indexes)
     else:
-        _self_indexes, _ = it.first_overlap_both(starts, ends, indexes)
+        _self_indexes = it.has_containment(starts, ends, indexes)
 
-    _self_indexes = _self_indexes
-
-    return scdf.loc[_self_indexes]
+    idxs = scdf.index.isin(_self_indexes)
+    if invert:
+        return scdf.loc[~idxs]
+    else:
+        return scdf.loc[idxs]
 
 
 def _both_dfs(scdf, ocdf, how=False, **kwargs):
@@ -219,7 +231,7 @@ def _set_intersection(scdf, ocdf, strandedness=None, how=None, **kwargs):
     return _intersection(s, o, strandedness=strandedness, how=how, **kwargs)
 
 
-def _overlapping_for_nearest(scdf, ocdf, suffix, n_jobs=1, **kwargs):
+def _overlapping_for_nearest(scdf, ocdf, suffix, **kwargs):
 
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
@@ -227,11 +239,7 @@ def _overlapping_for_nearest(scdf, ocdf, suffix, n_jobs=1, **kwargs):
 
     if not ocdf2.empty:
         # only copying data because of the eternal source buffer array is read only problem
-        if n_jobs > 1:
-            scdf = scdf.copy(deep=True)
-            original_idx = scdf.index.copy(deep=True)
-        else:
-            original_idx = scdf.index
+        original_idx = scdf.index
 
         idxs = scdf2.index
         original_idx = scdf.index.copy(deep=True)
@@ -400,14 +408,15 @@ def _subtraction(scdf, ocdf, **kwargs):
     return scdf
 
 
-def _coverage(ranges, value_col=None, stranded=False, n_jobs=1, **coverage):
+def _coverage(ranges, value_col=None, stranded=False, **coverage):
 
     try:
         from pyranges import PyRles
     except ImportError:
         raise Exception("Using the coverage method requires that pyrle is installed.")
 
-    return PyRles(ranges, value_col=value_col, stranded=stranded, nb_cpu=n_jobs)
+    return PyRles(ranges, value_col=value_col, stranded=stranded)
+
 
 
 
@@ -416,8 +425,8 @@ def _write_both(scdf, ocdf, new_pos=False, **kwargs):
 
     suffixes = kwargs["suffixes"]
 
-    scdf, ocdf = _both_dfs(scdf, ocdf, **kwargs)
     ocdf = ocdf.drop("Chromosome", 1)
+    scdf, ocdf = _both_dfs(scdf, ocdf, **kwargs)
     nix = pd.Index(range(len(scdf)))
     scdf.index = nix
     ocdf.index = nix
@@ -473,3 +482,24 @@ if __name__ == "__main__":
                                 dtype={"Chromosome": "category", "Strand": "category"})
 
     bgr = pr.PyRanges(background, copy_df=False)
+
+
+# c = """chr1	3	6	h	0	+
+# chr2	4	7	h	0	-"""
+
+# c2 = """chr1	1	2	f	0	+
+# chr2	6	7	f	0	-"""
+
+# import pandas as pd
+# from io import StringIO
+
+# names = "Chromosome Start End Name Score Strand".split()
+# df1 = pd.read_table(StringIO(c), header=None, names=names)
+# df2 = pd.read_table(StringIO(c2), header=None, names=names)
+
+# import dask.dataframe as dd
+
+# ddf1 = dd.from_pandas(df1, npartitions=1)
+# ddf2 = dd.from_pandas(df2, npartitions=1)
+
+# ddf1.groupby("Chromosome").apply(func_name, ddf2)

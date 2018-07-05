@@ -235,7 +235,7 @@ def test_create_stranded_grles(chipseq_dataset):
 def test_create_stranded_grles_multicpu(chipseq_dataset):
 
 
-    grles = PyRles(chipseq_dataset, stranded=True, n_jobs=5)
+    grles = PyRles(chipseq_dataset, stranded=True, nb_cpu=5)
 
     print(grles)
 

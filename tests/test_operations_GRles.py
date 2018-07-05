@@ -63,7 +63,7 @@ def test_subtraction(chip, background, expected_result):
 
 def test_subtraction_multicpu(chip, background, expected_result):
 
-    result = chip.sub(background, n_jobs=5)
+    result = chip.sub(background, nb_cpu=5)
 
     print("result\n", result, "\n")
     print("expected_result\n", expected_result)

@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 
+import dask.dataframe as dd
+
+
 from tabulate import tabulate
 
 
@@ -292,29 +295,29 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, nb_cpu=1, **kwargs):
+    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, **kwargs):
         "Find the nearest feature in other."
 
-        df = pyrange_apply(_nearest, self, other, strandedness=strandedness, suffix=suffix, how=how, overlap=overlap, n_jobs=nb_cpu)
+        df = pyrange_apply(_nearest, self, other, strandedness=strandedness, suffix=suffix, how=how, overlap=overlap)
 
         return df
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def intersection(self, other, strandedness=False, how=None, nb_cpu=1):
+    def intersection(self, other, strandedness=False, how=None):
 
         "Want the parts of the intervals in self that overlap with other."
 
-        df = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how, n_jobs=nb_cpu)
+        df = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how)
         # df = _intersection(self, other, strandedness=strandedness, how=how)
 
         return df
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def set_intersection(self, other, strandedness=False, how=None, nb_cpu=1):
+    def set_intersection(self, other, strandedness=False, how=None):
 
-        si = pyrange_apply(_set_intersection, self, other, strandedness=strandedness, how=how, n_jobs=nb_cpu)
+        si = pyrange_apply(_set_intersection, self, other, strandedness=strandedness, how=how)
 
         return si
 
