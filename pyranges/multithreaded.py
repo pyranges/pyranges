@@ -40,7 +40,6 @@ def return_empty_if_one_empty(func):
 
 def _pyrange_apply(function, scdf, other_dfs, grpby_key, n_jobs=1, **kwargs):
 
-
     if function.__name__ == "_set_union":
         self_dfs =  {k: d for k, d in scdf.groupby(grpby_key)}
         self_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), self_dfs)
@@ -134,16 +133,14 @@ def _first_df(scdf, ocdf, how=False, invert=False, **kwargs):
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how:
-        indexes = it.has_overlaps(starts, ends, indexes)
+        _indexes = it.has_overlaps(starts, ends, indexes)
     elif how == "containment":
-        indexes = it.has_containments(starts, ends, indexes)
-
-    indexes = indexes
+        _indexes = it.has_containments(starts, ends, indexes)
 
     if not invert:
-        return scdf.loc[scdf.index.isin(indexes)]
+        return scdf.loc[scdf.index.isin(_indexes)]
     else:
-        return scdf.loc[~scdf.index.isin(indexes)]
+        return scdf.loc[~scdf.index.isin(_indexes)]
 
 
 def _both_dfs(scdf, ocdf, how=False, **kwargs):

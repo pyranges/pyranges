@@ -2,9 +2,6 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 
-import dask.dataframe as dd
-
-
 from tabulate import tabulate
 
 
@@ -284,84 +281,84 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def overlap(self, other, strandedness=False, invert=False, how=None, **kwargs):
+    def overlap(self, other, strandedness=False, invert=False, how=None, nb_cpu=1, **kwargs):
 
         "Want all intervals in self that overlap with other."
 
         df = pyrange_apply(_first_df, self, other, strandedness=strandedness,
-                           invert=invert, how=how, **kwargs)
+                           invert=invert, how=how, n_jobs=nb_cpu, **kwargs)
 
         return df
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, **kwargs):
+    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, nb_cpu=1, **kwargs):
         "Find the nearest feature in other."
 
-        df = pyrange_apply(_nearest, self, other, strandedness=strandedness, suffix=suffix, how=how, overlap=overlap)
+        df = pyrange_apply(_nearest, self, other, strandedness=strandedness, suffix=suffix, how=how, overlap=overlap, n_jobs=nb_cpu)
 
         return df
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def intersection(self, other, strandedness=False, how=None):
+    def intersection(self, other, strandedness=False, how=None, nb_cpu=1):
 
         "Want the parts of the intervals in self that overlap with other."
 
-        df = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how)
+        df = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how, n_jobs=nb_cpu)
         # df = _intersection(self, other, strandedness=strandedness, how=how)
 
         return df
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def set_intersection(self, other, strandedness=False, how=None):
+    def set_intersection(self, other, strandedness=False, how=None, nb_cpu=1):
 
-        si = pyrange_apply(_set_intersection, self, other, strandedness=strandedness, how=how)
+        si = pyrange_apply(_set_intersection, self, other, strandedness=strandedness, how=how, n_jobs=nb_cpu)
 
         return si
 
     @pyrange_or_df
     @return_empty_if_both_empty
-    def set_union(self, other, strandedness=False):
+    def set_union(self, other, strandedness=False, nb_cpu=1):
 
-        si = pyrange_apply(_set_union, self, other, strandedness=strandedness)
+        si = pyrange_apply(_set_union, self, other, strandedness=strandedness, n_jobs=nb_cpu)
 
         return si
 
 
     @pyrange_or_df
-    def subtraction(self, other, strandedness=False):
+    def subtraction(self, other, strandedness=False, nb_cpu=1):
 
 
-        return pyrange_apply(_subtraction, self, other, strandedness=strandedness)
+        return pyrange_apply(_subtraction, self, other, strandedness=strandedness, n_jobs=nb_cpu)
 
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], how=None, **kwargs):
+    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], how=None, nb_cpu=1, **kwargs):
 
         df = pyrange_apply(_write_both, self, other, strandedness=strandedness, new_pos=new_pos,
-                           suffixes=suffixes, how=how, **kwargs)
+                           suffixes=suffixes, how=how, n_jobs=nb_cpu, **kwargs)
 
         return df
 
 
     @pyrange_or_df_single
-    def cluster(self, strand=None):
+    def cluster(self, strand=None, nb_cpu=1):
 
-        df = pyrange_apply_single(_cluster, self, strand=strand)
+        df = pyrange_apply_single(_cluster, self, strand=strand, n_jobs=nb_cpu)
 
         return df
 
 
     @pyrange_or_df_single
-    def tile(self, tile_size=50):
+    def tile(self, tile_size=50, nb_cpu=1):
 
         df = _tile(self, tile_size)
         return df
 
 
-    def coverage(self, value_col=None, stranded=False):
+    def coverage(self, value_col=None, stranded=False, nb_cpu=1):
 
-        return _coverage(self, value_col, stranded=stranded)
+        return _coverage(self, value_col, stranded=stranded, n_jobs=nb_cpu)
