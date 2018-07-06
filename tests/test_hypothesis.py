@@ -333,7 +333,7 @@ def test_set_intersection(gr, gr2):
         assert bedtools_df.empty == result.df.empty
 
 
-overlap_command = "bedtools intersect -wa {} -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
+overlap_command = "bedtools intersect -u {} -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", strandedness)

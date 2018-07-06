@@ -73,6 +73,8 @@ def _overlap(self, other, strandedness, invert, how=None):
             else:
                 indexes = it.has_overlaps(starts, ends, indexes)
 
+            print(indexes)
+
             dfs[chromosome, strand] = pick_out_indexes_possibly_nonunique(cdf, indexes, invert)
 
     else:

@@ -40,19 +40,20 @@ def return_empty_if_one_empty(func):
 
 def _pyrange_apply(function, scdf, other_dfs, grpby_key, n_jobs=1, **kwargs):
 
+    print("in pyrange apply " * 10, n_jobs)
     if function.__name__ == "_set_union":
         self_dfs =  {k: d for k, d in scdf.groupby(grpby_key)}
         self_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), self_dfs)
         keys_union = natsorted(list(set(self_dfs).union(other_dfs)))
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(self_dfs[key], other_dfs[key], key=key, **kwargs) for key in keys_union)
+        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(self_dfs[key], other_dfs[key], key=key, n_jobs=n_jobs, **kwargs) for key in keys_union)
 
     elif not function.__name__ in ["_write_both", "_nearest"]:
         # for most methods, we do not need to know anything about other except start, end
         # i.e. less data that needs to be sent to other processes
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key][["Start", "End"]], key=key, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
+        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key][["Start", "End"]], key=key, n_jobs=n_jobs, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
 
     else:
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key], key=key, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
+        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key], key=key, n_jobs=n_jobs, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
 
     outdfs = [df for df in outdfs if not df.empty]
 
@@ -91,10 +92,9 @@ def pyrange_apply_single(function, self, **kwargs):
         return pd.DataFrame(columns="Chromosome Start End Strand".split())
 
 
-def pyrange_apply(function, self, other, **kwargs):
+def pyrange_apply(function, self, other, n_jobs, **kwargs):
 
     strandedness = kwargs["strandedness"]
-    n_jobs = kwargs.get("n_jobs", 1)
 
     print("Using {} cores and strandedness {}".format(n_jobs, strandedness))
 
@@ -117,18 +117,25 @@ def pyrange_apply(function, self, other, **kwargs):
         other_dfs = {key: v for key, v in other.df.groupby(grpby_key)}
         other_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), other_dfs)
 
-    return _pyrange_apply(function, self.df, other_dfs, grpby_key, **kwargs)
+    return _pyrange_apply(function, self.df, other_dfs, grpby_key, n_jobs=n_jobs, **kwargs)
 
 
 
 
 @return_empty_if_one_empty
-def _first_df(scdf, ocdf, how=False, invert=False, **kwargs):
+def _first_df(scdf, ocdf, how=False, invert=False, n_jobs=1, **kwargs):
 
     assert how in "containment first".split() + [False, None]
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values
+
+    print("n_jobs " * 10)
+    print(n_jobs)
+
+    if n_jobs > 1:
+        print("deepcopy")
+        scdf = scdf.copy(deep=True)
 
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
@@ -138,7 +145,7 @@ def _first_df(scdf, ocdf, how=False, invert=False, **kwargs):
         _indexes = it.has_containments(starts, ends, indexes)
 
     if not invert:
-        return scdf.loc[scdf.index.isin(_indexes)]
+        return scdf.reindex(_indexes)
     else:
         return scdf.loc[~scdf.index.isin(_indexes)]
 
