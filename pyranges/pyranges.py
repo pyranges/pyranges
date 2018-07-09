@@ -5,7 +5,7 @@ from collections import defaultdict
 from tabulate import tabulate
 
 
-from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap
+from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes
 # from pyranges.multithreaded import _cluster, pyrange_apply_single, _subtraction, _set_union, _set_intersection, _intersection, pyrange_apply, _nearest, _coverage, _write_both, _first_df
 
 from ncls import NCLS
@@ -270,7 +270,9 @@ class PyRanges():
         else:
             s = self.df
 
-        str_repr = tabulate(s, headers='keys', tablefmt='psql', showindex=False) + \
+        h = [c + "\n(" + str(t) + ")" for c, t in  zip(self.df.columns, self.df.dtypes)]
+
+        str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
                                         "\nPyRanges object has {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
         return str_repr
 
@@ -359,6 +361,27 @@ class PyRanges():
 
         return _coverage(self, value_col, stranded=stranded)
 
+    @pyrange_or_df_single
+    def tss(self, slack=0):
+
+        if not self.stranded:
+            raise Exception("Cannot compute TSSes without strand info. Perhaps use slack() instead?")
+
+        return _tss(self, slack)
+
+
+    @pyrange_or_df_single
+    def tes(self, slack=0):
+
+        if not self.stranded:
+            raise Exception("Cannot compute TESes without strand info. Perhaps use slack() instead?")
+
+        return _tes(self, slack)
+
+    @pyrange_or_df_single
+    def pos(self, slack=0):
+
+        pass
     # @pyrange_or_df
     # @return_empty_if_one_empty
     # def overlap(self, other, strandedness=False, invert=False, how=None, nb_cpu=1, **kwargs):

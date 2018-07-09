@@ -883,90 +883,43 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
 
     return df
 
-# @profile
-# def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
+def _tss(self, slack=0):
 
-#     if overlap:
-#         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(self, other, strandedness, suffix)
-#     else:
-#         df_to_find_nearest_in = self.df
+    df = self.df
 
-#     other_strand = {"+": "-", "-": "+"}
+    tss_pos = df.loc[df.Strand == "+"]
 
-#     if self.stranded and strandedness: # chromosome and strand
-#         grpby_key = "Chromosome Strand".split()
-#     else:
-#         grpby_key = "Chromosome"
+    tss_neg = df.loc[df.Strand == "-"].copy()
 
-#     other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
+    # pd.options.mode.chained_assignment = None
+    tss_neg.loc[:, "Start"] = tss_neg.End
 
-#     dfs = []
+    # pd.options.mode.chained_assignment = "warn"
+    tss = pd.concat([tss_pos, tss_neg], sort=False)
+    tss["End"] = tss.Start
+    tss.End = tss.End + 1 + slack
+    tss.Start = tss.Start - slack
+    tss.loc[tss.Start < 0, "Start"] = 0
 
-#     for key, scdf in df_to_find_nearest_in.groupby(grpby_key):
-
-#         if len(key) == 2 and strandedness == "opposite":
-#             other_key = key[0], other_strand[key[1]]
-#         else:
-#             other_key = key
-
-#         if not other_key in other_dfs:
-#             continue
-
-#         ocdf = other_dfs[other_key]
-
-#         # print("scdf", scdf.to_csv(sep=" "))
-#         # print("ocdf", ocdf.to_csv(sep=" "))
-
-#         if how == "next":
-#             l_idx, r_idx, dist = _next_nonoverlapping(scdf.End, ocdf.Start)
-#         elif how == "previous":
-#             l_idx, r_idx, dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
-#         else:
-#             previous_l_idx, previous_r_idx, previous_dist = _previous_nonoverlapping(scdf.Start, ocdf.End)
-
-#             previous_r_idx = pd.Series(previous_r_idx, index=previous_l_idx).sort_index().values
-#             previous_dist = pd.Series(previous_dist, index=previous_l_idx).sort_index().values
-#             previous_l_idx = np.sort(previous_l_idx)
-
-#             next_l_idx, next_r_idx, next_dist = _next_nonoverlapping(scdf.End, ocdf.Start)
-
-#             next_r_idx = pd.Series(next_r_idx, index=next_l_idx).sort_index().values
-#             next_dist = pd.Series(next_dist, index=next_l_idx).sort_index().values
-#             next_l_idx = np.sort(next_l_idx)
-
-#             l_idx, r_idx, dist = nearest_nonoverlapping(previous_l_idx, previous_r_idx, previous_dist,
-#                                                         next_l_idx, next_r_idx, next_dist)
-
-#         r_idx = r_idx[dist != -1]
-#         l_idx = l_idx[dist != -1]
-#         dist = dist[dist != -1]
-
-#         scdf = scdf.reindex(l_idx, fill_value=-1)
-#         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
-
-#         # print("scdf", scdf)
-#         # print("ocdf", ocdf)
-
-#         ocdf.index = scdf.index
-#         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
-#         ocdf.drop("Chromosome", axis=1, inplace=True)
-
-#         r_idx = pd.Series(r_idx, index=ocdf.index)
-#         # if r_idx[r_idx == -1].any():
-#         #     ocdf = ocdf.drop(r_idx.loc[r_idx == -1].index)
-
-#         result = scdf.join(ocdf, rsuffix=suffix, how="left")
-
-#         dfs.append(result)
-#     if dfs:
-#         df = pd.concat(dfs)
-#     else:
-#         df = pd.DataFrame(columns="Chromosome Start End Strand".split())
+    return tss.reindex(df.index)
 
 
-#     if overlap and not df.empty and not nearest_df.empty:
-#         df = pd.concat([nearest_df, df])
-#     elif overlap and not nearest_df.empty:
-#         df = nearest_df
+def _tes(self, slack=0):
 
-#     return df
+    df = self.df
+
+    tes_pos = df.loc[df.Strand == "+"]
+
+    tes_neg = df.loc[df.Strand == "-"].copy()
+
+    # pd.options.mode.chained_assignment = None
+    tes_neg.loc[:, "Start"] = tes_neg.End
+
+    # pd.options.mode.chained_assignment = "warn"
+    tes = pd.concat([tes_pos, tes_neg], sort=False)
+    tes["Start"] = tes.End
+    tes.End = tes.End + 1 + slack
+    tes.Start = tes.Start - slack
+    tes.loc[tes.Start < 0, "Start"] = 0
+
+    return tes.reindex(df.index)
