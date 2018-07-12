@@ -942,14 +942,21 @@ def _jaccard(self, other, strandedness):
     else:
         strand = False
 
-    print(self)
+    il = self.set_intersection(other, strandedness).lengths().sum()
+    # ul = self.set_union(other, strandedness).lengths().sum()
+    s = self.cluster(True).lengths().sum()
+    o = other.cluster(True).lengths().sum()
 
-    s = self.cluster(strand)
-    o = other.cluster(strand)
+    print("o", o)
+    print("s", s)
+    print("il", il)
+    # print("ul", ul)
 
-    sl = s.lengths().sum()
-    ol = o.lengths().sum()
 
-    il = s.intersection(o, strandedness).lengths().sum()
 
-    return il / (sl + ol - il)
+    # if il == ul:
+    #     return 1
+    if s + o == il:
+        return 1
+
+    return il / (s + o - il)
