@@ -281,6 +281,7 @@ def _cluster(self, strand=False, maxdist=0, minnb=1):
 
         df = pd.concat(dfs, ignore_index=True)["Chromosome Start End".split()]
 
+
     return df
 
 
@@ -883,6 +884,7 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
 
     return df
 
+
 def _tss(self, slack=0):
 
     df = self.df
@@ -923,3 +925,31 @@ def _tes(self, slack=0):
     tes.loc[tes.Start < 0, "Start"] = 0
 
     return tes.reindex(df.index)
+
+
+def _lengths(self):
+
+    df = self.df
+    lengths = df.End - df.Start
+
+    return lengths
+
+
+def _jaccard(self, other, strandedness):
+
+    if strandedness:
+        strand = True
+    else:
+        strand = False
+
+    print(self)
+
+    s = self.cluster(strand)
+    o = other.cluster(strand)
+
+    sl = s.lengths().sum()
+    ol = o.lengths().sum()
+
+    il = s.intersection(o, strandedness).lengths().sum()
+
+    return il / (sl + ol - il)

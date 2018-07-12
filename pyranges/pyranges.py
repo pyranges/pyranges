@@ -5,11 +5,24 @@ from collections import defaultdict
 from tabulate import tabulate
 
 
-from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes
+from pyranges.subset import get_string, get_slice, get_tuple
+from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths
 # from pyranges.multithreaded import _cluster, pyrange_apply_single, _subtraction, _set_union, _set_intersection, _intersection, pyrange_apply, _nearest, _coverage, _write_both, _first_df
 
 from ncls import NCLS
 
+def return_copy_if_view(df, df2):
+    # https://stackoverflow.com/questions/26879073/checking-whether-data-frame-is-copy-or-view-in-pandas
+
+    if df.values.base is df2.values.base:
+        return df.copy(deep=True)
+    else:
+        return df
+
+# def is_view(df, df2):
+#     # https://stackoverflow.com/questions/26879073/checking-whether-data-frame-is-copy-or-view-in-pandas
+
+#     return df.values.base is df2.values.base
 
 def create_ncls(cdf):
 
@@ -67,12 +80,12 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
 
 def return_empty_if_one_empty(func):
 
-    def extended_func(self, other, **kwargs):
+    def extended_func(self, other, *args, **kwargs):
 
         if len(self) == 0 or len(other) == 0:
             df = pd.DataFrame(columns="Chromosome Start End Strand".split())
         else:
-            df = func(self, other, **kwargs)
+            df = func(self, other, *args, **kwargs)
 
         return df
 
@@ -81,12 +94,12 @@ def return_empty_if_one_empty(func):
 
 def return_empty_if_both_empty(func):
 
-    def extended_func(self, other, **kwargs):
+    def extended_func(self, other, *args, **kwargs):
 
         if len(self) == 0 and len(other) == 0:
             df = pd.DataFrame(columns="Chromosome Start End Strand".split())
         else:
-            df = func(self, other, **kwargs)
+            df = func(self, other, *args, **kwargs)
 
         return df
 
@@ -95,10 +108,10 @@ def return_empty_if_both_empty(func):
 
 def pyrange_or_df(func):
 
-    def extension(self, other, **kwargs):
-        df = func(self, other, **kwargs)
+    def extension(self, other, *args, **kwargs):
+        df = func(self, other, *args, **kwargs)
 
-        if kwargs.get("df_only"):
+        if kwargs.get("df"):
             return df
 
         return PyRanges(df)
@@ -108,10 +121,10 @@ def pyrange_or_df(func):
 
 def pyrange_or_df_single(func):
 
-    def extension(self, **kwargs):
-        df = func(self, **kwargs)
+    def extension(self, *args, **kwargs):
+        df = func(self, *args, **kwargs)
 
-        if kwargs.get("df_only"):
+        if kwargs.get("df"):
             return df
 
         return PyRanges(df)
@@ -194,68 +207,18 @@ class PyRanges():
 
     def __getitem__(self, val):
 
-        pd.options.mode.chained_assignment = None
         if isinstance(val, str):
-            if val in set(self.df.Chromosome):
-                return PyRanges(self.df.loc[self.df.Chromosome == val])
-            elif val in "+ -".split():
-                return PyRanges(self.df.loc[self.df.Strand == val])
-            else:
-                raise Exception("Invalid choice for string subsetting PyRanges: {}. Must be either strand or chromosome".format(val))
+            df = _get_string(self, val)
 
         elif isinstance(val, tuple):
-
-            # "chr1", 5:10
-            if len(val) == 2 and val[0] in self.df.Chromosome.values and isinstance(val[1], slice):
-                chromosome, loc = val
-                start = loc.start or 0
-                stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-                idxes = [r[2] for r in self.__ncls__[chromosome, "+"].find_overlap(start, stop)] + \
-                        [r[2] for r in self.__ncls__[chromosome, "-"].find_overlap(start, stop)]
-
-                return PyRanges(self.df.loc[idxes])
-
-            # "+", 5:10
-            if len(val) == 2 and val[0] in "+ -".split() and isinstance(val[1], slice):
-                strand, loc = val
-                start = loc.start or 0
-                stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-                idxes = []
-                for chromosome in self.df.Chromosome.drop_duplicates():
-                    idxes.extend([r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)])
-
-                return PyRanges(self.df.loc[idxes])
-
-            # "chr1", "+"
-            if len(val) == 2 and val[1] in "+ -".split():
-
-                chromosome, strand = val
-
-                return PyRanges(self.df.loc[(self.df.Chromosome == chromosome) & (self.df.Strand == strand)])
-
-            # "chr1", "+", 5:10
-            elif len(val) == 3 and val[0] in self.df.Chromosome.values and val[1] in "+ -".split():
-
-                chromosome, strand, loc = val
-                start = loc.start or 0
-                stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-                idxes = [r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)]
-
-                return PyRanges(self.df.loc[idxes])
-
-        # 100:999
+            df = get_tuple(self, val)
         elif isinstance(val, slice):
+            df = get_slice(self, val)
 
-            start = val.start or 0
-            stop = val.stop or max(self.df.End.max(), start)
-
-            idxes = []
-            for it in self.__ncls__.values():
-                idxes.extend([r[2] for r in it.find_overlap(start, stop)])
-
-            return PyRanges(self.df.loc[idxes])
-
-        pd.options.mode.chained_assignment = "warn"
+        if not is_view(df):
+            return PyRanges(df)
+        else:
+            return PyRanges(df.copy(deep=True))
 
 
     def __str__(self):
@@ -280,6 +243,7 @@ class PyRanges():
     def __repr__(self):
 
         return str(self)
+
 
     @pyrange_or_df
     @return_empty_if_one_empty
@@ -344,7 +308,7 @@ class PyRanges():
 
 
     @pyrange_or_df_single
-    def cluster(self, strand=None, df_only=False, max_dist=0, min_nb=1):
+    def cluster(self, strand=None, max_dist=0, min_nb=1, **kwargs):
 
         df = _cluster(self, strand, max_dist, min_nb)
 
@@ -378,10 +342,61 @@ class PyRanges():
 
         return _tes(self, slack)
 
-    @pyrange_or_df_single
-    def pos(self, slack=0):
+    def pos(self, *val):
 
-        pass
+        # turn int-tuple into slice
+        newval = []
+        for v in val:
+            if isinstance(v, tuple) and len(v) == 2 and isinstance(v[0], int) and isinstance(v[1], int):
+                newval.append(slice(v[0], v[1]))
+            else:
+                newval.append(v)
+
+        val = tuple(newval)
+
+        if len(val) == 1:
+            val = val[0]
+
+        if isinstance(val, str):
+            df = get_string(self, val)
+        elif isinstance(val, tuple):
+            df = get_tuple(self, val)
+        elif isinstance(val, slice):
+            df = get_slice(self, val)
+        else:
+            raise Exception("Invalid type for indexer. Must be str, slice, or 2/3-tuple.")
+
+        return return_copy_if_view(df, self.df)
+
+
+    # always returns df
+    def get(self, column, values, **kwargs):
+
+        df = self.df
+        if not column in self.df:
+            raise Exception("Column {} not in PyRanges".format(column))
+
+        if isinstance(values, str):
+            df = df.loc[df[column] == values]
+        else:
+            df = df.loc[df[column].isin(values)]
+
+        return return_copy_if_view(df, self.df)
+
+
+    def lengths(self, **kwargs):
+
+        df = _lengths(self)
+
+        return df
+
+
+    def jaccard(self, other, strandedness):
+
+        return _jaccard(self, other, strandedness)
+
+
+
     # @pyrange_or_df
     # @return_empty_if_one_empty
     # def overlap(self, other, strandedness=False, invert=False, how=None, nb_cpu=1, **kwargs):

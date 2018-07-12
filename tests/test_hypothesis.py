@@ -597,6 +597,43 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     # print("bedtools", bedtools_distances)
 
 
+
+jaccard_strandedness = [False, "same"]
+jaccard_command = "bedtools jaccard {}  -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
+@pytest.mark.bedtools
+@pytest.mark.parametrize("strandedness", jaccard_strandedness)
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min(), gr2=dfs_min())
+def test_jaccard(gr, gr2, strandedness):
+
+    print(gr.df)
+    print(gr2.df)
+
+    bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
+    print(bedtools_strand)
+
+    result_df = None
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        f2 = "{}/f2.bed".format(temp_dir)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
+
+        cmd = jaccard_command.format(bedtools_strand, f1, f2)
+        print(f1)
+        print(f2)
+        print(cmd)
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+
+        bedtools_jaccard = float(result.split("\n")[1].split()[2])
+
+    print("result bedtools", bedtools_jaccard)
+    result = gr.jaccard(gr2, strandedness=strandedness)
+    print("pyranges result", result)
+
+    assert np.isclose(result, bedtools_jaccard)
+
+
 join_command = "bedtools intersect {} -wo -a {} -b {}"
 join_strandedness = [False, "opposite", "same"]
 
