@@ -5,6 +5,7 @@ from collections import defaultdict
 from tabulate import tabulate
 
 
+from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths
 # from pyranges.multithreaded import _cluster, pyrange_apply_single, _subtraction, _set_union, _set_intersection, _intersection, pyrange_apply, _nearest, _coverage, _write_both, _first_df
@@ -136,6 +137,7 @@ def pyrange_or_df_single(func):
 class PyRanges():
 
     df = None
+    gf = None
 
     def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=True):
 
@@ -162,6 +164,8 @@ class PyRanges():
         self.__dict__["df"] = df
 
         self.__dict__["__ncls__"] = create_ncls_dict(df, self.stranded)
+
+        self.__dict__["gf"] = GenomicFeaturesMethods(self)
 
 
     def __len__(self):
@@ -215,7 +219,7 @@ class PyRanges():
         elif isinstance(val, slice):
             df = get_slice(self, val)
 
-        if not is_view(df):
+        if not df._is_view:
             return PyRanges(df)
         else:
             return PyRanges(df.copy(deep=True))
@@ -331,16 +335,13 @@ class PyRanges():
         if not self.stranded:
             raise Exception("Cannot compute TSSes without strand info. Perhaps use slack() instead?")
 
-        return _tss(self, slack)
+        return _tss_or_tes(self, "tss", slack)
 
 
     @pyrange_or_df_single
     def tes(self, slack=0):
 
-        if not self.stranded:
-            raise Exception("Cannot compute TESes without strand info. Perhaps use slack() instead?")
-
-        return _tes(self, slack)
+        return _tss_or_tes(self, "tes", slack)
 
     def pos(self, *val):
 
