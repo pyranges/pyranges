@@ -1,5 +1,33 @@
 import pandas as pd
 
+# from pyranges.pyranges import pyrange_or_df_single
+import pyranges as pr
+
+def pyrange_or_df(func):
+
+    def extension(self, other, *args, **kwargs):
+        df = func(self, other, *args, **kwargs)
+
+        if kwargs.get("df"):
+            return df
+
+        return pr.PyRanges(df)
+
+    return extension
+
+
+def pyrange_or_df_single(func):
+
+    # from pyranges import PyRanges
+    def extension(self, *args, **kwargs):
+        df = func(self, *args, **kwargs)
+
+        if kwargs.get("df"):
+            return df
+
+        return pr.PyRanges(df)
+
+    return extension
 
 
 def _keep_transcript_with_most_exons(df):
@@ -104,6 +132,7 @@ class GenomicFeaturesMethods():
 
         self.pr = pr
 
+    @pyrange_or_df_single
     def tss(self, transcripts="all", drop_duplicate_tss=True, slack=0):
 
         pr = self.pr
@@ -122,15 +151,17 @@ class GenomicFeaturesMethods():
         if drop_duplicate_tss:
             df = df.drop_duplicates("Chromosome Start End".split())
 
+        df = df.drop(["ExonNumber", "ExonID"], 1)
+
         return df
 
-
+    @pyrange_or_df_single
     def tes(self, transcripts="all", drop_duplicate_tss=True, slack=0):
 
         pr = self.pr
 
-
         df = pr.df
+        df = df.drop("ExonNumber", 1)
 
         if transcripts == "all":
             pass
@@ -143,5 +174,7 @@ class GenomicFeaturesMethods():
 
         if drop_duplicate_tss:
             df = df.drop_duplicates("Chromosome Start End".split())
+
+        df = df.drop(["ExonNumber", "ExonID"], 1)
 
         return df

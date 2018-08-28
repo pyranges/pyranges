@@ -99,12 +99,17 @@ def read_gtf(f):
 
     df = pd.read_table(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes)
 
+    if sum(df.Score == ".") == len(df):
+        cols_to_concat = "Chromosome Start End Strand Feature".split()
+    else:
+        cols_to_concat = "Chromosome Start End Strand Feature Score".split()
+
     extract = _fetch_gene_transcript_exon_id(df.Attribute)
     extract.columns = "GeneID TranscriptID ExonNumber ExonID".split()
 
     extract.ExonNumber = extract.ExonNumber.astype(float)
 
-    df = pd.concat([df["Chromosome Start End Strand Feature Score".split()],
+    df = pd.concat([df[cols_to_concat],
                         extract], axis=1)
 
     print(df.head())
