@@ -165,7 +165,7 @@ class PyRanges():
 
         self.__dict__["__ncls__"] = create_ncls_dict(df, self.stranded)
 
-        self.__dict__["gf"] = GenomicFeaturesMethods(self)
+        self.__dict__["ft"] = GenomicFeaturesMethods(self)
 
 
     def __len__(self):

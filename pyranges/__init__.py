@@ -69,10 +69,17 @@ def _fetch_gene_transcript_exon_id(attribute):
 
     no_quotes = attribute.str.replace('"', '').str.replace("'", "")
 
-    df = no_quotes.str.extract("gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?", expand=True)
+    df = no_quotes.str.extract("gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?", expand=True)# .iloc[:, [1, 2, 3]]
+    # print(df.head())
+    # print(df.head().index)
+    # print(df.columns)
+    # raise
 
+    df.columns = "GeneID TranscriptID ExonNumber ExonID".split()
     cat_cols = "GeneID TranscriptID ExonID".split()
+    # df.columns = cat_cols
     df.loc[:, cat_cols] = df[cat_cols].astype("category")
+    # print(df.head())
 
     return df
 
@@ -90,7 +97,7 @@ def read_gtf(f):
     attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    df = pd.read_table(f, sep="\t", comment="#", header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes)
+    df = pd.read_table(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes)
 
     extract = _fetch_gene_transcript_exon_id(df.Attribute)
     extract.columns = "GeneID TranscriptID ExonNumber ExonID".split()
@@ -99,6 +106,8 @@ def read_gtf(f):
 
     df = pd.concat([df["Chromosome Start End Strand Feature Score".split()],
                         extract], axis=1)
+
+    print(df.head())
 
     return PyRanges(df)
 

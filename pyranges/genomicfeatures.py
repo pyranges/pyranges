@@ -1,5 +1,7 @@
 import pandas as pd
 
+
+
 def _keep_transcript_with_most_exons(df):
 
     for gene, gdf in df.groupby("GeneID"):
@@ -21,6 +23,7 @@ def tss_or_tes(df, which, slack=0):
 
     if "Feature" not in df:
         raise Exception("No Feature information in object.")
+
 
     _df = df[df.Feature == "transcript"]
 
@@ -105,9 +108,6 @@ class GenomicFeaturesMethods():
 
         pr = self.pr
 
-        if not pr.stranded:
-            raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
-
         df = pr.df
 
         if transcripts == "all":
@@ -115,6 +115,8 @@ class GenomicFeaturesMethods():
         elif transcripts == "most_exons":
             df = _keep_transcript_with_most_exons(df)
 
+        if not pr.stranded:
+            raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
         df = tss_or_tes(df, "tss")
 
         if drop_duplicate_tss:
@@ -127,8 +129,6 @@ class GenomicFeaturesMethods():
 
         pr = self.pr
 
-        if not pr.stranded:
-            raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
 
         df = pr.df
 
@@ -137,7 +137,9 @@ class GenomicFeaturesMethods():
         elif transcripts == "most_exons":
             df = _keep_transcript_with_most_exons(df)
 
-            df = tss_or_tes(df, "tes")
+        if not pr.stranded:
+            raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
+        df = tss_or_tes(df, "tes")
 
         if drop_duplicate_tss:
             df = df.drop_duplicates("Chromosome Start End".split())

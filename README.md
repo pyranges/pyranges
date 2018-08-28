@@ -28,6 +28,10 @@ the data.
 PyRanges also contains a run-length encoding library for extremely efficient
 arithmetic computation of scores associated with genomic intervals.
 
+**The work on the top-level library has slowed down a bit right now, as I am
+currently working on improving the underlying algorithms for interval set
+operations (NCLS). After that I'll get back to working on PyRanges again.**
+
 ### Paper
 
 Being written here: https://github.com/endrebak/pyranges-paper

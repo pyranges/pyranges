@@ -12,6 +12,7 @@ from io import StringIO
 
 np.random.seed(1)
 
+
 @pytest.fixture
 def cs():
 
@@ -34,6 +35,13 @@ def exons():
     df.columns = "Chromosome Start End".split() + list(df.columns[3:])
 
     return PyRanges(df)
+
+
+@pytest.fixture
+def gtf():
+
+    return pr.read_gtf("tests/test_data/ensembl.gtf")
+
 
 
 @pytest.fixture
