@@ -6,6 +6,7 @@ from tabulate import tabulate
 
 
 from pyranges.genomicfeatures import GenomicFeaturesMethods
+# from pyranges.genomicfeatures import _tss, _tes
 from pyranges.subset import get_string, get_slice, get_tuple
 from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths
 # from pyranges.multithreaded import _cluster, pyrange_apply_single, _subtraction, _set_union, _set_intersection, _intersection, pyrange_apply, _nearest, _coverage, _write_both, _first_df
@@ -335,13 +336,13 @@ class PyRanges():
         if not self.stranded:
             raise Exception("Cannot compute TSSes without strand info. Perhaps use slack() instead?")
 
-        return _tss_or_tes(self, "tss", slack)
+        return _tss(self, slack)
 
 
     @pyrange_or_df_single
     def tes(self, slack=0):
 
-        return _tss_or_tes(self, "tes", slack)
+        return _tes(self, slack)
 
     def pos(self, *val):
 

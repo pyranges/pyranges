@@ -41,12 +41,12 @@ def filter_transcripts(df, keep="most_exons"):
 
 
 
-def _tss(self, slack=0, drop_duplicates=True):
+def _tss(df, slack=0, drop_duplicates=True):
 
-    try:
-        df = self.df
-    except:
-        df = self
+    # try:
+    #     df = self.df
+    # except:
+    #     df = self
 
     tss_pos = df.loc[df.Strand == "+"]
 
@@ -70,9 +70,9 @@ def _tss(self, slack=0, drop_duplicates=True):
     return tss
 
 
-def _tes(self, slack=0, drop_duplicates=True):
+def _tes(df, slack=0, drop_duplicates=True):
 
-    df = self.df
+    # df = self.df
 
     tes_pos = df.loc[df.Strand == "+"]
 
