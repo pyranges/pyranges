@@ -1,6 +1,6 @@
 import pytest
 from hypothesis import given, settings, reproduce_failure, unlimited, HealthCheck, seed
-from hypothesis.extra.pandas import data_frames, columns, range_indexes, column
+from hypothesis.extra.pandas import data_frames, columns, range_indexes, column, indexes
 from hypothesis.extra.numpy import arrays
 import hypothesis.strategies as st
 
@@ -44,6 +44,8 @@ positions = st.integers(min_value=0, max_value=int(1e7))
 lengths = st.integers(min_value=1, max_value=int(1e7))
 small_lengths = st.integers(min_value=1, max_value=int(1e4))
 strands = st.sampled_from("+ -".split())
+names = st.text("abcdefghijklmnopqrstuvxyz", min_size=1)
+scores = st.integers(min_value=0, max_value=256)
 
 
 # dfs = data_frames(columns=columns("Chromosome Start End Strand".split(),
@@ -51,42 +53,46 @@ strands = st.sampled_from("+ -".split())
 #                                                              strands).map(mysort))
 
 df_minsize = 1
-nonempty_dfs = data_frames(index=range_indexes(min_size=df_minsize),
+nonempty_dfs = data_frames(index=indexes(dtype=np.int64, min_size=df_minsize, unique=True),
                            columns=columns("Chromosome Start End Strand".split(), dtype=int),
                            rows=st.tuples(chromosomes, positions, positions, strands).map(mysort))
 
 
 better_df_minsize = 1
-better_dfs = data_frames(index=range_indexes(min_size=better_df_minsize),
+better_dfs = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
                          columns=[column("Chromosome", chromosomes),
                                   column("Start", elements=positions),
                                   column("End", elements=lengths),
                                   column("Strand", strands)])
 
-better_dfs_min = data_frames(index=range_indexes(min_size=better_df_minsize),
+better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
                              columns=[column("Chromosome", cs),
                                       column("Start", elements=lengths),
                                       column("End", elements=small_lengths),
+                                      column("Name", elements=names),
+                                      column("Score", elements=scores),
                                       column("Strand", strands)])
 
-better_dfs_min_single_chromosome = data_frames(index=range_indexes(min_size=better_df_minsize),
+better_dfs_min_single_chromosome = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
                                                columns=[column("Chromosome", chromosomes_small),
                                                         column("Start", elements=lengths),
                                                         column("End", elements=small_lengths),
+                                                        column("Name", elements=names),
+                                                        column("Score", elements=scores),
                                                         column("Strand", strands)])
 
-better_dfs_min_nostrand = data_frames(index=range_indexes(min_size=better_df_minsize),
+better_dfs_min_nostrand = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
                              columns=[column("Chromosome", chromosomes_small),
                                       column("Start", elements=small_lengths),
                                       column("End", elements=small_lengths)])
 
 
 large_df_minsize = 5
-large_dfs = data_frames(index=range_indexes(min_size=large_df_minsize),
+large_dfs = data_frames(index=indexes(dtype=np.int64, min_size=large_df_minsize, unique=True),
                            columns=columns("Chromosome Start End Name Score Strand".split(), dtype=int),
-                           rows=st.tuples(chromosomes, positions, positions, st.text(), small_lengths, strands).map(mysort))
+                           rows=st.tuples(chromosomes, positions, positions, names, small_lengths, strands).map(mysort))
 
-runlengths = data_frames(index=range_indexes(min_size=df_minsize),
+runlengths = data_frames(index=indexes(dtype=np.int64, min_size=df_minsize, unique=True),
                          columns=[column("Runs", st.integers(min_value=1, max_value=int(1e7))),
                                   # must have a min/max on floats because R S4vectors translates too big ones into inf.
                                   # which is unequal to eg -1.79769e+308 so the tests fail
@@ -98,7 +104,7 @@ runlengths = data_frames(index=range_indexes(min_size=df_minsize),
 #                                                      column("Values2", st.floats(min_value=0.001, max_value=int(1e7)))])
 
 
-runlengths_same_length_integers = data_frames(index=range_indexes(min_size=df_minsize),
+runlengths_same_length_integers = data_frames(index=indexes(dtype=np.int64, min_size=df_minsize, unique=True),
                                               columns=[column("Runs", st.integers(min_value=1, max_value=int(1e4))),
                                               column("Values", st.integers(min_value=1, max_value=int(1e4))),
                                               column("Values2", st.integers(min_value=1, max_value=int(1e4)))])
@@ -110,9 +116,8 @@ runlengths_same_length_integers = data_frames(index=range_indexes(min_size=df_mi
 def dfs_min(draw):
     df = draw(better_dfs_min)
     df.loc[:, "End"] += df.Start
-    df.insert(3, "Name", "a")
-    df.insert(4, "Score", 0)
 
+    print("index: ", list(df.index))
     gr = PyRanges(df)
 
     np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
@@ -436,13 +441,14 @@ def test_set_union(gr, gr2):
 subtraction_command = "bedtools subtract {} -a {} -b {}"
 
 @pytest.mark.bedtools
-@pytest.mark.parametrize("strandedness", strandedness)
+@pytest.mark.parametrize("strandedness", ["same"]) # , False
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
+@reproduce_failure('3.71.3', b'AXicY2SAAUYMBpTDiCSKIgcXQBIFAAHjAAo=')
 def test_subtraction(gr, gr2, strandedness):
 
-    print("gr\n", gr)
-    print("gr2\n", gr2)
+    # print("gr\n", gr)
+    # print("gr2\n", gr2)
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
 
     result_df = None

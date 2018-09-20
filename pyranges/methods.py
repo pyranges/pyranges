@@ -645,6 +645,9 @@ def _subtraction(self, other, strandedness):
     else:
         grpby_key = "Chromosome"
 
+    print("self.df", self.df.to_csv(sep=" "))
+
+
     self_dfs = {k: d for k, d in self.df.groupby(grpby_key)}
     other_dfs = {k: d for k, d in other.df.groupby(grpby_key)}
 
@@ -655,6 +658,13 @@ def _subtraction(self, other, strandedness):
     _idxes = dict()
 
     for key, scdf in self_dfs.items():
+
+        # the downstream union of self/missing indexes sorts them
+        # therefore, we need them to be in correct order here
+        scdf.index = pd.Index(range(len(scdf)))
+        print("-------")
+        print("scdf", scdf.to_csv(sep=" "))
+
 
         if len(key) == 2:
             old_key = key
@@ -667,7 +677,7 @@ def _subtraction(self, other, strandedness):
 
         # scdf = self_dfs[key]
         ogr = pr.PyRanges(other_dfs[key])
-
+        # ogr.index = pd.Index(range(len(ogr)))
         #print("scdf\n", scdf)
         #print("odf\n", ogr)
 
@@ -706,8 +716,6 @@ def _subtraction(self, other, strandedness):
             new_starts = np.concatenate([new_starts1, new_starts2])
             new_ends = np.concatenate([new_ends1, new_ends2])
 
-
-
         #print("scdf.index", scdf.index)
         missing_idx = pd.Index(scdf.index).difference(idx_self)
         #print("missing_idx " * 10, missing_idx)
@@ -719,9 +727,16 @@ def _subtraction(self, other, strandedness):
         idx_self = idx_self[idx_to_drop]
         new_starts = pd.Series(new_starts, index=idx_self).sort_index()
         new_ends = pd.Series(new_ends, index=idx_self).sort_index()
-        idx_self = np.sort(idx_self)
+        # idx_self = np.sort(idx_self)
 
+        print("scdf", scdf.to_csv(sep=" "))
+        print("scdf.index", scdf.index)
+        print("idx_self", idx_self)
+        print("missing_idx", missing_idx)
         scdf = scdf.reindex(missing_idx.union(idx_self))
+        print("scdf", scdf.to_csv(sep=" "))
+        print("scdf.index", scdf.index)
+        print("idx_self", idx_self)
 
         if len(idx_self):
             # why does boolean indexing work, but not regular?

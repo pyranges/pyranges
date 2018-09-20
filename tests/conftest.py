@@ -10,7 +10,6 @@ import numpy as np
 
 from io import StringIO
 
-np.random.seed(1)
 
 
 @pytest.fixture
@@ -106,8 +105,6 @@ def chip_10_plus_one(names):
     gr = PyRanges(df)
 
     assert gr.stranded
-
-    gr.df = gr.df.reindex(np.random.permutation(gr.df.index))
 
     return gr
 

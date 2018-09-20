@@ -153,8 +153,6 @@ def test_advanced_subtraction_opposite_strand_plus_one(chip_10_plus_one, input_1
 
     result = chip_10_plus_one.subtraction(input_10, strandedness="opposite")
 
-    # assert 0
-
     assert_df_equal(result.df, expected_result_opposite_strand_plus_one.df)
 
 
