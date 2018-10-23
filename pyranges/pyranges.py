@@ -399,6 +399,15 @@ class PyRanges():
         return _jaccard(self, other, strandedness)
 
 
+    @pyrange_or_df_single
+    def sort(self, strand=True):
+
+        if strand:
+            return self.df.sort_values("Chromosome Strand".split())
+        else:
+            return self.df.sort_values("Chromosome")
+
+
 
     # @pyrange_or_df
     # @return_empty_if_one_empty

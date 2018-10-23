@@ -23,7 +23,7 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 10000
+    max_examples = 100
     deadline = None
 
 
@@ -117,14 +117,11 @@ def dfs_min(draw):
     df = draw(better_dfs_min)
     df.loc[:, "End"] += df.Start
 
-    print("index: ", list(df.index))
     gr = PyRanges(df)
 
-    np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
-    # this is the same as allowing users to arbitrarily sort
-    # their underlying dataframes in whichever way they choose
-    # an the PyRanges functionality still works! Wowaweeva
-    gr.df = df.reindex(np.random.permutation(df.index.values))
+    # do not sort like this, use pyranges sort
+    # np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
+    # gr.df = df.reindex(np.random.permutation(df.index.values))
 
     return gr
 
@@ -293,9 +290,9 @@ def test_cluster(gr, strand):
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
         if not strand:
-            bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, usecols=[0, 1, 2], names="Chromosome Start End".split())
+            bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, usecols=[0, 1, 2], names="Chromosome Start End".split(), dtype={"Chromosome": "category"})
         else:
-            bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Strand".split())
+            bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Strand".split(), dtype={"Chromosome": "category"})
 
     print("bedtools_df\n", bedtools_df)
     result = gr.cluster(strand=strand)
@@ -636,6 +633,7 @@ def test_jaccard(gr, gr2, strandedness):
     print("pyranges result", result)
 
     assert 0 <= result <=1
+    # sicne bedtools is buggy for this func?
     # assert np.isclose(result, bedtools_jaccard)
 
 
@@ -647,6 +645,9 @@ join_strandedness = [False, "opposite", "same"]
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_join(gr, gr2, strandedness):
+
+    print(gr.df)
+    print(gr2.df)
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
 
@@ -661,9 +662,8 @@ def test_join(gr, gr2, strandedness):
         print(cmd)
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
-        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split())
+        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split(), dtype={"Chromosome": "category", "Strand": "category"} )
         bedtools_df = bedtools_df.drop(["Overlap", "Chromosome_b"], 1)
-
 
     print("gr\n", gr)
     print("gr2\n", gr2)
@@ -671,7 +671,7 @@ def test_join(gr, gr2, strandedness):
     result = gr.join(gr2, strandedness=strandedness)
 
     print("result\n", result)
-    print("bedtools\n", bedtools_df)
+    print("bedtools\n", PyRanges(bedtools_df))
 
     if result.df.empty:
         assert bedtools_df.empty

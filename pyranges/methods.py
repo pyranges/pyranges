@@ -73,7 +73,6 @@ def _overlap(self, other, strandedness, invert, how=None):
             else:
                 indexes = it.has_overlaps(starts, ends, indexes)
 
-            print(indexes)
 
             dfs[chromosome, strand] = pick_out_indexes_possibly_nonunique(cdf, indexes, invert)
 
@@ -126,7 +125,6 @@ def both_indexes(self, other, strandedness, how=None):
         other_dfs = OrderedDict([(k, v) for k, v in other.df.groupby("Chromosome")])
 
     if strandedness: # know from assertion above that both have strand info
-        # # print("in strandedness " * 10)
 
         for (chromosome, strand), cdf in df.groupby("Chromosome Strand".split()):
 
@@ -143,6 +141,7 @@ def both_indexes(self, other, strandedness, how=None):
                 _self_indexes, _other_indexes = it.all_containments_both(starts, ends, indexes)
             else:
                 _self_indexes, _other_indexes = it.first_overlap_both(starts, ends, indexes)
+
 
             self_d[chromosome, strand] = _self_indexes
             other_d[chromosome, strand] = _other_indexes
@@ -645,7 +644,7 @@ def _subtraction(self, other, strandedness):
     else:
         grpby_key = "Chromosome"
 
-    print("self.df", self.df.to_csv(sep=" "))
+    # print("self.df", self.df.to_csv(sep=" "))
 
 
     self_dfs = {k: d for k, d in self.df.groupby(grpby_key)}
@@ -962,9 +961,9 @@ def _jaccard(self, other, strandedness):
     s = self.cluster(True).lengths().sum()
     o = other.cluster(True).lengths().sum()
 
-    print("o", o)
-    print("s", s)
-    print("il", il)
+    # print("o", o)
+    # print("s", s)
+    # print("il", il)
     # print("ul", ul)
 
 
