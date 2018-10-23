@@ -162,6 +162,7 @@ class PyRanges():
             if "Strand" in df:
                 df.Strand = df.Strand.astype("category")
 
+
         self.__dict__["df"] = df
 
         self.__dict__["__ncls__"] = create_ncls_dict(df, self.stranded)

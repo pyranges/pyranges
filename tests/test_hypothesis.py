@@ -133,8 +133,8 @@ def dfs_min(draw):
 def dfs_min_single_chromosome(draw):
     df = draw(better_dfs_min_single_chromosome)
     df.loc[:, "End"] += df.Start
-    df.insert(3, "Name", "a")
-    df.insert(4, "Score", 0)
+    # df.insert(3, "Name", "a")
+    # df.insert(4, "Score", 0)
 
     return df
 
@@ -338,7 +338,7 @@ def test_set_intersection(gr, gr2):
         assert bedtools_df.empty == result.df.empty
 
 
-overlap_command = "bedtools intersect -u {} -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
+overlap_command = "bedtools intersect -u {} -a {} -b {}"
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", strandedness)
@@ -373,7 +373,7 @@ def test_overlap(gr, gr2, strandedness):
     else:
         assert bedtools_df.empty == result.df.empty
 
-intersection_command = "bedtools intersect {} -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
+intersection_command = "bedtools intersect {} -a {} -b {}"
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", strandedness)
@@ -444,7 +444,6 @@ subtraction_command = "bedtools subtract {} -a {} -b {}"
 @pytest.mark.parametrize("strandedness", ["same"]) # , False
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
-@reproduce_failure('3.71.3', b'AXicY2SAAUYMBpTDiCSKIgcXQBIFAAHjAAo=')
 def test_subtraction(gr, gr2, strandedness):
 
     # print("gr\n", gr)
@@ -556,7 +555,6 @@ strandedness = [False, "same", "opposite"]
 @pytest.mark.parametrize("nearest_how,overlap,strandedness", product(nearest_hows, overlaps, strandedness))
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
-# @reproduce_failure('3.59.0', b'AXicY2RgZGSAABiNymRgAAAArAAG') #
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
     print(gr.df)
