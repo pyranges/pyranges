@@ -1,6 +1,6 @@
 # pyranges
 
-[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) (https://pyranges.readthedocs.io/?badge=latest) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
+[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
 
 
 
