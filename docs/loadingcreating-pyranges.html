@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+
+  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="PyRanges documentation" />
+  
+  
+  
+
+<meta name="author" content="Endre Bakken Stovner">
+
+
+<meta name="date" content="2018-10-25">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="index.html">
+<link rel="next" href="subsetting-pyranges.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to PyRanges</a></li>
+<li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
+<li class="chapter" data-level="3" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>3</b> Subsetting PyRanges</a></li>
+<li class="chapter" data-level="4" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>4</b> Manipulating the data in PyRanges</a></li>
+<li class="chapter" data-level="5" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>5</b> Methods for manipulating single PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>6</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="7" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>7</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="8" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>8</b> Joining Ranges</a></li>
+<li class="chapter" data-level="9" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>9</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">PyRanges documentation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="loadingcreating-pyranges" class="section level1">
+<h1><span class="header-section-number">2</span> Loading/Creating PyRanges</h1>
+<p>A PyRanges object can be built in three ways:</p>
+<ol style="list-style-type: decimal">
+<li>from a Pandas dataframe</li>
+<li>using the PyRanges constructor with the seqnames, starts and ends (and optionally strands), individually.</li>
+<li>using one of the custom reader functions for genomic data (<code>read_bed</code>, <code>read_bam</code> or <code>read_gtf</code>)</li>
+</ol>
+<div id="using-a-dataframe" class="section level4 unnumbered">
+<h4>Using a DataFrame</h4>
+<p>If you instantiate a PyRanges object from a dataframe, the dataframe should at least contain the columns Chromosome, Start and End. A column called Strand is optional. Any other columns in the dataframe are treated as metadata.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pyranges <span class="im">as</span> pr
+chipseq <span class="op">=</span> pr.get_example_path(<span class="st">&quot;chipseq.bed&quot;</span>)
+df <span class="op">=</span> pd.read_table(chipseq, header<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span><span class="st">&quot;Chromosome Start End Name Score Strand&quot;</span>.split())
+<span class="bu">print</span>(df.head(<span class="dv">2</span>))</code></pre></div>
+<pre><code>##   Chromosome      Start        End Name  Score Strand
+## 0       chr8   28510032   28510057   U0      0      -
+## 1       chr7  107153363  107153388   U0      0      -</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(df.tail(<span class="dv">2</span>))</code></pre></div>
+<pre><code>##      Chromosome      Start        End Name  Score Strand
+## 9998       chr1  194245558  194245583   U0      0      +
+## 9999       chr8   57916061   57916086   U0      0      +</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(pr.PyRanges(df))</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr8         | 28510032  | 28510057  | U0         | 0         | -            |
+## | chr7         | 107153363 | 107153388 | U0         | 0         | -            |
+## | chr5         | 135821802 | 135821827 | U0         | 0         | -            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chr6         | 89296757  | 89296782  | U0         | 0         | -            |
+## | chr1         | 194245558 | 194245583 | U0         | 0         | +            |
+## | chr8         | 57916061  | 57916086  | U0         | 0         | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+</div>
+<div id="using-constructor-keywords" class="section level4 unnumbered">
+<h4>Using constructor keywords</h4>
+<p>The other way to instantiate a PyRanges object is to use the constructor with keywords:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(seqnames<span class="op">=</span>df.Chromosome, starts<span class="op">=</span>df.Start, ends<span class="op">=</span>df.End)
+<span class="bu">print</span>(gr)</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+
+## | Chromosome   | Start     | End       |
+## | (object)     | (int64)   | (int64)   |
+## |--------------+-----------+-----------|
+## | chr8         | 28510032  | 28510057  |
+## | chr7         | 107153363 | 107153388 |
+## | chr5         | 135821802 | 135821827 |
+## | ...          | ...       | ...       |
+## | chr6         | 89296757  | 89296782  |
+## | chr1         | 194245558 | 194245583 |
+## | chr8         | 57916061  | 57916086  |
+## +--------------+-----------+-----------+
+## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+<p>It is possible to make PyRanges objects out of basic Python datatypes:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(seqnames<span class="op">=</span><span class="st">&quot;chr1&quot;</span>, strands<span class="op">=</span><span class="st">&quot;+&quot;</span>, starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
+<span class="bu">print</span>(gr)</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+--------------+
+## | Chromosome   |     Start |       End | Strand       |
+## | (category)   |   (int64) |   (int64) | (category)   |
+## |--------------+-----------+-----------+--------------|
+## | chr1         |         0 |         3 | +            |
+## | chr1         |         1 |         4 | +            |
+## | chr1         |         2 |         5 | +            |
+## +--------------+-----------+-----------+--------------+
+## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(seqnames<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
+<span class="bu">print</span>(gr)</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+
+## | Chromosome   |     Start |       End | Strand     |
+## | (object)     |   (int64) |   (int64) | (object)   |
+## |--------------+-----------+-----------+------------|
+## | chr1         |         0 |         3 | +          |
+## | chr2         |         1 |         4 | -          |
+## | chr3         |         2 |         5 | +          |
+## +--------------+-----------+-----------+------------+
+## PyRanges object has 3 sequences from 3 chromosomes.</code></pre>
+</div>
+<div id="using-read_bed-read_gtf-or-read_bam" class="section level4 unnumbered">
+<h4>Using <code>read_bed</code>, <code>read_gtf</code> or <code>read_bam</code></h4>
+<p>The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)
+gr <span class="op">=</span> pr.read_gtf(ensembl_path)
+<span class="bu">print</span>(gr)</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+-----------------+--------------+-----------------+
+## | Chromosome   | Start     | End       | Strand       | Feature      | GeneID          | TranscriptID    | ExonNumber   | ExonID          |
+## | (category)   | (int64)   | (int64)   | (category)   | (category)   | (object)        | (object)        | (float64)    | (object)        |
+## |--------------+-----------+-----------+--------------+--------------+-----------------+-----------------+--------------+-----------------|
+## | 1            | 11869     | 14409     | +            | gene         | ENSG00000223972 | nan             | nan          | nan             |
+## | 1            | 11869     | 14409     | +            | transcript   | ENSG00000223972 | ENST00000456328 | nan          | nan             |
+## | 1            | 11869     | 12227     | +            | exon         | ENSG00000223972 | ENST00000456328 | 1.0          | ENSE00002234944 |
+## | ...          | ...       | ...       | ...          | ...          | ...             | ...             | ...          | ...             |
+## | 1            | 133374    | 133723    | -            | exon         | ENSG00000238009 | ENST00000610542 | 1.0          | ENSE00003748456 |
+## | 1            | 129055    | 129223    | -            | exon         | ENSG00000238009 | ENST00000610542 | 2.0          | ENSE00003734824 |
+## | 1            | 120874    | 120932    | -            | exon         | ENSG00000238009 | ENST00000610542 | 3.0          | ENSE00003740919 |
+## +--------------+-----------+-----------+--------------+--------------+-----------------+-----------------+--------------+-----------------+
+## PyRanges object has 95 sequences from 1 chromosomes.</code></pre>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>This is the same behavior as bedtools intersect.<a href="loadingcreating-pyranges.html#fnref1">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="subsetting-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

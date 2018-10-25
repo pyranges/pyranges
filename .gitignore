@@ -16,6 +16,5 @@ dist/
 *.txt
 *.so
 *.cpp
-*.html
 *.lprof
 *.egg-*
