@@ -1,0 +1,40 @@
+# Intersecting Ranges
+
+PyRanges objects can be intersected with other PyRanges to find the subset of
+the genome that is contained in both. The regular intersection-method finds the
+intersection of all combinations of ranges: [^1]
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.load_dataset("aorta")
+gr2 = pr.load_dataset("aorta2")
+print(gr.intersection(gr2))
+```
+
+The set_intersection method clusters the intervals (i.e. merges them into one) before finding the intersection: [^2]
+
+```{python tidy=FALSE}
+print(gr.set_intersection(gr2))
+```
+
+Both methods also take a strandedness option, which can either be `"same"`, `"opposite"` or `False`/`None`
+
+```{python tidy=FALSE}
+print(gr.set_intersection(gr2, strandedness="opposite"))
+```
+
+[^1]: This is the same behavior as bedtools intersect.
+[^2]: This is the same behavior as Bioconductor GenomicRanges intersect.
+
+The intersection method also takes a how argument, which currently accepts the
+option `"containment"`, which requires that the intervals in self be completely
+within the intervals in other.
+
+```{python tidy=FALSE}
+f1 = pr.load_dataset("f1")
+print(f1)
+f2 = pr.load_dataset("f2")
+print(f2)
+result = f2.intersection(f1, how="containment")
+print(result)
+```

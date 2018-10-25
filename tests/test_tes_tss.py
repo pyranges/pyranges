@@ -11,9 +11,9 @@ import pandas as pd
 from io import StringIO
 
 
-def test_tss(f1):
+def test_tssify(f1):
 
-    result = f1.tss(slack=5)
+    result = f1.tssify(slack=5)
 
     print(f1)
     print(result)
@@ -22,11 +22,11 @@ def test_tss(f1):
     assert list(result.End) == [9, 13, 14]
 
 
-def test_tes(f2):
+def test_tesify(f2):
 
     print(f2)
 
-    result = f2.tes(slack=500)
+    result = f2.tesify(slack=500)
 
     print(result)
 

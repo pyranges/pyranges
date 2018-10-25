@@ -1,0 +1,59 @@
+# Loading/Creating PyRanges
+
+A PyRanges object can be built in three ways:
+
+1. from a Pandas dataframe
+2. using the PyRanges constructor with the seqnames, starts and ends (and optionally strands), individually.
+3. using one of the custom reader functions for genomic data (`read_bed`, `read_bam` or `read_gtf`)
+
+#### Using a DataFrame {-}
+
+If you instantiate a PyRanges object from a dataframe, the dataframe should at
+least contain the columns Chromosome, Start and End. A column called Strand is
+optional. Any other columns in the dataframe are treated as metadata.
+
+```{python tidy=FALSE}
+
+import pandas as pd
+import pyranges as pr
+
+chipseq = pr.get_example_path("chipseq.bed")
+
+df = pd.read_table(chipseq, header=None, names="Chromosome Start End Name Score Strand".split())
+
+print(df.head(2))
+print(df.tail(2))
+
+print(pr.PyRanges(df))
+```
+
+#### Using constructor keywords {-}
+
+The other way to instantiate a PyRanges object is to use the constructor with keywords:
+
+```{python tidy=FALSE}
+gr = pr.PyRanges(seqnames=df.Chromosome, starts=df.Start, ends=df.End)
+print(gr)
+```
+
+It is possible to make PyRanges objects out of basic Python datatypes:
+
+```{python tidy=FALSE}
+gr = pr.PyRanges(seqnames="chr1", strands="+", starts=[0, 1, 2], ends=(3, 4, 5))
+print(gr)
+
+gr = pr.PyRanges(seqnames="chr1 chr2 chr3".split(), strands="+ - +".split(), starts=[0, 1, 2], ends=(3, 4, 5))
+print(gr)
+```
+
+#### Using `read_bed`, `read_gtf` or `read_bam` {-}
+
+The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam [^1].
+
+```{python tidy=FALSE}
+ensembl_path = pr.get_example_path("ensembl.gtf")
+gr = pr.read_gtf(ensembl_path)
+print(gr)
+```
+
+[^1]: PyRanges uses the pysam library which requires that the bam file must have an index.

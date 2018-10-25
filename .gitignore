@@ -1,4 +1,5 @@
 
+.hypothesis/
 *.RData
 *.Rhistory
 build/

@@ -1,8 +1,0 @@
-cython
-sphinx_autorun_ebs
-pyranges
-ncls
-pandas
-numpy
-sorted_nearest
-pyrle

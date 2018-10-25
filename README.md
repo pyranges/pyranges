@@ -161,6 +161,8 @@ For the future:
 * Enable annotation with featurefetch?
 * Add dtypes to PyRanges-header?
 * Find sequences of ranges with pyfaidx
+* Nearest: upstream/downstream
+* K-nearest
 
 ### Performance
 

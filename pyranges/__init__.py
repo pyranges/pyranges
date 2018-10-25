@@ -105,8 +105,6 @@ def read_gtf(f):
         cols_to_concat = "Chromosome Start End Strand Feature Score".split()
 
     extract = _fetch_gene_transcript_exon_id(df.Attribute)
-    print("extract")
-    print(extract)
     extract.columns = "GeneID TranscriptID ExonNumber ExonID".split()
 
     extract.ExonNumber = extract.ExonNumber.astype(float)

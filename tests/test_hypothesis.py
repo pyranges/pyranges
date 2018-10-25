@@ -69,8 +69,8 @@ better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=better_df_mi
                              columns=[column("Chromosome", cs),
                                       column("Start", elements=lengths),
                                       column("End", elements=small_lengths),
-                                      column("Name", elements=names),
-                                      column("Score", elements=scores),
+                                      # column("Name", elements=names),
+                                      # column("Score", elements=scores),
                                       column("Strand", strands)])
 
 better_dfs_min_single_chromosome = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
@@ -117,6 +117,8 @@ def dfs_min(draw):
     df = draw(better_dfs_min)
     df.loc[:, "End"] += df.Start
 
+    df.insert(3, "Name", "a")
+    df.insert(4, "Score", 0)
     gr = PyRanges(df)
 
     # do not sort like this, use pyranges sort
@@ -130,8 +132,8 @@ def dfs_min(draw):
 def dfs_min_single_chromosome(draw):
     df = draw(better_dfs_min_single_chromosome)
     df.loc[:, "End"] += df.Start
-    # df.insert(3, "Name", "a")
-    # df.insert(4, "Score", 0)
+    df.insert(3, "Name", "a")
+    df.insert(4, "Score", 0)
 
     return df
 
@@ -397,8 +399,8 @@ def test_intersection(gr, gr2, strandedness):
         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand".split())
 
     result = gr.intersection(gr2, strandedness=strandedness)
-    # print("result\n", result.df)
-    # print("bedtools_df\n", bedtools_df)
+    print("result\n", result.df)
+    print("bedtools_df\n", bedtools_df)
 
     if not bedtools_df.empty:
         assert_df_equal(result.df, bedtools_df)

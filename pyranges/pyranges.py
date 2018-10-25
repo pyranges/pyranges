@@ -8,7 +8,7 @@ from tabulate import tabulate
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 # from pyranges.genomicfeatures import _tss, _tes
 from pyranges.subset import get_string, get_slice, get_tuple
-from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths
+from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
 # from pyranges.multithreaded import _cluster, pyrange_apply_single, _subtraction, _set_union, _set_intersection, _intersection, pyrange_apply, _nearest, _coverage, _write_both, _first_df
 
 from ncls import NCLS
@@ -214,7 +214,7 @@ class PyRanges():
     def __getitem__(self, val):
 
         if isinstance(val, str):
-            df = _get_string(self, val)
+            df = get_string(self, val)
 
         elif isinstance(val, tuple):
             df = get_tuple(self, val)
@@ -306,9 +306,9 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], how=None):
+    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], suffix="_b", how=None):
 
-        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes, how)
+        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes, suffix, how)
 
         return df
 
@@ -320,19 +320,27 @@ class PyRanges():
 
         return df
 
-    @pyrange_or_df_single
-    def tile(self, tile_size=50):
+    # @pyrange_or_df_single
+    # def tile(self, tile_size=50):
 
-        df = _tile(self, tile_size)
-        return df
+    #     df = _tile(self, tile_size)
+    #     return df
 
 
     def coverage(self, value_col=None, stranded=False):
 
         return _coverage(self, value_col, stranded=stranded)
 
+
     @pyrange_or_df_single
-    def tss(self, slack=0):
+    def slack(self, slack):
+
+        return _slack(self, slack)
+
+
+
+    @pyrange_or_df_single
+    def tssify(self, slack=0):
 
         if not self.stranded:
             raise Exception("Cannot compute TSSes without strand info. Perhaps use slack() instead?")
@@ -341,7 +349,7 @@ class PyRanges():
 
 
     @pyrange_or_df_single
-    def tes(self, slack=0):
+    def tesify(self, slack=0):
 
         return _tes(self, slack)
 

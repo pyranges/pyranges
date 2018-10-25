@@ -1,0 +1,17 @@
+# Turning Ranges into RLEs
+
+Ranges can be turned into dicts of run length encodings with the coverage function:
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.load_dataset("aorta")
+print(gr)
+print(gr.coverage())
+print(gr.coverage(stranded=True))
+```
+
+You can also create coverage for an any numeric value in your PyRanges:
+
+```{python tidy=FALSE}
+print(gr.coverage("Score"))
+```

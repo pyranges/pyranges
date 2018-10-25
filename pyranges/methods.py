@@ -457,7 +457,7 @@ def _keep_both(idx_df, other, suffixes, new_pos):
     return idx_df
 
 
-def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], how=None):
+def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], suffix="_b", how=None):
 
     assert new_pos in ["intersection", "union", False, None]
 
@@ -500,7 +500,7 @@ def _overlap_write_both(self, other, strandedness=False, new_pos=None, suffixes=
         idx_counter += len(scdf)
 
         if not new_pos:
-            _df = scdf.join(ocdf, rsuffix=suffixes[1])
+            _df = scdf.join(ocdf, rsuffix=suffix)
 
         elif new_pos == "intersection":
 
@@ -895,6 +895,16 @@ def _nearest(self, other, strandedness, suffix="_b", how=None, overlap=True):
         df = pd.concat([nearest_df, df])
     elif overlap and not nearest_df.empty:
         df = nearest_df
+
+    return df
+
+
+def _slack(self, slack):
+
+    df = self.df.copy()
+    df.Start = df.Start - slack
+    df.loc[df.Start < 0, "Start"] = 0
+    df.End = df.End + slack
 
     return df
 
