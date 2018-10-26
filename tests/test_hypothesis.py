@@ -77,8 +77,8 @@ better_dfs_min_single_chromosome = data_frames(index=indexes(dtype=np.int64, min
                                                columns=[column("Chromosome", chromosomes_small),
                                                         column("Start", elements=lengths),
                                                         column("End", elements=small_lengths),
-                                                        column("Name", elements=names),
-                                                        column("Score", elements=scores),
+                                                        # column("Name", elements=names),
+                                                        # column("Score", elements=scores),
                                                         column("Strand", strands)])
 
 better_dfs_min_nostrand = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
