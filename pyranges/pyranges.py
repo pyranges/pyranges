@@ -1,6 +1,12 @@
 import pandas as pd
+from natsort import natsorted
 import numpy as np
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
+
+import logging
+
+import ray
+ray.init(logging_level=logging.CRITICAL)
 
 from tabulate import tabulate
 
@@ -33,15 +39,25 @@ def create_ncls(cdf):
                 cdf.index.values)
 
 
-def create_ncls_dict(df, strand):
+def create_df_dict(df):
 
-    if not strand:
+    if not "Strand" in df:
         grpby_key = "Chromosome"
     else:
         grpby_key = "Chromosome Strand".split()
 
     grpby = df.groupby(grpby_key)
-    nclses = {key: create_ncls(cdf) for (key, cdf) in grpby}
+    dfs = OrderedDict()
+
+    for (key, cdf) in natsorted(grpby):
+        dfs[key] = cdf
+
+    return dfs
+
+
+def create_ncls_dict(dfs):
+
+    nclses = {key: create_ncls(cdf) for (key, cdf) in dfs.items()}
     dd = defaultdict(NCLS)
     dd.update(nclses)
 
@@ -137,7 +153,7 @@ def pyrange_or_df_single(func):
 
 class PyRanges():
 
-    df = None
+    dfs = None
     gf = None
 
     def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=True):
@@ -146,32 +162,39 @@ class PyRanges():
 
         if df is False or df is None:
             df = create_pyranges_df(seqnames, starts, ends, strands)
-        else:
+            self.__dict__["dfs"] = create_df_dict(df)
+        elif isinstance(df, pd.DataFrame):
             assert "Chromosome" in df and "Start" in df and "End" in df
-            df.index = range(len(df))
+            self.__dict__["dfs"] = create_df_dict(df)
+        else:
+            # df is actually dict of dfs
+            self.__dict__["dfs"] = df
+
+
+        #     df.index = range(len(df))
 
         # using __dict__ to avoid invoking setattr
-        if "Strand" not in df:
-            self.__dict__["stranded"] = False
-        else:
-            self.__dict__["stranded"] = True
-
-        if copy_df and df_given:
-            df = df.copy()
-            df.Chromosome = df.Chromosome.astype("category")
-            if "Strand" in df:
-                df.Strand = df.Strand.astype("category")
+        # if "Strand" not in df:
+        #     self.__dict__["stranded"] = False
+        # else:
+        #     self.__dict__["stranded"] = True
 
 
-        self.__dict__["df"] = df
 
-        self.__dict__["__ncls__"] = create_ncls_dict(df, self.stranded)
+        # if copy_df and df_given:
+        #     df = df.copy()
+        #     df.Chromosome = df.Chromosome.astype("category")
+        #     if "Strand" in df:
+        #         df.Strand = df.Strand.astype("category")
+
+
+        # self.__dict__["__ncls__"] = create_ncls_dict(self.dfs)
 
         self.__dict__["ft"] = GenomicFeaturesMethods(self)
 
 
     def __len__(self):
-        return self.df.shape[0]
+        return sum(len(d) for d in self.dfs.values())
 
     def __setattr__(self, column_name, column):
 
@@ -179,10 +202,6 @@ class PyRanges():
             raise Exception("The columns Chromosome, Start, End or Strand can not be reset.")
         if column_name == "stranded":
             raise Exception("The stranded attribute is read-only. Create a new PyRanges object instead.")
-
-        if column_name == "df":
-            self.__dict__["df"] = column
-            return
 
         if not isinstance(column, str):
             if not len(self.df) == len(column):
@@ -205,7 +224,7 @@ class PyRanges():
         if name in self.df:
             return self.df[name]
         else:
-            self.__dict__[name]
+            return self.__dict__[name]
 
     def __eq__(self, other):
 
@@ -221,28 +240,29 @@ class PyRanges():
         elif isinstance(val, slice):
             df = get_slice(self, val)
 
-        if not df._is_view:
-            return PyRanges(df)
-        else:
-            return PyRanges(df.copy(deep=True))
+        return df
 
 
     def __str__(self):
 
-        if len(self.df) > 6:
-            h = self.df.head(3).astype(object)
-            t = self.df.tail(3).astype(object)
-            m = self.df.head(1).astype(object)
-            m.loc[:,:] = "..."
-            m.index = ["..."]
-            s = pd.concat([h, m, t])
-        else:
-            s = self.df
+        # if len(self) > 6:
+            # h = self.dfs.head(3).astype(object)
+            # t = self.df.tail(3).astype(object)
+            # m = self.df.head(1).astype(object)
+        first_df = self.dfs[list(self.dfs.keys())[0]].head(3)
+        last_df = self.dfs[list(self.dfs.keys())[-1]].tail(3)
 
-        h = [c + "\n(" + str(t) + ")" for c, t in  zip(self.df.columns, self.df.dtypes)]
+        h = first_df.head(3).astype(object)
+        m = first_df.head(1).astype(object)
+        t = last_df.head(3).astype(object)
+        m.loc[:,:] = "..."
+        # m.index = ["..."]
+        s = pd.concat([h, m, t])
+
+        h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df)]
 
         str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
-                                        "\nPyRanges object has {} sequences from {} chromosomes.".format(self.df.shape[0], len(set(self.df.Chromosome)))
+                                        "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.dfs.keys()))
         return str_repr
 
 
@@ -271,15 +291,21 @@ class PyRanges():
 
         return df
 
-    @pyrange_or_df
     @return_empty_if_one_empty
     def intersection(self, other, strandedness=False, how=None):
 
-        "Want the parts of the intervals in self that overlap with other."
+        from pyranges.ray import _intersection, pyrange_apply
+        print("intersect " * 10)
 
-        df = _intersection(self, other, strandedness, how)
+        dfs = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how)
 
-        return df
+        return PyRanges(dfs)
+        # ray.get([_intersection.remote(sdf, odf)])
+        # "Want the parts of the intervals in self that overlap with other."
+
+        # df = _intersection(self, other, strandedness, how)
+
+        # return df
 
     @pyrange_or_df
     @return_empty_if_one_empty
@@ -416,6 +442,9 @@ class PyRanges():
             return self.df.sort_values("Chromosome")
 
 
+    @property
+    def stranded(self):
+        return len(list(self.dfs.keys())[0]) == 2
 
     # @pyrange_or_df
     # @return_empty_if_one_empty
