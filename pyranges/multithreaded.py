@@ -65,9 +65,10 @@ def pyrange_apply(function, self, other, **kwargs):
         assert self.stranded and other.stranded, \
             "Can only do stranded operations when both PyRanges contain strand info"
 
-    results = {}
+    results = []
 
     items = natsorted(self.dfs.items())
+    keys = natsorted(self.dfs.keys())
 
     if strandedness:
 
@@ -75,7 +76,7 @@ def pyrange_apply(function, self, other, **kwargs):
             os = strand_dict[s]
             odf = other.dfs[c, os]
             result = function.remote(df, odf, kwargs)
-            results[c, s] = result
+            results.append(result)
 
     else:
 
@@ -85,7 +86,8 @@ def pyrange_apply(function, self, other, **kwargs):
                 odf = other.dfs[c]
 
                 result = function.remote(df, odf, kwargs)
-                results[c, s] = result
+                results.append(result)
+
 
         elif not self.stranded and other.stranded:
 
@@ -95,24 +97,23 @@ def pyrange_apply(function, self, other, **kwargs):
                 odf = merge_strands.remote(odf1, odf2)
 
                 result = function.remote(df, odf, kwargs)
-                results[c, s] = result
+                results.append(result)
 
         elif self.stranded and other.stranded:
             for (c, s), df in items:
                 odf = other.dfs[c, s]
                 result = function.remote(df, odf, kwargs)
-                results[c, s] = result
+                results.append(result)
 
         else:
             for c, df in items:
                 odf = other.dfs[c]
                 result = function.remote(df, odf, kwargs)
-                results[c] = result
+                results.append(result)
 
-    d = {k: ray.get(v) for k, v in results.items()}
-    d = {k: v[0] for k, v in d.items() if v is not None}
+    results = ray.get(results)
 
-    return d
+    return {k: r[0] for k, r in zip(keys, results) if r is not None}
 
 
 
@@ -195,7 +196,7 @@ def _both_dfs(scdf, ocdf, how=False, **kwargs):
 
     return scdf.loc[_self_indexes], ocdf.loc[_other_indexes]
 
-@ray.remote(num_return_vals=1)
+@ray.remote
 def _intersection(scdf, ocdf, kwargs):
 
     how = kwargs["how"]
@@ -210,17 +211,17 @@ def _intersection(scdf, ocdf, kwargs):
 
     oncls = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
-    if not how:
+    if not how or how is None:
         _self_indexes, _other_indexes = oncls.all_overlaps_both(starts, ends, indexes)
     elif how == "containment":
         _self_indexes, _other_indexes = oncls.all_containments_both(starts, ends, indexes)
-    else:
+    elif how == "both":
         _self_indexes, _other_indexes = oncls.first_overlap_both(starts, ends, indexes)
 
     _self_indexes = _self_indexes
     _other_indexes = _other_indexes
 
-    scdf, ocdf = scdf.loc[_self_indexes], ocdf.loc[_other_indexes]
+    scdf, ocdf = scdf.reindex(_self_indexes), ocdf.reindex(_other_indexes)
 
     new_starts = pd.Series(
         np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),

@@ -6,7 +6,8 @@ from collections import defaultdict, OrderedDict
 import logging
 
 import ray
-ray.init(logging_level=logging.CRITICAL)#, local_mode=True)
+ray.init() # logging_level=logging.CRITICAL # local_mode=True
+# ray.init(local_mode=True) # logging_level=logging.CRITICAL # local_mode=True
 
 from tabulate import tabulate
 
@@ -26,7 +27,13 @@ def return_copy_if_view(df, df2):
 
 def create_df_dict(df):
 
-    return {k: ray.put(v) for k, v in natsorted(df.groupby(grpby_key))}
+    if "Strand" in df:
+        grpby_key = "Chromosome Strand".split()
+    else:
+        grpby_key = "Chromosome"
+
+    # {k: ray.put(v) for k, v in natsorted(df.groupby(grpby_key))}
+    return {k: ray.put(v) for k, v in df.groupby(grpby_key)}
 
 
 def create_pyranges_df(seqnames, starts, ends, strands=None):
@@ -136,7 +143,7 @@ class PyRanges():
 
 
     def __len__(self):
-        return sum(len(d) for d in self.dfs.values())
+        return sum(len(ray.get(d)) for d in self.dfs.values())
 
     def __setattr__(self, column_name, column):
 
@@ -189,6 +196,7 @@ class PyRanges():
             first_key = list(self.dfs.keys())[0]
             # last_key = list(self.dfs.keys())[-1]
             first_df = ray.get(self.dfs[first_key]).head(3)
+
             # last_df = ray.get(self.dfs[last_key]).tail(3)
             h = first_df.head(3).astype(object)
             m = first_df.head(1).astype(object)
@@ -254,8 +262,7 @@ class PyRanges():
     @return_empty_if_one_empty
     def intersection(self, other, strandedness=False, how=None):
 
-        from pyranges.ray import _intersection, pyrange_apply
-        print("intersect " * 10)
+        from pyranges.multithreaded import _intersection, pyrange_apply
 
         dfs = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how)
 
