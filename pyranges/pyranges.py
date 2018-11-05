@@ -26,17 +26,6 @@ def return_copy_if_view(df, df2):
 
 def create_df_dict(df):
 
-    if not "Strand" in df:
-        grpby_key = "Chromosome"
-    else:
-        grpby_key = "Chromosome Strand".split()
-
-    # dfs = OrderedDict()
-
-    # for (key, cdf) in natsorted(grpby):
-    #     print(key)
-    #     dfs[key] = ray.put(cdf)
-
     return {k: ray.put(v) for k, v in natsorted(df.groupby(grpby_key))}
 
 
@@ -147,9 +136,14 @@ class PyRanges():
 
 
     def __len__(self):
-        return sum(len(ray.get(v)) for v in self.dfs.values())
+        return sum(len(d) for d in self.dfs.values())
 
     def __setattr__(self, column_name, column):
+
+        if column_name in "Chromosome Start End Strand".split():
+            raise Exception("The columns Chromosome, Start, End or Strand can not be reset.")
+        if column_name == "stranded":
+            raise Exception("The stranded attribute is read-only. Create a new PyRanges object instead.")
 
         if not isinstance(column, str):
             if not len(self) == len(column):
@@ -167,12 +161,6 @@ class PyRanges():
         self.df.insert(pos, column_name, column_to_insert)
 
 
-    # def __getattr__(self, name):
-
-    #     if name in self.dfs:
-    #         return self.df[name]
-    #     else:
-    #         return self.__dict__[name]
 
     def __eq__(self, other):
 
@@ -263,10 +251,11 @@ class PyRanges():
 
         return df
 
-    # @return_empty_if_one_empty
+    @return_empty_if_one_empty
     def intersection(self, other, strandedness=False, how=None):
 
-        from pyranges.multithreaded import _intersection, pyrange_apply
+        from pyranges.ray import _intersection, pyrange_apply
+        print("intersect " * 10)
 
         dfs = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how)
 
