@@ -3,7 +3,7 @@ import pytest
 
 from pyranges.pyranges import PyRanges
 
-from tests.helpers import assert_df_equal
+from tests.helpers import assert_dfs_equal
 import pandas as pd
 
 from io import StringIO
@@ -49,11 +49,9 @@ def test_intersect_simple_granges(simple_gr1, simple_gr2, expected_result_inters
     print(simple_gr2)
     result = simple_gr1.intersection(simple_gr2, strandedness=False)
 
-    print("result\n", result.df)
-    print("expected_result_intersection_simple_granges\n",
-          expected_result_intersection_simple_granges.df)
+    print("result\n", result)
 
-    assert_df_equal(result.df, expected_result_intersection_simple_granges.df)
+    assert_dfs_equal(result, expected_result_intersection_simple_granges)
 
 
 @pytest.fixture
@@ -70,9 +68,12 @@ def test_intersect_same_strand_simple_granges(simple_gr1, simple_gr2, expected_r
 
     result = simple_gr1.intersection(simple_gr2, strandedness="same")
 
+    print("result")
     print(result)
+    print("expected")
+    print(expected_result_same_strand_intersection_simple_granges)
 
-    assert_df_equal(expected_result_same_strand_intersection_simple_granges.df, result.df)
+    assert_dfs_equal(expected_result_same_strand_intersection_simple_granges, result)
 
 
 
@@ -94,7 +95,7 @@ def test_intersect_opposite_strand_simple_granges(simple_gr1, simple_gr2):
 
     print(result)
 
-    assert result.df.empty
+    assert len(result) == 0
 
 
 
@@ -104,4 +105,4 @@ def test_intersect_unstranded_simple_granges_containment(simple_gr1, simple_gr2)
 
     print(result)
 
-    assert result.df.empty
+    assert len(result) == 0

@@ -15,6 +15,8 @@ from collections import defaultdict
 
 from functools import wraps
 
+import ray
+
 def parse_grpby_key(grpby_key):
 
     if isinstance(grpby_key, str):
@@ -38,30 +40,80 @@ def return_empty_if_one_empty(func):
     return extended_func
 
 
-def _pyrange_apply(function, scdf, other_dfs, grpby_key, n_jobs=1, **kwargs):
+@ray.remote
+def merge_strands(df1, df2):
 
-    print("in pyrange apply " * 10, n_jobs)
-    if function.__name__ == "_set_union":
-        self_dfs =  {k: d for k, d in scdf.groupby(grpby_key)}
-        self_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), self_dfs)
-        keys_union = natsorted(list(set(self_dfs).union(other_dfs)))
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(self_dfs[key], other_dfs[key], key=key, n_jobs=n_jobs, **kwargs) for key in keys_union)
+    return ray.put(pd.concat(df1, df2))
 
-    elif not function.__name__ in ["_write_both", "_nearest"]:
-        # for most methods, we do not need to know anything about other except start, end
-        # i.e. less data that needs to be sent to other processes
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key][["Start", "End"]], key=key, n_jobs=n_jobs, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
+
+
+def pyrange_apply(function, self, other, **kwargs):
+
+    strandedness = kwargs["strandedness"]
+
+    other_strand = {"+": "-", "-": "+"}
+    same_strand = {"+": "+", "-": "-"}
+
+    if strandedness == "same":
+        strand_dict = same_strand
+    elif strandedness == "opposite":
+        strand_dict = other_strand
+
+    assert strandedness in ["same", "opposite", False, None]
+
+    if strandedness:
+        assert self.stranded and other.stranded, \
+            "Can only do stranded operations when both PyRanges contain strand info"
+
+    results = {}
+
+    items = natsorted(self.dfs.items())
+
+    if strandedness:
+
+        for (c, s), df in items:
+            os = strand_dict[s]
+            odf = other.dfs[c, os]
+            result = function.remote(df, odf, kwargs)
+            results[c, s] = result
 
     else:
-        outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, other_dfs[key], key=key, n_jobs=n_jobs, **kwargs) for key, scdf in natsorted(scdf.groupby(grpby_key)))
 
-    outdfs = [df for df in outdfs if not df.empty]
+        if self.stranded and not other.stranded:
 
-    if outdfs:
-        df = pd.concat(outdfs)
-        return df
-    else:
-        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+            for (c, s), df in items:
+                odf = other.dfs[c]
+
+                result = function.remote(df, odf, kwargs)
+                results[c, s] = result
+
+        elif not self.stranded and other.stranded:
+
+            for c, df in items:
+                odf1 = other.dfs[c, "+"]
+                odf2 = other.dfs[c, "-"]
+                odf = merge_strands.remote(odf1, odf2)
+
+                result = function.remote(df, odf, kwargs)
+                results[c, s] = result
+
+        elif self.stranded and other.stranded:
+            for (c, s), df in items:
+                odf = other.dfs[c, s]
+                result = function.remote(df, odf, kwargs)
+                results[c, s] = result
+
+        else:
+            for c, df in items:
+                odf = other.dfs[c]
+                result = function.remote(df, odf, kwargs)
+                results[c] = result
+
+    d = {k: ray.get(v) for k, v in results.items()}
+    d = {k: v[0] for k, v in d.items() if v is not None}
+
+    return d
+
 
 
 def pyrange_apply_single(function, self, **kwargs):
@@ -90,34 +142,6 @@ def pyrange_apply_single(function, self, **kwargs):
         return df
     else:
         return pd.DataFrame(columns="Chromosome Start End Strand".split())
-
-
-def pyrange_apply(function, self, other, n_jobs, **kwargs):
-
-    strandedness = kwargs["strandedness"]
-
-    print("Using {} cores and strandedness {}".format(n_jobs, strandedness))
-
-    assert strandedness in ["same", "opposite", False, None]
-
-    if strandedness:
-        assert self.stranded and other.stranded, \
-            "Can only do stranded operations when both PyRanges contain strand info"
-
-    if self.stranded and other.stranded and strandedness:
-        grpby_key = ["Chromosome", "Strand"]
-    else:
-        grpby_key = "Chromosome"
-
-    other_strand = {"+": "-", "-": "+"}
-    if strandedness == "opposite":
-        other_dfs = {(c, other_strand[s]): v for (c, s), v in other.df.groupby(grpby_key)}
-        other_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End Strand".split()), other_dfs)
-    else:
-        other_dfs = {key: v for key, v in other.df.groupby(grpby_key)}
-        other_dfs = defaultdict(lambda: pd.DataFrame(columns="Chromosome Start End".split()), other_dfs)
-
-    return _pyrange_apply(function, self.df, other_dfs, grpby_key, n_jobs=n_jobs, **kwargs)
 
 
 
@@ -171,13 +195,32 @@ def _both_dfs(scdf, ocdf, how=False, **kwargs):
 
     return scdf.loc[_self_indexes], ocdf.loc[_other_indexes]
 
+@ray.remote(num_return_vals=1)
+def _intersection(scdf, ocdf, kwargs):
 
+    how = kwargs["how"]
 
+    if ocdf.empty: # just return empty df
+        return None
+    # scdf2, ocdfe#2 = ray.get(_both_dfs.remote(scdf, ocdf, how=False))
+    assert how in "containment first".split() + [False, None]
+    starts = scdf.Start.values
+    ends = scdf.End.values
+    indexes = scdf.index.values
 
-@return_empty_if_one_empty
-def _intersection(scdf, ocdf, **kwargs):
+    oncls = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
-    scdf, ocdf = _both_dfs(scdf, ocdf, **kwargs)
+    if not how:
+        _self_indexes, _other_indexes = oncls.all_overlaps_both(starts, ends, indexes)
+    elif how == "containment":
+        _self_indexes, _other_indexes = oncls.all_containments_both(starts, ends, indexes)
+    else:
+        _self_indexes, _other_indexes = oncls.first_overlap_both(starts, ends, indexes)
+
+    _self_indexes = _self_indexes
+    _other_indexes = _other_indexes
+
+    scdf, ocdf = scdf.loc[_self_indexes], ocdf.loc[_other_indexes]
 
     new_starts = pd.Series(
         np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
@@ -192,7 +235,11 @@ def _intersection(scdf, ocdf, **kwargs):
     scdf.loc[:, "End"] = new_ends
     pd.options.mode.chained_assignment = 'warn'
 
-    return scdf
+    if not scdf.empty:
+        return [ray.put(scdf)]
+    else:
+        return None
+
 
 
 def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
