@@ -6,8 +6,8 @@ from collections import defaultdict, OrderedDict
 import logging
 
 import ray
-ray.init() # logging_level=logging.CRITICAL # local_mode=True
-# ray.init(local_mode=True) # logging_level=logging.CRITICAL # local_mode=True
+# ray.init() # logging_level=logging.CRITICAL # local_mode=True
+ray.init(local_mode=True) # logging_level=logging.CRITICAL # local_mode=True
 
 from tabulate import tabulate
 

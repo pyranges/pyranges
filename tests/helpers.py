@@ -1,4 +1,5 @@
 import pandas as pd
+# import ray
 
 def assert_dfs_equal(gr1, gr2):
 
@@ -12,6 +13,10 @@ def assert_dfs_equal(gr1, gr2):
         assert_df_equal(v, dfs2[k])
 
 def assert_df_equal(df1, df2):
+
+    # if not isinstance(df1, pd.DataFrame):
+    #     df1 = ray.get(df1)
+    #     df2 = ray.get(df2)
 
     if "Strand" in df1 and "Strand" in df2:
         sort_on = "Chromosome Start End Strand".split()
