@@ -1,5 +1,5 @@
 import pandas as pd
-# import ray
+import ray
 
 def assert_dfs_equal(gr1, gr2):
 
@@ -10,7 +10,15 @@ def assert_dfs_equal(gr1, gr2):
     assert list(dfs1.keys()) == list(dfs2.keys())
 
     for k, v in dfs1.items():
-        assert_df_equal(v, dfs2[k])
+
+        v2 = dfs2[k]
+        try:
+            v = ray.get(v)
+            v2 = ray.get(v2)
+        except:
+            pass
+
+        assert_df_equal(v, v2)
 
 def assert_df_equal(df1, df2):
 

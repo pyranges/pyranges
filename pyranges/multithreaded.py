@@ -17,6 +17,18 @@ from functools import wraps
 
 import ray
 
+
+@ray.remote
+def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
+
+
+
+    print("se", cluster_df)
+    if not cluster_df.empty:
+        return [ray.put(cluster_df)]
+    else:
+        return None
+
 def parse_grpby_key(grpby_key):
 
     if isinstance(grpby_key, str):
@@ -40,10 +52,10 @@ def return_empty_if_one_empty(func):
     return extended_func
 
 
-@ray.remote
-def merge_strands(df1, df2):
+# @ray.remote
+# def merge_strands(df1, df2):
 
-    return ray.put(pd.concat(df1, df2))
+#     return [ray.put(pd.concat([ df1, df2 ]))]
 
 
 
@@ -94,7 +106,7 @@ def pyrange_apply(function, self, other, **kwargs):
             for c, df in items:
                 odf1 = other.dfs[c, "+"]
                 odf2 = other.dfs[c, "-"]
-                odf = merge_strands.remote(odf1, odf2)
+                # odf = merge_strands.remote(odf1, odf2)
 
                 result = function.remote(df, odf, kwargs)
                 results.append(result)
@@ -117,12 +129,9 @@ def pyrange_apply(function, self, other, **kwargs):
 
 
 
-def pyrange_apply_single(function, self, **kwargs):
+def pyrange_apply_single(function, self, strand):
 
-    strand = kwargs["strand"]
-    n_jobs = kwargs.get("n_jobs", 1)
-
-    print("Using {} cores and strand {}".format(n_jobs, strand))
+    # strand = kwargs["strand"]
 
     if strand:
         assert self.stranded, \
@@ -133,18 +142,65 @@ def pyrange_apply_single(function, self, **kwargs):
     else:
         grpby_key = "Chromosome"
 
-    outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, **kwargs) for key, scdf in natsorted(self.df.groupby(grpby_key)))
+    results = []
+    if strand:
 
+        for (c, s), df in self.items():
 
-    outdfs = [df for df in outdfs if not df.empty]
+            result = function.remote(df, c, s)
+            # print(c, s)
+            # print(ray.put(result))
+            results.append(result)
 
-    if outdfs:
-        df = pd.concat(outdfs)
-        return df
+        keys = self.keys()
+
+    elif not self.stranded:
+
+        keys = self.keys
+        for c, df in self.items():
+
+            result = function.remote(df, c, s)
+            results.append(result)
+
+    else: # not stranded and self strand
+
+        keys = []
+        for c in self.chromosomes:
+
+            print(c)
+            keys.append(c)
+            dfs = list(self[c].values())
+            print(dfs)
+            print(type(dfs))
+
+            # df = merge_strands.remote(*dfs)
+
+            result = function.remote(dfs[0], c, strand, df2=dfs[1])
+            results.append(result)
+
+    results = ray.get(results)
+
+    return {k: r[0] for k, r in zip(keys, results) if r is not None}
+
+@ray.remote
+def _cluster(df, chromosome, strand=False, df2=None):
+
+    if df2 is not None or df2 != False:
+        df = pd.concat([df, df2])
+
+    cdf = df.sort_values("Start")
+    starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
+
+    nidx = pd.Index(range(len(starts)))
+    if strand:
+        cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx),
+                                   "Start": starts, "End": ends,
+                                   "Strand": pd.Series(strand, dtype="category", index=nidx)})
     else:
-        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+        cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx), "Start": starts, "End": ends})
 
 
+    return [ray.put( cluster_df )]
 
 
 @return_empty_if_one_empty
@@ -243,27 +299,7 @@ def _intersection(scdf, ocdf, kwargs):
 
 
 
-def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
 
-    nidx = pd.Index(range(len(starts)))
-    if strand:
-        cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx),
-                                   "Start": starts, "End": ends,
-                                   "Strand": pd.Series(strand, dtype="category", index=nidx)})
-    else:
-        cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx), "Start": starts, "End": ends})
-
-    return cluster_df
-
-
-def _cluster(df, chromosome, strand=False, **kwargs):
-
-    cdf = df.sort_values("Start")
-    starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
-
-    cluster_df = _create_df_from_starts_ends(starts, ends, chromosome, strand)
-
-    return cluster_df
 
 
 @return_empty_if_one_empty

@@ -1,3 +1,5 @@
+from pyranges.ncls import find_overlaps
+
 def get_slice(self, val):
 
     # 100:999
@@ -14,8 +16,12 @@ def get_slice(self, val):
 
 def get_string(self, val):
 
-    if val in set(self.df.Chromosome):
-        return self.df.loc[self.df.Chromosome == val]
+    if val in self.chromosomes:
+        if self.stranded:
+            return {k: self.dfs[k] for k in self.keys() if k[0] == val}
+        else:
+            return self.dfs[val]
+
     elif val in "+ -".split():
         return self.df.loc[self.df.Strand == val]
     else:
@@ -35,33 +41,40 @@ def get_tuple(self, val):
 
 def get_double(self, val):
 
+    print(val)
     # "chr1", 5:10
-    if len(val) == 2 and val[0] in self.df.Chromosome.values and isinstance(val[1], slice):
+    if len(val) == 2 and val[0] in self.chromosomes and isinstance(val[1], slice):
         chromosome, loc = val
         start = loc.start or 0
-        stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-        idxes = [r[2] for r in self.__ncls__[chromosome, "+"].find_overlap(start, stop)] + \
-                [r[2] for r in self.__ncls__[chromosome, "-"].find_overlap(start, stop)]
+        df = self.dfs[chromosome].values
+        stop = loc.stop or max(df.End.max(), start)
 
-        return self.df.loc[idxes]
+        idxes = [r[2] for r in find_overlaps(df, start, stop)]
+        # idxes = [r[2] for r in self.__ncls__[chromosome, "+"].find_overlap(start, stop)] + \
+        #         [r[2] for r in self.__ncls__[chromosome, "-"].find_overlap(start, stop)]
+
+        return df
 
     # "+", 5:10
     if len(val) == 2 and val[0] in "+ -".split() and isinstance(val[1], slice):
         strand, loc = val
         start = loc.start or 0
         stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
-        idxes = []
-        for chromosome in self.df.Chromosome.drop_duplicates():
-            idxes.extend([r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)])
 
-        return self.df.loc[idxes]
+        dfs = []
+        for df in self.values():
+
+            idxes = [r[2] for r in find_overlaps(df, start, stop)]
+            dfs.append(df.reindex(idxes))
+
+        return dfs
 
     # "chr1", "+"
     if len(val) == 2 and val[1] in "+ -".split():
 
         chromosome, strand = val
 
-        return self.df.loc[(self.df.Chromosome == chromosome) & (self.df.Strand == strand)]
+        return self.dfs[chromosome, strand]
 
 
 def get_triple(self, val):
