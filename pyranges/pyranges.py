@@ -428,3 +428,7 @@ class PyRanges():
     def strands(self):
 
         return natsorted(set(k[1] for k in self.keys()))
+
+    def as_df(self):
+
+        return pd.concat(self.values)
