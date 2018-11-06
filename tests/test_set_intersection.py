@@ -1,5 +1,5 @@
 import pytest
-from tests.helpers import assert_df_equal
+from tests.helpers import assert_dfs_equal
 
 from pyranges.pyranges import PyRanges
 import pyranges as pr
@@ -15,14 +15,18 @@ def expected_result_regular_intersection():
 chr8	38747236	38747251	U0	0	-
 chr15	26105515	26105518	U0	0	+"""
 
-    return pd.read_table(StringIO(c), header=None, names="Chromosome Start End Name Score Strand".split())
+    return pr.PyRanges(pd.read_table(StringIO(c), header=None, names="Chromosome Start End Name Score Strand".split()))
 
 
 def test_advanced_intersection(cs, bg, expected_result_regular_intersection):
 
-    result = cs.intersection(bg)
+    result = cs.set_intersection(bg, strandedness=False)
 
-    assert_df_equal(result.df, expected_result_regular_intersection)
+    print(result)
+    print(expected_result_regular_intersection)
+
+    assert_dfs_equal(result, expected_result_regular_intersection)
+
 
 @pytest.fixture
 def expected_result_intersection_same_strand():

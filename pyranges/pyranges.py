@@ -6,8 +6,11 @@ from collections import defaultdict, OrderedDict
 import logging
 
 import ray
-# ray.init() # logging_level=logging.CRITICAL # local_mode=True
-ray.init(local_mode=True) # logging_level=logging.CRITICAL # local_mode=True
+
+try:
+    ray.init(local_mode=True, logging_level=logging.CRITICAL) # logging_level=logging.CRITICAL # local_mode=True
+except:
+    pass # Ray was already initialized
 
 from tabulate import tabulate
 
@@ -177,13 +180,12 @@ class PyRanges():
 
         if isinstance(val, str):
             df = get_string(self, val)
-
         elif isinstance(val, tuple):
             df = get_tuple(self, val)
         elif isinstance(val, slice):
             df = get_slice(self, val)
 
-        return df
+        return PyRanges(df)
 
 
     def __str__(self):
@@ -191,16 +193,17 @@ class PyRanges():
         if len(self) == 0:
             return "Empty PyRanges"
 
-        if len(self.dfs.keys()) == 1:
+        keys = natsorted(list(self.dfs.keys()))
+        if len(keys) == 1:
 
-            first_key = list(self.dfs.keys())[0]
+            first_key = keys[0]
             # last_key = list(self.dfs.keys())[-1]
-            first_df = ray.get(self.dfs[first_key]).head(3)
+            first_df = ray.get(self.dfs[first_key])
 
             # last_df = ray.get(self.dfs[last_key]).tail(3)
             h = first_df.head(3).astype(object)
             m = first_df.head(1).astype(object)
-            t = first_df.head(3).astype(object)
+            t = first_df.tail(3).astype(object)
             m.loc[:,:] = "..."
 
             if len(self) > 6:
@@ -211,21 +214,41 @@ class PyRanges():
                 s = h
         else:
 
-            first_key = list(self.dfs.keys())[0]
-            last_key = list(self.dfs.keys())[-1]
-            first_df = ray.get(self.dfs[first_key]).head(3)
-            last_df = ray.get(self.dfs[last_key]).tail(3)
-            # last_df = self.dfs[list(self.dfs.keys())[-1]].tail(3)
-
-            h = first_df.head(3).astype(object)
-            m = first_df.head(1).astype(object)
-            t = last_df.head(3).astype(object)
-            m.loc[:,:] = "..."
-            # m.index = ["..."]
             if len(self) > 6:
+
+                # iterate from front until have three
+                heads = []
+                hl = 0
+                for k in keys:
+                    h = ray.get(self.dfs[k]).head(3)
+                    first_df = h
+                    hl += len(h)
+                    heads.append(h)
+                    if hl >= 3:
+                        break
+
+                tails = []
+                tl = 0
+                for k in keys[::-1]:
+                    t = ray.get(self.dfs[k]).tail(3)
+                    tl += len(t)
+                    tails.append(t)
+                    if tl >= 3:
+                        break
+                # iterate from back until have three
+
+                h = pd.concat(heads).head(3).astype(object)
+                t = pd.concat(tails).tail(3).astype(object)
+                m = h.head(1).astype(object)
+
+                m.loc[:,:] = "..."
                 s = pd.concat([h, m, t])
+
             else:
-                s = pd.concat([h, t])
+
+                h = pd.concat(ray.get(self.dfs.values()))
+                first_df = h
+                s = h.astype(object)
 
         h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df)]
 
@@ -268,13 +291,18 @@ class PyRanges():
 
         return PyRanges(dfs)
 
-    @pyrange_or_df
     @return_empty_if_one_empty
     def set_intersection(self, other, strandedness=False, how=None):
 
-        si = _set_intersection(self, other, strandedness, how)
+        from pyranges.multithreaded import _set_intersection, pyrange_apply
 
-        return si
+        self_clusters = self.cluster()
+        other_clusters = other.cluster()
+        dfs = pyrange_apply(_set_intersection, self_clusters, other_clusters, strandedness=strandedness, how=how)
+
+        # si = _set_intersection(self, other, strandedness, how)
+
+        return PyRanges(dfs)
 
     @pyrange_or_df
     @return_empty_if_both_empty
@@ -288,6 +316,7 @@ class PyRanges():
     @pyrange_or_df
     def subtraction(self, other, strandedness=False):
 
+
         return _subtraction(self, other, strandedness)
 
 
@@ -300,18 +329,13 @@ class PyRanges():
         return df
 
 
-    @pyrange_or_df_single
-    def cluster(self, strand=None, max_dist=0, min_nb=1, **kwargs):
+    def cluster(self, strand=None, max_dist=0, min_nb=1):
 
-        df = _cluster(self, strand, max_dist, min_nb)
+        from pyranges.multithreaded import _cluster, pyrange_apply_single
 
-        return df
+        dfs = pyrange_apply_single(_cluster, self, strand=strand)
 
-    # @pyrange_or_df_single
-    # def tile(self, tile_size=50):
-
-    #     df = _tile(self, tile_size)
-    #     return df
+        return PyRanges(dfs)
 
 
     def coverage(self, value_col=None, stranded=False):
@@ -402,7 +426,33 @@ class PyRanges():
         else:
             return self.df.sort_values("Chromosome")
 
+    @property
+    def keys(self):
+        return natsorted(self.dfs.keys())
 
     @property
     def stranded(self):
-        return len(list(self.dfs.keys())[0]) == 2
+        return len(list(self.keys)[0]) == 2
+
+    @property
+    def strands(self):
+
+        if not self.stranded:
+            raise Exception("PyRanges not stranded!")
+
+        return natsorted(set([k[1] for k in self.keys]))
+
+    @property
+    def chromosomes(self):
+
+        return natsorted(set([k[0] for k in self.keys]))
+
+    @property
+    def items(self):
+
+        return natsorted([(k, df) for (k, df) in self.dfs.items()])
+
+    @property
+    def values(self):
+
+        return [df for k, df in self.items]

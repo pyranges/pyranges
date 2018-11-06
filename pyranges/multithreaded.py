@@ -17,12 +17,12 @@ from functools import wraps
 
 import ray
 
-def parse_grpby_key(grpby_key):
+# def parse_grpby_key(grpby_key):
 
-    if isinstance(grpby_key, str):
-        return grpby_key, False
-    else:
-        return grpby_key[0], grpby_key[1]
+#     if isinstance(grpby_key, str):
+#         return grpby_key, False
+#     else:
+#         return grpby_key[0], grpby_key[1]
 
 
 def return_empty_if_one_empty(func):
@@ -43,7 +43,7 @@ def return_empty_if_one_empty(func):
 @ray.remote
 def merge_strands(df1, df2):
 
-    return ray.put(pd.concat(df1, df2))
+    return ray.put(pd.concat([df1, df2]))
 
 
 
@@ -54,10 +54,12 @@ def pyrange_apply(function, self, other, **kwargs):
     other_strand = {"+": "-", "-": "+"}
     same_strand = {"+": "+", "-": "-"}
 
-    if strandedness == "same":
-        strand_dict = same_strand
-    elif strandedness == "opposite":
+    if strandedness == "opposite":
         strand_dict = other_strand
+    else:
+        strand_dict = same_strand
+
+
 
     assert strandedness in ["same", "opposite", False, None]
 
@@ -69,6 +71,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
     items = natsorted(self.dfs.items())
     keys = natsorted(self.dfs.keys())
+
 
     if strandedness:
 
@@ -92,6 +95,7 @@ def pyrange_apply(function, self, other, **kwargs):
         elif not self.stranded and other.stranded:
 
             for c, df in items:
+
                 odf1 = other.dfs[c, "+"]
                 odf2 = other.dfs[c, "-"]
                 odf = merge_strands.remote(odf1, odf2)
@@ -100,6 +104,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 results.append(result)
 
         elif self.stranded and other.stranded:
+
             for (c, s), df in items:
                 odf = other.dfs[c, s]
                 result = function.remote(df, odf, kwargs)
@@ -120,9 +125,6 @@ def pyrange_apply(function, self, other, **kwargs):
 def pyrange_apply_single(function, self, **kwargs):
 
     strand = kwargs["strand"]
-    n_jobs = kwargs.get("n_jobs", 1)
-
-    print("Using {} cores and strand {}".format(n_jobs, strand))
 
     if strand:
         assert self.stranded, \
@@ -133,16 +135,46 @@ def pyrange_apply_single(function, self, **kwargs):
     else:
         grpby_key = "Chromosome"
 
-    outdfs = Parallel(n_jobs=n_jobs)(delayed(function)(scdf, **kwargs) for key, scdf in natsorted(self.df.groupby(grpby_key)))
+    items = self.items
 
+    results = []
 
-    outdfs = [df for df in outdfs if not df.empty]
+    if strand:
 
-    if outdfs:
-        df = pd.concat(outdfs)
-        return df
+        for (c, s), df in items:
+
+            _strand = s
+            result = function.remote(df, c, _strand)
+            results.append(result)
+
+        keys = self.keys
+        print(keys)
+        # raise
+
+    elif not self.stranded:
+
+        keys = []
+        for c, df in items:
+
+            result = function.remote(df, c, strand)
+            results.append(result)
+            keys.append(c)
+
     else:
-        return pd.DataFrame(columns="Chromosome Start End Strand".split())
+
+        keys = []
+        for c in self.chromosomes:
+
+            df = self[c]
+            df = merge_strands.remote(*df.dfs.values())
+            df = df["Chromosome Start End".split()]
+            result = function.remote(df, c, strand)
+            results.append(result)
+            keys.append(c)
+
+    results = ray.get(results)
+
+    return {k: r[0] for k, r in zip(keys, results) if r is not None}
 
 
 
@@ -256,26 +288,34 @@ def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
     return cluster_df
 
 
-def _cluster(df, chromosome, strand=False, **kwargs):
+@ray.remote
+def _cluster(df, chromosome, strand=False):
 
     cdf = df.sort_values("Start")
+
     starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
 
     cluster_df = _create_df_from_starts_ends(starts, ends, chromosome, strand)
 
-    return cluster_df
+    if not cluster_df.empty:
+        return [ray.put(cluster_df)]
+    else:
+        return None
 
 
-@return_empty_if_one_empty
-def _set_intersection(scdf, ocdf, strandedness=None, how=None, **kwargs):
+@ray.remote
+def _set_intersection(scdf, ocdf, kwargs):
 
-    chromosome, strand = parse_grpby_key(kwargs["key"])
+    chromosome = scdf.Chromosome.iloc[0]
 
-    strand = True if strandedness else False
-    s = _cluster(scdf, chromosome, strand=strand)
-    o = _cluster(ocdf, chromosome, strand=strand)
+    strand = True if kwargs["strandedness"] else False
+    if strand:
+        strand = scdf.Strand.iloc[0]
 
-    return _intersection(s, o, strandedness=strandedness, how=how, **kwargs)
+    s = _cluster.remote(scdf, chromosome, strand=strand)
+    o = _cluster.remote(ocdf, chromosome, strand=strand)
+
+    return _intersection.remote(s, o, kwargs)
 
 
 def _overlapping_for_nearest(scdf, ocdf, suffix, n_jobs=1, **kwargs):

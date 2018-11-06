@@ -14,8 +14,15 @@ def get_slice(self, val):
 
 def get_string(self, val):
 
-    if val in set(self.df.Chromosome):
-        return self.df.loc[self.df.Chromosome == val]
+    print(val)
+    print(self.chromosomes)
+    if val in self.chromosomes:
+        if not self.stranded:
+            self.dfs[val]
+        else:
+            return {k: self.dfs[k] for k in self.keys if k[0] == val}
+
+
     elif val in "+ -".split():
         return self.df.loc[self.df.Strand == val]
     else:
