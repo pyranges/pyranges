@@ -142,7 +142,14 @@ def pyrange_apply(function, self, other, **kwargs):
 
         else:
 
+            print("else " * 10)
             for c, df in items:
+                print("c", c)
+                print("other.chrom", other.chromosomes)
+                if not c in other.chromosomes:
+                    continue
+                print("c2", c)
+
                 odf = other.dfs[c]
                 result = function.remote(df, odf, kwargs)
                 results.append(result)
@@ -177,7 +184,6 @@ def pyrange_apply_single(function, self, strand):
             results.append(result)
 
         keys = self.keys
-        print(keys)
         # raise
 
     elif not self.stranded:
@@ -198,7 +204,11 @@ def pyrange_apply_single(function, self, strand):
             # print(dfs.values)
             # print(type(dfs.values))
             # print(len(dfs.values))
-            df1, df2 = dfs.values
+            if len(dfs.keys) == 2:
+                df1, df2 = dfs.values
+            else:
+                df1 = dfs.values[0]
+                df2 = None
             # print(type( df1 ))
             # print(type( df2 ))
             # print(df1)

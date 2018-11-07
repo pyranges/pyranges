@@ -469,7 +469,11 @@ class PyRanges():
     @property
     def chromosomes(self):
 
-        return natsorted(set([k[0] for k in self.keys]))
+        if self.stranded:
+            return natsorted(set([k[0] for k in self.keys]))
+        else:
+            return natsorted(set([k for k in self.keys]))
+
 
     @property
     def items(self):
@@ -480,6 +484,11 @@ class PyRanges():
     def values(self):
 
         return [df for k, df in self.items]
+
+    @property
+    def df(self):
+
+        return self.as_df()
 
     def as_df(self):
 
