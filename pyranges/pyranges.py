@@ -17,7 +17,9 @@ from tabulate import tabulate
 
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
-from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
+# from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
+from pyranges.multithreaded import (_cluster, pyrange_apply_single,
+                                    _intersection, pyrange_apply)
 
 def return_copy_if_view(df, df2):
     # https://stackoverflow.com/questions/26879073/checking-whether-data-frame-is-copy-or-view-in-pandas
@@ -146,7 +148,7 @@ class PyRanges():
 
 
     def __len__(self):
-        return sum(len(ray.get(d)) for d in self.dfs.values())
+        return sum(len(ray.get(d)) for d in self.values)
 
     def __setattr__(self, column_name, column):
 
@@ -184,8 +186,10 @@ class PyRanges():
             df = get_tuple(self, val)
         elif isinstance(val, slice):
             df = get_slice(self, val)
+        else:
+            raise Exception("Not valid subsetter: {}".format(str(val)))
 
-        return PyRanges(df)
+        return df
 
 
     def __str__(self):
@@ -193,10 +197,10 @@ class PyRanges():
         if len(self) == 0:
             return "Empty PyRanges"
 
-        keys = natsorted(list(self.dfs.keys()))
-        if len(keys) == 1:
+        # keys = natsorted(list(self.dfs.keys()))
+        if len(self.keys) == 1:
 
-            first_key = keys[0]
+            first_key = self.keys[0]
             # last_key = list(self.dfs.keys())[-1]
             first_df = ray.get(self.dfs[first_key])
 
@@ -213,7 +217,20 @@ class PyRanges():
             else:
                 s = h
         else:
+            keys = self.keys
+            first_key = keys[0]
+            last_key = keys[-1]
+            # first_key = self.keys[0]
+            # last_key = self.keys[-1]
+            first_df = ray.get(self.dfs[first_key]).head(3)
+            last_df = ray.get(self.dfs[last_key]).tail(3)
+            # last_df = self.dfs[list(self.dfs.keys())[-1]].tail(3)
 
+            h = first_df.head(3).astype(object)
+            m = first_df.head(1).astype(object)
+            t = last_df.head(3).astype(object)
+            m.loc[:,:] = "..."
+            # m.index = ["..."]
             if len(self) > 6:
 
                 # iterate from front until have three
@@ -285,7 +302,6 @@ class PyRanges():
     @return_empty_if_one_empty
     def intersection(self, other, strandedness=False, how=None):
 
-        from pyranges.multithreaded import _intersection, pyrange_apply
 
         dfs = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how)
 
@@ -329,13 +345,11 @@ class PyRanges():
         return df
 
 
-    def cluster(self, strand=None, max_dist=0, min_nb=1):
+    def cluster(self, strand=None, max_dist=0, min_nb=1, **kwargs):
 
-        from pyranges.multithreaded import _cluster, pyrange_apply_single
+        df = pyrange_apply_single(_cluster, self, strand)
 
-        dfs = pyrange_apply_single(_cluster, self, strand=strand)
-
-        return PyRanges(dfs)
+        return PyRanges(df)
 
 
     def coverage(self, value_col=None, stranded=False):
@@ -456,3 +470,7 @@ class PyRanges():
     def values(self):
 
         return [df for k, df in self.items]
+
+    def as_df(self):
+
+        return pd.concat(self.values)

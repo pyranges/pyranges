@@ -1,4 +1,6 @@
 
+*flycheck*
+*.pyc*
 *bk
 .hypothesis/
 *.RData

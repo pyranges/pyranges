@@ -1,4 +1,3 @@
-
 import pytest
 from tests.helpers import assert_dfs_equal
 
@@ -9,88 +8,52 @@ import pandas as pd
 
 from io import StringIO
 
+
 @pytest.fixture
-def expected_result_simple_cluster():
+def expected_result_cluster_simple_granges():
 
-    c = """chr1	3	6	+
-chr1	8	9	+
-chr1	5	7	-"""
+    c = """Chromosome Start End Strand
+chr1 3 6 +
+chr1 5 7 -
+chr1 8 9 +"""
 
-    return pr.PyRanges(pd.read_table(StringIO(c), header=None, names="Chromosome Start End Strand".split()))
+    df = pd.read_table(StringIO(c), sep="\s+", header=0)
+    return PyRanges(df)
+
+@pytest.fixture
+def expected_result_cluster_simple_granges_no_strand():
+
+    c = """Chromosome Start End
+chr1 3 7
+chr1 8 9"""
+
+    df = pd.read_table(StringIO(c), sep="\s+", header=0)
+    return PyRanges(df)
 
 
-def test_simple_cluster(f1, expected_result_simple_cluster):
+
+# @pytest.fixture
+
+#     c = """Chromosome Start End Strand Score
+# chr1    6   7   - 7"""
+
+#     df = pd.read_table(StringIO(c), sep="\s+", header=0)
+#     return PyRanges(df)
+
+
+def test_cluster_simple_granges(f1, expected_result_cluster_simple_granges):
 
     result = f1.cluster(strand=True)
 
-    print(result)
+    print("result\n", result)
 
-    print(expected_result_simple_cluster)
-
-    assert_dfs_equal(result, expected_result_simple_cluster)
+    assert_dfs_equal(result, expected_result_cluster_simple_granges)
 
 
-@pytest.fixture
-def expected_result_advanced():
+def test_cluster_simple_granges_no_strand(f1, expected_result_cluster_simple_granges_no_strand):
 
-    c = """chrY	7046809	7046834
-chrY	7194340	7194365
-chrY	7405376	7405401
-chrY	7463444	7463469
-chrY	7701983	7702008
-chrY	7761026	7761051
-chrY	8010951	8010976
-chrY	8316773	8316798
-chrY	11942770	11942795
-chrY	12930373	12930398
-chrY	13216614	13216639
-chrY	13517892	13517917
-chrY	14774053	14774078
-chrY	15224235	15224260
-chrY	15548022	15548047
-chrY	16045242	16045267
-chrY	16495497	16495522
-chrY	21559181	21559206
-chrY	21707662	21707687
-chrY	21751211	21751236
-chrY	21910706	21910731
-chrY	22054002	22054027
-chrY	22210637	22210662"""
+    result = f1.cluster(strand=None)
 
+    print("result\n", result)
 
-    return pr.PyRanges(pd.read_table(StringIO(c), header=None, names="Chromosome Start End".split()))
-
-
-def test_advanced_cluster(cs, expected_result_advanced):
-
-    chrY = cs["chrY"]
-
-    result = chrY.cluster()
-
-    print(result.values)
-
-    assert_dfs_equal(result, expected_result_advanced)
-
-# chrY	7046809	7046834
-# chrY	7194340	7194365
-# chrY	7405376	7405401
-# chrY	7463444	7463469
-# chrY	7701983	7702008
-# chrY	7761026	7761051
-# chrY	8010951	8010976
-# chrY	8316773	8316798
-# chrY	11942770	11942795
-# chrY	12930373	12930398
-# chrY	13216614	13216639
-# chrY	13517892	13517917
-# chrY	14774053	14774078
-# chrY	15224235	15224260
-# chrY	15548022	15548047
-# chrY	16045242	16045267
-# chrY	16495497	16495522
-# chrY	21559181	21559206
-# chrY	21707662	21707687
-# chrY	21751211	21751236
-# chrY	21910706	21910731
-# chrY	22054002	22054027
-# chrY	22210637	22210662
+    assert_dfs_equal(result, expected_result_cluster_simple_granges_no_strand)
