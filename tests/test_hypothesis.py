@@ -65,7 +65,7 @@ better_dfs = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsiz
                                   column("End", elements=lengths),
                                   column("Strand", strands)])
 
-better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
+better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True, elements=lengths),
                              columns=[column("Chromosome", cs),
                                       column("Start", elements=lengths),
                                       column("End", elements=small_lengths),
@@ -556,9 +556,6 @@ strandedness = [False, "same", "opposite"]
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
-    print(gr.df)
-    print(gr2.df)
-
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[overlap]
 
@@ -566,8 +563,8 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
         f2 = "{}/f2.bed".format(temp_dir)
-        gr.df.to_csv(f1, sep="\t", header=False, index=False)
-        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
+        gr.as_df().to_csv(f1, sep="\t", header=False, index=False)
+        gr2.as_df().to_csv(f2, sep="\t", header=False, index=False)
 
         cmd = nearest_command.format(bedtools_overlap, bedtools_strand, f1, f2)
         # print(cmd)
@@ -579,11 +576,11 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
         if not bedtools_df.empty:
             bedtools_df = bedtools_df[bedtools_df.Distance != -1]["Chromosome Start End Strand Distance".split()].sort_values("Distance")
 
-    result = gr.nearest(gr2, overlap=overlap, strandedness=strandedness)
-    if not result.df.empty:
-
-        print("pyranges_df", result.df)
-        result_df = result.df.sort_values("Distance")["Chromosome Start End Strand Distance".split()]
+    result = gr.nearest(gr2, overlap=overlap, strandedness=strandedness).as_df()
+    if not len(result) == 0:
+        print("pyranges_df", result)
+        result_df = result.sort_values("Distance")["Chromosome Start End Strand Distance".split()]
+        print("pyranges_df", result_df)
         # print("bedtools_df", bedtools_df)
         # print("pyranges", pyranges_distances)
 

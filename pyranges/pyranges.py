@@ -19,7 +19,7 @@ from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 # from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
 from pyranges.multithreaded import (_cluster, pyrange_apply_single,
-                                    _intersection, pyrange_apply)
+                                    _intersection, pyrange_apply, _nearest)
 
 def return_copy_if_view(df, df2):
     # https://stackoverflow.com/questions/26879073/checking-whether-data-frame-is-copy-or-view-in-pandas
@@ -267,7 +267,7 @@ class PyRanges():
                 first_df = h
                 s = h.astype(object)
 
-        h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df)]
+        h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df.dtypes)]
 
         str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
                                         "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.dfs.keys()))
@@ -291,11 +291,22 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def nearest(self, other, strandedness=False, suffix="_b", how=None, overlap=True, **kwargs):
+    def nearest(self, other, **kwargs):
+
+        # strandedness=False, suffix="_b", how=None, overlap=True,
+        if not "strandedness" in kwargs:
+            kwargs["strandedness"] = False
+        if not "suffix" in kwargs:
+            kwargs["suffix"] = "_b"
+        if not "overlap" in kwargs:
+            kwargs["overlap"] = True
+        if not "how" in kwargs:
+            kwargs["how"] = None
+
 
         "Find the nearest feature in other."
 
-        df = _nearest(self, other, strandedness, suffix, how, overlap)
+        df = pyrange_apply(_nearest, self, other, **kwargs)
 
         return df
 
@@ -312,11 +323,10 @@ class PyRanges():
 
         from pyranges.multithreaded import _set_intersection, pyrange_apply
 
-        self_clusters = self.cluster()
-        other_clusters = other.cluster()
+        strand = True if strandedness else False
+        self_clusters = self.cluster(strand=strand)
+        other_clusters = other.cluster(strand=strand)
         dfs = pyrange_apply(_set_intersection, self_clusters, other_clusters, strandedness=strandedness, how=how)
-
-        # si = _set_intersection(self, other, strandedness, how)
 
         return PyRanges(dfs)
 
@@ -473,4 +483,7 @@ class PyRanges():
 
     def as_df(self):
 
-        return pd.concat(self.values)
+        if len(self) == 0:
+            return pd.DataFrame()
+        else:
+            return pd.concat(self.values)

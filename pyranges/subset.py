@@ -31,7 +31,7 @@ def get_string(self, val):
     elif val in "+ -".split():
         return {k: v for k, v in self.items if k[1] == val}
     else:
-        raise Exception("Chromosome or Strand '{}' not found in PyRanges.".format(val))
+        return {}
 
 
 
@@ -93,7 +93,10 @@ def get_double(self, val):
 
         chromosome, strand = val
 
-        return self.dfs[chromosome, strand]
+        if (chromosome, strand) in self.dfs:
+            return self.dfs[chromosome, strand]
+        else:
+            return {}
 
 
 def get_triple(self, val):
