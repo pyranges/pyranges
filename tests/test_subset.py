@@ -9,7 +9,7 @@ from io import StringIO
 
 
 # @pytest.fixture
-# def expected_result_cluster_simple_granges():
+# def expected_result_subset():
 
 #     c = """Chromosome Start End Strand
 # chr1 3 6 +
@@ -43,6 +43,7 @@ from io import StringIO
 def test_subset_chr(cs):
 
     # result = pd.concat(list(cs["chrY"].values()))
+    cs["chrY", 100:100000]
 
     print(result)
 

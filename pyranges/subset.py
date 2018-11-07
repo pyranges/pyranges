@@ -46,12 +46,21 @@ def get_double(self, val):
     if len(val) == 2 and val[0] in self.chromosomes and isinstance(val[1], slice):
         chromosome, loc = val
         start = loc.start or 0
-        df = self.dfs[chromosome].values
-        stop = loc.stop or max(df.End.max(), start)
+        if self.stranded:
+            dfs = [df for k, df in self.items if k[0] == val]
+            max_end = max([df.End.max() for df in dfs])
+        else:
+            dfs = self.dfs[val]
+            max_end = df.End.max()
 
+        # in case 1:None
+        stop = loc.stop or max(max_end, start)
+
+        print(dfs)
+        for df in dfs:
         idxes = [r[2] for r in find_overlaps(df, start, stop)]
-        # idxes = [r[2] for r in self.__ncls__[chromosome, "+"].find_overlap(start, stop)] + \
-        #         [r[2] for r in self.__ncls__[chromosome, "-"].find_overlap(start, stop)]
+
+
 
         return df
 
