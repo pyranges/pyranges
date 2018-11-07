@@ -189,7 +189,7 @@ class PyRanges():
         else:
             raise Exception("Not valid subsetter: {}".format(str(val)))
 
-        return df
+        return PyRanges(df)
 
 
     def __str__(self):

@@ -1,4 +1,5 @@
 import pandas as pd
+import pyranges as pr
 import ray
 
 def assert_dfs_equal(gr1, gr2):
@@ -69,3 +70,10 @@ def assert_df_equal(df1, df2):
     print("index equal", df1.index == df2.index)
 
     pd.testing.assert_frame_equal(df1, df2)
+
+from io import StringIO
+
+def string_to_pyrange(s):
+
+    df = pd.read_table(StringIO(s), sep="\s+", header=0)
+    return pr.PyRanges(df)

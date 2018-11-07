@@ -8,4 +8,10 @@ def create_ncls(df):
 
 def find_overlaps(df, start, end):
 
-    return create_ncls(df).find_overlap(start, end)
+    n = create_ncls(df)
+
+    idxes = []
+    for r in n.find_overlap(start, end):
+        idxes.append(r[2])
+
+    return idxes

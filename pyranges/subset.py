@@ -4,14 +4,20 @@ def get_slice(self, val):
 
     # 100:999
 
-    start = val.start or 0
-    stop = val.stop or max(self.df.End.max(), start)
 
-    idxes = []
-    for it in self.__ncls__.values():
-        idxes.extend([r[2] for r in it.find_overlap(start, stop)])
+    d = {}
 
-    return self.df.loc[idxes]
+    for k, df in self.items:
+
+        start = val.start or 0
+        stop = val.stop or max(df.End.max(), start)
+        idxes = find_overlaps(df, start, stop)
+        d[k] = df.reindex(idxes)
+
+    return d
+
+
+
 
 
 def get_string(self, val):
@@ -23,7 +29,7 @@ def get_string(self, val):
             return self.dfs[val]
 
     elif val in "+ -".split():
-        return self.df.loc[self.df.Strand == val]
+        return {k: v for k, v in self.items if k[1] == val}
     else:
         raise Exception("Chromosome or Strand '{}' not found in PyRanges.".format(val))
 
@@ -41,14 +47,13 @@ def get_tuple(self, val):
 
 def get_double(self, val):
 
-    print(val)
     # "chr1", 5:10
     if len(val) == 2 and val[0] in self.chromosomes and isinstance(val[1], slice):
         chromosome, loc = val
         start = loc.start or 0
         if self.stranded:
-            dfs = [df for k, df in self.items if k[0] == val]
-            max_end = max([df.End.max() for df in dfs])
+            dfs = {k: df for k, df in self.items if k[0] == chromosome}
+            max_end = max([df.End.max() for df in dfs.values()])
         else:
             dfs = self.dfs[val]
             max_end = df.End.max()
@@ -56,27 +61,32 @@ def get_double(self, val):
         # in case 1:None
         stop = loc.stop or max(max_end, start)
 
-        print(dfs)
-        for df in dfs:
-        idxes = [r[2] for r in find_overlaps(df, start, stop)]
+        dfs2 = {}
+        for k, df in dfs.items():
+            idxes = find_overlaps(df, start, stop)
+            if idxes:
+                dfs2[k] = df.loc[idxes]
 
-
-
-        return df
+        return dfs2
 
     # "+", 5:10
     if len(val) == 2 and val[0] in "+ -".split() and isinstance(val[1], slice):
         strand, loc = val
         start = loc.start or 0
-        stop = loc.stop or max(self.df.loc[self.df.Chromosome == chromosome].End.max(), start)
 
-        dfs = []
-        for df in self.values():
+        dfs = {k: df for k, df in self.items if k[1] == strand}
+        max_end = max([df.End.max() for df in dfs.values()])
 
-            idxes = [r[2] for r in find_overlaps(df, start, stop)]
-            dfs.append(df.reindex(idxes))
+        stop = loc.stop or max(max_end, start)
 
-        return dfs
+        dfs2 = {}
+        for k, df in dfs.items():
+            idxes = find_overlaps(df, start, stop)
+            if idxes:
+                dfs2[k] = df.loc[idxes]
+
+        return dfs2
+
 
     # "chr1", "+"
     if len(val) == 2 and val[1] in "+ -".split():
@@ -91,12 +101,15 @@ def get_triple(self, val):
     # "chr1", "+", 5:10
     chromosome, strand, loc = val
     start = loc.start or 0
-    stop = loc.stop or max(self.df.loc[(self.df.Chromosome == chromosome) & (self.df.Strand == strand)].End.max(), start)
+
     if strand not in "+ -".split():
         raise Exception("Strand '{}' invalid.".format(val))
 
-    if (chromosome, strand) in self.__ncls__:
-        idxes = [r[2] for r in self.__ncls__[chromosome, strand].find_overlap(start, stop)]
-        return self.df.loc[idxes]
-    else:
-        raise Exception("Chromosome and Strand pair {}, {} not found in PyRanges.".format(chromosome, strand))
+    df = self[chromosome, strand].values[0]
+
+    max_end = df.End.max()
+
+    stop = loc.stop or max(max_end, start)
+
+    idxes = find_overlaps(df, start, stop)
+    return df.reindex(idxes)
