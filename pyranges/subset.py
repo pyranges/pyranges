@@ -94,7 +94,7 @@ def get_double(self, val):
         chromosome, strand = val
 
         if (chromosome, strand) in self.dfs:
-            return self.dfs[chromosome, strand]
+            return {(chromosome, strand): self.dfs[chromosome, strand]}
         else:
             return {}
 

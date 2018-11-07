@@ -139,42 +139,42 @@ def input_10_no_strand(names):
 
     return PyRanges(df)
 
-##### HYPOTHESIS
+# ##### HYPOTHESIS
 
-import hypothesis.strategies as st
-from hypothesis import given, settings, reproduce_failure, unlimited, HealthCheck, seed
-from hypothesis.extra.pandas import data_frames, columns, range_indexes, column, indexes
+# import hypothesis.strategies as st
+# from hypothesis import given, settings, reproduce_failure, unlimited, HealthCheck, seed
+# from hypothesis.extra.pandas import data_frames, columns, range_indexes, column, indexes
 
-from hypothesis.extra.numpy import arrays
+# from hypothesis.extra.numpy import arrays
 
 
-positions = st.integers(min_value=0, max_value=int(1e7))
-lengths = st.integers(min_value=1, max_value=int(1e7))
-small_lengths = st.integers(min_value=1, max_value=int(1e4))
-strands = st.sampled_from("+ -".split())
-names = st.text("abcdefghijklmnopqrstuvxyz", min_size=1)
-scores = st.integers(min_value=0, max_value=256)
+# positions = st.integers(min_value=0, max_value=int(1e7))
+# lengths = st.integers(min_value=1, max_value=int(1e7))
+# small_lengths = st.integers(min_value=1, max_value=int(1e4))
+# strands = st.sampled_from("+ -".split())
+# names = st.text("abcdefghijklmnopqrstuvxyz", min_size=1)
+# scores = st.integers(min_value=0, max_value=256)
 
-better_df_minsize = 1
-better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
-                             columns=[column("Chromosome", cs),
-                                      column("Start", elements=lengths),
-                                      column("End", elements=small_lengths),
-                                      # column("Name", elements=names),
-                                      # column("Score", elements=scores),
-                                      column("Strand", strands)])
+# better_df_minsize = 1
+# better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
+#                              columns=[column("Chromosome", cs),
+#                                       column("Start", elements=lengths),
+#                                       column("End", elements=small_lengths),
+#                                       # column("Name", elements=names),
+#                                       # column("Score", elements=scores),
+#                                       column("Strand", strands)])
 
-@st.composite
-def dfs_min(draw):
-    df = draw(better_dfs_min)
-    df.loc[:, "End"] += df.Start
+# @st.composite
+# def dfs_min(draw):
+#     df = draw(better_dfs_min)
+#     df.loc[:, "End"] += df.Start
 
-    df.insert(3, "Name", "a")
-    df.insert(4, "Score", 0)
-    gr = PyRanges(df)
+#     df.insert(3, "Name", "a")
+#     df.insert(4, "Score", 0)
+#     gr = PyRanges(df)
 
-    # do not sort like this, use pyranges sort
-    # np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
-    # gr.df = df.reindex(np.random.permutation(df.index.values))
+#     # do not sort like this, use pyranges sort
+#     # np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
+#     # gr.df = df.reindex(np.random.permutation(df.index.values))
 
-    return gr
+#     return gr

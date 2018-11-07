@@ -37,7 +37,6 @@ def create_df_dict(df):
     else:
         grpby_key = "Chromosome"
 
-    # {k: ray.put(v) for k, v in natsorted(df.groupby(grpby_key))}
     return {k: ray.put(v) for k, v in df.groupby(grpby_key)}
 
 
@@ -127,6 +126,10 @@ def pyrange_or_df_single(func):
     return extension
 
 
+@ray.remote
+def length(df):
+
+    return len(df)
 
 class PyRanges():
 
@@ -148,7 +151,7 @@ class PyRanges():
 
 
     def __len__(self):
-        return sum(len(ray.get(d)) for d in self.values)
+        return sum(ray.get([ length.remote(d) for d in self.objids ]))
 
     def __setattr__(self, column_name, column):
 
@@ -180,6 +183,8 @@ class PyRanges():
 
     def __getitem__(self, val):
 
+        # print("self, val")
+        # print(self, val)
         if isinstance(val, str):
             df = get_string(self, val)
         elif isinstance(val, tuple):
@@ -189,6 +194,9 @@ class PyRanges():
         else:
             raise Exception("Not valid subsetter: {}".format(str(val)))
 
+        # print("getitem " * 100)
+        # print(df)
+        # print(ray.get(df))
         return PyRanges(df)
 
 
@@ -478,12 +486,17 @@ class PyRanges():
     @property
     def items(self):
 
-        return natsorted([(k, df) for (k, df) in self.dfs.items()])
+        return natsorted([(k, ray.get(df)) for (k, df) in self.dfs.items()])
 
     @property
     def values(self):
 
         return [df for k, df in self.items]
+
+    @property
+    def objids(self):
+
+        return [objid for k, objid in natsorted(self.dfs.items())]
 
     @property
     def df(self):

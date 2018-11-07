@@ -21,9 +21,6 @@ import ray
 @ray.remote
 def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
 
-
-
-    print("se", cluster_df)
     if not cluster_df.empty:
         return [ray.put(cluster_df)]
     else:
@@ -60,7 +57,6 @@ def merge_strands(df1, df2):
 
 def pyrange_apply(function, self, other, **kwargs):
 
-    print("\nkwargs", kwargs)
     strandedness = kwargs["strandedness"]
 
     other_strand = {"+": "-", "-": "+"}
@@ -82,7 +78,6 @@ def pyrange_apply(function, self, other, **kwargs):
     items = natsorted(self.dfs.items())
     keys = natsorted(self.dfs.keys())
 
-    print(self.stranded, other.stranded, strandedness)
 
     if strandedness:
 
@@ -93,7 +88,10 @@ def pyrange_apply(function, self, other, **kwargs):
             if not (c, os) in other.keys:
                 continue
 
+            # print("other", other)
+            # print("other[c, os]", other[c, os])
             odf = other[c, os].values[0]
+            # print("odf", odf)
             result = function.remote(df, odf, kwargs)
             results.append(result)
 
@@ -142,13 +140,9 @@ def pyrange_apply(function, self, other, **kwargs):
 
         else:
 
-            print("else " * 10)
             for c, df in items:
-                print("c", c)
-                print("other.chrom", other.chromosomes)
                 if not c in other.chromosomes:
                     continue
-                print("c2", c)
 
                 odf = other.dfs[c]
                 result = function.remote(df, odf, kwargs)
@@ -269,10 +263,8 @@ def _first_df(scdf, ocdf, how=False, invert=False, n_jobs=1, **kwargs):
         return scdf.loc[~scdf.index.isin(_indexes)]
 
 
-def _both_dfs(scdf, ocdf, how=False, **kwargs):
+def _both_dfs(scdf, ocdf, how=False):
 
-    print(scdf)
-    print(ocdf)
     assert how in "containment first".split() + [False, None]
     starts = scdf.Start.values
     ends = scdf.End.values
@@ -290,10 +282,7 @@ def _both_dfs(scdf, ocdf, how=False, **kwargs):
     _self_indexes = _self_indexes
     _other_indexes = _other_indexes
 
-    print(_self_indexes)
-    print(_other_indexes)
-
-    return scdf.loc[_self_indexes], ocdf.loc[_other_indexes]
+    return scdf.reindex(_self_indexes), ocdf.reindex(_other_indexes)
 
 @ray.remote
 def _intersection(scdf, ocdf, kwargs):
@@ -361,6 +350,7 @@ def _set_intersection(scdf, ocdf, kwargs):
     return _intersection.remote(s, o, kwargs)
 
 
+# @ray.remote(num_return_vals=2)
 def _overlapping_for_nearest(scdf, ocdf, suffix):
 
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
