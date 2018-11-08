@@ -8,6 +8,7 @@ import logging
 import ray
 
 try:
+    # ray.init(logging_level=logging.CRITICAL) # logging_level=logging.CRITICAL # local_mode=True
     ray.init(local_mode=True, logging_level=logging.CRITICAL) # logging_level=logging.CRITICAL # local_mode=True
 except:
     pass # Ray was already initialized
@@ -18,8 +19,29 @@ from tabulate import tabulate
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 # from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
-from pyranges.multithreaded import (_cluster, pyrange_apply_single,
-                                    _intersection, pyrange_apply, _nearest)
+from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard,
+                                    _intersection, pyrange_apply, _nearest, _first_df, _set_intersection, _subtraction)
+
+def fill_kwargs(kwargs):
+
+    if not "strandedness" in kwargs:
+        kwargs["strandedness"] = False
+    if not "suffix" in kwargs:
+        kwargs["suffix"] = "_b"
+    if not "overlap" in kwargs:
+        kwargs["overlap"] = True
+    if not "how" in kwargs:
+        kwargs["how"] = None
+    if not "invert" in kwargs:
+        kwargs["invert"] = None
+    if not "new_pos" in kwargs:
+        kwargs["new_pos"] = None
+    if not "suffixes" in kwargs:
+        kwargs["suffixes"] = ["_a", "_b"]
+    if not "suffix" in kwargs:
+        kwargs["suffixes"] = ["_b"]
+
+    return kwargs
 
 def return_copy_if_view(df, df2):
     # https://stackoverflow.com/questions/26879073/checking-whether-data-frame-is-copy-or-view-in-pandas
@@ -271,7 +293,7 @@ class PyRanges():
 
             else:
 
-                h = pd.concat(ray.get(self.dfs.values()))
+                h = pd.concat(ray.get(self.dfs.values()), sort=False)
                 first_df = h
                 s = h.astype(object)
 
@@ -289,11 +311,17 @@ class PyRanges():
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def overlap(self, other, strandedness=False, invert=False, how=None, **kwargs):
+    def overlap(self, other, **kwargs):
 
         "Want all intervals in self that overlap with other."
 
-        df = _overlap(self, other, strandedness, invert, how)
+        print(kwargs)
+        kwargs = fill_kwargs(kwargs)
+        print(kwargs)
+
+        df = pyrange_apply(_first_df, self, other, **kwargs)
+
+        # df = _overlap(self, other, strandedness, invert, how)
 
         return df
 
@@ -302,17 +330,11 @@ class PyRanges():
     def nearest(self, other, **kwargs):
 
         # strandedness=False, suffix="_b", how=None, overlap=True,
-        if not "strandedness" in kwargs:
-            kwargs["strandedness"] = False
-        if not "suffix" in kwargs:
-            kwargs["suffix"] = "_b"
-        if not "overlap" in kwargs:
-            kwargs["overlap"] = True
-        if not "how" in kwargs:
-            kwargs["how"] = None
 
 
         "Find the nearest feature in other."
+
+        kwargs = fill_kwargs(kwargs)
 
         df = pyrange_apply(_nearest, self, other, **kwargs)
 
@@ -329,8 +351,6 @@ class PyRanges():
     @return_empty_if_one_empty
     def set_intersection(self, other, strandedness=False, how=None):
 
-        from pyranges.multithreaded import _set_intersection, pyrange_apply
-
         strand = True if strandedness else False
         self_clusters = self.cluster(strand=strand)
         other_clusters = other.cluster(strand=strand)
@@ -342,23 +362,28 @@ class PyRanges():
     @return_empty_if_both_empty
     def set_union(self, other, strand=False):
 
+        strand = True if strandedness else False
+        self_clusters = self.cluster(strand=strand)
+        other_clusters = other.cluster(strand=strand)
         si = _set_union(self, other, strand)
 
         return si
 
 
     @pyrange_or_df
-    def subtraction(self, other, strandedness=False):
+    def subtraction(self, other, **kwargs):
 
+        kwargs = fill_kwargs(kwargs)
 
-        return _subtraction(self, other, strandedness)
+        return pyrange_apply(_subtraction, self, other, **kwargs)
 
 
     @pyrange_or_df
     @return_empty_if_one_empty
-    def join(self, other, strandedness=False, new_pos=None, suffixes=["_a", "_b"], suffix="_b", how=None):
+    def join(self, other, **kwargs):
 
-        df = _overlap_write_both(self, other, strandedness, new_pos, suffixes, suffix, how)
+        kwargs = fill_kwargs(kwargs)
+        df = pyrange_apply(_write_both, self, other, **kwargs)
 
         return df
 
@@ -374,6 +399,36 @@ class PyRanges():
 
         return _coverage(self, value_col, stranded=stranded)
 
+
+    def lengths(self, **kwargs):
+
+        df = _lengths(self)
+
+        return df
+
+
+    def jaccard(self, other, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+        strand = True if kwargs["strandedness"] else False
+        self_clusters = self.cluster(strand=strand)
+        other_clusters = other.cluster(strand=strand)
+
+        results = pyrange_apply(_jaccard, self_clusters, other_clusters, **kwargs)
+        values = ray.get(list(results.values()))
+
+        ssum, osum, ilsum = 0, 0, 0
+        for s, o, il in values:
+            ssum += s
+            osum += o
+            ilsum += il
+
+        if ssum + osum == ilsum:
+            jaccard = 1
+        else:
+            jaccard = ilsum / (ssum + osum - ilsum)
+
+        return jaccard
 
     @pyrange_or_df_single
     def slack(self, slack):
@@ -438,18 +493,6 @@ class PyRanges():
         return return_copy_if_view(df, self.df)
 
 
-    def lengths(self, **kwargs):
-
-        df = _lengths(self)
-
-        return df
-
-
-    def jaccard(self, other, strandedness):
-
-        return _jaccard(self, other, strandedness)
-
-
     @pyrange_or_df_single
     def sort(self, strand=True):
 
@@ -507,5 +550,9 @@ class PyRanges():
 
         if len(self) == 0:
             return pd.DataFrame()
+        elif len(self) == 1:
+            # print("ooo " * 100)
+            # print(self.values[0])
+            return self.values[0]
         else:
             return pd.concat(self.values)

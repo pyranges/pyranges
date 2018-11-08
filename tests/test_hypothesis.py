@@ -46,7 +46,7 @@ small_lengths = st.integers(min_value=1, max_value=int(1e4))
 strands = st.sampled_from("+ -".split())
 names = st.text("abcdefghijklmnopqrstuvxyz", min_size=1)
 scores = st.integers(min_value=0, max_value=256)
-
+use_strand = st.booleans()
 
 # dfs = data_frames(columns=columns("Chromosome Start End Strand".split(),
 #                                   dtype=int), rows=st.tuples(chromosomes, positions, positions,
@@ -72,6 +72,8 @@ better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=better_df_mi
                                       # column("Name", elements=names),
                                       # column("Score", elements=scores),
                                       column("Strand", strands)])
+
+
 
 better_dfs_min_single_chromosome = data_frames(index=indexes(dtype=np.int64, min_size=better_df_minsize, unique=True),
                                                columns=[column("Chromosome", chromosomes_small),
@@ -115,10 +117,15 @@ runlengths_same_length_integers = data_frames(index=indexes(dtype=np.int64, min_
 @st.composite
 def dfs_min(draw):
     df = draw(better_dfs_min)
+    # strand = draw(use_strand)
     df.loc[:, "End"] += df.Start
 
     df.insert(3, "Name", "a")
     df.insert(4, "Score", 0)
+
+    # if not strand:
+    #     df = df.drop("Strand", axis=1)
+
     gr = PyRanges(df)
 
     # do not sort like this, use pyranges sort
@@ -440,7 +447,7 @@ def test_set_union(gr, gr2):
 subtraction_command = "bedtools subtract {} -a {} -b {}"
 
 @pytest.mark.bedtools
-@pytest.mark.parametrize("strandedness", ["same"]) # , False
+@pytest.mark.parametrize("strandedness", ["same", "opposite", False]) #
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_subtraction(gr, gr2, strandedness):
@@ -466,7 +473,7 @@ def test_subtraction(gr, gr2, strandedness):
     print("result\n", result)
     print("bedtools_df\n", PyRanges(bedtools_df))
 
-    if not bedtools_df.empty:
+    if not bedtools_df.empty or not result.df.empty:
         assert_df_equal(result.df, bedtools_df)
     else:
         assert bedtools_df.empty == result.df.empty

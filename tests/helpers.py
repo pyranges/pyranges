@@ -41,14 +41,14 @@ def assert_df_equal(df1, df2):
     elif "Start_b" in df2:
         sort_on += "Start_b End_b".split()
 
-    df1 = df1.sort_values(sort_on)
-    df2 = df2.sort_values(sort_on)
+    df1.Chromosome = df1.Chromosome.astype("object")
+    df2.Chromosome = df2.Chromosome.astype("object")
 
     df1 = df1.reset_index(drop=True)
     df2 = df2.reset_index(drop=True)
 
-    df1.Chromosome = df1.Chromosome.astype("object")
-    df2.Chromosome = df2.Chromosome.astype("object")
+    df1 = df1.sort_values(sort_on)
+    df2 = df2.sort_values(sort_on)
 
     print("Actual")
     print(df1.to_csv(sep=" "))

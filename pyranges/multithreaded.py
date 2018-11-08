@@ -85,12 +85,16 @@ def pyrange_apply(function, self, other, **kwargs):
 
             os = strand_dict[s]
 
+            # cannot do this with set subtraction
+            # but need it for ...
             if not (c, os) in other.keys:
-                continue
+                odf = pd.DataFrame(columns="Chromosome Start End".split())
+            else:
+                odf = other[c, os].values[0]
 
             # print("other", other)
             # print("other[c, os]", other[c, os])
-            odf = other[c, os].values[0]
+            # odf = other[c, os].values[0]
             # print("odf", odf)
             result = function.remote(df, odf, kwargs)
             results.append(result)
@@ -100,7 +104,11 @@ def pyrange_apply(function, self, other, **kwargs):
         if self.stranded and not other.stranded:
 
             for (c, s), df in items:
-                odf = other.dfs[c]
+
+                if not c in other.chromosomes:
+                    odf = pr.PyRanges(pd.DataFrame(columns="Chromosome Start End".split()))
+                else:
+                    odf = other.dfs[c]
 
                 result = function.remote(df, odf, kwargs)
                 results.append(result)
@@ -111,11 +119,11 @@ def pyrange_apply(function, self, other, **kwargs):
             for c, df in items:
 
                 if not c in other.chromosomes:
-                    continue
-
-                odf1 = other[c, "+"]
-                odf2 = other[c, "-"]
-                odf = merge_strands.remote(odf1, odf2)
+                    odf = pr.PyRanges(pd.DataFrame(columns="Chromosome Start End".split()))
+                else:
+                    odf1 = other[c, "+"]
+                    odf2 = other[c, "-"]
+                    odf = merge_strands.remote(odf1, odf2)
 
                 result = function.remote(df, odf, kwargs)
                 results.append(result)
@@ -125,14 +133,17 @@ def pyrange_apply(function, self, other, **kwargs):
             for (c, s), df in self.items:
 
                 if not c in other.chromosomes:
-                    continue
+                    odfs = pr.PyRanges(pd.DataFrame(columns="Chromosome Start End".split()))
+                else:
+                    odfs = other[c].values
 
-                odfs = other[c].values
 
                 if len(odfs) == 2:
                     odf = merge_strands.remote(*odfs)[0]
-                else:
+                elif len(odfs) == 1:
                     odf = odfs[0]
+                else:
+                    odf = pd.DataFrame(columns="Chromosome Start End".split())
 
 
                 result = function.remote(df, odf, kwargs)
@@ -142,9 +153,10 @@ def pyrange_apply(function, self, other, **kwargs):
 
             for c, df in items:
                 if not c in other.chromosomes:
-                    continue
+                    odf = pd.DataFrame(columns="Chromosome Start End".split())
+                else:
+                    odf = other.dfs[c]
 
-                odf = other.dfs[c]
                 result = function.remote(df, odf, kwargs)
                 results.append(result)
 
@@ -235,20 +247,16 @@ def _cluster(df, chromosome, strand=False, df2=None):
     return [ray.put( cluster_df )]
 
 
-@return_empty_if_one_empty
-def _first_df(scdf, ocdf, how=False, invert=False, n_jobs=1, **kwargs):
+@ray.remote
+def _first_df(scdf, ocdf, kwargs):
+
+    how = kwargs["how"]
+    invert = kwargs["invert"]
 
     assert how in "containment first".split() + [False, None]
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values
-
-    print("n_jobs " * 10)
-    print(n_jobs)
-
-    if n_jobs > 1:
-        print("deepcopy")
-        scdf = scdf.copy(deep=True)
 
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
@@ -258,9 +266,9 @@ def _first_df(scdf, ocdf, how=False, invert=False, n_jobs=1, **kwargs):
         _indexes = it.has_containments(starts, ends, indexes)
 
     if not invert:
-        return scdf.reindex(_indexes)
+        return [ray.put(scdf.reindex(_indexes))]
     else:
-        return scdf.loc[~scdf.index.isin(_indexes)]
+        return [ray.put(scdf.loc[~scdf.index.isin(_indexes)])]
 
 
 def _both_dfs(scdf, ocdf, how=False):
@@ -289,8 +297,6 @@ def _intersection(scdf, ocdf, kwargs):
 
     how = kwargs["how"]
 
-    # print("scdf", scdf)
-    # print("ocdf", ocdf)
     if ocdf.empty: # just return empty df
         return None
     # scdf2, ocdfe#2 = ray.get(_both_dfs.remote(scdf, ocdf, how=False))
@@ -344,8 +350,8 @@ def _set_intersection(scdf, ocdf, kwargs):
     if strand:
         strand = scdf.Strand.iloc[0]
 
-    s = _cluster.remote(scdf, chromosome, strand=strand)[0]
-    o = _cluster.remote(ocdf, chromosome, strand=strand)[0]
+    s = ray.get(_cluster.remote(scdf, chromosome, strand=strand))[0]
+    o = ray.get(_cluster.remote(ocdf, chromosome, strand=strand))[0]
 
     return _intersection.remote(s, o, kwargs)
 
@@ -493,17 +499,17 @@ def _set_union(scdf, ocdf, **kwargs):
     return cluster_df
 
 
-def _subtraction(scdf, ocdf, **kwargs):
-
-    chromosome, strand = parse_grpby_key(kwargs["key"])
+@ray.remote
+def _subtraction(scdf, ocdf, kwargs):
 
     if ocdf.empty or scdf.empty:
-        return scdf
+        return [ray.put(scdf)]
 
     strandedness = kwargs["strandedness"]
     strand = True if strandedness else False
 
-    oc = _cluster(ocdf, chromosome, strand)
+    chromosome = scdf.Chromosome.head(1).iloc[0]
+    oc = _cluster.remote(ocdf, chromosome, strand)[0]
     o = NCLS(oc.Start.values, oc.End.values, oc.index.values)
 
     idx_self, new_starts, new_ends = o.set_difference_helper(
@@ -529,8 +535,7 @@ def _subtraction(scdf, ocdf, **kwargs):
 
         scdf.loc[scdf.index.isin(idx_self), "Start"] = new_starts
         scdf.loc[scdf.index.isin(idx_self), "End"] = new_ends
-
-    return scdf
+    return [ray.put(scdf)]
 
 
 def _coverage(ranges, value_col=None, stranded=False, n_jobs=1, **coverage):
@@ -544,12 +549,18 @@ def _coverage(ranges, value_col=None, stranded=False, n_jobs=1, **coverage):
 
 
 
-@return_empty_if_one_empty
-def _write_both(scdf, ocdf, new_pos=False, **kwargs):
+@ray.remote
+def _write_both(scdf, ocdf, kwargs):
+
+    if scdf.empty or ocdf.empty:
+        return None
 
     suffixes = kwargs["suffixes"]
+    suffix = kwargs["suffix"]
+    how = kwargs["how"]
+    new_pos = kwargs["new_pos"]
 
-    scdf, ocdf = _both_dfs(scdf, ocdf, **kwargs)
+    scdf, ocdf = _both_dfs(scdf, ocdf, how=how)
     nix = pd.Index(range(len(scdf)))
     scdf.index = nix
     ocdf.index = nix
@@ -587,7 +598,59 @@ def _write_both(scdf, ocdf, new_pos=False, **kwargs):
         df.insert(2, "End", new_ends)
         df.rename(index=str, columns={"Chromosome" + suffixes[0]: "Chromosome", "Strand" + suffixes[0]: "Strand"}, inplace=True)
 
-    return df
+    return [ray.put(df)]
+
+def _lengths(df):
+
+    lengths = df.End - df.Start
+
+    return lengths
+
+@ray.remote
+def _jaccard(self, other, kwargs):
+
+    strandedness = kwargs["strandedness"]
+
+    if strandedness:
+        strand = True
+    else:
+        strand = False
+
+    s = _lengths(self).sum()
+    o = _lengths(other).sum()
+
+    res = ray.get(_intersection.remote(self, other, kwargs))
+    if res:
+        res = ray.get(res[0])
+        il = _lengths(res).sum()
+    else:
+        il = 0
+
+
+    # # ul = self.set_union(other, strandedness).lengths().sum()
+    # # s = self.cluster(True)
+    # # o = other.cluster(True)
+
+    # # print(self)
+    # # print(s)
+    # # print(other)
+    # # print(o)
+
+    # # print("o", o)
+    # # print("s", s)
+    # # print("il", il)
+    # # print("ul", ul)
+
+    # # if il == ul:
+    # #     return 1
+    # print(s)
+    # print(o)
+    # print("_il " * 100, il)
+    # if s + o == il:
+    #     return 1
+    # il / (s + o - il)
+
+    return [ray.put([ s, o, il ])]
 
 
 if __name__ == "__main__":
