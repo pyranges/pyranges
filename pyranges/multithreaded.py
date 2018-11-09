@@ -160,9 +160,11 @@ def pyrange_apply(function, self, other, **kwargs):
                 result = function.remote(df, odf, kwargs)
                 results.append(result)
 
+    print("get results")
     results = ray.get(results)
+    print("done getting")
 
-    return {k: r[0] for k, r in zip(keys, results) if r is not None}
+    return {k: r for k, r in zip(keys, results) if r is not None}
 
 
 
@@ -333,7 +335,7 @@ def _intersection(scdf, ocdf, kwargs):
     pd.options.mode.chained_assignment = 'warn'
 
     if not scdf.empty:
-        return [ray.put(scdf)]
+        return scdf
     else:
         return None
 

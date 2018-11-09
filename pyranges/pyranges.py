@@ -59,7 +59,7 @@ def create_df_dict(df):
     else:
         grpby_key = "Chromosome"
 
-    return {k: ray.put(v) for k, v in df.groupby(grpby_key)}
+    return {k: v for k, v in df.groupby(grpby_key)}
 
 
 def create_pyranges_df(seqnames, starts, ends, strands=None):
@@ -224,6 +224,7 @@ class PyRanges():
 
     def __str__(self):
 
+        print("in str")
         if len(self) == 0:
             return "Empty PyRanges"
 
@@ -232,7 +233,7 @@ class PyRanges():
 
             first_key = self.keys[0]
             # last_key = list(self.dfs.keys())[-1]
-            first_df = ray.get(self.dfs[first_key])
+            first_df = self.dfs[first_key]
 
             # last_df = ray.get(self.dfs[last_key]).tail(3)
             h = first_df.head(3).astype(object)
@@ -247,13 +248,14 @@ class PyRanges():
             else:
                 s = h
         else:
+            print("in else")
             keys = self.keys
             first_key = keys[0]
             last_key = keys[-1]
             # first_key = self.keys[0]
             # last_key = self.keys[-1]
-            first_df = ray.get(self.dfs[first_key]).head(3)
-            last_df = ray.get(self.dfs[last_key]).tail(3)
+            first_df = self.dfs[first_key].head(3)
+            last_df = self.dfs[last_key].tail(3)
             # last_df = self.dfs[list(self.dfs.keys())[-1]].tail(3)
 
             h = first_df.head(3).astype(object)
@@ -261,13 +263,14 @@ class PyRanges():
             t = last_df.head(3).astype(object)
             m.loc[:,:] = "..."
             # m.index = ["..."]
-            if len(self) > 6:
+            if (len(h) + len(t)) < 6:
 
                 # iterate from front until have three
                 heads = []
                 hl = 0
                 for k in keys:
-                    h = ray.get(self.dfs[k]).head(3)
+                    print("k", k)
+                    h = self.dfs[k].head(3)
                     first_df = h
                     hl += len(h)
                     heads.append(h)
@@ -277,7 +280,8 @@ class PyRanges():
                 tails = []
                 tl = 0
                 for k in keys[::-1]:
-                    t = ray.get(self.dfs[k]).tail(3)
+                    print("k2", k)
+                    t = self.dfs[k].tail(3)
                     tl += len(t)
                     tails.append(t)
                     if tl >= 3:
@@ -289,13 +293,7 @@ class PyRanges():
                 m = h.head(1).astype(object)
 
                 m.loc[:,:] = "..."
-                s = pd.concat([h, m, t])
-
-            else:
-
-                h = pd.concat(ray.get(self.dfs.values()), sort=False)
-                first_df = h
-                s = h.astype(object)
+            s = pd.concat([h, m, t])
 
         h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df.dtypes)]
 
@@ -529,7 +527,7 @@ class PyRanges():
     @property
     def items(self):
 
-        return natsorted([(k, ray.get(df)) for (k, df) in self.dfs.items()])
+        return natsorted([(k, df) for (k, df) in self.dfs.items()])
 
     @property
     def values(self):
