@@ -246,7 +246,7 @@ def _cluster(df, chromosome, strand=False, df2=None):
     else:
         cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx), "Start": starts, "End": ends})
 
-    return [ray.put( cluster_df )]
+    return cluster_df
 
 
 @ray.remote
@@ -265,12 +265,12 @@ def _first_df(scdf, ocdf, kwargs):
     if not how:
         _indexes = it.has_overlaps(starts, ends, indexes)
     elif how == "containment":
-        _indexes = it.has_containments(starts, ends, indexes)
+        _indexes = it.has_containment(starts, ends, indexes)
 
     if not invert:
-        return [ray.put(scdf.reindex(_indexes))]
+        return scdf.reindex(_indexes)
     else:
-        return [ray.put(scdf.loc[~scdf.index.isin(_indexes)])]
+        return scdf.loc[~scdf.index.isin(_indexes)]
 
 
 def _both_dfs(scdf, ocdf, how=False):
@@ -464,7 +464,7 @@ def _nearest(scdf, ocdf, kwargs):
         df = nearest_df
 
     df = df.drop("Chromosome" + suffix, axis=1)
-    return [ray.put(df)]
+    return df
 
 
 def _set_union(scdf, ocdf, **kwargs):
@@ -534,10 +534,10 @@ def _subtraction(scdf, ocdf, kwargs):
     scdf = scdf.reindex(missing_idx.union(idx_self))
 
     if len(idx_self):
-
         scdf.loc[scdf.index.isin(idx_self), "Start"] = new_starts
         scdf.loc[scdf.index.isin(idx_self), "End"] = new_ends
-    return [ray.put(scdf)]
+
+    return scdf
 
 
 def _coverage(ranges, value_col=None, stranded=False, n_jobs=1, **coverage):
