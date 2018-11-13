@@ -21,7 +21,7 @@ def assert_dfs_equal(gr1, gr2):
 
         assert_df_equal(v, v2)
 
-def assert_df_equal(df1, df2):
+def assert_df_equal(df1, df2, check_index=False):
 
     # if not isinstance(df1, pd.DataFrame):
     #     df1 = ray.get(df1)
@@ -69,7 +69,12 @@ def assert_df_equal(df1, df2):
     print(df2.index)
     print("index equal", df1.index == df2.index)
 
-    pd.testing.assert_frame_equal(df1, df2)
+    if not check_index:
+        df2.index = df1.index
+
+
+
+    pd.testing.assert_frame_equal(df1, df2, check_dtype=False)
 
 from io import StringIO
 

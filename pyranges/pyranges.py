@@ -148,17 +148,39 @@ def pyrange_or_df_single(func):
     return extension
 
 
-@ray.remote
-def length(df):
 
-    return len(df)
+
+def set_dtypes(df, extended):
+
+    category = pd.Categorical
+    if not extended:
+        dtypes = {"Start": np.int32, "End": np.int32, "Chromosome": category, "Strand": category}
+    else:
+        dtypes = {"Start": np.int64, "End": np.int64, "Chromosome": category, "Strand": category}
+
+    print(df.head())
+
+    for col, dtype in dtypes.items():
+
+        if df[col].dtype != dtype:
+            df[col] = df[col].astype(dtype)
+
+    return df
+
 
 class PyRanges():
 
     dfs = None
     gf = None
 
-    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=True):
+    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=True, extended=False):
+
+        if copy_df:
+            df = df.copy()
+
+        # TODO: find out, how to check if col dtype is categorical?
+        # if isinstance(df, pd.DataFrame):
+        #     df = set_dtypes(df, extended)
 
         if df is False or df is None:
             df = create_pyranges_df(seqnames, starts, ends, strands)
@@ -173,7 +195,7 @@ class PyRanges():
 
 
     def __len__(self):
-        return sum(ray.get([ length.remote(d) for d in self.objids ]))
+        return sum([ len(d) for d in self.values ])
 
     def __setattr__(self, column_name, column):
 
@@ -263,7 +285,7 @@ class PyRanges():
             t = last_df.head(3).astype(object)
             m.loc[:,:] = "..."
             # m.index = ["..."]
-            if (len(h) + len(t)) < 6:
+            if (len(h) + len(t)) < 6 and len(self) >= 6:
 
                 # iterate from front until have three
                 heads = []
@@ -293,7 +315,10 @@ class PyRanges():
                 m = h.head(1).astype(object)
 
                 m.loc[:,:] = "..."
-            s = pd.concat([h, m, t])
+                s = pd.concat([h, m, t])
+            else:
+                s = pd.concat([h, t])
+
 
         h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df.dtypes)]
 

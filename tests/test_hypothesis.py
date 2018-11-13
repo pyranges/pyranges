@@ -308,7 +308,11 @@ def test_cluster(gr, strand):
     print("result\n", result.df)
 
     if not bedtools_df.empty:
-        assert_df_equal(result.df, bedtools_df)
+        # need to sort because bedtools sometimes gives the result in non-natsorted chromosome order!
+        try:
+            assert_df_equal(result.df.sort_values("Chromosome Start Strand".split()), bedtools_df.sort_values("Chromosome Start Strand".split()))
+        except:
+            assert_df_equal(result.df.sort_values("Chromosome Start Strand".split()), bedtools_df.sort_values("Chromosome Start Strand".split()))
     else:
         assert bedtools_df.empty == result.df.empty
 
@@ -566,6 +570,7 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[overlap]
 
+    # sort_values = "Distance Start End".split()
     result_df = None
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
@@ -578,19 +583,20 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
         bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Distance".split())
-        print("bedtools_df", bedtools_df)
         # raise
         if not bedtools_df.empty:
-            bedtools_df = bedtools_df[bedtools_df.Distance != -1]["Chromosome Start End Strand Distance".split()].sort_values("Distance")
+            bedtools_df = bedtools_df[bedtools_df.Distance != -1]["Chromosome Start End Strand Distance".split()]
 
     result = gr.nearest(gr2, overlap=overlap, strandedness=strandedness).as_df()
+    # print(result)
     if not len(result) == 0:
-        print("pyranges_df", result)
-        result_df = result.sort_values("Distance")["Chromosome Start End Strand Distance".split()]
-        print("pyranges_df", result_df)
-        # print("bedtools_df", bedtools_df)
-        # print("pyranges", pyranges_distances)
+        result_df = result["Chromosome Start End Strand Distance".split()]
 
+        # resetting index, because bedtools sorts result on start, end
+        # while we want order in original file
+        # print("before" * 50, result_df)
+        # result_df.index = range(len(result_df))
+        # print("after" * 50, result_df)
         assert_df_equal(result_df, bedtools_df)
     else:
         result_df = pd.DataFrame(columns="Chromosome Start End Strand Distance".split())
