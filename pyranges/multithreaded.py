@@ -350,22 +350,22 @@ def _intersection(scdf, ocdf, kwargs):
 
 
 
-@ray.remote
-def _set_intersection(scdf, ocdf, kwargs):
+# @ray.remote
+# def _set_intersection(scdf, ocdf, kwargs):
 
-    if len(scdf) == 0 or len(ocdf) == 0:
-        return None
+#     if len(scdf) == 0 or len(ocdf) == 0:
+#         return None
 
-    chromosome = scdf.Chromosome.iloc[0]
+#     chromosome = scdf.Chromosome.iloc[0]
 
-    strand = True if kwargs["strandedness"] else False
-    if strand:
-        strand = scdf.Strand.iloc[0]
+#     strand = True if kwargs["strandedness"] else False
+#     if strand:
+#         strand = scdf.Strand.iloc[0]
 
-    s = _cluster.remote(scdf, chromosome, strand=strand)
-    o = _cluster.remote(ocdf, chromosome, strand=strand)
+#     s = _cluster.remote(scdf, chromosome, strand=strand)
+#     o = _cluster.remote(ocdf, chromosome, strand=strand)
 
-    return _intersection.remote(s, o, kwargs)
+#     return _intersection.remote(s, o, kwargs)
 
 
 
