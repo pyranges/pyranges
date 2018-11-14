@@ -415,9 +415,7 @@ class PyRanges():
 
     def cluster(self, strand=None, **kwargs):
 
-        kwargs[""]
-
-        df = pyrange_apply_single(_cluster, self, strand)
+        df = pyrange_apply_single(_cluster, self, strand, kwargs)
 
         return PyRanges(df)
 
