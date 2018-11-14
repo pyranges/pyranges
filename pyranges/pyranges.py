@@ -19,7 +19,7 @@ from tabulate import tabulate
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 # from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
-from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard,
+from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard, _coverage,
                                     _intersection, pyrange_apply, _nearest, _first_df, _set_intersection, _subtraction)
 
 def fill_kwargs(kwargs):
@@ -316,6 +316,8 @@ class PyRanges():
 
                 m.loc[:,:] = "..."
                 s = pd.concat([h, m, t])
+            elif len(h) + len(t) == 6:
+                s = pd.concat([h, m, t])
             else:
                 s = pd.concat([h, t])
 
@@ -411,16 +413,18 @@ class PyRanges():
         return df
 
 
-    def cluster(self, strand=None, max_dist=0, min_nb=1, **kwargs):
+    def cluster(self, strand=None, **kwargs):
+
+        kwargs[""]
 
         df = pyrange_apply_single(_cluster, self, strand)
 
         return PyRanges(df)
 
 
-    def coverage(self, value_col=None, stranded=False):
+    def coverage(self, value_col=None, strand=True):
 
-        return _coverage(self, value_col, stranded=stranded)
+        return _coverage(self, value_col, strand=strand)
 
 
     def lengths(self, **kwargs):

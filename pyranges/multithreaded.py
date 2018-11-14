@@ -172,7 +172,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
 
 
-def pyrange_apply_single(function, self, strand):
+def pyrange_apply_single(function, self, strand, kwargs):
 
     if strand:
         assert self.stranded, \
@@ -192,7 +192,7 @@ def pyrange_apply_single(function, self, strand):
         for (c, s), df in items:
 
             _strand = s
-            result = function.remote(df, c, _strand)
+            result = function.remote(df, c, _strand, kwargs)
             results.append(result)
 
         keys = self.keys
@@ -203,7 +203,7 @@ def pyrange_apply_single(function, self, strand):
         keys = []
         for c, df in items:
 
-            result = function.remote(df, c, strand)
+            result = function.remote(df, c, strand, kwargs)
             results.append(result)
             keys.append(c)
 
@@ -218,14 +218,14 @@ def pyrange_apply_single(function, self, strand):
             # print(len(dfs.values))
             if len(dfs.keys) == 2:
                 df1, df2 = dfs.values
+                df1 = merge_strands.remote(df1, df2)
             else:
                 df1 = dfs.values[0]
-                df2 = None
             # print(type( df1 ))
             # print(type( df2 ))
             # print(df1)
             # print(df2)
-            result = function.remote(df1, c, strand, df2)
+            result = function.remote(df1, c, strand, kwargs)
             results.append(result)
             keys.append(c)
 
@@ -234,14 +234,10 @@ def pyrange_apply_single(function, self, strand):
     return {k: r for k, r in zip(keys, results) if r is not None}
 
 @ray.remote
-def _cluster(df, chromosome, strand=False, df2=None):
-
-    if df2 is not None or df2 != False:
-        df = pd.concat([df, df2])
+def _cluster(df, chromosome, strand, kwargs):
 
     cdf = df.sort_values("Start")
-    # print(cdf.Start.dtype)
-    # print(cdf.End.dtype)
+
     starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
 
     nidx = pd.Index(range(len(starts)))
@@ -702,14 +698,16 @@ def _subtraction(scdf, ocdf, kwargs):
     return scdf
 
 
-def _coverage(ranges, value_col=None, stranded=False, n_jobs=1, **coverage):
+def _coverage(ranges, value_col=None, strand=True):
 
     try:
-        from pyranges import PyRles
+        from pyrle.methods import coverage
+        from pyrle import PyRles
     except ImportError:
         raise Exception("Using the coverage method requires that pyrle is installed.")
 
-    return PyRles(ranges, value_col=value_col, stranded=stranded, nb_cpu=n_jobs)
+    kwargs = {"value_col": value_col}
+    return PyRles(pyrange_apply_single(coverage, ranges, strand, kwargs))
 
 
 
