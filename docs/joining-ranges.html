@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -136,23 +137,23 @@ gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;aorta&quot;<
 gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;aorta2&quot;</span>)
 <span class="bu">print</span>(gr.join(gr2, suffix<span class="op">=</span><span class="st">&quot;_2&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_2   | End_2     | Name_2     | Score_2   | Strand_2     |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_b   | End_b     | Name_b     | Score_b   | Strand_b     |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            | 10073     | 10272     | Input      | 1         | +            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | 1         | -            |
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10073     | 10272     | Input      | 1         | +            |
-## | chr1         | 9951      | 10150     | H3K27me3   | 8         | -            | 10073     | 10272     | Input      | 1         | +            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | 1         | -            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10079     | 10278     | Input      | 1         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10082     | 10281     | Input      | 1         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10149     | 10348     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10082     | 10281     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10149     | 10348     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10280     | 10479     | Input      | 1         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 49 sequences from 1 chromosomes.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.join(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_b   | End_b     | Name_b     | Score_b   | Strand_b     |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | 1         | -            |
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | 1         | -            |
@@ -167,7 +168,7 @@ gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;aorta2&quot
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f2.join(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
@@ -176,7 +177,7 @@ gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;aorta2&quot
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f2.join(f1, new_pos<span class="op">=</span><span class="st">&quot;intersection&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End |   Start_a |     End_a | Name_a     |   Score_a | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
-## | (category)   |   (int64) |   (int64) |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int64) |   (int64) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         6 |         7 |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
@@ -207,10 +208,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -137,34 +138,34 @@ values <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1<
 r1 <span class="op">=</span> Rle(runs, values)
 <span class="bu">print</span>(r1)</code></pre></div>
 <pre><code>## +--------+------+------+------+
-## | Runs   |   10 |   10 |   20 |
+## | Runs   | 10   | 10   | 20   |
 ## |--------+------+------+------|
-## | Values |    0 |    1 |    0 |
+## | Values | 0.0  | 1.0  | 0.0  |
 ## +--------+------+------+------+
 ## Rle of length 40 containing 3 elements</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">runs2 <span class="op">=</span> [<span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">20</span>]
 values2 <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">100</span>]
 r2 <span class="op">=</span> Rle(runs2, values2)
 <span class="bu">print</span>(r2)</code></pre></div>
-<pre><code>## +--------+------+-----+------+
-## | Runs   |   11 |   9 |   20 |
-## |--------+------+-----+------|
-## | Values |  100 |   0 |  100 |
-## +--------+------+-----+------+
+<pre><code>## +--------+-------+-----+-------+
+## | Runs   | 11    | 9   | 20    |
+## |--------+-------+-----+-------|
+## | Values | 100.0 | 0.0 | 100.0 |
+## +--------+-------+-----+-------+
 ## Rle of length 40 containing 3 elements</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(r1 <span class="op">+</span> r2)</code></pre></div>
-<pre><code>## +--------+------+-----+-----+------+
-## | Runs   |   10 |   1 |   9 |   20 |
-## |--------+------+-----+-----+------|
-## | Values |  100 | 101 |   1 |  100 |
-## +--------+------+-----+-----+------+
+<pre><code>## +--------+-------+-------+-----+-------+
+## | Runs   | 10    | 1     | 9   | 20    |
+## |--------+-------+-------+-----+-------|
+## | Values | 100.0 | 101.0 | 1.0 | 100.0 |
+## +--------+-------+-------+-----+-------+
 ## Rle of length 40 containing 4 elements</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(r1 <span class="op">*</span> r2)</code></pre></div>
-<pre><code>## +--------+------+-----+------+
-## | Runs   |   10 |   1 |   29 |
-## |--------+------+-----+------|
-## | Values |    0 | 100 |    0 |
-## +--------+------+-----+------+
+<pre><code>## +--------+------+-------+------+
+## | Runs   | 10   | 1     | 29   |
+## |--------+------+-------+------|
+## | Values | 0.0  | 100.0 | 0.0  |
+## +--------+------+-------+------+
 ## Rle of length 40 containing 3 elements</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(r1.runs)</code></pre></div>
 <pre><code>## [10 10 20]</code></pre>
@@ -173,17 +174,17 @@ r2 <span class="op">=</span> Rle(runs2, values2)
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">r1 <span class="op">=</span> r1 <span class="op">+</span> <span class="dv">5</span>
 <span class="bu">print</span>(r1)</code></pre></div>
 <pre><code>## +--------+------+------+------+
-## | Runs   |   10 |   10 |   20 |
+## | Runs   | 10   | 10   | 20   |
 ## |--------+------+------+------|
-## | Values |    5 |    6 |    5 |
+## | Values | 5.0  | 6.0  | 5.0  |
 ## +--------+------+------+------+
 ## Rle of length 40 containing 3 elements</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(r2 <span class="op">/</span> r1)</code></pre></div>
-<pre><code>## +--------+------+---------+-----+------+
-## | Runs   |   10 |       1 |   9 |   20 |
-## |--------+------+---------+-----+------|
-## | Values |   20 | 16.6667 |   0 |   20 |
-## +--------+------+---------+-----+------+
+<pre><code>## +--------+------+--------------------+-----+------+
+## | Runs   | 10   | 1                  | 9   | 20   |
+## |--------+------+--------------------+-----+------|
+## | Values | 20.0 | 16.666666666666668 | 0.0 | 20.0 |
+## +--------+------+--------------------+-----+------+
 ## Rle of length 40 containing 4 elements</code></pre>
 
 </div>
@@ -211,10 +212,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

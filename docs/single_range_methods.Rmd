@@ -5,6 +5,7 @@ There are several methods for manipulating the contents of a PyRanges.
 `cluster` is a mathematical set operation which creates a union of all the intervals in the ranges:
 
 ```{python tidy=FALSE}
+import pyranges as pr
 f1 = pr.load_dataset("f1")
 print(f1.cluster())
 ```

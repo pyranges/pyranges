@@ -309,10 +309,10 @@ def test_cluster(gr, strand):
 
     if not bedtools_df.empty:
         # need to sort because bedtools sometimes gives the result in non-natsorted chromosome order!
-        try:
+        if result.stranded:
             assert_df_equal(result.df.sort_values("Chromosome Start Strand".split()), bedtools_df.sort_values("Chromosome Start Strand".split()))
-        except:
-            assert_df_equal(result.df.sort_values("Chromosome Start Strand".split()), bedtools_df.sort_values("Chromosome Start Strand".split()))
+        else:
+            assert_df_equal(result.df.sort_values("Chromosome Start".split()), bedtools_df.sort_values("Chromosome Start".split()))
     else:
         assert bedtools_df.empty == result.df.empty
 
@@ -456,8 +456,6 @@ subtraction_command = "bedtools subtract {} -a {} -b {}"
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_subtraction(gr, gr2, strandedness):
 
-    # print("gr\n", gr)
-    # print("gr2\n", gr2)
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
 
     result_df = None
@@ -492,8 +490,8 @@ rle_commute_how = ["__add__", "__mul__"]
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_commutative_rles(gr, gr2, how):
 
-    cv = gr.coverage(stranded=True)
-    cv2 = gr2.coverage(stranded=True)
+    cv = gr.coverage(strand=True)
+    cv2 = gr2.coverage(strand=True)
 
     method = getattr(cv, how)
     method2 = getattr(cv2, how)

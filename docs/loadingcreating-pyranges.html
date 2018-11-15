@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -154,15 +155,15 @@ df <span class="op">=</span> pd.read_table(chipseq, header<span class="op">=</sp
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(pr.PyRanges(df))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr8         | 28510032  | 28510057  | U0         | 0         | -            |
-## | chr7         | 107153363 | 107153388 | U0         | 0         | -            |
-## | chr5         | 135821802 | 135821827 | U0         | 0         | -            |
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr6         | 89296757  | 89296782  | U0         | 0         | -            |
-## | chr1         | 194245558 | 194245583 | U0         | 0         | +            |
-## | chr8         | 57916061  | 57916086  | U0         | 0         | +            |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 </div>
@@ -173,15 +174,15 @@ df <span class="op">=</span> pd.read_table(chipseq, header<span class="op">=</sp
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       |
-## | (object)     | (int64)   | (int64)   |
+## | (category)   | (int32)   | (int32)   |
 ## |--------------+-----------+-----------|
-## | chr8         | 28510032  | 28510057  |
-## | chr7         | 107153363 | 107153388 |
-## | chr5         | 135821802 | 135821827 |
+## | chr1         | 100079649 | 100079674 |
+## | chr1         | 212609534 | 212609559 |
+## | chr1         | 223587418 | 223587443 |
 ## | ...          | ...       | ...       |
-## | chr6         | 89296757  | 89296782  |
-## | chr1         | 194245558 | 194245583 |
-## | chr8         | 57916061  | 57916086  |
+## | chrY         | 8316773   | 8316798   |
+## | chrY         | 7463444   | 7463469   |
+## | chrY         | 7405376   | 7405401   |
 ## +--------------+-----------+-----------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>It is possible to make PyRanges objects out of basic Python datatypes:</p>
@@ -216,7 +217,7 @@ gr <span class="op">=</span> pr.read_gtf(ensembl_path)
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+-----------------+--------------+-----------------+
 ## | Chromosome   | Start     | End       | Strand       | Feature      | GeneID          | TranscriptID    | ExonNumber   | ExonID          |
-## | (category)   | (int64)   | (int64)   | (category)   | (category)   | (object)        | (object)        | (float64)    | (object)        |
+## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (object)        | (object)        | (float64)    | (object)        |
 ## |--------------+-----------+-----------+--------------+--------------+-----------------+-----------------+--------------+-----------------|
 ## | 1            | 11869     | 14409     | +            | gene         | ENSG00000223972 | nan             | nan          | nan             |
 ## | 1            | 11869     | 14409     | +            | transcript   | ENSG00000223972 | ENST00000456328 | nan          | nan             |
@@ -260,10 +261,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

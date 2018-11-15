@@ -169,6 +169,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
     results = ray.get(results)
 
+
     return {k: r for k, r in zip(keys, results) if r is not None}
 
 
@@ -192,8 +193,10 @@ def pyrange_apply_single(function, self, strand, kwargs):
 
         for (c, s), df in items:
 
+            kwargs["chromosome"] = c
             _strand = s
-            result = function.remote(df, c, _strand, kwargs)
+            kwargs["strand"] = _strand
+            result = function.remote(df, kwargs)
             results.append(result)
 
         keys = self.keys
@@ -204,7 +207,8 @@ def pyrange_apply_single(function, self, strand, kwargs):
         keys = []
         for c, df in items:
 
-            result = function.remote(df, c, strand, kwargs)
+            kwargs["chromosome"] = c
+            result = function.remote(df, kwargs)
             results.append(result)
             keys.append(c)
 
@@ -212,6 +216,8 @@ def pyrange_apply_single(function, self, strand, kwargs):
 
         keys = []
         for c in self.chromosomes:
+
+            kwargs["chromosome"] = c
 
             dfs = self[c]
             # print(dfs.values)
@@ -226,7 +232,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             # print(type( df2 ))
             # print(df1)
             # print(df2)
-            result = function.remote(df1, c, strand, kwargs)
+            result = function.remote(df1,kwargs)
             results.append(result)
             keys.append(c)
 
@@ -234,8 +240,11 @@ def pyrange_apply_single(function, self, strand, kwargs):
 
     return {k: r for k, r in zip(keys, results) if r is not None}
 
+
 @ray.remote
-def _cluster(df, chromosome, strand, kwargs):
+def _cluster(df, kwargs):
+
+    chromosome, strand = kwargs["chromosome"], kwargs.get("strand", None)
 
     cdf = df.sort_values("Start")
 
@@ -446,7 +455,6 @@ def _nearest(scdf, ocdf, kwargs):
     overlap = kwargs["overlap"]
     how = kwargs["how"]
     suffix = kwargs["suffix"]
-    strandedness = kwargs["strandedness"]
 
     if overlap:
         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(scdf, ocdf, suffix)
@@ -481,7 +489,7 @@ def _nearest(scdf, ocdf, kwargs):
 
         df = df_to_find_nearest_in.join(ocdf, rsuffix=suffix)
 
-    if overlap and not df.empty and not nearest_df.empty:
+    if overlap and "df" in locals() and not df.empty and not nearest_df.empty:
         df = pd.concat([nearest_df, df])
     elif overlap and not nearest_df.empty:
         df = nearest_df
@@ -670,7 +678,13 @@ def _subtraction(scdf, ocdf, kwargs):
     strand = True if strandedness else False
 
     chromosome = scdf.Chromosome.head(1).iloc[0]
-    oc = ray.get(_cluster.remote(ocdf, chromosome, strand, kwargs))
+    kwargs["chromosome"] = chromosome
+
+    if "Strand" in ocdf and strand:
+        strand = scdf.Strand.head(1).iloc[0]
+        kwargs["strand"] = strand
+
+    oc = ray.get(_cluster.remote(ocdf, kwargs))
     o = NCLS(oc.Start.values, oc.End.values, oc.index.values)
 
     idx_self, new_starts, new_ends = o.set_difference_helper(
@@ -696,7 +710,10 @@ def _subtraction(scdf, ocdf, kwargs):
         scdf.loc[scdf.index.isin(idx_self), "Start"] = new_starts
         scdf.loc[scdf.index.isin(idx_self), "End"] = new_ends
 
-    return scdf
+    if not scdf.empty:
+        return scdf
+    else:
+        return None
 
 
 def _coverage(ranges, value_col=None, strand=True):
@@ -814,6 +831,62 @@ def _jaccard(self, other, kwargs):
     # il / (s + o - il)
 
     return [ s, o, il ]
+
+
+@ray.remote
+def _tss(df, kwargs):
+
+    slack = kwargs["slack"]
+
+    tss_pos = df.loc[df.Strand == "+"]
+
+    tss_neg = df.loc[df.Strand == "-"].copy()
+
+    # pd.options.mode.chained_assignment = None
+    tss_neg.loc[:, "Start"] = tss_neg.End
+
+    # pd.options.mode.chained_assignment = "warn"
+    tss = pd.concat([tss_pos, tss_neg], sort=False)
+    tss["End"] = tss.Start
+    tss.End = tss.End + 1 + slack
+    tss.Start = tss.Start - slack
+    tss.loc[tss.Start < 0, "Start"] = 0
+
+    return tss.reindex(df.index)
+
+
+@ray.remote
+def _tes(df, kwargs):
+
+    slack = kwargs["slack"]
+
+    tes_pos = df.loc[df.Strand == "+"]
+
+    tes_neg = df.loc[df.Strand == "-"].copy()
+
+    # pd.options.mode.chained_assignment = None
+    tes_neg.loc[:, "Start"] = tes_neg.End
+
+    # pd.options.mode.chained_assignment = "warn"
+    tes = pd.concat([tes_pos, tes_neg], sort=False)
+    tes["Start"] = tes.End
+    tes.End = tes.End + 1 + slack
+    tes.Start = tes.Start - slack
+    tes.loc[tes.Start < 0, "Start"] = 0
+
+    return tes.reindex(df.index)
+
+
+@ray.remote
+def _slack(df, kwargs):
+
+    slack = kwargs["slack"]
+    # df = self.df.copy()
+    df.Start = df.Start - slack
+    df.loc[df.Start < 0, "Start"] = 0
+    df.End = df.End + slack
+
+    return df
 
 
 if __name__ == "__main__":

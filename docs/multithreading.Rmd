@@ -1,0 +1,21 @@
+# Using multiple cores
+
+Most PyRanges and PyRle-operations can be run in parallel. Even user-made
+functions can be run in parallel using the apply or apply_pair functions.
+
+However, by default PyRanges uses no extra cores. Unless the data are reasonably
+big (at least 10^7) number of intervals or the functions are very long-running,
+running in parallel-mode is actually more time-consuming than single-core mode.
+
+PyRanges uses Ray, a "flexible, high-performance distributed execution
+framework" to run in parallel-mode. To start Ray in parallel-mode you need to
+import and initialize Ray before importing PyRanges or PyRles.
+
+```
+import ray
+ray.init()
+# then
+import pyranges as pr
+```
+
+Now PyRanges and PyRles is running in multi-core mode.

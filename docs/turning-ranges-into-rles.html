@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -136,55 +137,75 @@ gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;aorta&quot;<
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            |
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9951      | 10150     | H3K27me3   | 8         | -            |
+## | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            |
+## | chr1         | 10024     | 10223     | H3K27me3   | 1         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chr1         | 10001     | 10200     | H3K27me3   | 5         | -            |
+## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            |
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            |
-## | chr1         | 110246    | 110445    | H3K27me3   | 1         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 11 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage())</code></pre></div>
-<pre><code>## chr1
-## +--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------+
-## | Runs   |   9916 |   23 |   12 |   2 |   25 |  ...    |   80 |   114 |   5 |   99801 |   199 |
-## |--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------|
-## | Values |      0 |    1 |    2 |   3 |    4 | ...     |    3 |     2 |   1 |       0 |     1 |
-## +--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------+
-## Rle of length 110445 containing 22 elements
-## Unstranded PyRles object with 1 chromosome.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage(stranded<span class="op">=</span><span class="va">True</span>))</code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
-## | Runs   |   9939 |   14 |   71 |   114 |   14 |   71 |   23 |   199 |   99801 |   199 |
+## | Runs   | 9939   | 14   | 71   | 114   | 14   | 71   | 23   | 199   | 99801   | 199   |
 ## |--------+--------+------+------+-------+------+------+------+-------+---------+-------|
-## | Values |      0 |    1 |    2 |     3 |    2 |    1 |    0 |     1 |       0 |     1 |
+## | Values | 0.0    | 1.0  | 2.0  | 3.0   | 2.0  | 1.0  | 0.0  | 1.0   | 0.0     | 1.0   |
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
 ## Rle of length 110445 containing 10 elements
 ## 
 ## chr1 -
 ## --
 ## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
-## | Runs   |   9916 |   35 |   27 |   23 |   114 |  ...    |   27 |   23 |   41 |   85 |   114 |
+## | Runs   | 9916   | 35   | 27   | 23   | 114   |  ...    | 27   | 23   | 41   | 85   | 114   |
 ## |--------+--------+------+------+------+-------+---------+------+------+------+------+-------|
-## | Values |      0 |    1 |    2 |    3 |     4 | ...     |    3 |    2 |    1 |    2 |     1 |
+## | Values | 0.0    | 1.0  | 2.0  | 3.0  | 4.0   | ...     | 3.0  | 2.0  | 1.0  | 2.0  | 1.0   |
+## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
+## Rle of length 10440 containing 12 elements
+## PyRles object with 2 chromosomes/strand pairs.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage(strand<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<pre><code>## chr1 +
+## --
+## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
+## | Runs   | 9939   | 14   | 71   | 114   | 14   | 71   | 23   | 199   | 99801   | 199   |
+## |--------+--------+------+------+-------+------+------+------+-------+---------+-------|
+## | Values | 0.0    | 1.0  | 2.0  | 3.0   | 2.0  | 1.0  | 0.0  | 1.0   | 0.0     | 1.0   |
+## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
+## Rle of length 110445 containing 10 elements
+## 
+## chr1 -
+## --
+## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
+## | Runs   | 9916   | 35   | 27   | 23   | 114   |  ...    | 27   | 23   | 41   | 85   | 114   |
+## |--------+--------+------+------+------+-------+---------+------+------+------+------+-------|
+## | Values | 0.0    | 1.0  | 2.0  | 3.0  | 4.0   | ...     | 3.0  | 2.0  | 1.0  | 2.0  | 1.0   |
 ## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
 <p>You can also create coverage for an any numeric value in your PyRanges:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage(<span class="st">&quot;Score&quot;</span>))</code></pre></div>
-<pre><code>## chr1
-## +--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------+
-## | Runs   |   9916 |   23 |   12 |   2 |   25 |  ...    |   80 |   114 |   5 |   99801 |   199 |
-## |--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------|
-## | Values |      0 |    5 |   12 |  20 |   25 | ...     |   11 |    10 |   4 |       0 |     1 |
-## +--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------+
-## Rle of length 110445 containing 22 elements
-## Unstranded PyRles object with 1 chromosome.</code></pre>
+<pre><code>## chr1 +
+## --
+## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
+## | Runs   | 9939   | 14   | 71   | 114   | 14   | 71   | 23   | 199   | 99801   | 199   |
+## |--------+--------+------+------+-------+------+------+------+-------+---------+-------|
+## | Values | 0.0    | 7.0  | 12.0 | 13.0  | 6.0  | 1.0  | 0.0  | 4.0   | 0.0     | 1.0   |
+## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
+## Rle of length 110445 containing 10 elements
+## 
+## chr1 -
+## --
+## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
+## | Runs   | 9916   | 35   | 27   | 23   | 114   |  ...    | 27   | 23   | 41   | 85   | 114   |
+## |--------+--------+------+------+------+-------+---------+------+------+------+------+-------|
+## | Values | 0.0    | 5.0  | 13.0 | 20.0 | 25.0  | ...     | 13.0 | 6.0  | 1.0  | 7.0  | 6.0   |
+## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
+## Rle of length 10440 containing 12 elements
+## PyRles object with 2 chromosomes/strand pairs.</code></pre>
 
 </div>
             </section>
@@ -211,10 +232,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -132,11 +133,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">5</span> Methods for manipulating single PyRanges</h1>
 <p>There are several methods for manipulating the contents of a PyRanges.</p>
 <p><code>cluster</code> is a mathematical set operation which creates a union of all the intervals in the ranges:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;f1&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
+f1 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;f1&quot;</span>)
 <span class="bu">print</span>(f1.cluster())</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   |     Start |       End |
-## | (category)   |   (int64) |   (int64) |
+## | (category)   |   (int32) |   (int32) |
 ## |--------------+-----------+-----------|
 ## | chr1         |         3 |         7 |
 ## | chr1         |         8 |         9 |
@@ -147,11 +149,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="bu">print</span>(f1.tssify(slack<span class="op">=</span><span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         0 |         9 | interval1  |         0 | +            |
-## | chr1         |         2 |        13 | interval2  |         0 | -            |
 ## | chr1         |         3 |        14 | interval3  |         0 | +            |
+## | chr1         |         2 |        13 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 <p><code>tesify</code> finds the ends of the regions (taking direction of transcription into account).</p>
@@ -159,22 +161,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="bu">print</span>(f1.tesify(slack<span class="op">=</span><span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         1 |        12 | interval1  |         0 | +            |
-## | chr1         |         2 |        13 | interval2  |         0 | -            |
 ## | chr1         |         4 |        15 | interval3  |         0 | +            |
+## | chr1         |         2 |        13 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 <p><code>slack</code> extends the starts and ends of your interval.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f1.slack(<span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         0 |        11 | interval1  |         0 | +            |
-## | chr1         |         0 |        12 | interval2  |         0 | -            |
 ## | chr1         |         3 |        14 | interval3  |         0 | +            |
+## | chr1         |         0 |        12 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 
@@ -203,10 +205,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

@@ -27,7 +27,7 @@ stranded PyRle is automatically demoted to an unstranded PyRle.
 ```{python tidy=FALSE}
 
 
-bg_stranded = gr_bg.coverage(stranded=True)
+bg_stranded = gr_bg.coverage(strand=True)
 print(bg_stranded)
 
 print(cs + bg_stranded)

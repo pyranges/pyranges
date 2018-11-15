@@ -16,11 +16,12 @@ except:
 from tabulate import tabulate
 
 
+# from pyranges.settings import pyranges_settings
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 # from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
 from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard, _coverage,
-                                    _intersection, pyrange_apply, _nearest, _first_df, _subtraction)
+                                    _intersection, pyrange_apply, _nearest, _first_df, _subtraction, _tss, _tes, _slack)
 
 def fill_kwargs(kwargs):
 
@@ -152,17 +153,17 @@ def pyrange_or_df_single(func):
 
 def set_dtypes(df, extended):
 
-    category = pd.Categorical
     if not extended:
-        dtypes = {"Start": np.int32, "End": np.int32, "Chromosome": category, "Strand": category}
+        dtypes = {"Start": np.int32, "End": np.int32, "Chromosome": "category", "Strand": "category"}
     else:
-        dtypes = {"Start": np.int64, "End": np.int64, "Chromosome": category, "Strand": category}
+        dtypes = {"Start": np.int64, "End": np.int64, "Chromosome": "category", "Strand": "category"}
 
-    # print(df.head())
+    if not "Strand" in df:
+        del dtypes["Strand"]
 
     for col, dtype in dtypes.items():
 
-        if df[col].dtype != dtype:
+        if df[col].dtype.name != dtype:
             df[col] = df[col].astype(dtype)
 
     return df
@@ -173,14 +174,13 @@ class PyRanges():
     dfs = None
     gf = None
 
-    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=True, extended=False):
+    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=False, extended=False):
 
         if copy_df:
             df = df.copy()
 
-        # TODO: find out, how to check if col dtype is categorical?
-        # if isinstance(df, pd.DataFrame):
-        #     df = set_dtypes(df, extended)
+        if isinstance(df, pd.DataFrame):
+            df = set_dtypes(df, extended)
 
         if df is False or df is None:
             df = create_pyranges_df(seqnames, starts, ends, strands)
@@ -211,23 +211,39 @@ class PyRanges():
         if column_name in "Chromosome Strand".split():
             raise Exception("The columns Chromosome and Strand can not be reset.")
 
-        if isinstance(column, list) or isinstance(column, pd.Series) or isinstance(column, np.ndarray):
+        isiterable = isinstance(column, list) or isinstance(column, pd.Series) or isinstance(column, np.ndarray)
+        if isiterable:
             if not len(self) == len(column):
                 raise Exception("DataFrame and column must be same length.")
 
-        already_exists = column_name in self.df.values[0]
+        already_exists = column_name in self.values[0]
+        # print(self.values[0])
+        # print("already exists " * 10, already_exists)
         pos = self.values[0].shape[1]
+
+        if already_exists:
+            pos -= 1
+
         start_length, end_length = 0, 0
 
-        for df in self.values:
+        dfs = {}
+        for k, df in self.items:
+
             end_length += len(df)
 
             if already_exists:
                 df = df.drop(column_name, axis=1)
 
-            df.insert(pos, column_name, column[start_length:end_length])
+            if isiterable:
+                df.insert(pos, column_name, column[start_length:end_length])
+            else:
+                df.insert(pos, column_name, column)
+
             start_length = end_length
 
+            dfs[k] = df
+
+        self.__dict__["dfs"] = dfs
 
 
     def __eq__(self, other):
@@ -348,9 +364,9 @@ class PyRanges():
                 first_df = first_df.drop("Chromosome Start End".split(), axis=1)
 
             s.insert(0, "Position", pos)
-
-        # print(list(s.columns))
-        h = [c + "\n(" + str(t) + ")" for c, t in  zip(s.columns, ["multiple types"] + list(first_df.dtypes))]
+            h = [c + "\n(" + str(t) + ")" for c, t in  zip(s.columns, ["multiple types"] + list(first_df.dtypes))]
+        else:
+            h = [c + "\n(" + str(t) + ")" for c, t in  zip(s.columns, list(first_df.dtypes))]
 
         str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
                                         "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.chromosomes))
@@ -362,8 +378,8 @@ class PyRanges():
         return str(self)
 
 
-    @pyrange_or_df
-    @return_empty_if_one_empty
+    # @pyrange_or_df
+    # @return_empty_if_one_empty
     def overlap(self, other, **kwargs):
 
         "Want all intervals in self that overlap with other."
@@ -378,8 +394,8 @@ class PyRanges():
 
         return df
 
-    @pyrange_or_df
-    @return_empty_if_one_empty
+    # @pyrange_or_df
+    # @return_empty_if_one_empty
     def nearest(self, other, **kwargs):
 
         # strandedness=False, suffix="_b", how=None, overlap=True,
@@ -393,7 +409,7 @@ class PyRanges():
 
         return df
 
-    @return_empty_if_one_empty
+    # @return_empty_if_one_empty
     def intersection(self, other, strandedness=False, how=None):
 
 
@@ -401,7 +417,7 @@ class PyRanges():
 
         return PyRanges(dfs)
 
-    @return_empty_if_one_empty
+    # @return_empty_if_one_empty
     def set_intersection(self, other, strandedness=False, how=None, **kwargs):
 
         strand = True if strandedness else False
@@ -418,16 +434,18 @@ class PyRanges():
     #     return si
 
 
-    @pyrange_or_df
+    # @pyrange_or_df
     def subtraction(self, other, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
 
-        return pyrange_apply(_subtraction, self, other, **kwargs)
+        result = pyrange_apply(_subtraction, self, other, **kwargs)
+
+        return PyRanges(result)
 
 
-    @pyrange_or_df
-    @return_empty_if_one_empty
+    # @pyrange_or_df
+    # @return_empty_if_one_empty
     def join(self, other, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
@@ -437,7 +455,6 @@ class PyRanges():
 
 
     def cluster(self, strand=None, **kwargs):
-
 
         df = pyrange_apply_single(_cluster, self, strand, kwargs)
 
@@ -449,11 +466,32 @@ class PyRanges():
         return _coverage(self, value_col, strand=strand)
 
 
-    def lengths(self, **kwargs):
+    def apply(self, f, strand=True, as_pyranges=True, kwargs=None):
 
-        df = _lengths(self)
+        if kwargs is None:
+            kwargs = {}
 
-        return df
+        f = ray.remote(f)
+
+        result = pyrange_apply_single(f, self, strand, kwargs)
+
+        if not as_pyranges:
+            return result
+        else:
+            return PyRanges(result)
+
+
+    def apply_pair(self, other, f, kwargs, strand=True, as_pyranges=True):
+
+        f = ray.remote(f)
+
+        result = pyrange_apply(f, self, other, strand, kwargs)
+
+        if not as_pyranges:
+            return result
+        else:
+            return PyRanges(result)
+
 
 
     def jaccard(self, other, **kwargs):
@@ -479,26 +517,24 @@ class PyRanges():
 
         return jaccard
 
-    @pyrange_or_df_single
     def slack(self, slack):
 
-        return _slack(self, slack)
+        kwargs = {"slack": slack}
+        prg = PyRanges(pyrange_apply_single(_slack, self, self.stranded, kwargs))
 
+        return prg
 
-
-    @pyrange_or_df_single
     def tssify(self, slack=0):
 
-        if not self.stranded:
-            raise Exception("Cannot compute TSSes without strand info. Perhaps use slack() instead?")
-
-        return _tss(self, slack)
+        kwargs = {"slack": slack}
+        return PyRanges(pyrange_apply_single(_tss, self, self.stranded, kwargs))
 
 
-    @pyrange_or_df_single
+
     def tesify(self, slack=0):
 
-        return _tes(self, slack)
+        kwargs = {"slack": slack}
+        return PyRanges(pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
     def pos(self, *val):
 

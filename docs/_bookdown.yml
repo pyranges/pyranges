@@ -1,4 +1,8 @@
+delete_merged_file: true
 rmd_files: ["index.Rmd", "creating.Rmd", "subset.Rmd", "manipulation.Rmd",
 "single_range_methods.Rmd", "intersection.Rmd", "overlap.Rmd", "join.Rmd",
-"nearest.Rmd", "coverage.Rmd", "runlengths.Rmd", "runlength_dict.Rmd"]
+"nearest.Rmd", "coverage.Rmd", "runlengths.Rmd", "runlength_dict.Rmd", "multithreading.Rmd"]
 output_dir: "."
+
+bookdown::gitbook:
+  css: css.css

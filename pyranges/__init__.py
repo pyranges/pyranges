@@ -8,6 +8,9 @@ from pyranges.pyranges import PyRanges
 
 from pyrle import PyRles, Rle
 
+# from pyranges.settings import pyranges_settings
+
+# pyranges_settings = pyranges_settings
 
 def load_dataset(basename):
 

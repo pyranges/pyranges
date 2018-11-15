@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -137,30 +138,30 @@ gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq_bac
 <span class="bu">print</span>(gr.nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (int64)       | (int64)     | (object)     | (int64)       | (category)     | (int64)    |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | (object)     | (int64)       | (category)     | (int64)    |
 ## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------|
 ## | chr1         | 226987592 | 226987617 | U0         | 0         | +            | 226987603     | 226987628   | U0           | 0             | -              | 0          |
-## | chr15        | 26105515  | 26105540  | U0         | 0         | +            | 26105493      | 26105518    | U0           | 0             | +              | 0          |
-## | chr8         | 38747226  | 38747251  | U0         | 0         | -            | 38747236      | 38747261    | U0           | 0             | +              | 0          |
+## | chr1         | 1541598   | 1541623   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 228761     |
+## | chr1         | 1599121   | 1599146   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 171238     |
 ## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...          | ...           | ...            | ...        |
-## | chrY         | 8316773   | 8316798   | U0         | 0         | +            | 20557165      | 20557190    | U0           | 0             | +              | 2312314    |
-## | chrY         | 7463444   | 7463469   | U0         | 0         | +            | 20557165      | 20557190    | U0           | 0             | +              | 3165643    |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 3223711    |
+## | chrY         | 21910706  | 21910731  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1353517    |
+## | chrY         | 22054002  | 22054027  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1496813    |
+## | chrY         | 22210637  | 22210662  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1653448    |
 ## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>The nearest method takes a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (int64)       | (int64)     | (object)     | (int64)       | (category)     | (int64)    |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | (object)     | (int64)       | (category)     | (int64)    |
 ## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------|
 ## | chr1         | 226987592 | 226987617 | U0         | 0         | +            | 226987603     | 226987628   | U0           | 0             | -              | 0          |
-## | chr8         | 38747226  | 38747251  | U0         | 0         | -            | 38747236      | 38747261    | U0           | 0             | +              | 0          |
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            | 212410559     | 212410584   | U0           | 0             | -              | 198951     |
+## | chr1         | 1541598   | 1541623   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 228761     |
+## | chr1         | 1599121   | 1599146   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 171238     |
 ## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...          | ...           | ...            | ...        |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            | 11776321      | 11776346    | U0           | 0             | +              | 1741547    |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 2632551    |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 3238126    |
+## | chrY         | 21910706  | 21910731  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1353517    |
+## | chrY         | 22054002  | 22054027  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1496813    |
+## | chrY         | 22210637  | 22210662  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1653448    |
 ## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>The nearest method also takes two variables, namely how and overlap. How can take the values <code>None</code>, <code>&quot;next&quot;</code> and <code>&quot;previous&quot;</code>. The default is <code>None</code>, which means that PyRanges looks in both directions. The default is <code>None</code>. The overlap argument is a bool which indicates whether you want to include overlaps or not.</p>
@@ -168,18 +169,18 @@ gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq_bac
 <span class="bu">print</span>(f1)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         3 |         6 | interval1  |         0 | +            |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |
 ## | chr1         |         8 |         9 | interval3  |         0 | +            |
+## | chr1         |         5 |         7 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;f2&quot;</span>)
 <span class="bu">print</span>(f2)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         1 |         2 | a          |         0 | +            |
 ## | chr1         |         6 |         7 | b          |         0 | -            |
@@ -188,7 +189,7 @@ gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq_bac
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f2.nearest(f1, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>, how<span class="op">=</span><span class="st">&quot;next&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |   Distance |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |    (int64) |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |    (int64) |
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------|
 ## | chr1         |         1 |         2 | a          |         0 | +            |         5 |         7 | interval2  |         0 | -            |          4 |
 ## | chr1         |         6 |         7 | b          |         0 | -            |         8 |         9 | interval3  |         0 | +            |          2 |
@@ -197,7 +198,7 @@ gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq_bac
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f2.nearest(f1, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>, how<span class="op">=</span><span class="st">&quot;next&quot;</span>, overlap<span class="op">=</span><span class="va">False</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |   Distance |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |    (int64) |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |    (int64) |
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------|
 ## | chr1         |         1 |         2 | a          |         0 | +            |         5 |         7 | interval2  |         0 | -            |          4 |
 ## | chr1         |         6 |         7 | b          |         0 | -            |         8 |         9 | interval3  |         0 | +            |          2 |
@@ -229,10 +230,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

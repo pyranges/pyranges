@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -136,26 +137,26 @@ gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq&quot
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr8         | 28510032  | 28510057  | U0         | 0         | -            |
-## | chr7         | 107153363 | 107153388 | U0         | 0         | -            |
-## | chr5         | 135821802 | 135821827 | U0         | 0         | -            |
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr6         | 89296757  | 89296782  | U0         | 0         | -            |
-## | chr1         | 194245558 | 194245583 | U0         | 0         | +            |
-## | chr8         | 57916061  | 57916086  | U0         | 0         | +            |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>Chromosome only</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chrX         | 41852946  | 41852971  | U0         | 0         | -            |
-## | chrX         | 69979838  | 69979863  | U0         | 0         | -            |
-## | chrX         | 34824145  | 34824170  | U0         | 0         | -            |
+## | chrX         | 13843759  | 13843784  | U0         | 0         | +            |
+## | chrX         | 114673546 | 114673571 | U0         | 0         | +            |
+## | chrX         | 131816774 | 131816799 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
 ## | chrX         | 5044527   | 5044552   | U0         | 0         | -            |
 ## | chrX         | 15281263  | 15281288  | U0         | 0         | -            |
@@ -166,7 +167,7 @@ gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq&quot
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 41852946  | 41852971  | U0         | 0         | -            |
 ## | chrX         | 69979838  | 69979863  | U0         | 0         | -            |
@@ -181,7 +182,7 @@ gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq&quot
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 151324943 | 151324968 | U0         | 0         | +            |
 ## | chrX         | 152902449 | 152902474 | U0         | 0         | +            |
@@ -196,51 +197,51 @@ gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq&quot
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 150277236 | 150277261 | U0         |         0 | -            |
 ## | chrX         | 151277790 | 151277815 | U0         |         0 | -            |
 ## | chrX         | 153037423 | 153037448 | U0         |         0 | -            |
-## | chrX         | 153255924 | 153255949 | U0         |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 4 sequences from 1 chromosomes.</code></pre>
 <p>Slice</p>
 <p>Only using slices returns all ranges from all chromosomes and strands within those coordinates.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="dv">0</span>:<span class="dv">100000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr2         |     33241 |     33266 | U0         |         0 | +            |
-## | chr2         |     13611 |     13636 | U0         |         0 | -            |
-## | chr2         |     32620 |     32645 | U0         |         0 | -            |
-## | chr3         |     87179 |     87204 | U0         |         0 | +            |
-## | chr4         |     45413 |     45438 | U0         |         0 | -            |
+## | chr2         | 33241     | 33266     | U0         | 0         | +            |
+## | chr2         | 13611     | 13636     | U0         | 0         | -            |
+## | chr2         | 32620     | 32645     | U0         | 0         | -            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chr4         | 45413     | 45438     | U0         | 0         | -            |
+## | chr3         | 87179     | 87204     | U0         | 0         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 5 sequences from 3 chromosomes.</code></pre>
+## PyRanges object has 5 sequences from 24 chromosomes.</code></pre>
 <p>Strand</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr21        | 40099618  | 40099643  | U0         | 0         | +            |
-## | chr19        | 19571102  | 19571127  | U0         | 0         | +            |
-## | chr2         | 19357329  | 19357354  | U0         | 0         | +            |
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr9         | 120803448 | 120803473 | U0         | 0         | +            |
-## | chr1         | 194245558 | 194245583 | U0         | 0         | +            |
-## | chr8         | 57916061  | 57916086  | U0         | 0         | +            |
+## | chrY         | 11942770  | 11942795  | U0         | 0         | +            |
+## | chrY         | 8316773   | 8316798   | U0         | 0         | +            |
+## | chrY         | 7463444   | 7463469   | U0         | 0         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 5050 sequences from 24 chromosomes.</code></pre>
 <p>Slice and Strand</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>, <span class="dv">0</span>:<span class="dv">100000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr3         |     87179 |     87204 | U0         |         0 | +            |
 ## | chr2         |     33241 |     33266 | U0         |         0 | +            |
+## | chr3         |     87179 |     87204 | U0         |         0 | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 2 sequences from 2 chromosomes.</code></pre>
 
@@ -269,10 +270,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

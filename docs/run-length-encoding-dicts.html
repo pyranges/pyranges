@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-10-25">
+<meta name="date" content="2018-11-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +33,7 @@
   
   
 <link rel="prev" href="an-introduction-to-rles.html">
-
+<link rel="next" href="using-multiple-cores.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -111,6 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -137,128 +138,120 @@ gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq&quot
 gr_bg <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq_background&quot;</span>)
 cs <span class="op">=</span> gr.coverage()
 <span class="bu">print</span>(cs)</code></pre></div>
-<pre><code>## chr1
-## +--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## | Runs   |   1325303 |   25 |   216270 |   25 |   57498 |  ...    |   25 |   167465 |   25 |   989343 |   25 |
-## |--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------|
-## | Values |         0 |    1 |        0 |    1 |       0 | ...     |    1 |        0 |    1 |        0 |    1 |
-## +--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## Rle of length 247134924 containing 1762 elements
+<pre><code>## chr1 +
+## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
+## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   |  ...    | 25   | 2952580   | 25   | 1156833   | 25   |
+## |--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0     | 1.0  | 0.0       | ...     | 1.0  | 0.0       | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
+## Rle of length 247134924 containing 894 elements
 ## ...
-## chrY
+## chrY -
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
-## | Runs   |   7046809 |   25 |   147506 |   25 |   211011 |  ...    |   25 |   143271 |   25 |   156610 |   25 |
+## | Runs   | 7046809   | 25   | 358542   | 25   | 296582   |  ...    | 25   | 143271   | 25   | 156610   | 25   |
 ## |--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------|
-## | Values |         0 |    1 |        0 |    1 |        0 | ...     |    1 |        0 |    1 |        0 |    1 |
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0      | 1.0  |
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
-## Rle of length 22210662 containing 46 elements
-## Unstranded PyRles object with 24 chromosomes.</code></pre>
+## Rle of length 22210662 containing 32 elements
+## PyRles object with 48 chromosomes/strand pairs.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">bg <span class="op">=</span> gr_bg.coverage()
 <span class="bu">print</span>(bg)</code></pre></div>
-<pre><code>## chr1
-## +--------+----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
-## | Runs   |   887771 |   25 |   106864 |   25 |   46417 |  ...    |   25 |   656076 |   25 |   1261276 |   25 |
-## |--------+----------+------+----------+------+---------+---------+------+----------+------+-----------+------|
-## | Values |        0 |    1 |        0 |    1 |       0 | ...     |    1 |        0 |    1 |         0 |    1 |
-## +--------+----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
-## Rle of length 246875649 containing 1480 elements
-## ...
-## chrY
-## +--------+------------+------+--------+------+---------+---------+------+-----------+------+------------+------+
-## | Runs   |   10629111 |   25 |   3320 |   25 |   11045 |  ...    |   25 |   8620274 |   25 |   36845024 |   25 |
-## |--------+------------+------+--------+------+---------+---------+------+-----------+------+------------+------|
-## | Values |          0 |    1 |      0 |    1 |       0 | ...     |    1 |         0 |    1 |          0 |    1 |
-## +--------+------------+------+--------+------+---------+---------+------+-----------+------+------------+------+
-## Rle of length 57402239 containing 16 elements
-## Unstranded PyRles object with 25 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(cs <span class="op">+</span> bg)</code></pre></div>
-<pre><code>## chr1
-## +--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## | Runs   |   887771 |   25 |   106864 |   25 |   46417 |  ...    |   25 |   730068 |   25 |   259250 |   25 |
-## |--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------|
-## | Values |        0 |    1 |        0 |    1 |       0 | ...     |    1 |        0 |    1 |        0 |    1 |
-## +--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## Rle of length 247134924 containing 3242 elements
-## ...
-## chrY
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------+
-## | Runs   |   7046809 |   25 |   147506 |   25 |   211011 |  ...    |   25 |   156610 |   25 |   35191552 |   25 |
-## |--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------|
-## | Values |         0 |    1 |        0 |    1 |        0 | ...     |    1 |        0 |    1 |          0 |    1 |
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------+
-## Rle of length 57402239 containing 62 elements
-## Unstranded PyRles object with 25 chromosomes.</code></pre>
-<p>When using arithmetic operations with a stranded and an unstranded PyRle, the stranded PyRle is automatically demoted to an unstranded PyRle.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">bg_stranded <span class="op">=</span> gr_bg.coverage(stranded<span class="op">=</span><span class="va">True</span>)
-<span class="bu">print</span>(bg_stranded)</code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------+
-## | Runs   |   1041102 |   25 |   1088232 |   25 |   109724 |  ...    |   25 |   719119 |   25 |   1774357 |   25 |
+## | Runs   | 1041102   | 25   | 1088232   | 25   | 109724   |  ...    | 25   | 719119   | 25   | 1774357   | 25   |
 ## |--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------|
-## | Values |         0 |    1 |         0 |    1 |        0 | ...     |    1 |        0 |    1 |         0 |    1 |
+## | Values | 0.0       | 1.0  | 0.0       | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0       | 1.0  |
 ## +--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------+
 ## Rle of length 245614348 containing 724 elements
 ## ...
 ## chrY -
 ## +--------+------------+------+--------+------+-----------+------+---------+------+------------+------+
-## | Runs   |   10629111 |   25 |   3320 |   25 |   1286333 |   25 |   18027 |   25 |   45465323 |   25 |
+## | Runs   | 10629111   | 25   | 3320   | 25   | 1286333   | 25   | 18027   | 25   | 45465323   | 25   |
 ## |--------+------------+------+--------+------+-----------+------+---------+------+------------+------|
-## | Values |          0 |    1 |      0 |    1 |         0 |    1 |       0 |    1 |          0 |    1 |
+## | Values | 0.0        | 1.0  | 0.0    | 1.0  | 0.0       | 1.0  | 0.0     | 1.0  | 0.0        | 1.0  |
+## +--------+------------+------+--------+------+-----------+------+---------+------+------------+------+
+## Rle of length 57402239 containing 10 elements
+## PyRles object with 50 chromosomes/strand pairs.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(cs <span class="op">+</span> bg)</code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
+## | Runs   | 1041102   | 25   | 500471   | 25   | 57498   |  ...    | 25   | 363693   | 25   | 1156833   | 25   |
+## |--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0     | ...     | 1.0  | 0.0      | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
+## Rle of length 247134924 containing 1618 elements
+## ...
+## chrY -
+## +--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------+
+## | Runs   | 7046809   | 25   | 358542   | 25   | 296582   |  ...    | 25   | 156610   | 25   | 35191552   | 25   |
+## |--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------|
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0        | 1.0  |
+## +--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------+
+## Rle of length 57402239 containing 42 elements
+## PyRles object with 50 chromosomes/strand pairs.</code></pre>
+<p>When using arithmetic operations with a stranded and an unstranded PyRle, the stranded PyRle is automatically demoted to an unstranded PyRle.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">bg_stranded <span class="op">=</span> gr_bg.coverage(strand<span class="op">=</span><span class="va">True</span>)
+<span class="bu">print</span>(bg_stranded)</code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------+
+## | Runs   | 1041102   | 25   | 1088232   | 25   | 109724   |  ...    | 25   | 719119   | 25   | 1774357   | 25   |
+## |--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0       | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------+
+## Rle of length 245614348 containing 724 elements
+## ...
+## chrY -
+## +--------+------------+------+--------+------+-----------+------+---------+------+------------+------+
+## | Runs   | 10629111   | 25   | 3320   | 25   | 1286333   | 25   | 18027   | 25   | 45465323   | 25   |
+## |--------+------------+------+--------+------+-----------+------+---------+------+------------+------|
+## | Values | 0.0        | 1.0  | 0.0    | 1.0  | 0.0       | 1.0  | 0.0     | 1.0  | 0.0        | 1.0  |
 ## +--------+------------+------+--------+------+-----------+------+---------+------+------------+------+
 ## Rle of length 57402239 containing 10 elements
 ## PyRles object with 50 chromosomes/strand pairs.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(cs <span class="op">+</span> bg_stranded)</code></pre></div>
-<pre><code>## chr1
-## +--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## | Runs   |   887771 |   25 |   106864 |   25 |   46417 |  ...    |   25 |   730068 |   25 |   259250 |   25 |
-## |--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------|
-## | Values |        0 |    1 |        0 |    1 |       0 | ...     |    1 |        0 |    1 |        0 |    1 |
-## +--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## Rle of length 247134924 containing 3242 elements
+<pre><code>## chr1 +
+## +--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
+## | Runs   | 1041102   | 25   | 500471   | 25   | 57498   |  ...    | 25   | 363693   | 25   | 1156833   | 25   |
+## |--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0     | ...     | 1.0  | 0.0      | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
+## Rle of length 247134924 containing 1618 elements
 ## ...
-## chrY
+## chrY -
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------+
-## | Runs   |   7046809 |   25 |   147506 |   25 |   211011 |  ...    |   25 |   156610 |   25 |   35191552 |   25 |
+## | Runs   | 7046809   | 25   | 358542   | 25   | 296582   |  ...    | 25   | 156610   | 25   | 35191552   | 25   |
 ## |--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------|
-## | Values |         0 |    1 |        0 |    1 |        0 | ...     |    1 |        0 |    1 |          0 |    1 |
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0        | 1.0  |
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------+
-## Rle of length 57402239 containing 62 elements
-## Unstranded PyRles object with 25 chromosomes.</code></pre>
+## Rle of length 57402239 containing 42 elements
+## PyRles object with 50 chromosomes/strand pairs.</code></pre>
 <p>Like Rles, PyGRles supports arithmetic operations with numbers.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>((<span class="fl">0.67</span> <span class="op">+</span> cs) <span class="op">*</span> <span class="dv">5</span>)</code></pre></div>
-<pre><code>## chr1
-## +--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## | Runs   |   1325303 |   25 |   216270 |   25 |   57498 |  ...    |   25 |   167465 |   25 |   989343 |   25 |
-## |--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------|
-## | Values |      3.35 | 8.35 |     3.35 | 8.35 |    3.35 | ...     | 8.35 |     3.35 | 8.35 |     3.35 | 8.35 |
-## +--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------+
-## Rle of length 247134924 containing 1762 elements
+<pre><code>## chr1 +
+## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
+## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   |  ...    | 25   | 2952580   | 25   | 1156833   | 25   |
+## |--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------|
+## | Values | 3.35      | 8.35 | 3.35    | 8.35 | 3.35      | ...     | 8.35 | 3.35      | 8.35 | 3.35      | 8.35 |
+## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
+## Rle of length 247134924 containing 894 elements
 ## ...
-## chrY
+## chrY -
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
-## | Runs   |   7046809 |   25 |   147506 |   25 |   211011 |  ...    |   25 |   143271 |   25 |   156610 |   25 |
+## | Runs   | 7046809   | 25   | 358542   | 25   | 296582   |  ...    | 25   | 143271   | 25   | 156610   | 25   |
 ## |--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------|
-## | Values |      3.35 | 8.35 |     3.35 | 8.35 |     3.35 | ...     | 8.35 |     3.35 | 8.35 |     3.35 | 8.35 |
+## | Values | 3.35      | 8.35 | 3.35     | 8.35 | 3.35     | ...     | 8.35 | 3.35     | 8.35 | 3.35     | 8.35 |
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
-## Rle of length 22210662 containing 46 elements
-## Unstranded PyRles object with 24 chromosomes.</code></pre>
+## Rle of length 22210662 containing 32 elements
+## PyRles object with 48 chromosomes/strand pairs.</code></pre>
 
 </div>
-
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="an-introduction-to-rles.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="an-introduction-to-rles.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="using-multiple-cores.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -276,10 +269,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
