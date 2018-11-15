@@ -197,27 +197,29 @@ class PyRanges():
     def __len__(self):
         return sum([ len(d) for d in self.values ])
 
+
+    def __getattr__(self, name):
+
+        if name in self.values[0]:
+            return pd.concat([df[name] for df in self.values])
+        else:
+            raise Exception("PyRanges object has no attribute", name)
+
+
     def __setattr__(self, column_name, column):
 
-        if column_name in "Chromosome Start End Strand".split():
-            raise Exception("The columns Chromosome, Start, End or Strand can not be reset.")
-        if column_name == "stranded":
-            raise Exception("The stranded attribute is read-only. Create a new PyRanges object instead.")
+        if column_name in "Chromosome Strand".split():
+            raise Exception("The columns Chromosome and Strand can not be reset.")
 
         if not isinstance(column, str):
             if not len(self) == len(column):
                 raise Exception("DataFrame and column must be same length.")
 
-            column_to_insert = pd.Series(column, index=self.df.index)
-        else:
-            column_to_insert = pd.Series(column, index=self.df.index)
-
-        pos = self.df.shape[1]
-        if column_name in self.df:
-            pos = list(self.df.columns).index(column_name)
-            self.df.drop(column_name, inplace=True, axis=1)
-
-        self.df.insert(pos, column_name, column_to_insert)
+        already_exists = column_name in self.df.values[0]
+        pos = self.values[0].shape[1]
+        for df in self.values:
+            df = df.drop(column_name, axis=1)
+            df.insert(pos, column, column_to_insert)
 
 
 
@@ -246,7 +248,7 @@ class PyRanges():
 
     def __str__(self):
 
-        print("in str")
+        # print("in str")
         if len(self) == 0:
             return "Empty PyRanges"
 
@@ -270,7 +272,6 @@ class PyRanges():
             else:
                 s = h
         else:
-            print("in else")
             keys = self.keys
             first_key = keys[0]
             last_key = keys[-1]
@@ -285,14 +286,13 @@ class PyRanges():
             t = last_df.head(3).astype(object)
             m.loc[:,:] = "..."
             # m.index = ["..."]
-            print((len(h) + len(t)) < 6, len(self) >= 6)
+            # print((len(h) + len(t)) < 6, len(self) >= 6)
             if (len(h) + len(t)) < 6 and len(self) >= 6:
 
                 # iterate from front until have three
                 heads = []
                 hl = 0
                 for k in keys:
-                    print("k", k)
                     h = self.dfs[k].head(3)
                     first_df = h
                     hl += len(h)
@@ -303,7 +303,6 @@ class PyRanges():
                 tails = []
                 tl = 0
                 for k in keys[::-1]:
-                    print("k2", k)
                     t = self.dfs[k].tail(3)
                     tl += len(t)
                     tails.append(t)
@@ -412,7 +411,6 @@ class PyRanges():
 
     def cluster(self, strand=None, **kwargs):
 
-        kwargs.update({})
 
         df = pyrange_apply_single(_cluster, self, strand, kwargs)
 
@@ -439,7 +437,7 @@ class PyRanges():
         other_clusters = other.cluster(strand=strand)
 
         results = pyrange_apply(_jaccard, self_clusters, other_clusters, **kwargs)
-        values = ray.get(list(results.values()))
+        values = results.values()
 
         ssum, osum, ilsum = 0, 0, 0
         for s, o, il in values:

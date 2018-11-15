@@ -101,7 +101,7 @@ def pyrange_apply(function, self, other, **kwargs):
             # print("other[c, os]", other[c, os])
             # odf = other[c, os].values[0]
             result = function.remote(df, odf, kwargs)
-            print(result)
+            # print(result)
             # print(" --- " * 50)
             # print(result)
             results.append(result)
@@ -670,7 +670,7 @@ def _subtraction(scdf, ocdf, kwargs):
     strand = True if strandedness else False
 
     chromosome = scdf.Chromosome.head(1).iloc[0]
-    oc = _cluster.remote(ocdf, chromosome, strand)
+    oc = ray.get(_cluster.remote(ocdf, chromosome, strand, kwargs))
     o = NCLS(oc.Start.values, oc.End.values, oc.index.values)
 
     idx_self, new_starts, new_ends = o.set_difference_helper(
