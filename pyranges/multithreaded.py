@@ -83,7 +83,6 @@ def pyrange_apply(function, self, other, **kwargs):
 
         for (c, s), df in items:
 
-
             os = strand_dict[s]
             # print("s", s, "os", os)
             # print(self.keys)
@@ -97,10 +96,12 @@ def pyrange_apply(function, self, other, **kwargs):
             else:
                 odf = other[c, os].values[0]
 
+
             # print("other", other)
             # print("other[c, os]", other[c, os])
             # odf = other[c, os].values[0]
             result = function.remote(df, odf, kwargs)
+            print(result)
             # print(" --- " * 50)
             # print(result)
             results.append(result)

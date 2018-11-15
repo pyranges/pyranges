@@ -285,6 +285,7 @@ class PyRanges():
             t = last_df.head(3).astype(object)
             m.loc[:,:] = "..."
             # m.index = ["..."]
+            print((len(h) + len(t)) < 6, len(self) >= 6)
             if (len(h) + len(t)) < 6 and len(self) >= 6:
 
                 # iterate from front until have three
@@ -314,6 +315,9 @@ class PyRanges():
                 t = pd.concat(tails).tail(3).astype(object)
                 m = h.head(1).astype(object)
 
+                m.loc[:,:] = "..."
+                s = pd.concat([h, m, t])
+            elif len(h) + len(t) == 6:
                 m.loc[:,:] = "..."
                 s = pd.concat([h, m, t])
             else:
@@ -377,7 +381,9 @@ class PyRanges():
         strand = True if strandedness else False
         self_clusters = self.cluster(strand=strand)
         other_clusters = other.cluster(strand=strand)
-        dfs = pyrange_apply(_set_intersection, self_clusters, other_clusters, strandedness=strandedness, how=how)
+        print(self_clusters)
+        print(other_clusters)
+        dfs = pyrange_apply(_intersection, self_clusters, other_clusters, strandedness=strandedness, how=how)
 
         return PyRanges(dfs)
 
@@ -386,8 +392,7 @@ class PyRanges():
     def set_union(self, other, strand=False):
 
         strand = True if strandedness else False
-        self_clusters = self.cluster(strand=strand)
-        other_clusters = other.cluster(strand=strand)
+        self_clusters, other_clusters = ray.get([self.cluster(strand=strand), other.cluster(strand=strand)])
         si = _set_union(self, other, strand)
 
         return si
