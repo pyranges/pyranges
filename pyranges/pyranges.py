@@ -211,15 +211,22 @@ class PyRanges():
         if column_name in "Chromosome Strand".split():
             raise Exception("The columns Chromosome and Strand can not be reset.")
 
-        if not isinstance(column, str):
+        if isinstance(column, list) or isinstance(column, pd.Series) or isinstance(column, np.ndarray):
             if not len(self) == len(column):
                 raise Exception("DataFrame and column must be same length.")
 
         already_exists = column_name in self.df.values[0]
         pos = self.values[0].shape[1]
+        start_length, end_length = 0, 0
         for df in self.values:
-            df = df.drop(column_name, axis=1)
-            df.insert(pos, column, column_to_insert)
+            end_length += len(df)
+            if already_exists:
+                df = df.drop(column_name, axis=1)
+            print(df)
+            print(start_length, end_length)
+            print(column[start_length:end_length])
+            df.insert(pos, column_name, column[start_length:end_length])
+            start_length = end_length
 
 
 
@@ -287,12 +294,14 @@ class PyRanges():
             m.loc[:,:] = "..."
             # m.index = ["..."]
             # print((len(h) + len(t)) < 6, len(self) >= 6)
-            if (len(h) + len(t)) < 6 and len(self) >= 6:
+            if (len(h) + len(t)) < 6:
 
+                keys_covered = set()
                 # iterate from front until have three
                 heads = []
                 hl = 0
                 for k in keys:
+                    keys_covered.add(k)
                     h = self.dfs[k].head(3)
                     first_df = h
                     hl += len(h)
@@ -303,6 +312,9 @@ class PyRanges():
                 tails = []
                 tl = 0
                 for k in keys[::-1]:
+                    if k in keys_covered:
+                        continue
+
                     t = self.dfs[k].tail(3)
                     tl += len(t)
                     tails.append(t)
@@ -311,11 +323,14 @@ class PyRanges():
                 # iterate from back until have three
 
                 h = pd.concat(heads).head(3).astype(object)
-                t = pd.concat(tails).tail(3).astype(object)
-                m = h.head(1).astype(object)
+                if tails:
+                    t = pd.concat(tails).tail(3).astype(object)
+                    m = h.head(1).astype(object)
+                    m.loc[:,:] = "..."
+                    s = pd.concat([h, m, t])
+                else:
+                    s = h
 
-                m.loc[:,:] = "..."
-                s = pd.concat([h, m, t])
             elif len(h) + len(t) == 6:
                 m.loc[:,:] = "..."
                 s = pd.concat([h, m, t])
@@ -326,7 +341,7 @@ class PyRanges():
         h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df.dtypes)]
 
         str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
-                                        "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.dfs.keys()))
+                                        "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.chromosomes))
         return str_repr
 
 
