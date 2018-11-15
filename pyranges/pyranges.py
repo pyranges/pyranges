@@ -158,7 +158,7 @@ def set_dtypes(df, extended):
     else:
         dtypes = {"Start": np.int64, "End": np.int64, "Chromosome": category, "Strand": category}
 
-    print(df.head())
+    # print(df.head())
 
     for col, dtype in dtypes.items():
 
@@ -218,13 +218,13 @@ class PyRanges():
         already_exists = column_name in self.df.values[0]
         pos = self.values[0].shape[1]
         start_length, end_length = 0, 0
+
         for df in self.values:
             end_length += len(df)
+
             if already_exists:
                 df = df.drop(column_name, axis=1)
-            print(df)
-            print(start_length, end_length)
-            print(column[start_length:end_length])
+
             df.insert(pos, column_name, column[start_length:end_length])
             start_length = end_length
 
@@ -337,8 +337,20 @@ class PyRanges():
             else:
                 s = pd.concat([h, t])
 
+        if False: # make setting
+            if self.stranded:
+                pos = s.Chromosome.astype(str) + " " + s.Start.astype(str) + "-" + s.End.astype(str) + " " + s.Strand.astype(str)
+                s = s.drop("Chromosome Start End Strand".split(), axis=1)
+                first_df = first_df.drop("Chromosome Start End Strand".split(), axis=1)
+            else:
+                pos = s.Chromosome.astype(str) + " " + s.Start.astype(str) + "-" + s.End.astype(str)
+                s = s.drop("Chromosome Start End".split(), axis=1)
+                first_df = first_df.drop("Chromosome Start End".split(), axis=1)
 
-        h = [c + "\n(" + str(t) + ")" for c, t in  zip(h.columns, first_df.dtypes)]
+            s.insert(0, "Position", pos)
+
+        # print(list(s.columns))
+        h = [c + "\n(" + str(t) + ")" for c, t in  zip(s.columns, ["multiple types"] + list(first_df.dtypes))]
 
         str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
                                         "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.chromosomes))
