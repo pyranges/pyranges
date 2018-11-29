@@ -21,12 +21,12 @@ from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 # from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
 from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard, _coverage,
-                                    _intersection, pyrange_apply, _nearest, _first_df, _subtraction, _tss, _tes, _slack)
+                                    _intersection, pyrange_apply, _nearest, _first_df, _subtraction, _tss, _tes, _slack, _sort, merge_dfs)
 
 def fill_kwargs(kwargs):
 
     if not "strandedness" in kwargs:
-        kwargs["strandedness"] = False
+        kwargs["strandedness"] = "same"
     if not "suffix" in kwargs:
         kwargs["suffix"] = "_b"
     if not "overlap" in kwargs:
@@ -384,58 +384,71 @@ class PyRanges():
 
         "Want all intervals in self that overlap with other."
 
-        print(kwargs)
+        # print(kwargs)
         kwargs = fill_kwargs(kwargs)
-        print(kwargs)
+        # print(kwargs)
 
-        df = pyrange_apply(_first_df, self, other, **kwargs)
+        dfs = pyrange_apply(_first_df, self, other, **kwargs)
 
         # df = _overlap(self, other, strandedness, invert, how)
 
-        return df
+        return PyRanges(dfs)
 
     # @pyrange_or_df
     # @return_empty_if_one_empty
     def nearest(self, other, **kwargs):
 
-        # strandedness=False, suffix="_b", how=None, overlap=True,
-
-
         "Find the nearest feature in other."
 
         kwargs = fill_kwargs(kwargs)
 
-        df = pyrange_apply(_nearest, self, other, **kwargs)
-
-        return df
-
-    # @return_empty_if_one_empty
-    def intersection(self, other, strandedness=False, how=None):
-
-
-        dfs = pyrange_apply(_intersection, self, other, strandedness=strandedness, how=how)
+        dfs = pyrange_apply(_nearest, self, other, **kwargs)
 
         return PyRanges(dfs)
 
     # @return_empty_if_one_empty
-    def set_intersection(self, other, strandedness=False, how=None, **kwargs):
+    def intersect(self, other, **kwargs):
 
+        kwargs = fill_kwargs(kwargs)
+
+        dfs = pyrange_apply(_intersection, self, other, **kwargs)
+
+        return PyRanges(dfs)
+
+    # @return_empty_if_one_empty
+    def set_intersect(self, other, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+        strandedness = kwargs["strandedness"]
         strand = True if strandedness else False
         self_clusters = self.cluster(strand=strand, **kwargs)
         other_clusters = other.cluster(strand=strand, **kwargs)
-        dfs = pyrange_apply(_intersection, self_clusters, other_clusters, strandedness=strandedness, how=how)
+        dfs = pyrange_apply(_intersection, self_clusters, other_clusters, **kwargs)
 
         return PyRanges(dfs)
 
+    def set_union(self, other, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+        strandedness = kwargs["strandedness"]
+        strand = True if strandedness else False
+        self_clusters = self.cluster(strand=strand, **kwargs)
+        other_clusters = other.cluster(strand=strand, **kwargs)
+        dfs = pyrange_apply(merge_dfs, self_clusters, other_clusters, **kwargs)
+        pr = PyRanges(dfs).cluster(strand=strand, **kwargs)
+
+        return PyRanges(dfs)
     # @pyrange_or_df
     # @return_empty_if_both_empty
     # def set_union(self, other, strand=False):
+    # pd.concat fra hver
+    # så cluster
 
     #     return si
 
 
     # @pyrange_or_df
-    def subtraction(self, other, **kwargs):
+    def subtract(self, other, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
 
@@ -506,6 +519,7 @@ class PyRanges():
 
         ssum, osum, ilsum = 0, 0, 0
         for s, o, il in values:
+            # print(s, o, il)
             ssum += s
             osum += o
             ilsum += il
@@ -529,7 +543,10 @@ class PyRanges():
         kwargs = {"slack": slack}
         return PyRanges(pyrange_apply_single(_tss, self, self.stranded, kwargs))
 
+    def sort(self, columns=["Start", "End"], **kwargs):
 
+        kwargs = fill_kwargs(kwargs)
+        return PyRanges(pyrange_apply_single(_sort, self, self.stranded, kwargs))
 
     def tesify(self, slack=0):
 
@@ -577,14 +594,6 @@ class PyRanges():
 
         return return_copy_if_view(df, self.df)
 
-
-    @pyrange_or_df_single
-    def sort(self, strand=True):
-
-        if strand:
-            return self.df.sort_values("Chromosome Strand".split())
-        else:
-            return self.df.sort_values("Chromosome")
 
     @property
     def keys(self):

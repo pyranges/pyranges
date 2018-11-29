@@ -49,7 +49,7 @@ def return_empty_if_one_empty(func):
 
 
 @ray.remote
-def merge_strands(df1, df2):
+def merge_dfs(df1, df2, kwargs):
 
     return pd.concat([df1, df2])
 
@@ -130,7 +130,8 @@ def pyrange_apply(function, self, other, **kwargs):
                 else:
                     odf1 = other[c, "+"]
                     odf2 = other[c, "-"]
-                    odf = merge_strands.remote(odf1, odf2)
+                    # merge strands
+                    odf = merge_dfs.remote(odf1, odf2)
 
                 result = function.remote(df, odf, kwargs)
                 results.append(result)
@@ -146,7 +147,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
 
                 if len(odfs) == 2:
-                    odf = merge_strands.remote(*odfs)
+                    odf = merge_dfs.remote(*odfs)
                 elif len(odfs) == 1:
                     odf = odfs[0]
                 else:
@@ -225,7 +226,8 @@ def pyrange_apply_single(function, self, strand, kwargs):
             # print(len(dfs.values))
             if len(dfs.keys) == 2:
                 df1, df2 = dfs.values
-                df1 = merge_strands.remote(df1, df2)
+                # merge strands
+                df1 = merge_dfs.remote(df1, df2)
             else:
                 df1 = dfs.values[0]
             # print(type( df1 ))
@@ -700,9 +702,9 @@ def _subtraction(scdf, ocdf, kwargs):
     new_ends = new_ends[idx_to_drop]
 
     idx_self = idx_self[idx_to_drop]
-    new_starts = pd.Series(new_starts, index=idx_self).sort_index()
-    new_ends = pd.Series(new_ends, index=idx_self).sort_index()
-    idx_self = np.sort(idx_self)
+    new_starts = pd.Series(new_starts, index=idx_self)#.sort_index()
+    new_ends = pd.Series(new_ends, index=idx_self)#.sort_index()
+    # idx_self = np.sort(idx_self)
 
     scdf = scdf.reindex(missing_idx.union(idx_self))
 
@@ -800,35 +802,13 @@ def _jaccard(self, other, kwargs):
     o = _lengths(other).sum()
 
     res = ray.get(_intersection.remote(self, other, kwargs))
-    if res:
-        res = ray.get(res[0])
-        il = _lengths(res).sum()
+    if isinstance(res, pd.DataFrame):
+        if not res.empty:
+            il = _lengths(res).sum()
+        else:
+            il = 0
     else:
         il = 0
-
-
-    # # ul = self.set_union(other, strandedness).lengths().sum()
-    # # s = self.cluster(True)
-    # # o = other.cluster(True)
-
-    # # print(self)
-    # # print(s)
-    # # print(other)
-    # # print(o)
-
-    # # print("o", o)
-    # # print("s", s)
-    # # print("il", il)
-    # # print("ul", ul)
-
-    # # if il == ul:
-    # #     return 1
-    # print(s)
-    # print(o)
-    # print("_il " * 100, il)
-    # if s + o == il:
-    #     return 1
-    # il / (s + o - il)
 
     return [ s, o, il ]
 
@@ -888,6 +868,10 @@ def _slack(df, kwargs):
 
     return df
 
+@ray.remote
+def _sort(df, kwargs):
+
+    return df.sort_values("Start End".split())
 
 if __name__ == "__main__":
 
