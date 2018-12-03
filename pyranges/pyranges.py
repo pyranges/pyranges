@@ -161,6 +161,19 @@ def set_dtypes(df, extended):
     if not "Strand" in df:
         del dtypes["Strand"]
 
+
+    if "ExonNumber" in df:
+        df.ExonNumber = df.ExonNumber.fillna(-1)
+        if df.ExonNumber.max() < 128:
+            df.ExonNumber = df.ExonNumber.astype(np.int8)
+        else:
+            df.ExonNumber = df.ExonNumber.astype(np.int16)
+
+    # for ID in "Feature GeneID TranscriptID ExonID".split():
+    #     if ID in df:
+    #         df[ID] = df[ID].astype("category")
+
+
     for col, dtype in dtypes.items():
 
         if df[col].dtype.name != dtype:
@@ -175,6 +188,10 @@ class PyRanges():
     gf = None
 
     def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=False, extended=False):
+
+        if isinstance(df, PyRanges):
+            raise Exception("Object is already a PyRange.")
+
 
         if copy_df:
             df = df.copy()
@@ -195,13 +212,13 @@ class PyRanges():
 
 
     def __len__(self):
-        return sum([ len(d) for d in self.values ])
+        return sum([ len(d) for d in self.values() ])
 
 
     def __getattr__(self, name):
 
-        if name in self.values[0]:
-            return pd.concat([df[name] for df in self.values])
+        if name in self.values()[0]:
+            return pd.concat([df[name] for df in self.values()])
         else:
             raise Exception("PyRanges object has no attribute", name)
 
@@ -216,10 +233,10 @@ class PyRanges():
             if not len(self) == len(column):
                 raise Exception("DataFrame and column must be same length.")
 
-        already_exists = column_name in self.values[0]
+        already_exists = column_name in self.values()[0]
         # print(self.values[0])
         # print("already exists " * 10, already_exists)
-        pos = self.values[0].shape[1]
+        pos = self.values()[0].shape[1]
 
         if already_exists:
             pos -= 1
@@ -227,7 +244,7 @@ class PyRanges():
         start_length, end_length = 0, 0
 
         dfs = {}
-        for k, df in self.items:
+        for k, df in self.items():
 
             end_length += len(df)
 
@@ -276,9 +293,9 @@ class PyRanges():
             return "Empty PyRanges"
 
         # keys = natsorted(list(self.dfs.keys()))
-        if len(self.keys) == 1:
+        if len(self.keys()) == 1:
 
-            first_key = self.keys[0]
+            first_key = self.keys()[0]
             # last_key = list(self.dfs.keys())[-1]
             first_df = self.dfs[first_key]
 
@@ -295,7 +312,7 @@ class PyRanges():
             else:
                 s = h
         else:
-            keys = self.keys
+            keys = self.keys()
             first_key = keys[0]
             last_key = keys[-1]
             # first_key = self.keys[0]
@@ -366,7 +383,15 @@ class PyRanges():
             s.insert(0, "Position", pos)
             h = [c + "\n(" + str(t) + ")" for c, t in  zip(s.columns, ["multiple types"] + list(first_df.dtypes))]
         else:
-            h = [c + "\n(" + str(t) + ")" for c, t in  zip(s.columns, list(first_df.dtypes))]
+            dtypes = []
+            for col, dtype in zip(s.columns, first_df.dtypes):
+                if str(dtype) == "category":
+                    dtype = first_df[col].cat.codes.dtype
+
+                # dtype = str(dtype).replace("float", "f_").replace("int", "i_")
+                dtypes.append(dtype)
+
+            h = [c + "\n(" + str(t) + ")" for c, t in  zip(s.columns, list(dtypes))]
 
         str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
                                         "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.chromosomes))
@@ -435,16 +460,12 @@ class PyRanges():
         self_clusters = self.cluster(strand=strand, **kwargs)
         other_clusters = other.cluster(strand=strand, **kwargs)
         dfs = pyrange_apply(merge_dfs, self_clusters, other_clusters, **kwargs)
-        pr = PyRanges(dfs).cluster(strand=strand, **kwargs)
+        # print(dfs)
+        pr = PyRanges(dfs)
+        # print(pr)
+        pr = pr.cluster(strand=strand, **kwargs)
 
         return PyRanges(dfs)
-    # @pyrange_or_df
-    # @return_empty_if_both_empty
-    # def set_union(self, other, strand=False):
-    # pd.concat fra hver
-    # så cluster
-
-    #     return si
 
 
     # @pyrange_or_df
@@ -462,9 +483,9 @@ class PyRanges():
     def join(self, other, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
-        df = pyrange_apply(_write_both, self, other, **kwargs)
+        dfs = pyrange_apply(_write_both, self, other, **kwargs)
 
-        return df
+        return PyRanges(dfs)
 
 
     def cluster(self, strand=None, **kwargs):
@@ -595,13 +616,13 @@ class PyRanges():
         return return_copy_if_view(df, self.df)
 
 
-    @property
+    # @property
     def keys(self):
         return natsorted(self.dfs.keys())
 
     @property
     def stranded(self):
-        return len(list(self.keys)[0]) == 2
+        return len(list(self.keys())[0]) == 2
 
     @property
     def strands(self):
@@ -609,31 +630,31 @@ class PyRanges():
         if not self.stranded:
             raise Exception("PyRanges not stranded!")
 
-        return natsorted(set([k[1] for k in self.keys]))
+        return natsorted(set([k[1] for k in self.keys()]))
 
     @property
     def chromosomes(self):
 
         if self.stranded:
-            return natsorted(set([k[0] for k in self.keys]))
+            return natsorted(set([k[0] for k in self.keys()]))
         else:
-            return natsorted(set([k for k in self.keys]))
+            return natsorted(set([k for k in self.keys()]))
 
 
-    @property
+    # @property
     def items(self):
 
         return natsorted([(k, df) for (k, df) in self.dfs.items()])
 
-    @property
+    # @property
     def values(self):
 
-        return [df for k, df in self.items]
+        return [df for k, df in self.items()]
 
-    @property
-    def objids(self):
+    # @property
+    # def objids(self):
 
-        return [objid for k, objid in natsorted(self.dfs.items())]
+    #     return [objid for k, objid in natsorted(self.dfs.items())]
 
     @property
     def df(self):
@@ -647,6 +668,6 @@ class PyRanges():
         elif len(self) == 1:
             # print("ooo " * 100)
             # print(self.values[0])
-            return self.values[0]
+            return self.values()[0]
         else:
-            return pd.concat(self.values)
+            return pd.concat(self.values())

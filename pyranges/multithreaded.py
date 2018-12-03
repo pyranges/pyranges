@@ -51,7 +51,17 @@ def return_empty_if_one_empty(func):
 @ray.remote
 def merge_dfs(df1, df2, kwargs):
 
-    return pd.concat([df1, df2])
+    if not df1.empty and not df2.empty:
+        return pd.concat([df1, df2])
+    elif df1.empty and df2.empty:
+        # can this happen?
+        return None
+    elif df1.empty:
+        return df2
+    else:
+        return df1
+
+
 
 
 
@@ -90,11 +100,12 @@ def pyrange_apply(function, self, other, **kwargs):
 
             # cannot do this with set subtraction
             # but need it for ...
-            if not (c, os) in other.keys:
+            if not (c, os) in other.keys():
                 # print(c, os, "not in ", other.keys)
                 odf = pd.DataFrame(columns="Chromosome Start End".split())
             else:
-                odf = other[c, os].values[0]
+                # print(other)
+                odf = other[c, os].values()[0]
 
 
             # print("other", other)
@@ -138,12 +149,12 @@ def pyrange_apply(function, self, other, **kwargs):
 
         elif self.stranded and other.stranded:
 
-            for (c, s), df in self.items:
+            for (c, s), df in self.items():
 
                 if not c in other.chromosomes:
                     odfs = pr.PyRanges(pd.DataFrame(columns="Chromosome Start End".split()))
                 else:
-                    odfs = other[c].values
+                    odfs = other[c].values()
 
 
                 if len(odfs) == 2:
@@ -186,7 +197,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
     else:
         grpby_key = "Chromosome"
 
-    items = self.items
+    items = self.items()
 
     results = []
 
@@ -200,7 +211,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             result = function.remote(df, kwargs)
             results.append(result)
 
-        keys = self.keys
+        keys = self.keys()
         # raise
 
     elif not self.stranded:
@@ -225,11 +236,11 @@ def pyrange_apply_single(function, self, strand, kwargs):
             # print(type(dfs.values))
             # print(len(dfs.values))
             if len(dfs.keys) == 2:
-                df1, df2 = dfs.values
+                df1, df2 = dfs.values()
                 # merge strands
                 df1 = merge_dfs.remote(df1, df2)
             else:
-                df1 = dfs.values[0]
+                df1 = dfs.values()[0]
             # print(type( df1 ))
             # print(type( df2 ))
             # print(df1)

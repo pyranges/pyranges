@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import pandas as pd
+# import numpy as np
 
 import pkg_resources
 
@@ -114,6 +115,7 @@ def read_gtf(f):
 
     df = pd.concat([df[cols_to_concat],
                         extract], axis=1)
+
 
     return PyRanges(df)
 
