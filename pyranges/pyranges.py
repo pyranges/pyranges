@@ -21,7 +21,7 @@ from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 # from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
 from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard, _coverage,
-                                    _intersection, pyrange_apply, _nearest, _first_df, _subtraction, _tss, _tes, _slack, _sort, merge_dfs)
+                                    _intersection, pyrange_apply, _nearest, _overlap, _first_df, _subtraction, _tss, _tes, _slack, _sort, merge_dfs)
 
 def fill_kwargs(kwargs):
 
@@ -413,7 +413,7 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         # print(kwargs)
 
-        dfs = pyrange_apply(_first_df, self, other, **kwargs)
+        dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
         # df = _overlap(self, other, strandedness, invert, how)
 
@@ -649,7 +649,7 @@ class PyRanges():
     # @property
     def values(self):
 
-        return [df for k, df in self.items()]
+        return [df for k, df in self.items() if not df.empty]
 
     # @property
     # def objids(self):
@@ -666,8 +666,6 @@ class PyRanges():
         if len(self) == 0:
             return pd.DataFrame()
         elif len(self) == 1:
-            # print("ooo " * 100)
-            # print(self.values[0])
             return self.values()[0]
         else:
             return pd.concat(self.values())

@@ -158,7 +158,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
 
                 if len(odfs) == 2:
-                    odf = merge_dfs.remote(*odfs)
+                    odf = merge_dfs.remote(*odfs, kwargs)
                 elif len(odfs) == 1:
                     odf = odfs[0]
                 else:
@@ -261,6 +261,9 @@ def _cluster(df, kwargs):
 
     cdf = df.sort_values("Start")
 
+    # print("ooooooool" * 10)
+    # cdf = sort_one_by_one(df, "Start", "End")
+
     starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
 
     nidx = pd.Index(range(len(starts)))
@@ -281,7 +284,6 @@ def _first_df(scdf, ocdf, kwargs):
         return None
 
     how = kwargs["how"]
-    invert = kwargs["invert"]
 
     assert how in "containment first".split() + [False, None]
     starts = scdf.Start.values
@@ -295,10 +297,26 @@ def _first_df(scdf, ocdf, kwargs):
     elif how == "containment":
         _indexes = it.has_containment(starts, ends, indexes)
 
-    if not invert:
-        return scdf.reindex(_indexes)
-    else:
-        return scdf.loc[~scdf.index.isin(_indexes)]
+    return scdf.reindex(_indexes)
+
+@ray.remote
+def _overlap(scdf, ocdf, kwargs):
+
+    if scdf.empty or ocdf.empty:
+        return None
+
+    how = kwargs["how"]
+
+    assert how in "containment first".split() + [False, None]
+    starts = scdf.Start.values
+    ends = scdf.End.values
+    indexes = scdf.index.values
+
+    it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
+
+    _indexes = it.all_overlaps_self(starts, ends, indexes)
+
+    return scdf.reindex(_indexes)
 
 
 def _both_dfs(scdf, ocdf, how=False):
@@ -450,12 +468,6 @@ def _previous_nonoverlapping(left_starts, right_ends):
 
     return r_idx, dist
 
-def sort_one_by_one(d, col1, col2):
-    """
-    Equivalent to pd.sort_values(by=[col1, col2]), but faster.
-    """
-    d = d.sort_values(by=[col2])
-    return d.sort_values(by=[col1], kind='mergesort')
 
 
 @ray.remote
@@ -882,7 +894,7 @@ def _slack(df, kwargs):
 @ray.remote
 def _sort(df, kwargs):
 
-    return df.sort_values("Start End".split())
+    return sort_one_by_one(df, "Start", "End")
 
 if __name__ == "__main__":
 

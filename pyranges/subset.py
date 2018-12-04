@@ -7,7 +7,7 @@ def get_slice(self, val):
 
     d = {}
 
-    for k, df in self.items:
+    for k, df in self.items():
 
         start = val.start or 0
         stop = val.stop or max(df.End.max(), start)
@@ -24,12 +24,12 @@ def get_string(self, val):
 
     if val in self.chromosomes:
         if self.stranded:
-            return {k: self.dfs[k] for k in self.keys if k[0] == val}
+            return {k: self.dfs[k] for k in self.keys() if k[0] == val}
         else:
             return self.dfs[val]
 
     elif val in "+ -".split():
-        return {k: v for k, v in self.items if k[1] == val}
+        return {k: v for k, v in self.items() if k[1] == val}
     else:
         return {}
 
@@ -52,7 +52,7 @@ def get_double(self, val):
         chromosome, loc = val
         start = loc.start or 0
         if self.stranded:
-            dfs = {k: df for k, df in self.items if k[0] == chromosome}
+            dfs = {k: df for k, df in self.items() if k[0] == chromosome}
             max_end = max([df.End.max() for df in dfs.values()])
         else:
             dfs = self.dfs[val]
@@ -74,7 +74,7 @@ def get_double(self, val):
         strand, loc = val
         start = loc.start or 0
 
-        dfs = {k: df for k, df in self.items if k[1] == strand}
+        dfs = {k: df for k, df in self.items() if k[1] == strand}
         max_end = max([df.End.max() for df in dfs.values()])
 
         stop = loc.stop or max(max_end, start)
