@@ -103,6 +103,9 @@ def read_gtf(f):
 
     df = pd.read_table(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes)
 
+    # Since Start is 1-indexed
+    df.Start -= 1
+
     if sum(df.Score == ".") == len(df):
         cols_to_concat = "Chromosome Start End Strand Feature".split()
     else:
@@ -128,3 +131,5 @@ def get_example_path(basename):
         _hack_to_load_idx = pkg_resources.resource_filename("pyranges", "example_data/{}.bai".format(basename))
 
     return full_path
+
+read_gff = read_gtf

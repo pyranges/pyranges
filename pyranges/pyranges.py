@@ -169,11 +169,6 @@ def set_dtypes(df, extended):
         else:
             df.ExonNumber = df.ExonNumber.astype(np.int16)
 
-    # for ID in "Feature GeneID TranscriptID ExonID".split():
-    #     if ID in df:
-    #         df[ID] = df[ID].astype("category")
-
-
     for col, dtype in dtypes.items():
 
         if df[col].dtype.name != dtype:
@@ -234,12 +229,11 @@ class PyRanges():
                 raise Exception("DataFrame and column must be same length.")
 
         already_exists = column_name in self.values()[0]
-        # print(self.values[0])
-        # print("already exists " * 10, already_exists)
-        pos = self.values()[0].shape[1]
 
         if already_exists:
-            pos -= 1
+            pos = list(self.values()[0].columns).index(column_name)
+        else:
+            pos = self.values()[0].shape[1]
 
         start_length, end_length = 0, 0
 
@@ -669,3 +663,43 @@ class PyRanges():
             return self.values()[0]
         else:
             return pd.concat(self.values())
+
+
+    def lengths(self):
+
+        lengths = {}
+        for k, df in self.items():
+            lengths[k] = df.End - df.Start
+
+        return lengths
+
+
+    def interval_summary(self, chromosome=False, strand=False):
+
+        lengths = {}
+
+        if self.stranded:
+            c = self.cluster(strand=strand)
+            lengths["cluster_stranded"] = c.lengths()
+            lengths["stranded"] = self.lengths()
+
+        c = self.cluster(strand=False)
+        lengths["cluster_unstranded"] = c.lengths()
+
+        summaries = OrderedDict()
+        if not chromosome and not strand:
+
+            for summary, d in lengths.items():
+                summaries[summary] = pd.concat(d.values()).describe()
+        else:
+            raise Exception("Flag chromosome and strand not implemented yet!")
+
+
+        summary = pd.concat(summaries.values(), axis=1)
+        summary.columns = list(summaries)
+
+
+        str_repr = tabulate(summary, headers=summary.columns, tablefmt='psql')
+        print(str_repr)
+
+            # pd.concat()

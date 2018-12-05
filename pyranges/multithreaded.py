@@ -235,10 +235,10 @@ def pyrange_apply_single(function, self, strand, kwargs):
             # print(dfs.values)
             # print(type(dfs.values))
             # print(len(dfs.values))
-            if len(dfs.keys) == 2:
+            if len(dfs.keys()) == 2:
                 df1, df2 = dfs.values()
                 # merge strands
-                df1 = merge_dfs.remote(df1, df2)
+                df1 = merge_dfs.remote(df1, df2, kwargs)
             else:
                 df1 = dfs.values()[0]
             # print(type( df1 ))
