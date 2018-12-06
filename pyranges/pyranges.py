@@ -452,14 +452,18 @@ class PyRanges():
         strandedness = kwargs["strandedness"]
         strand = True if strandedness else False
         self_clusters = self.cluster(strand=strand, **kwargs)
+        # print("s" * 100)
+        # print(self_clusters)
         other_clusters = other.cluster(strand=strand, **kwargs)
-        dfs = pyrange_apply(merge_dfs, self_clusters, other_clusters, **kwargs)
-        # print(dfs)
+        # print("o" * 100)
+        # print(other_clusters)
+        # dfs = pyrange_apply(merge_dfs, self_clusters, other_clusters, **kwargs)
+        print(dfs)
         pr = PyRanges(dfs)
-        # print(pr)
+        print(pr)
         pr = pr.cluster(strand=strand, **kwargs)
 
-        return PyRanges(dfs)
+        return pr
 
 
     # @pyrange_or_df

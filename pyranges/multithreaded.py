@@ -17,6 +17,7 @@ from functools import wraps
 
 import ray
 
+import sys
 
 @ray.remote
 def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
@@ -53,6 +54,7 @@ def merge_dfs(df1, df2, kwargs):
 
     if not df1.empty and not df2.empty:
         return pd.concat([df1, df2])
+
     elif df1.empty and df2.empty:
         # can this happen?
         return None
@@ -108,10 +110,17 @@ def pyrange_apply(function, self, other, **kwargs):
                 odf = other[c, os].values()[0]
 
 
+            # print(c, s)
+            # print(df.head())
+            # print(odf.head())
+            # print(df.dtypes)
+            # print(odf.dtypes)
             # print("other", other)
             # print("other[c, os]", other[c, os])
             # odf = other[c, os].values[0]
             result = function.remote(df, odf, kwargs)
+            # print("successfully completed")
+            # print(result)
             # print(result)
             # print(" --- " * 50)
             # print(result)
@@ -326,6 +335,7 @@ def _both_dfs(scdf, ocdf, how=False):
     ends = scdf.End.values
     indexes = scdf.index.values
 
+
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how:
@@ -368,6 +378,7 @@ def _intersection(scdf, ocdf, kwargs):
     _other_indexes = _other_indexes
 
     scdf, ocdf = scdf.reindex(_self_indexes), ocdf.reindex(_other_indexes)
+
 
     new_starts = pd.Series(
         np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
@@ -422,6 +433,7 @@ def _overlapping_for_nearest(scdf, ocdf, suffix):
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
     scdf2, ocdf2 = _both_dfs(scdf, ocdf, how="first")
+
 
     if not ocdf2.empty:
         # only copying data because of the eternal source buffer array is read only problem
@@ -503,6 +515,10 @@ def _nearest(scdf, ocdf, kwargs):
             r_idx, dist = nearest_nonoverlapping(previous_r_idx,
                                                 previous_dist,
                                                 next_r_idx, next_dist)
+
+
+        print("past df to find nearest in", file=sys.stderr)
+        sys.stderr.flush()
 
         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
 
