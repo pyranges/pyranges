@@ -21,7 +21,7 @@ from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 # from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
 from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard, _coverage,
-                                    _intersection, pyrange_apply, _nearest, _overlap, _first_df, _subtraction, _tss, _tes, _slack, _sort, merge_dfs)
+                                    _intersection, pyrange_apply, _nearest, _overlap, _first_df, _subtraction, _tss, _tes, _slack, _sort, merge_dfs, _concat)
 
 def fill_kwargs(kwargs):
 
@@ -451,16 +451,10 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         strandedness = kwargs["strandedness"]
         strand = True if strandedness else False
-        self_clusters = self.cluster(strand=strand, **kwargs)
-        # print("s" * 100)
-        # print(self_clusters)
-        other_clusters = other.cluster(strand=strand, **kwargs)
-        # print("o" * 100)
-        # print(other_clusters)
-        # dfs = pyrange_apply(merge_dfs, self_clusters, other_clusters, **kwargs)
-        print(dfs)
-        pr = PyRanges(dfs)
-        print(pr)
+
+        pr = self.concat(other)
+        # print(dfs)
+        # print(pr)
         pr = pr.cluster(strand=strand, **kwargs)
 
         return pr
@@ -523,6 +517,10 @@ class PyRanges():
             return result
         else:
             return PyRanges(result)
+
+    def concat(self, other):
+
+        return PyRanges(_concat(self, other))
 
 
 

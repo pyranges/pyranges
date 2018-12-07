@@ -64,7 +64,29 @@ def merge_dfs(df1, df2, kwargs):
         return df1
 
 
+def _concat(self, other):
 
+    strand = False
+    # if (self.stranded and other.stranded) or (not self.stranded and not other.stranded):
+    #     pass
+    if self.stranded and not other.stranded:
+        self = pr.PyRanges(pyrange_apply_single(merge_dfs, self, strand))
+    elif not self.stranded and other.stranded:
+        other = pr.PyRanges(pyrange_apply_single(merge_dfs, other, strand))
+
+    keys = natsorted(set(self.keys() + other.keys()))
+
+    concatted = []
+    for k in keys:
+        s = self.dfs.get(k, pd.DataFrame(columns="Chromosome Start End".split()))
+        o = other.dfs.get(k, pd.DataFrame(columns="Chromosome Start End".split()))
+
+        result = merge_dfs.remote(s, o, {})
+        concatted.append(result)
+
+    results = ray.get(concatted)
+
+    return {k: v for (k, v) in zip(keys, results) if not v is None}
 
 
 def pyrange_apply(function, self, other, **kwargs):
@@ -911,6 +933,7 @@ def _slack(df, kwargs):
 def _sort(df, kwargs):
 
     return sort_one_by_one(df, "Start", "End")
+
 
 if __name__ == "__main__":
 
