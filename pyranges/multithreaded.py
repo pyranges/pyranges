@@ -746,17 +746,17 @@ def _subtraction(scdf, ocdf, kwargs):
         kwargs["strand"] = strand
 
     oc = ray.get(_cluster.remote(ocdf, kwargs))
-    print("oc")
-    print(oc.head())
-    print(oc.dtypes)
-    print(oc.index.values.dtype)
+    # print("oc")
+    # print(oc.head())
+    # print(oc.dtypes)
+    # print(oc.index.values.dtype)
     o = NCLS(oc.Start.values, oc.End.values, oc.index.values)
-    print(o)
+    # print(o)
 
-    print("s")
-    print(scdf.head())
-    print(scdf.dtypes)
-    print(scdf.index.values.dtype)
+    # print("s")
+    # print(scdf.head())
+    # print(scdf.dtypes)
+    # print(scdf.index.values.dtype)
     idx_self, new_starts, new_ends = o.set_difference_helper(
         scdf.Start.values,
         scdf.End.values,
