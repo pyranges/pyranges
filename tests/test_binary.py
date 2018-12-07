@@ -20,7 +20,7 @@ import numpy as np
 
 
 from tests.helpers import assert_df_equal
-from tests.hypothesis.hypothesis_helper import dfs_min
+from tests.hypothesis_helper import dfs_min
 
 
 
@@ -40,9 +40,10 @@ strandedness = [False, "same", "opposite"]
 no_opposite = [False, "same"]
 
 
-def run_bedtools(command, gr, gr2, strandedness):
+def run_bedtools(command, gr, gr2, strandedness, nearest_overlap=False):
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
+    bedtools_overlap = {True: "", False: "-io"}[nearest_overlap]
 
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
@@ -50,7 +51,8 @@ def run_bedtools(command, gr, gr2, strandedness):
         gr.df.to_csv(f1, sep="\t", header=False, index=False)
         gr2.df.to_csv(f2, sep="\t", header=False, index=False)
 
-        cmd = command.format(f1=f1, f2=f2, strand=bedtools_strand)
+        cmd = command.format(f1=f1, f2=f2, strand=bedtools_strand, overlap=bedtools_overlap)
+        print(cmd)
 
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
@@ -77,6 +79,25 @@ def compare_results(bedtools_df, result):
         assert bedtools_df.empty == result.df.empty
 
 
+def compare_results_nearest(bedtools_df, result):
+
+    print("1 " * 50)
+    print(bedtools_df)
+    if not bedtools_df.empty:
+        bedtools_df = bedtools_df[bedtools_df.Distance != -1]
+
+    print("2 " * 50)
+    print(result)
+
+    result = result.df
+
+    if not len(result) == 0:
+        result_df = result["Chromosome Start End Strand Distance".split()]
+        assert_df_equal(result_df, bedtools_df)
+    else:
+        assert bedtools_df.empty
+
+
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", no_opposite)
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
@@ -97,18 +118,14 @@ def test_set_intersect(gr, gr2, strandedness):
 @pytest.mark.parametrize("strandedness", no_opposite)
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
-@reproduce_failure('3.59.0', b'AXicY2RAA4woFBAAAABfAAQ=')
 def test_set_union(gr, gr2, strandedness):
 
-    set_union_command = "cat {f1} {f2} | bedtools sort | bedtools merge -c 4,5,6 -o first -i -"    # set_union_command = "bedtools merge {strand} -c 4,5,6 -o first -i {f1}"
+    set_union_command = "cat {f1} {f2} | bedtools sort | bedtools merge {strand} -c 4,5,6 -o first -i -"    # set_union_command = "bedtools merge {strand} -c 4,5,6 -o first -i {f1}"
     bedtools_result = run_bedtools(set_union_command, gr, gr2, strandedness)
 
     bedtools_df = read_bedtools_result_set_op(bedtools_result, strandedness)
 
     result = gr.set_union(gr2, strandedness=strandedness)
-    print("r " * 30)
-    print(result)
-    # result_df
 
     compare_results(bedtools_df, result)
 
@@ -154,30 +171,15 @@ def test_intersect(gr, gr2, strandedness):
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_subtraction(gr, gr2, strandedness):
 
-    bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
-    subtraction_command = "bedtools subtract {} -a {} -b {}"
+    subtract_command = "bedtools subtract {strand} -a {f1} -b {f2}"
 
-    result_df = None
-    with tempfile.TemporaryDirectory() as temp_dir:
-        f1 = "{}/f1.bed".format(temp_dir)
-        f2 = "{}/f2.bed".format(temp_dir)
-        gr.df.to_csv(f1, sep="\t", header=False, index=False)
-        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
+    bedtools_result = run_bedtools(subtract_command, gr, gr2, strandedness)
 
-        cmd = subtraction_command.format(bedtools_strand, f1, f2)
+    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split())
 
-        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+    result = gr.subtract(gr2, strandedness=strandedness)
 
-        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand".split())
-
-    result = gr.subtraction(gr2, strandedness=strandedness)
-    print("result\n", result)
-    print("bedtools_df\n", PyRanges(bedtools_df))
-
-    if not bedtools_df.empty or not result.df.empty:
-        assert_df_equal(result.df, bedtools_df)
-    else:
-        assert bedtools_df.empty == result.df.empty
+    compare_results(bedtools_df, result)
 
 
                     # "bedtools closest {} -t first -io -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"]
@@ -192,48 +194,15 @@ strandedness = [False, "same", "opposite"]
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
-    bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
-    bedtools_overlap = {True: "", False: "-io"}[overlap]
+    nearest_command = "bedtools closest {strand} {overlap} -t first -d -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
-    nearest_command = "bedtools closest {} {} -t first -d -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
-    # sort_values = "Distance Start End".split()
-    result_df = None
-    with tempfile.TemporaryDirectory() as temp_dir:
-        f1 = "{}/f1.bed".format(temp_dir)
-        f2 = "{}/f2.bed".format(temp_dir)
-        gr.as_df().to_csv(f1, sep="\t", header=False, index=False)
-        gr2.as_df().to_csv(f2, sep="\t", header=False, index=False)
+    bedtools_result = run_bedtools(nearest_command, gr, gr2, strandedness, overlap)
 
-        cmd = nearest_command.format(bedtools_overlap, bedtools_strand, f1, f2)
-        # print(cmd)
-        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None, names="Chromosome Start End Strand Distance".split(), usecols=[0, 1, 2, 5, 12])
 
-        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Distance".split())
-        # raise
-        if not bedtools_df.empty:
-            bedtools_df = bedtools_df[bedtools_df.Distance != -1]["Chromosome Start End Strand Distance".split()]
+    result = gr.nearest(gr2, strandedness=strandedness, overlap=overlap)
 
-    result = gr.nearest(gr2, overlap=overlap, strandedness=strandedness).as_df()
-    # print(result)
-    if not len(result) == 0:
-        result_df = result["Chromosome Start End Strand Distance".split()]
-
-        # resetting index, because bedtools sorts result on start, end
-        # while we want order in original file
-        # print("before" * 50, result_df)
-        # result_df.index = range(len(result_df))
-        # print("after" * 50, result_df)
-        assert_df_equal(result_df, bedtools_df)
-    else:
-        result_df = pd.DataFrame(columns="Chromosome Start End Strand Distance".split())
-        assert bedtools_df.empty
-
-    # if not result.df.empty:
-    #     pyranges_distances = result_df.Distance.tolist()
-    # else:
-    #     pyranges_distances = []
-
-    # print("bedtools", bedtools_distances)
+    compare_results_nearest(bedtools_df, result)
 
 
 
@@ -243,37 +212,41 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_jaccard(gr, gr2, strandedness):
 
-    print(gr.df)
-    print(gr2.df)
-    jaccard_command = "bedtools jaccard {}  -a <(sort -k1,1 -k2,2n {}) -b <(sort -k1,1 -k2,2n {})"
+    # jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
-    print(bedtools_strand)
+    # bedtools_result = run_bedtools(jaccard_command, gr, gr2, strandedness)
 
-    result_df = None
-    with tempfile.TemporaryDirectory() as temp_dir:
-        f1 = "{}/f1.bed".format(temp_dir)
-        f2 = "{}/f2.bed".format(temp_dir)
-        gr.df.to_csv(f1, sep="\t", header=False, index=False)
-        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
+    # bedtools_jaccard = float(bedtools_result.split("\n")[1].split()[2])
 
-        cmd = jaccard_command.format(bedtools_strand, f1, f2)
-        print(f1)
-        print(f2)
-        print(cmd)
-        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
-
-        bedtools_jaccard = float(result.split("\n")[1].split()[2])
-
-    print("result bedtools", bedtools_jaccard)
     result = gr.jaccard(gr2, strandedness=strandedness)
-    print("pyranges result", result)
 
-    assert 0 <= result <=1
-    # sicne bedtools is buggy for this func?
-    # assert np.isclose(result, bedtools_jaccard)
+    # there is a bug in bedtools, so cannot use as oracle
+    assert 0 <= result <= 1
+    # assert abs(result - bedtools_jaccard) < 0.001
+
+# jaccard example, which should be 1, but bedtools considers 0.5:
+# +--------------+-----------+-----------+------------+-----------+----------+
+# | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+# | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+# |--------------+-----------+-----------+------------+-----------+----------|
+# | chr1         |         1 |         2 | a          |         0 | +        |
+# +--------------+-----------+-----------+------------+-----------+----------+
+# PyRanges object has 1 sequences from 1 chromosomes.,
+# =+--------------+-----------+-----------+------------+-----------+----------+
+# | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+# | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+# |--------------+-----------+-----------+------------+-----------+----------|
+# | chr1         |         1 |         2 | a          |         0 | +        |
+# | chr1         |         1 |         2 | a          |         0 | -        |
+# +--------------+-----------+-----------+------------+-----------+----------+
+# PyRanges object has 2 sequences from 1 chromosomes., strandedness='same')
+#
+# bedtools jaccard -s  -a <(sort -k1,1 -k2,2n /tmp/tmpuxs7jtw0/f1.bed) -b <(sort -k1,1 -k2,2n /tmp/tmpuxs7jtw0/f2.bed)
+# intersection	union-intersection	jaccard	n_intersections
+# 1	2	0.5	1
 
 
-join_command = "bedtools intersect {} -wo -a {} -b {}"
+
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", strandedness)
@@ -281,32 +254,15 @@ join_command = "bedtools intersect {} -wo -a {} -b {}"
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_join(gr, gr2, strandedness):
 
-    print(gr.df)
-    print(gr2.df)
+    join_command = "bedtools intersect {strand} -wo -a {f1} -b {f2}"
 
-    bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
+    bedtools_result = run_bedtools(join_command, gr, gr2, strandedness)
 
-    result_df = None
-    with tempfile.TemporaryDirectory() as temp_dir:
-        f1 = "{}/f1.bed".format(temp_dir)
-        f2 = "{}/f2.bed".format(temp_dir)
-        gr.df.to_csv(f1, sep="\t", header=False, index=False)
-        gr2.df.to_csv(f2, sep="\t", header=False, index=False)
-
-        cmd = join_command.format(bedtools_strand, f1, f2)
-        print(cmd)
-        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
-
-        bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split(), dtype={"Chromosome": "category", "Strand": "category"} )
-        bedtools_df = bedtools_df.drop(["Overlap", "Chromosome_b"], 1)
-
-    print("gr\n", gr)
-    print("gr2\n", gr2)
+    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None,
+                                names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split(),
+                                dtype={"Chromosome": "category", "Strand": "category"}).drop("Chromosome_b Overlap".split(), axis=1)
 
     result = gr.join(gr2, strandedness=strandedness)
-
-    print("result\n", result)
-    print("bedtools\n", PyRanges(bedtools_df))
 
     if result.df.empty:
         assert bedtools_df.empty

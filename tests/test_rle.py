@@ -2,7 +2,7 @@ import pytest
 
 from hypothesis import given, settings, reproduce_failure, unlimited, HealthCheck, seed
 
-from tests.hypothesis.hypothesis_helper import runlengths, dfs_min, runlengths_same_length_integers
+from tests.hypothesis_helper import runlengths, dfs_min, runlengths_same_length_integers
 
 from itertools import product
 import tempfile

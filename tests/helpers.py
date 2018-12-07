@@ -1,31 +1,7 @@
 import pandas as pd
-import pyranges as pr
-import ray
 
-def assert_dfs_equal(gr1, gr2):
 
-    dfs1 = gr1.dfs
-    dfs2 = gr2.dfs
-
-    print(list(dfs1.keys()), list(dfs2.keys()))
-    assert dfs1.keys() == dfs2.keys()
-
-    for k, v in dfs1.items():
-
-        v2 = dfs2[k]
-        try:
-            v = ray.get(v)
-            v2 = ray.get(v2)
-        except:
-            pass
-
-        assert_df_equal(v, v2)
-
-def assert_df_equal(df1, df2, check_index=False):
-
-    # if not isinstance(df1, pd.DataFrame):
-    #     df1 = ray.get(df1)
-    #     df2 = ray.get(df2)
+def assert_df_equal(df1, df2):
 
     if "Strand" in df1 and "Strand" in df2:
         sort_on = "Chromosome Start End Strand".split()
@@ -41,14 +17,14 @@ def assert_df_equal(df1, df2, check_index=False):
     elif "Start_b" in df2:
         sort_on += "Start_b End_b".split()
 
-    df1.Chromosome = df1.Chromosome.astype("object")
-    df2.Chromosome = df2.Chromosome.astype("object")
+    df1 = df1.sort_values(sort_on)
+    df2 = df2.sort_values(sort_on)
 
     df1 = df1.reset_index(drop=True)
     df2 = df2.reset_index(drop=True)
 
-    df1 = df1.sort_values(sort_on)
-    df2 = df2.sort_values(sort_on)
+    df1.Chromosome = df1.Chromosome.astype("object")
+    df2.Chromosome = df2.Chromosome.astype("object")
 
     print("Actual")
     print(df1.to_csv(sep=" "))
@@ -69,16 +45,4 @@ def assert_df_equal(df1, df2, check_index=False):
     print(df2.index)
     print("index equal", df1.index == df2.index)
 
-    if not check_index:
-        df2.index = df1.index
-
-
-
-    pd.testing.assert_frame_equal(df1, df2, check_dtype=False)
-
-from io import StringIO
-
-def string_to_pyrange(s):
-
-    df = pd.read_table(StringIO(s), sep="\s+", header=0)
-    return pr.PyRanges(df)
+    pd.testing.assert_frame_equal(df1, df2)

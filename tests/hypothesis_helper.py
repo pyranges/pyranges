@@ -65,7 +65,8 @@ def dfs_min(draw):
     # if not strand:
     #     df = df.drop("Strand", axis=1)
 
-    gr = PyRanges(df)
+    gr = PyRanges(df, extended=True)
+    # gr = PyRanges(df)
 
     # do not sort like this, use pyranges sort
     # np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))

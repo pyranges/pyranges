@@ -18,8 +18,8 @@ def test_tssify(f1):
     print(f1)
     print(result)
 
-    assert list(result.Start) == [0, 2, 3]
-    assert list(result.End) == [9, 13, 14]
+    assert list(result.Start) == [0, 3, 2]
+    assert list(result.End) == [9, 14, 13]
 
 
 def test_tesify(f2):

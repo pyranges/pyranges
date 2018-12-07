@@ -67,8 +67,7 @@ def merge_dfs(df1, df2, kwargs):
 def _concat(self, other):
 
     strand = False
-    # if (self.stranded and other.stranded) or (not self.stranded and not other.stranded):
-    #     pass
+
     if self.stranded and not other.stranded:
         self = pr.PyRanges(pyrange_apply_single(merge_dfs, self, strand))
     elif not self.stranded and other.stranded:
@@ -539,8 +538,7 @@ def _nearest(scdf, ocdf, kwargs):
                                                 next_r_idx, next_dist)
 
 
-        print("past df to find nearest in", file=sys.stderr)
-        sys.stderr.flush()
+        # sys.stderr.flush()
 
         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
 
@@ -748,8 +746,17 @@ def _subtraction(scdf, ocdf, kwargs):
         kwargs["strand"] = strand
 
     oc = ray.get(_cluster.remote(ocdf, kwargs))
+    print("oc")
+    print(oc.head())
+    print(oc.dtypes)
+    print(oc.index.values.dtype)
     o = NCLS(oc.Start.values, oc.End.values, oc.index.values)
+    print(o)
 
+    print("s")
+    print(scdf.head())
+    print(scdf.dtypes)
+    print(scdf.index.values.dtype)
     idx_self, new_starts, new_ends = o.set_difference_helper(
         scdf.Start.values,
         scdf.End.values,

@@ -19,7 +19,7 @@ import numpy as np
 
 
 from tests.helpers import assert_df_equal
-from tests.hypothesis.hypothesis_helper import dfs_min
+from tests.hypothesis_helper import dfs_min
 
 
 
