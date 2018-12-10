@@ -3,6 +3,11 @@
 [![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
 
 
+## Release
+
+PyRanges is slated for an early 2019 release, late February at the latest.
+
+#### Introduction
 
 GenomicRanges for Python.
 

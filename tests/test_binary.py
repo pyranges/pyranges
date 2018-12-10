@@ -148,7 +148,7 @@ def test_overlap(gr, gr2, strandedness):
 
 
 @pytest.mark.bedtools
-@pytest.mark.parametrize("strandedness", no_opposite)
+@pytest.mark.parametrize("strandedness", strandedness)
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_intersect(gr, gr2, strandedness):

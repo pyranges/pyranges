@@ -15,7 +15,10 @@ from collections import defaultdict
 
 from functools import wraps
 
-import ray
+try:
+    import ray
+except:
+    import pyranges.raymock as ray
 
 import sys
 
@@ -53,7 +56,7 @@ def return_empty_if_one_empty(func):
 def merge_dfs(df1, df2, kwargs):
 
     if not df1.empty and not df2.empty:
-        return pd.concat([df1, df2])
+        return pd.concat([df1, df2], sort=False)
 
     elif df1.empty and df2.empty:
         # can this happen?

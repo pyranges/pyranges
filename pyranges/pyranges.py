@@ -11,7 +11,7 @@ try:
     # ray.init(logging_level=logging.CRITICAL) # logging_level=logging.CRITICAL # local_mode=True
     ray.init(local_mode=True, logging_level=logging.CRITICAL) # logging_level=logging.CRITICAL # local_mode=True
 except:
-    pass # Ray was already initialized
+    pass
 
 from tabulate import tabulate
 
