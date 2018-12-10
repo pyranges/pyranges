@@ -685,7 +685,7 @@ class PyRanges():
         lengths["pyrange"] = self.lengths()
 
         if self.stranded:
-            c = self.cluster(strand=strand)
+            c = self.cluster(strand=True)
             lengths["coverage_stranded"] = c.lengths()
 
         c = self.cluster(strand=False)

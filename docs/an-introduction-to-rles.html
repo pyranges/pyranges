@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-11-15">
+<meta name="date" content="2018-12-10">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -103,15 +103,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
 <li class="chapter" data-level="3" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>3</b> Subsetting PyRanges</a></li>
 <li class="chapter" data-level="4" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>4</b> Manipulating the data in PyRanges</a></li>
-<li class="chapter" data-level="5" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>5</b> Methods for manipulating single PyRanges</a></li>
-<li class="chapter" data-level="6" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>6</b> Intersecting Ranges</a></li>
-<li class="chapter" data-level="7" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>7</b> Overlapping Ranges</a></li>
-<li class="chapter" data-level="8" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>8</b> Joining Ranges</a></li>
-<li class="chapter" data-level="9" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>9</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
+<li class="chapter" data-level="5" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>5</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>6</b> Sorting PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>7</b> Summarizing PyRanges</a></li>
+<li class="chapter" data-level="8" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>8</b> Methods for manipulating single PyRanges</a></li>
+<li class="chapter" data-level="9" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>9</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="10" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>10</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="11" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>11</b> Joining Ranges</a></li>
+<li class="chapter" data-level="12" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>12</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="13" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>13</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="14" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>14</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="15" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>15</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="16" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>16</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -130,7 +133,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="an-introduction-to-rles" class="section level1">
-<h1><span class="header-section-number">11</span> An introduction to RLEs</h1>
+<h1><span class="header-section-number">14</span> An introduction to RLEs</h1>
 <p>Rles are runlengths - a datastructure that can compactly describe the coverage of a genome (or some other score that is associated with each nucleotide). It is used for efficient genomewide arithmetic operations on these scores.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> pyrle <span class="im">import</span> Rle <span class="co"># or: from pyranges import Rle</span>
 runs <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>]
@@ -212,11 +215,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

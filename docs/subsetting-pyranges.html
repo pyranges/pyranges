@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-11-15">
+<meta name="date" content="2018-12-10">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -103,15 +103,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
 <li class="chapter" data-level="3" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>3</b> Subsetting PyRanges</a></li>
 <li class="chapter" data-level="4" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>4</b> Manipulating the data in PyRanges</a></li>
-<li class="chapter" data-level="5" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>5</b> Methods for manipulating single PyRanges</a></li>
-<li class="chapter" data-level="6" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>6</b> Intersecting Ranges</a></li>
-<li class="chapter" data-level="7" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>7</b> Overlapping Ranges</a></li>
-<li class="chapter" data-level="8" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>8</b> Joining Ranges</a></li>
-<li class="chapter" data-level="9" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>9</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
+<li class="chapter" data-level="5" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>5</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>6</b> Sorting PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>7</b> Summarizing PyRanges</a></li>
+<li class="chapter" data-level="8" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>8</b> Methods for manipulating single PyRanges</a></li>
+<li class="chapter" data-level="9" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>9</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="10" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>10</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="11" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>11</b> Joining Ranges</a></li>
+<li class="chapter" data-level="12" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>12</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="13" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>13</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="14" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>14</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="15" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>15</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="16" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>16</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -135,114 +138,113 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;chipseq&quot;</span>)
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand   |
+## | (int8)       | (int32)   | (int32)   | (object)   | (int64)   | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +        |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +        |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +        |
+## | ...          | ...       | ...       | ...        | ...       | ...      |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -        |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -        |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>Chromosome only</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chrX         | 13843759  | 13843784  | U0         | 0         | +            |
-## | chrX         | 114673546 | 114673571 | U0         | 0         | +            |
-## | chrX         | 131816774 | 131816799 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrX         | 5044527   | 5044552   | U0         | 0         | -            |
-## | chrX         | 15281263  | 15281288  | U0         | 0         | -            |
-## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand   |
+## | (int8)       | (int32)   | (int32)   | (object)   | (int64)   | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chrX         | 13843759  | 13843784  | U0         | 0         | +        |
+## | chrX         | 114673546 | 114673571 | U0         | 0         | +        |
+## | chrX         | 131816774 | 131816799 | U0         | 0         | +        |
+## | ...          | ...       | ...       | ...        | ...       | ...      |
+## | chrX         | 5044527   | 5044552   | U0         | 0         | -        |
+## | chrX         | 15281263  | 15281288  | U0         | 0         | -        |
+## | chrX         | 120273723 | 120273748 | U0         | 0         | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 282 sequences from 1 chromosomes.</code></pre>
 <p>Chromosome and Strand</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>])</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chrX         | 41852946  | 41852971  | U0         | 0         | -            |
-## | chrX         | 69979838  | 69979863  | U0         | 0         | -            |
-## | chrX         | 34824145  | 34824170  | U0         | 0         | -            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrX         | 5044527   | 5044552   | U0         | 0         | -            |
-## | chrX         | 15281263  | 15281288  | U0         | 0         | -            |
-## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand   |
+## | (int8)       | (int32)   | (int32)   | (object)   | (int64)   | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chrX         | 41852946  | 41852971  | U0         | 0         | -        |
+## | chrX         | 69979838  | 69979863  | U0         | 0         | -        |
+## | chrX         | 34824145  | 34824170  | U0         | 0         | -        |
+## | ...          | ...       | ...       | ...        | ...       | ...      |
+## | chrX         | 5044527   | 5044552   | U0         | 0         | -        |
+## | chrX         | 15281263  | 15281288  | U0         | 0         | -        |
+## | chrX         | 120273723 | 120273748 | U0         | 0         | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 151 sequences from 1 chromosomes.</code></pre>
 <p>Chromosome and Slice</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chrX         | 151324943 | 151324968 | U0         | 0         | +            |
-## | chrX         | 152902449 | 152902474 | U0         | 0         | +            |
-## | chrX         | 153632850 | 153632875 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrX         | 151277790 | 151277815 | U0         | 0         | -            |
-## | chrX         | 153037423 | 153037448 | U0         | 0         | -            |
-## | chrX         | 153255924 | 153255949 | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand   |
+## | (int8)       | (int32)   | (int32)   | (object)   | (int64)   | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chrX         | 151324943 | 151324968 | U0         | 0         | +        |
+## | chrX         | 152902449 | 152902474 | U0         | 0         | +        |
+## | chrX         | 153632850 | 153632875 | U0         | 0         | +        |
+## | ...          | ...       | ...       | ...        | ...       | ...      |
+## | chrX         | 151277790 | 151277815 | U0         | 0         | -        |
+## | chrX         | 153037423 | 153037448 | U0         | 0         | -        |
+## | chrX         | 153255924 | 153255949 | U0         | 0         | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 8 sequences from 1 chromosomes.</code></pre>
 <p>Chromosome, Strand and Slice</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chrX         | 150277236 | 150277261 | U0         |         0 | -            |
-## | chrX         | 151277790 | 151277815 | U0         |         0 | -            |
-## | chrX         | 153037423 | 153037448 | U0         |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chrX         | 150277236 | 150277261 | U0         |         0 | -        |
+## | chrX         | 151277790 | 151277815 | U0         |         0 | -        |
+## | chrX         | 153037423 | 153037448 | U0         |         0 | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 4 sequences from 1 chromosomes.</code></pre>
 <p>Slice</p>
 <p>Only using slices returns all ranges from all chromosomes and strands within those coordinates.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="dv">0</span>:<span class="dv">100000</span>])</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr2         | 33241     | 33266     | U0         | 0         | +            |
-## | chr2         | 13611     | 13636     | U0         | 0         | -            |
-## | chr2         | 32620     | 32645     | U0         | 0         | -            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr4         | 45413     | 45438     | U0         | 0         | -            |
-## | chr3         | 87179     | 87204     | U0         | 0         | +            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr2         |     33241 |     33266 | U0         |         0 | +        |
+## | chr2         |     13611 |     13636 | U0         |         0 | -        |
+## | chr2         |     32620 |     32645 | U0         |         0 | -        |
+## | chr4         |     45413 |     45438 | U0         |         0 | -        |
+## | chr3         |     87179 |     87204 | U0         |         0 | +        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 5 sequences from 24 chromosomes.</code></pre>
 <p>Strand</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>])</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 11942770  | 11942795  | U0         | 0         | +            |
-## | chrY         | 8316773   | 8316798   | U0         | 0         | +            |
-## | chrY         | 7463444   | 7463469   | U0         | 0         | +            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand   |
+## | (int8)       | (int32)   | (int32)   | (object)   | (int64)   | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +        |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +        |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +        |
+## | ...          | ...       | ...       | ...        | ...       | ...      |
+## | chrY         | 11942770  | 11942795  | U0         | 0         | +        |
+## | chrY         | 8316773   | 8316798   | U0         | 0         | +        |
+## | chrY         | 7463444   | 7463469   | U0         | 0         | +        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 5050 sequences from 24 chromosomes.</code></pre>
 <p>Slice and Strand</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>, <span class="dv">0</span>:<span class="dv">100000</span>])</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr2         |     33241 |     33266 | U0         |         0 | +            |
-## | chr3         |     87179 |     87204 | U0         |         0 | +            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr2         |     33241 |     33266 | U0         |         0 | +        |
+## | chr3         |     87179 |     87204 | U0         |         0 | +        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 2 sequences from 2 chromosomes.</code></pre>
 
 </div>
@@ -270,11 +272,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

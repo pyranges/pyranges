@@ -11,7 +11,7 @@ documentclass: book
 # Introduction to PyRanges
 
 PyRanges are collections of intervals that support comparison operations (like
-overlap and intersection) and other methods that are useful for genomic
+overlap and intersect) and other methods that are useful for genomic
 analyses. The ranges can have an arbitrary number of meta-data fields, i.e.
 columns associated with them.
 
@@ -63,17 +63,15 @@ gr2 = PyRanges(df2)
 
 print(gr2)
 
-print(gr1.intersection(gr2, strandedness="opposite"))
+print(gr1.intersect(gr2, strandedness="opposite"))
 
-print(gr1.intersection(gr2, strandedness=False))
+print(gr1.intersect(gr2, strandedness=False))
 
 ```
 
 There are also convenience methods for single PyRanges:
 
 ```{python}
-# The range objects also contain other convenience functions.
-
 print(gr1.cluster())
 ```
 

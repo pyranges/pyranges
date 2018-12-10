@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>PyRanges documentation</title>
   <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2018-11-15">
+<meta name="date" content="2018-12-10">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -103,15 +103,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
 <li class="chapter" data-level="3" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>3</b> Subsetting PyRanges</a></li>
 <li class="chapter" data-level="4" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>4</b> Manipulating the data in PyRanges</a></li>
-<li class="chapter" data-level="5" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>5</b> Methods for manipulating single PyRanges</a></li>
-<li class="chapter" data-level="6" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>6</b> Intersecting Ranges</a></li>
-<li class="chapter" data-level="7" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>7</b> Overlapping Ranges</a></li>
-<li class="chapter" data-level="8" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>8</b> Joining Ranges</a></li>
-<li class="chapter" data-level="9" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>9</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="10" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>10</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="11" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>11</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="12" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>12</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="13" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>13</b> Using multiple cores</a></li>
+<li class="chapter" data-level="5" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>5</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>6</b> Sorting PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>7</b> Summarizing PyRanges</a></li>
+<li class="chapter" data-level="8" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>8</b> Methods for manipulating single PyRanges</a></li>
+<li class="chapter" data-level="9" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>9</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="10" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>10</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="11" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>11</b> Joining Ranges</a></li>
+<li class="chapter" data-level="12" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>12</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="13" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>13</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="14" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>14</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="15" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>15</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="16" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>16</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -130,75 +133,78 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="intersecting-ranges" class="section level1">
-<h1><span class="header-section-number">6</span> Intersecting Ranges</h1>
-<p>PyRanges objects can be intersected with other PyRanges to find the subset of the genome that is contained in both. The regular intersection-method finds the intersection of all combinations of ranges: <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
+<h1><span class="header-section-number">9</span> Intersecting Ranges</h1>
+<p>PyRanges objects can be intersected with other PyRanges to find the subset of the genome that is contained in both. The regular intersect-method finds the intersection of all combinations of ranges: <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 gr <span class="op">=</span> pr.load_dataset(<span class="st">&quot;aorta&quot;</span>)
 gr2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;aorta2&quot;</span>)
-<span class="bu">print</span>(gr.intersection(gr2))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9988      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 10073     | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 10079     | 10138     | H3K27me3   | 7         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr1         | 10241     | 10281     | H3K27me3   | 6         | -            |
-## | chr1         | 10241     | 10348     | H3K27me3   | 6         | -            |
-## | chr1         | 10280     | 10440     | H3K27me3   | 6         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 49 sequences from 1 chromosomes.</code></pre>
-<p>The set_intersection method clusters the intervals (i.e. merges them into one) before finding the intersection: <a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersection(gr2))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+
-## | Chromosome   |     Start |       End |
-## | (category)   |   (int32) |   (int32) |
-## |--------------+-----------+-----------|
-## | chr1         |      9988 |     10445 |
-## +--------------+-----------+-----------+
-## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
-<p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersection(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+
-## | Chromosome   |     Start |       End | Strand       |
-## | (category)   |   (int32) |   (int32) | (category)   |
-## |--------------+-----------+-----------+--------------|
-## | chr1         |      9988 |     10223 | +            |
-## | chr1         |     10246 |     10348 | +            |
-## | chr1         |     10073 |     10272 | -            |
-## +--------------+-----------+-----------+--------------+
+<span class="bu">print</span>(gr.intersect(gr2))</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand   |
+## | (int8)       | (int32)   | (int32)   | (object)   | (int64)   | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr1         | 10073     | 10138     | H3K27me3   | 7         | +        |
+## | chr1         | 10073     | 10152     | H3K27me3   | 5         | +        |
+## | chr1         | 10073     | 10223     | H3K27me3   | 1         | +        |
+## | ...          | ...       | ...       | ...        | ...       | ...      |
+## | chr1         | 10241     | 10278     | H3K27me3   | 6         | -        |
+## | chr1         | 10241     | 10281     | H3K27me3   | 6         | -        |
+## | chr1         | 10241     | 10348     | H3K27me3   | 6         | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
+## PyRanges object has 27 sequences from 1 chromosomes.</code></pre>
+<p>The set_intersect method clusters the intervals (i.e. merges them into one) before finding the intersect: <a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersect(gr2))</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+----------+
+## | Chromosome   |     Start |       End | Strand   |
+## | (int8)       |   (int32) |   (int32) | (int8)   |
+## |--------------+-----------+-----------+----------|
+## | chr1         |     10073 |     10223 | +        |
+## | chr1         |     10246 |     10272 | +        |
+## | chr1         |     10280 |     10445 | +        |
+## | chr1         |      9988 |     10348 | -        |
+## +--------------+-----------+-----------+----------+
 ## PyRanges object has 4 sequences from 1 chromosomes.</code></pre>
-<p>The intersection method also takes a how argument, which currently accepts the option <code>&quot;containment&quot;</code>, which requires that the intervals in self be completely within the intervals in other.</p>
+<p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+----------+
+## | Chromosome   |     Start |       End | Strand   |
+## | (int8)       |   (int32) |   (int32) | (int8)   |
+## |--------------+-----------+-----------+----------|
+## | chr1         |      9988 |     10223 | +        |
+## | chr1         |     10246 |     10348 | +        |
+## | chr1         |     10073 |     10272 | -        |
+## +--------------+-----------+-----------+----------+
+## PyRanges object has 4 sequences from 1 chromosomes.</code></pre>
+<p>The intersect method also takes a how argument, which currently accepts the option <code>&quot;containment&quot;</code>, which requires that the intervals in self be completely within the intervals in other.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;f1&quot;</span>)
 <span class="bu">print</span>(f1)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr1         |         3 |         6 | interval1  |         0 | +        |
+## | chr1         |         8 |         9 | interval3  |         0 | +        |
+## | chr1         |         5 |         7 | interval2  |         0 | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f2 <span class="op">=</span> pr.load_dataset(<span class="st">&quot;f2&quot;</span>)
 <span class="bu">print</span>(f2)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         1 |         2 | a          |         0 | +            |
-## | chr1         |         6 |         7 | b          |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr1         |         1 |         2 | a          |         0 | +        |
+## | chr1         |         6 |         7 | b          |         0 | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">result <span class="op">=</span> f2.intersection(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">result <span class="op">=</span> f2.intersect(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>)
 <span class="bu">print</span>(result)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         6 |         7 | b          |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
+## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
+## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr1         |         6 |         7 | b          |         0 | -        |
+## +--------------+-----------+-----------+------------+-----------+----------+
 ## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
 
 </div>
@@ -233,11 +239,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
 "instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",

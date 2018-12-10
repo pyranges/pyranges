@@ -17,13 +17,11 @@ install:
   - conda config --add channels r
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy pandas pytest pytest-cov cython tabulate hypothesis bedtools r joblib # ray
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy pandas pytest pytest-cov cython tabulate hypothesis bedtools # ray
   - source activate test-environment
-  - python setup.py install # will install ncls and clustertrees and more
+  - python setup.py install # will install ncls
   - python --version
   - python -c 'import pandas as pd; print(pd.__version__)'
-  - echo 'source("https://bioconductor.org/biocLite.R"); biocLite("S4Vectors"); biocLite("GenomicRanges")' > install.R
-  - Rscript install.R
   - ls tests
 
 script: py.test -v tests # verbose to see that tests run and so that travis does not time out on hypothesis tests
