@@ -108,7 +108,7 @@ def get_triple(self, val):
     if strand not in "+ -".split():
         raise Exception("Strand '{}' invalid.".format(val))
 
-    df = self[chromosome, strand].values[0]
+    df = self[chromosome, strand].values()[0]
 
     max_end = df.End.max()
 

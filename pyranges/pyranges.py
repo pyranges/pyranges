@@ -352,9 +352,12 @@ class PyRanges():
                 h = pd.concat(heads).head(3).astype(object)
                 if tails:
                     t = pd.concat(tails).tail(3).astype(object)
-                    m = h.head(1).astype(object)
-                    m.loc[:,:] = "..."
-                    s = pd.concat([h, m, t])
+                    if len(h) + len(t) > 6:
+                        m = h.head(1).astype(object)
+                        m.loc[:,:] = "..."
+                        s = pd.concat([h, m, t])
+                    else:
+                        s = pd.concat([h, t])
                 else:
                     s = h
 
