@@ -5,13 +5,13 @@ from collections import defaultdict, OrderedDict
 
 import logging
 
-import ray
 
 try:
     # ray.init(logging_level=logging.CRITICAL) # logging_level=logging.CRITICAL # local_mode=True
+    import ray
     ray.init(local_mode=True, logging_level=logging.CRITICAL) # logging_level=logging.CRITICAL # local_mode=True
 except:
-    pass
+    import pyranges.raymock as ray
 
 from tabulate import tabulate
 
@@ -678,23 +678,23 @@ class PyRanges():
 
     def interval_summary(self, chromosome=False, strand=False):
 
-        lengths = {}
+        lengths = OrderedDict()
+        lengths["pyrange"] = self.lengths()
 
         if self.stranded:
             c = self.cluster(strand=strand)
-            lengths["cluster_stranded"] = c.lengths()
-            lengths["stranded"] = self.lengths()
+            lengths["coverage_stranded"] = c.lengths()
 
         c = self.cluster(strand=False)
-        lengths["cluster_unstranded"] = c.lengths()
+        lengths["coverage_unstranded"] = c.lengths()
 
         summaries = OrderedDict()
-        if not chromosome and not strand:
+        # if not chromosome and not strand:
 
-            for summary, d in lengths.items():
-                summaries[summary] = pd.concat(d.values()).describe()
-        else:
-            raise Exception("Flag chromosome and strand not implemented yet!")
+        for summary, d in lengths.items():
+            summaries[summary] = pd.concat(d.values()).describe()
+        # else:
+        #     raise Exception("Flag chromosome and strand not implemented yet!")
 
 
         summary = pd.concat(summaries.values(), axis=1)
