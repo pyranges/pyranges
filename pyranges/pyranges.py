@@ -679,7 +679,7 @@ class PyRanges():
         return lengths
 
 
-    def interval_summary(self, chromosome=False, strand=False):
+    def summary(self, chromosome=False, strand=False):
 
         lengths = OrderedDict()
         lengths["pyrange"] = self.lengths()
