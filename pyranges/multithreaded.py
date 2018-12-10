@@ -6,8 +6,6 @@ import pyranges as pr
 
 from natsort import natsorted
 
-from joblib import Parallel, delayed
-
 from sorted_nearest import (find_clusters, nearest_previous_nonoverlapping,
                             nearest_next_nonoverlapping, nearest_nonoverlapping, find_clusters)
 
