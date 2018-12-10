@@ -1,0 +1,21 @@
+# Summarizing PyRanges
+
+The summary-function gives a summary of the lengths of the intervals in a PyRange:
+
+```{python tidy=FALSE}
+import pyranges as pr
+
+import pandas as pd
+
+from io import StringIO
+
+gr = pr.load_dataset("epigenome_roadmap")
+
+print(gr)
+
+print(gr.summary())
+```
+
+The column `coverage_stranded` tells you how the data looks when merging all
+overlapping features (taking strand into account), and `coverage_unstranded` is
+the same, but all features are merged independent of their strand.
