@@ -86,7 +86,13 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
     idx = range(len(starts))
     series_to_concat = []
     for s in columns:
-        s = pd.Series(s, index=idx)
+        # print(s.head())
+        # print(idx)
+        if isinstance(s, pd.Series):
+            s = pd.Series(s.values, index=idx)
+        else:
+            s = pd.Series(s, index=idx)
+
         series_to_concat.append(s)
 
     df = pd.concat(series_to_concat, axis=1)
