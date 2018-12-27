@@ -68,7 +68,7 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
     if isinstance(seqnames, str):
         seqnames = pd.Series([seqnames] * len(starts), dtype="category")
 
-    if strands != None and strands != False:
+    if strands is not None:
 
         if isinstance(strands, str):
             strands = pd.Series([strands] * len(starts), dtype="category")
