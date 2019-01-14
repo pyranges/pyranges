@@ -333,6 +333,8 @@ def _first_df(scdf, ocdf, kwargs):
 @ray.remote
 def _overlap(scdf, ocdf, kwargs):
 
+    invert = kwargs["invert"]
+
     if scdf.empty or ocdf.empty:
         return None
 
@@ -345,7 +347,15 @@ def _overlap(scdf, ocdf, kwargs):
 
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
-    _indexes = it.all_overlaps_self(starts, ends, indexes)
+    if not how:
+        _indexes = it.all_overlaps_self(starts, ends, indexes)
+    elif how == "containment":
+        _indexes = it.has_containment(starts, ends, indexes)
+    else:
+        _indexes = it.has_overlaps(starts, ends, indexes)
+
+    if invert:
+        _indexes = scdf.index.difference(_indexes)
 
     return scdf.reindex(_indexes)
 

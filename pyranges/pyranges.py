@@ -418,7 +418,19 @@ class PyRanges():
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
-        # df = _overlap(self, other, strandedness, invert, how)
+        return PyRanges(dfs)
+
+
+    def no_overlap(self, other, **kwargs):
+
+        "Want all intervals in self that do not overlap with other."
+
+        # print(kwargs)
+        kwargs = fill_kwargs(kwargs)
+        kwargs["invert"] = True
+        # print(kwargs)
+
+        dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
         return PyRanges(dfs)
 
@@ -712,5 +724,3 @@ class PyRanges():
 
         str_repr = tabulate(summary, headers=summary.columns, tablefmt='psql')
         print(str_repr)
-
-            # pd.concat()
