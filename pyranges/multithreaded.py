@@ -64,6 +64,32 @@ def merge_dfs(df1, df2, kwargs):
     else:
         return df1
 
+def process_results(results, keys):
+
+    results_dict = {k: r for k, r in zip(keys, results) if r is not None}
+
+    try:
+        first_item = next(iter(results_dict.values()))
+    except StopIteration: # empty collection
+        return results_dict
+
+    if not isinstance(first_item, pd.DataFrame):
+        return results_dict
+
+    to_delete = []
+    # to ensure no duplicate indexes and no empty dataframes
+    for k in results_dict:
+        if results_dict[k] is None or results_dict[k].empty:
+            to_delete.append(k)
+        else:
+            results_dict[k].index = range(len(results_dict[k]))
+
+    for k in to_delete:
+        results_dict[k]
+
+    return results_dict
+
+
 
 def _concat(self, other):
 
@@ -86,7 +112,7 @@ def _concat(self, other):
 
     results = ray.get(concatted)
 
-    return {k: v for (k, v) in zip(keys, results) if not v is None}
+    return process_results(results, keys)
 
 
 def pyrange_apply(function, self, other, **kwargs):
@@ -124,11 +150,10 @@ def pyrange_apply(function, self, other, **kwargs):
 
             # cannot do this with set subtraction
             # but need it for ...
-            if not (c, os) in other.keys():
+            if not (c, os) in other.keys() or len(other[c, os].values()) == 0:
                 # print(c, os, "not in ", other.keys)
                 odf = pd.DataFrame(columns="Chromosome Start End".split())
             else:
-                # print(other)
                 odf = other[c, os].values()[0]
 
 
@@ -212,8 +237,9 @@ def pyrange_apply(function, self, other, **kwargs):
 
     results = ray.get(results)
 
+    results = process_results(results, keys)
 
-    return {k: r for k, r in zip(keys, results) if r is not None}
+    return results
 
 
 
@@ -282,11 +308,16 @@ def pyrange_apply_single(function, self, strand, kwargs):
 
     results = ray.get(results)
 
-    return {k: r for k, r in zip(keys, results) if r is not None}
+    results = process_results(results, keys)
+
+    return results
 
 
 @ray.remote
 def _cluster(df, kwargs):
+
+    if df.empty:
+        return None
 
     chromosome, strand = kwargs["chromosome"], kwargs.get("strand", None)
 
@@ -970,3 +1001,42 @@ if __name__ == "__main__":
                                 dtype={"Chromosome": "category", "Strand": "category"})
 
     bgr = pr.PyRanges(background, copy_df=False)
+
+# import pyranges as pr
+# import pandas as pd
+# f_df = pd.read_table("f.csv", sep=" ")
+# r_df = pd.read_table("r.csv", sep=" ")
+# r_df
+# f = pr.PyRanges(f_df)
+# r = pr.PyRanges(r_df)
+# f.overlap(r)
+# f
+# r
+# r = pr.PyRanges(r_df)
+# f.overlap(r, strandedness=False)
+# r.overlap(f, strandedness=False)
+# f
+# r
+# f.join(r)
+# import pyranges as pr
+# import pandas as pd
+# f_df = pd.read_table("f.csv", sep=" ")
+# r_df = pd.read_table("r.csv", sep=" ")
+# r_df
+# f = pr.PyRanges(f_df)
+# r = pr.PyRanges(r_df)
+# f.overlap(r)
+# f
+# r
+# r = pr.PyRanges(r_df)
+# f.overlap(r, strandedness=False)
+# r.overlap(f, strandedness=False)
+# f
+# r
+# f.join(r)
+# f.overlap(r)
+# r.overlap(r)
+# r
+# r.overlap(f)
+# r.overlap(f, strandedness=False)
+# f.overlap(r, strandedness=False)

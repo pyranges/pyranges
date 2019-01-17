@@ -414,7 +414,6 @@ class PyRanges():
 
         # print(kwargs)
         kwargs = fill_kwargs(kwargs)
-        # print(kwargs)
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
@@ -590,6 +589,23 @@ class PyRanges():
 
         kwargs = {"slack": slack}
         return PyRanges(pyrange_apply_single(_tes, self, self.stranded, kwargs))
+
+    def drop_empty(self):
+
+        empty = []
+        for k in self.dfs.keys():
+            if self.dfs[k].empty:
+                empty.append(k)
+
+        for k in empty:
+            del self.dfs[k]
+
+    def empty(self):
+
+        if len(self.values()) == 0:
+            return True
+
+        return False
 
     def pos(self, *val):
 
