@@ -9,7 +9,7 @@ import pandas as pd
 
 from io import StringIO
 
-gr = pr.load_dataset("epigenome_roadmap")
+gr = pr.data.epigenome_roadmap()
 
 print(gr)
 

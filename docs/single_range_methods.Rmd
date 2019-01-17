@@ -6,7 +6,7 @@ There are several methods for manipulating the contents of a PyRanges.
 
 ```{python tidy=FALSE}
 import pyranges as pr
-f1 = pr.load_dataset("f1")
+f1 = pr.data.f1()
 print(f1.cluster())
 ```
 

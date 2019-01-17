@@ -10,7 +10,7 @@ There are many ways to subset a PyRanges object. Each returns a new PyRanges obj
 
 import pyranges as pr
 
-gr = pr.load_dataset("chipseq")
+gr = pr.data.chipseq()
 print(gr)
 ```
 

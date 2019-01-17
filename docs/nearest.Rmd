@@ -5,8 +5,8 @@ the ones in self.
 
 ```{python tidy=FALSE}
 import pyranges as pr
-gr = pr.load_dataset("chipseq")
-gr2 = pr.load_dataset("chipseq_background")
+gr = pr.data.chipseq()
+gr2 = pr.data.chipseq_background()
 print(gr.nearest(gr2, suffix="_Input"))
 ```
 
@@ -24,9 +24,9 @@ is `None`. The overlap argument is a bool which indicates whether you want
 to include overlaps or not.
 
 ```{python tidy=FALSE}
-f1 = pr.load_dataset("f1")
+f1 = pr.data.f1()
 print(f1)
-f2 = pr.load_dataset("f2")
+f2 = pr.data.f2()
 print(f2)
 print(f2.nearest(f1, strandedness="opposite", how="next"))
 print(f2.nearest(f1, strandedness="opposite", how="next", overlap=False))

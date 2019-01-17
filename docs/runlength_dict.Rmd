@@ -9,8 +9,8 @@ Rledicts support the arithmetic operations +, -, /, and *.
 ```{python tidy=FALSE}
 import pyranges as pr
 
-gr = pr.load_dataset("chipseq")
-gr_bg = pr.load_dataset("chipseq_background")
+gr = pr.data.chipseq()
+gr_bg = pr.data.chipseq_background()
 
 cs = gr.coverage()
 print(cs)

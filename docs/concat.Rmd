@@ -9,8 +9,8 @@ import pandas as pd
 
 from io import StringIO
 
-gr1 = pr.load_dataset("f1")
-gr2 = pr.load_dataset("f2")
+gr1 = pr.data.f1()
+gr2 = pr.data.f2()
 
 print(gr1)
 

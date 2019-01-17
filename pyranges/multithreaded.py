@@ -115,6 +115,17 @@ def _concat(self, other):
     return process_results(results, keys)
 
 
+@ray.remote
+def _index_as_col(df, kwargs):
+
+    df["Index"] = df.index
+
+    return df
+
+
+
+
+
 def pyrange_apply(function, self, other, **kwargs):
 
     strandedness = kwargs["strandedness"]
@@ -548,13 +559,22 @@ def _previous_nonoverlapping(left_starts, right_ends):
 @ray.remote
 def _nearest(scdf, ocdf, kwargs):
 
-
     if scdf.empty or ocdf.empty:
         return None
+
+    strand = ocdf.Strand.iloc[0]
 
     overlap = kwargs["overlap"]
     how = kwargs["how"]
     suffix = kwargs["suffix"]
+
+    if how == "upstream":
+        how = {"+": "previous", "-": "next"}[strand]
+    elif how == "downstream":
+        how = {"+": "next", "-": "previous"}[strand]
+
+    print("how " * 50)
+    print(how)
 
     if overlap:
         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(scdf, ocdf, suffix)

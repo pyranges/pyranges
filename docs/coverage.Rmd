@@ -4,7 +4,7 @@ Ranges can be turned into dicts of run length encodings with the coverage functi
 
 ```{python tidy=FALSE}
 import pyranges as pr
-gr = pr.load_dataset("aorta")
+gr = pr.data.aorta()
 print(gr)
 print(gr.coverage())
 print(gr.coverage(strand=True))

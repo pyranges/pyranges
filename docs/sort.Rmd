@@ -11,7 +11,7 @@ import pandas as pd
 
 from io import StringIO
 
-cs = pr.load_dataset("chipseq")
+cs = pr.data.chipseq()
 
 print(cs)
 

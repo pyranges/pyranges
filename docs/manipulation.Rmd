@@ -5,7 +5,7 @@ This dataframe is accessible with the df attribute of the PyRanges object.
 
 ```{python tidy=FALSE}
 import pyranges as pr
-gr = pr.load_dataset("chipseq")
+gr = pr.data.chipseq()
 print(gr)
 print(gr.df.head(5))
 ```
