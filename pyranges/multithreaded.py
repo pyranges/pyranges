@@ -562,7 +562,7 @@ def _nearest(scdf, ocdf, kwargs):
     if scdf.empty or ocdf.empty:
         return None
 
-    strand = ocdf.Strand.iloc[0]
+    strand = scdf.Strand.iloc[0]
 
     overlap = kwargs["overlap"]
     how = kwargs["how"]
@@ -572,9 +572,6 @@ def _nearest(scdf, ocdf, kwargs):
         how = {"+": "previous", "-": "next"}[strand]
     elif how == "downstream":
         how = {"+": "next", "-": "previous"}[strand]
-
-    print("how " * 50)
-    print(how)
 
     if overlap:
         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(scdf, ocdf, suffix)
@@ -599,8 +596,6 @@ def _nearest(scdf, ocdf, kwargs):
                                                 previous_dist,
                                                 next_r_idx, next_dist)
 
-
-        # sys.stderr.flush()
 
         ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
 

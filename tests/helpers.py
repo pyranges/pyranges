@@ -3,6 +3,7 @@ import pandas as pd
 
 def assert_df_equal(df1, df2):
 
+    pd.options.mode.chained_assignment = None
     if "Strand" in df1 and "Strand" in df2:
         sort_on = "Chromosome Start End Strand".split()
         df1.Strand = df1.Strand.astype("object")
@@ -46,3 +47,5 @@ def assert_df_equal(df1, df2):
     print("index equal", df1.index == df2.index)
 
     pd.testing.assert_frame_equal(df1, df2)
+
+    pd.options.mode.chained_assignment = "warn"

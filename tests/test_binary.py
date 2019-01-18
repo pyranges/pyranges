@@ -32,7 +32,7 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 100
+    max_examples = 10
     deadline = None
 
 
@@ -44,7 +44,7 @@ def run_bedtools(command, gr, gr2, strandedness, nearest_overlap=False, nearest_
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[nearest_overlap]
-    bedtools_how = {"upstream": "-fu", "downstream": "-fd", None: ""}[nearest_how] + " -D ref"
+    bedtools_how = {"upstream": "-id", "downstream": "-iu", None: ""}[nearest_how] + " -D a"
     print("bedtools how:", bedtools_how)
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -84,13 +84,8 @@ def compare_results(bedtools_df, result):
 
 def compare_results_nearest(bedtools_df, result):
 
-    print("1 " * 50)
-    print(bedtools_df)
     if not bedtools_df.empty:
         bedtools_df = bedtools_df[bedtools_df.Distance != -1]
-
-    print("2 " * 50)
-    print(result)
 
     result = result.df
 
@@ -188,9 +183,9 @@ def test_subtraction(gr, gr2, strandedness):
 # cannot test the full functionality
 # because bedtools is buggy
 # therefore commenting out
-nearest_hows = [None] #, "upstream", "downstream"]
+nearest_hows = [None, "upstream", "downstream"]
 overlaps = [True, False]
-strandedness = [False] #, "same", "opposite"]
+strandedness = [False, "same", "opposite"]
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("nearest_how,overlap,strandedness", product(nearest_hows, overlaps, strandedness))
@@ -203,17 +198,14 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     bedtools_result = run_bedtools(nearest_command, gr, gr2, strandedness, overlap, nearest_how)
 
     bedtools_df = pd.read_table(StringIO(bedtools_result), header=None, names="Chromosome Start End Strand Chromosome2 Distance".split(), usecols=[0, 1, 2, 5, 6, 12])
+
     bedtools_df.Distance = bedtools_df.Distance.abs()
 
     bedtools_df = bedtools_df[bedtools_df.Chromosome2 != "."]
     bedtools_df = bedtools_df.drop("Chromosome2", 1)
 
-
     result = gr.nearest(gr2, strandedness=strandedness, overlap=overlap, how=nearest_how)
 
-    # if not overlap:
-    #     result.apply(lambda df, _: df[df.Distance != 1])
-    #     print(result)
     print("bedtools " * 5)
     print(bedtools_df)
     print("result " * 5)
