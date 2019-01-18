@@ -180,9 +180,6 @@ def test_subtraction(gr, gr2, strandedness):
     compare_results(bedtools_df, result)
 
 
-# cannot test the full functionality
-# because bedtools is buggy
-# therefore commenting out
 nearest_hows = [None, "upstream", "downstream"]
 overlaps = [True, False]
 strandedness = [False, "same", "opposite"]

@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import pandas as pd
-# import numpy as np
+import numpy as np
 
 import pkg_resources
 
@@ -60,16 +60,21 @@ def _fetch_gene_transcript_exon_id(attribute):
 
     no_quotes = attribute.str.replace('"', '').str.replace("'", "")
 
+    # if annotation == "ensembl":
+    #     df = no_quotes.str.extract("gene_id.?ENSG(.+?);(?:.*transcript_id.?ENST(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?ENSE(.+?);)?", expand=True)# .iloc[:, [1, 2, 3]]
+    # else:
     df = no_quotes.str.extract("gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?", expand=True)# .iloc[:, [1, 2, 3]]
+
     # print(df.head())
     # print(df.head().index)
     # print(df.columns)
     # raise
 
     df.columns = "GeneID TranscriptID ExonNumber ExonID".split()
-    cat_cols = "GeneID TranscriptID ExonID".split()
+    # float_cols = "GeneID TranscriptID ExonID".split()
+
     # df.columns = cat_cols
-    df.loc[:, cat_cols] = df[cat_cols].astype("category")
+    # df.loc[:, float_cols] = df[float_cols].astype(np.double)
     # print(df.head())
 
     return df

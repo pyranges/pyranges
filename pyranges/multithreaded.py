@@ -122,10 +122,6 @@ def _index_as_col(df, kwargs):
 
     return df
 
-
-
-
-
 def pyrange_apply(function, self, other, **kwargs):
 
     strandedness = kwargs["strandedness"]

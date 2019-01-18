@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>16 Using multiple cores | PyRanges documentation</title>
-  <meta name="description" content="16 Using multiple cores | PyRanges documentation">
+  <title>18 Using multiple cores | PyRanges documentation</title>
+  <meta name="description" content="18 Using multiple cores | PyRanges documentation">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="16 Using multiple cores | PyRanges documentation" />
+  <meta property="og:title" content="18 Using multiple cores | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="16 Using multiple cores | PyRanges documentation" />
+  <meta name="twitter:title" content="18 Using multiple cores | PyRanges documentation" />
   
   
   
@@ -25,14 +25,14 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-01-17">
+<meta name="date" content="2019-01-18">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="run-length-encoding-dicts.html">
+<link rel="prev" href="subsetting-pyrles.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -115,7 +115,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="13" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>13</b> Turning Ranges into RLEs</a></li>
 <li class="chapter" data-level="14" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>14</b> An introduction to RLEs</a></li>
 <li class="chapter" data-level="15" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>15</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="16" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>16</b> Using multiple cores</a></li>
+<li class="chapter" data-level="16" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>16</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="17" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>17</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="18" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>18</b> Using multiple cores</a></li>
 </ul>
 
       </nav>
@@ -134,7 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="using-multiple-cores" class="section level1">
-<h1><span class="header-section-number">16</span> Using multiple cores</h1>
+<h1><span class="header-section-number">18</span> Using multiple cores</h1>
 <p>Most PyRanges and PyRle-operations can be run in parallel. Even user-made functions can be run in parallel using the apply or apply_pair functions.</p>
 <p>PyRanges uses Ray, a “flexible, high-performance distributed execution framework” to run in parallel-mode. To start Ray in parallel-mode you need to import and initialize Ray before importing PyRanges or PyRles.</p>
 <pre><code>import ray
@@ -142,11 +144,8 @@ ray.init()
 # then
 import pyranges as pr</code></pre>
 <p>Now PyRanges and PyRles is running in multi-core mode.</p>
-<div id="note" class="section level4">
-<h4><span class="header-section-number">16.0.0.1</span> Note</h4>
-<p>By default PyRanges uses no extra cores. Unless the data are reasonably big (at least 10^7) number of intervals or the functions are very long-running, running in parallel-mode is actually more time-consuming than single-core mode. Also, if the PyRanges contains a lot of text data, there is less to be gained by using multithreading. This is due to how strings are represented in memory in Python and Pandas. However, this is something that will be fixed in pandas2 and then the multithreading capabilities of PyRanges will be more useful for these kinds of data.</p>
+<p>Note: By default PyRanges uses no extra cores. Unless the data are reasonably big (at least 10^7) number of intervals or the functions are very long-running, running in parallel-mode is actually more time-consuming than single-core mode. Also, if the PyRanges contains a lot of text data, there is less to be gained by using multithreading. This is due to how strings are represented in memory in Python and Pandas. However, this is something that will be fixed in pandas2 and then the multithreading capabilities of PyRanges will be more useful for these kinds of data.</p>
 
-</div>
 </div>
 
 
@@ -161,7 +160,7 @@ import pyranges as pr</code></pre>
           </div>
         </div>
       </div>
-<a href="run-length-encoding-dicts.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="subsetting-pyrles.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
     </div>
   </div>

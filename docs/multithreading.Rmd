@@ -16,9 +16,7 @@ import pyranges as pr
 
 Now PyRanges and PyRles is running in multi-core mode.
 
-#### Note
-
-By default PyRanges uses no extra cores. Unless the data are reasonably big (at
+Note: By default PyRanges uses no extra cores. Unless the data are reasonably big (at
 least 10^7) number of intervals or the functions are very long-running, running
 in parallel-mode is actually more time-consuming than single-core mode. Also, if
 the PyRanges contains a lot of text data, there is less to be gained by using

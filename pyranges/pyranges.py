@@ -717,7 +717,7 @@ class PyRanges():
         return lengths
 
 
-    def summary(self, chromosome=False, strand=False):
+    def summary(self):
 
         lengths = OrderedDict()
         lengths["pyrange"] = self.lengths()
@@ -730,12 +730,9 @@ class PyRanges():
         lengths["coverage_unstranded"] = c.lengths()
 
         summaries = OrderedDict()
-        # if not chromosome and not strand:
 
         for summary, d in lengths.items():
             summaries[summary] = pd.concat(d.values()).describe()
-        # else:
-        #     raise Exception("Flag chromosome and strand not implemented yet!")
 
 
         summary = pd.concat(summaries.values(), axis=1)
