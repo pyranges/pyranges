@@ -122,6 +122,18 @@ def _index_as_col(df, kwargs):
 
     return df
 
+
+
+def call_f(f, df, odf, kwargs):
+
+    try:
+        return f.remote(df, odf, kwargs)
+    except:
+        return f.remote(df, odf)
+
+
+
+
 def pyrange_apply(function, self, other, **kwargs):
 
     strandedness = kwargs["strandedness"]
@@ -151,33 +163,13 @@ def pyrange_apply(function, self, other, **kwargs):
         for (c, s), df in items:
 
             os = strand_dict[s]
-            # print("s", s, "os", os)
-            # print(self.keys)
-            # print(other.keys)
 
-            # cannot do this with set subtraction
-            # but need it for ...
             if not (c, os) in other.keys() or len(other[c, os].values()) == 0:
-                # print(c, os, "not in ", other.keys)
                 odf = pd.DataFrame(columns="Chromosome Start End".split())
             else:
                 odf = other[c, os].values()[0]
 
-
-            # print(c, s)
-            # print(df.head())
-            # print(odf.head())
-            # print(df.dtypes)
-            # print(odf.dtypes)
-            # print("other", other)
-            # print("other[c, os]", other[c, os])
-            # odf = other[c, os].values[0]
-            result = function.remote(df, odf, kwargs)
-            # print("successfully completed")
-            # print(result)
-            # print(result)
-            # print(" --- " * 50)
-            # print(result)
+            result = call_f(function, df, odf, kwargs)
             results.append(result)
 
     else:
@@ -191,7 +183,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 else:
                     odf = other.dfs[c]
 
-                result = function.remote(df, odf, kwargs)
+                result = call_f(function, df, odf, kwargs)
                 results.append(result)
 
 
@@ -204,10 +196,9 @@ def pyrange_apply(function, self, other, **kwargs):
                 else:
                     odf1 = other[c, "+"]
                     odf2 = other[c, "-"]
-                    # merge strands
                     odf = merge_dfs.remote(odf1, odf2)
 
-                result = function.remote(df, odf, kwargs)
+                result = call_f(function, df, odf, kwargs)
                 results.append(result)
 
         elif self.stranded and other.stranded:
@@ -228,7 +219,7 @@ def pyrange_apply(function, self, other, **kwargs):
                     odf = pd.DataFrame(columns="Chromosome Start End".split())
 
 
-                result = function.remote(df, odf, kwargs)
+                result = call_f(function, df, odf, kwargs)
                 results.append(result)
 
         else:
@@ -239,7 +230,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 else:
                     odf = other.dfs[c]
 
-                result = function.remote(df, odf, kwargs)
+                result = call_f(function, df, odf, kwargs)
                 results.append(result)
 
     results = ray.get(results)
@@ -247,6 +238,14 @@ def pyrange_apply(function, self, other, **kwargs):
     results = process_results(results, keys)
 
     return results
+
+
+def call_f_single(f, df, kwargs):
+
+    try:
+        return f.remote(df, kwargs)
+    except:
+        return f.remote(df)
 
 
 
@@ -272,7 +271,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["chromosome"] = c
             _strand = s
             kwargs["strand"] = _strand
-            result = function.remote(df, kwargs)
+            result = call_f_single(function, df, kwargs)
             results.append(result)
 
         keys = self.keys()
@@ -284,7 +283,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
         for c, df in items:
 
             kwargs["chromosome"] = c
-            result = function.remote(df, kwargs)
+            result = call_f_single(function, df, kwargs)
             results.append(result)
             keys.append(c)
 
@@ -309,7 +308,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             # print(type( df2 ))
             # print(df1)
             # print(df2)
-            result = function.remote(df1,kwargs)
+            result = call_f_single(function, df, kwargs)
             results.append(result)
             keys.append(c)
 

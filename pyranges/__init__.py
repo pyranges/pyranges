@@ -56,31 +56,30 @@ def read_bam(f):
     return PyRanges(df)
 
 
-def _fetch_gene_transcript_exon_id(attribute):
+def _fetch_gene_transcript_exon_id(attribute, annotation):
 
     no_quotes = attribute.str.replace('"', '').str.replace("'", "")
 
-    # if annotation == "ensembl":
-    #     df = no_quotes.str.extract("gene_id.?ENSG(.+?);(?:.*transcript_id.?ENST(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?ENSE(.+?);)?", expand=True)# .iloc[:, [1, 2, 3]]
-    # else:
     df = no_quotes.str.extract("gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?", expand=True)# .iloc[:, [1, 2, 3]]
 
-    # print(df.head())
-    # print(df.head().index)
-    # print(df.columns)
-    # raise
-
     df.columns = "GeneID TranscriptID ExonNumber ExonID".split()
-    # float_cols = "GeneID TranscriptID ExonID".split()
 
-    # df.columns = cat_cols
-    # df.loc[:, float_cols] = df[float_cols].astype(np.double)
-    # print(df.head())
+    # df.loc[:, "ExonNumber"] = df.ExonNumber.astype(int)
+
+    if annotation == "ensembl":
+        newdf = []
+        for c in "GeneID TranscriptID ExonID".split():
+            r = df[c].astype(str).str.extract('(\d+)').astype(float)
+            newdf.append(r)
+
+        newdf = pd.concat(newdf, axis=1)
+        newdf.insert(2, "ExonNumber", df["ExonNumber"])
+        df = newdf
 
     return df
 
 
-def read_gtf(f):
+def read_gtf(f, annotation=None):
 
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
@@ -103,7 +102,7 @@ def read_gtf(f):
     else:
         cols_to_concat = "Chromosome Start End Strand Feature Score".split()
 
-    extract = _fetch_gene_transcript_exon_id(df.Attribute)
+    extract = _fetch_gene_transcript_exon_id(df.Attribute, annotation)
     extract.columns = "GeneID TranscriptID ExonNumber ExonID".split()
 
     extract.ExonNumber = extract.ExonNumber.astype(float)
