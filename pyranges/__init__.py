@@ -10,6 +10,8 @@ from pyranges import data
 
 from pyrle import PyRles, Rle
 
+from pyranges.version import __version__
+
 # from pyranges.settings import pyranges_settings
 
 # pyranges_settings = pyranges_settings

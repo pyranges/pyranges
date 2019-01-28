@@ -132,9 +132,52 @@ def call_f(f, df, odf, kwargs):
         return f.remote(df, odf)
 
 
+def make_sparse(df):
+
+    if "Strand" in df:
+        cols = "Chromosome Start End Strand".split()
+    else:
+        cols = "Chromosome Start End".split()
+
+    return df[cols]
+
+
+def make_binary_sparse(kwargs, df, odf):
+
+    sparse = kwargs.get("sparse")
+
+    if not sparse:
+        return df, odf
+
+    if sparse.get("self"):
+
+        df = make_sparse(df)
+
+    if sparse.get("other"):
+
+        odf = make_sparse(odf)
+
+    return df, odf
+
+
+def make_unary_sparse(kwargs, df):
+
+    sparse = kwargs.get("sparse")
+
+    if not sparse:
+        return df
+
+    df = make_sparse(df)
+
+    return df
 
 
 def pyrange_apply(function, self, other, **kwargs):
+
+    # if not set(self.chromosomes).intersection(other.chromosomes):
+    #     self_str = " ".join(self.chromosomes)
+    #     other_str = " ".join(other.chromosomes)
+    #     raise Exception("No overlapping chromosomes between self and other \nself: {}\nother: {}".format(self_str, other_str))
 
     strandedness = kwargs["strandedness"]
 
@@ -169,6 +212,8 @@ def pyrange_apply(function, self, other, **kwargs):
             else:
                 odf = other[c, os].values()[0]
 
+            df, odf = make_binary_sparse(kwargs, df, odf)
+
             result = call_f(function, df, odf, kwargs)
             results.append(result)
 
@@ -183,6 +228,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 else:
                     odf = other.dfs[c]
 
+                df, odf = make_binary_sparse(kwargs, df, odf)
                 result = call_f(function, df, odf, kwargs)
                 results.append(result)
 
@@ -197,6 +243,8 @@ def pyrange_apply(function, self, other, **kwargs):
                     odf1 = other[c, "+"]
                     odf2 = other[c, "-"]
                     odf = merge_dfs.remote(odf1, odf2)
+
+                df, odf = make_binary_sparse(kwargs, df, odf)
 
                 result = call_f(function, df, odf, kwargs)
                 results.append(result)
@@ -218,6 +266,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 else:
                     odf = pd.DataFrame(columns="Chromosome Start End".split())
 
+                df, odf = make_binary_sparse(kwargs, df, odf)
 
                 result = call_f(function, df, odf, kwargs)
                 results.append(result)
@@ -229,6 +278,8 @@ def pyrange_apply(function, self, other, **kwargs):
                     odf = pd.DataFrame(columns="Chromosome Start End".split())
                 else:
                     odf = other.dfs[c]
+
+                df, odf = make_binary_sparse(kwargs, df, odf)
 
                 result = call_f(function, df, odf, kwargs)
                 results.append(result)
@@ -271,6 +322,8 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["chromosome"] = c
             _strand = s
             kwargs["strand"] = _strand
+
+            df = make_unary_sparse(kwargs, df)
             result = call_f_single(function, df, kwargs)
             results.append(result)
 
@@ -283,6 +336,8 @@ def pyrange_apply_single(function, self, strand, kwargs):
         for c, df in items:
 
             kwargs["chromosome"] = c
+
+            df = make_unary_sparse(kwargs, df)
             result = call_f_single(function, df, kwargs)
             results.append(result)
             keys.append(c)
@@ -308,7 +363,8 @@ def pyrange_apply_single(function, self, strand, kwargs):
             # print(type( df2 ))
             # print(df1)
             # print(df2)
-            result = call_f_single(function, df, kwargs)
+            df1 = make_unary_sparse(kwargs, df1)
+            result = call_f_single(function, df1, kwargs)
             results.append(result)
             keys.append(c)
 

@@ -4,6 +4,9 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
+
+__version__ = open("pyranges/version.py").readline().split(" = ")[1].replace('"', '').strip()
+
 install_requires = ["cython", "pandas", "ncls", "tabulate", "pysam", "sorted_nearest", "pyrle"]
 
 setup(
@@ -12,7 +15,7 @@ setup(
     package_data={'pyranges': ['example_data/*.bed', 'example_data/*.gtf',
                                'example_data/*.bam', 'example_data/*.bam.bai']},
     include_dirs=["."],
-    version="0.0.15",
+    version=__version__,
     description="GenomicRanges for Python.",
     author="Endre Bakken Stovner",
     author_email="endrebak85@gmail.com",

@@ -41,6 +41,8 @@ def fill_kwargs(kwargs):
         kwargs["suffixes"] = ["_a", "_b"]
     if not "suffix" in kwargs:
         kwargs["suffixes"] = ["_b"]
+    if not "sparse" in kwargs:
+        kwargs["sparse"] = {"self": False, "other": False}
 
     return kwargs
 
@@ -411,6 +413,7 @@ class PyRanges():
         "Want all intervals in self that overlap with other."
 
         # print(kwargs)
+        kwargs["sparse"] = {"self": False, "other": True}
         kwargs = fill_kwargs(kwargs)
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
@@ -425,6 +428,7 @@ class PyRanges():
         # print(kwargs)
         kwargs = fill_kwargs(kwargs)
         kwargs["invert"] = True
+        kwargs["sparse"] = {"self": False, "other": True}
         # print(kwargs)
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
@@ -447,6 +451,7 @@ class PyRanges():
     def intersect(self, other, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
+        kwargs["sparse"] = {"self": False, "other": True}
 
         dfs = pyrange_apply(_intersection, self, other, **kwargs)
 
@@ -481,6 +486,7 @@ class PyRanges():
     # @pyrange_or_df
     def subtract(self, other, **kwargs):
 
+        kwargs["sparse"] = {"self": False, "other": True}
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply(_subtraction, self, other, **kwargs)
@@ -500,6 +506,7 @@ class PyRanges():
 
     def cluster(self, strand=None, **kwargs):
 
+        kwargs["sparse"] = True
         df = pyrange_apply_single(_cluster, self, strand, kwargs)
 
         return PyRanges(df)
@@ -539,7 +546,6 @@ class PyRanges():
     def concat(self, other):
 
         return PyRanges(_concat(self, other))
-
 
 
     def jaccard(self, other, **kwargs):
