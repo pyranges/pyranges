@@ -12,7 +12,7 @@ def names():
 @pytest.fixture
 def chip_10(names):
 
-    df = pd.read_table("tests/chip_10.bed", header=None, names=names)
+    df = pd.read_csv("tests/chip_10.bed", header=None, names=names, sep="\t")
 
     gr = PyRanges(df)
 
@@ -23,7 +23,7 @@ def chip_10(names):
 @pytest.fixture
 def f1(names):
 
-    df = pd.read_table("tests/f1.bed", sep="\t", header=None, names="Chromosome  Start  End  Name Score Strand".split())
+    df = pd.read_csv("tests/f1.bed", sep="\t", header=None, names="Chromosome  Start  End  Name Score Strand".split())
 
     return PyRanges(df)
 
@@ -31,6 +31,6 @@ def f1(names):
 @pytest.fixture
 def f2(names):
 
-    df = pd.read_table("tests/f2.bed", sep="\t", header=None, names=names)
+    df = pd.read_csv("tests/f2.bed", sep="\t", header=None, names=names)
 
     return PyRanges(df)

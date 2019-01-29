@@ -71,7 +71,7 @@ def read_bedtools_result_set_op(bedtools_result, strandedness):
         usecols = [0, 1, 2]
         names = "Chromosome Start End".split()
 
-    return pd.read_table(StringIO(bedtools_result), header=None, usecols=usecols, names=names)
+    return pd.read_csv(StringIO(bedtools_result), header=None, usecols=usecols, names=names, sep="\t")
 
 
 def compare_results(bedtools_df, result):
@@ -138,7 +138,7 @@ def test_overlap(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(overlap_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split())
+    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
 
     result = gr.overlap(gr2, strandedness=strandedness)
 
@@ -155,7 +155,7 @@ def test_intersect(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(intersect_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split())
+    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
 
     result = gr.intersect(gr2, strandedness=strandedness)
 
@@ -173,7 +173,7 @@ def test_subtraction(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(subtract_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split())
+    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
 
     result = gr.subtract(gr2, strandedness=strandedness)
 
@@ -194,7 +194,7 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
     bedtools_result = run_bedtools(nearest_command, gr, gr2, strandedness, overlap, nearest_how)
 
-    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None, names="Chromosome Start End Strand Chromosome2 Distance".split(), usecols=[0, 1, 2, 5, 6, 12])
+    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Strand Chromosome2 Distance".split(), usecols=[0, 1, 2, 5, 6, 12], sep="\t")
 
     bedtools_df.Distance = bedtools_df.Distance.abs()
 
@@ -264,9 +264,9 @@ def test_join(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(join_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_table(StringIO(bedtools_result), header=None,
+    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None,
                                 names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split(),
-                                dtype={"Chromosome": "category", "Strand": "category"}).drop("Chromosome_b Overlap".split(), axis=1)
+                                dtype={"Chromosome": "category", "Strand": "category"}).drop("Chromosome_b Overlap".split(), axis=1, sep="\t")
 
     result = gr.join(gr2, strandedness=strandedness)
 

@@ -23,7 +23,7 @@ def read_bed(f):
 
     columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split()
 
-    df = pd.read_table(f, dtype={"Chromosome": "category", "Strand": "category"}, header=None)
+    df = pd.read_csv(f, dtype={"Chromosome": "category", "Strand": "category"}, header=None, sep="\t")
 
     df.columns = columns[:df.shape[1]]
 
@@ -94,7 +94,7 @@ def read_gtf(f, annotation=None):
     attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    df = pd.read_table(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes)
+    df = pd.read_csv(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes)
 
     # Since Start is 1-indexed
     df.Start -= 1

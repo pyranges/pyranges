@@ -648,7 +648,7 @@ def _nearest(scdf, ocdf, kwargs):
                                                 next_r_idx, next_dist)
 
 
-        ocdf = ocdf.reindex(r_idx, fill_value=-1) # instead of np.nan, so ints are not promoted to float
+        ocdf = ocdf.reindex(r_idx)
 
         ocdf.index = df_to_find_nearest_in.index
         ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
