@@ -264,9 +264,9 @@ def test_join(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(join_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None,
+    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, sep="\t",
                                 names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split(),
-                                dtype={"Chromosome": "category", "Strand": "category"}).drop("Chromosome_b Overlap".split(), axis=1, sep="\t")
+                                dtype={"Chromosome": "category", "Strand": "category"}).drop("Chromosome_b Overlap".split(), axis=1)
 
     result = gr.join(gr2, strandedness=strandedness)
 
