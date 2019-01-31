@@ -328,7 +328,6 @@ def pyrange_apply_single(function, self, strand, kwargs):
             results.append(result)
 
         keys = self.keys()
-        # raise
 
     elif not self.stranded:
 

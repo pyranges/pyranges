@@ -1,5 +1,3 @@
-
-
 import pytest
 
 from hypothesis import given, settings, reproduce_failure, unlimited, HealthCheck, seed

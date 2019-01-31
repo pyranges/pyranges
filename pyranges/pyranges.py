@@ -8,19 +8,22 @@ import logging
 
 try:
     import ray
-    ray.init(local_mode=True, logging_level=logging.CRITICAL)
-except:
+    if not ray.is_initialized():
+        ray.init(local_mode=True, logging_level=logging.CRITICAL, ignore_reinit_error=True)
+except Exception as e:
     import pyranges.raymock as ray
 
 from tabulate import tabulate
 
 
-# from pyranges.settings import pyranges_settings
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
-# from pyranges.methods import _cluster, _subtraction, _set_union, _set_intersection, _intersection, _nearest, _coverage, _overlap_write_both, _overlap, _tss, _tes, _jaccard, _lengths, _slack
-from pyranges.multithreaded import (_cluster, pyrange_apply_single, _write_both, _jaccard, _coverage,
-                                    _intersection, pyrange_apply, _nearest, _overlap, _first_df, _subtraction, _tss, _tes, _slack, _sort, merge_dfs, _concat, _index_as_col)
+from pyranges.multithreaded import (_cluster, pyrange_apply_single,
+                                    _write_both, _jaccard, _coverage,
+                                    _intersection, pyrange_apply, _nearest,
+                                    _overlap, _first_df, _subtraction, _tss,
+                                    _tes, _slack, _sort, merge_dfs, _concat,
+                                    _index_as_col)
 
 def fill_kwargs(kwargs):
 
@@ -214,6 +217,8 @@ class PyRanges():
     def __len__(self):
         return sum([ len(d) for d in self.values() ])
 
+    def __call__(self, eval_str):
+        return self.eval(eval_str)
 
     def __getattr__(self, name):
 
@@ -541,6 +546,24 @@ class PyRanges():
             return result
         else:
             return PyRanges(result)
+
+
+    def eval(self, eval_cmd, strand=True, as_pyranges=True, kwargs=None):
+
+        f = lambda df: eval(eval_cmd)
+
+        if kwargs is None:
+            kwargs = {}
+
+        f = ray.remote(f)
+
+        result = pyrange_apply_single(f, self, strand, kwargs)
+
+        if not as_pyranges:
+            return result
+        else:
+            return PyRanges(result)
+
 
     def concat(self, other):
 

@@ -59,9 +59,9 @@ def test_cluster(gr, strand):
         result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
 
         if not strand:
-            bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, usecols=[0, 1, 2], names="Chromosome Start End".split(), dtype={"Chromosome": "category"})
+            bedtools_df = pd.read_csv(StringIO(result), sep="\t", header=None, squeeze=True, usecols=[0, 1, 2], names="Chromosome Start End".split(), dtype={"Chromosome": "category"})
         else:
-            bedtools_df = pd.read_table(StringIO(result), header=None, squeeze=True, names="Chromosome Start End Strand".split(), dtype={"Chromosome": "category"})
+            bedtools_df = pd.read_csv(StringIO(result), sep="\t", header=None, squeeze=True, names="Chromosome Start End Strand".split(), dtype={"Chromosome": "category"})
 
     print("bedtools_df\n", bedtools_df)
     result = gr.cluster(strand=strand)
