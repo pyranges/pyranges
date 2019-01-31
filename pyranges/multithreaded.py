@@ -852,12 +852,11 @@ def _subtraction(scdf, ocdf, kwargs):
         strand = scdf.Strand.head(1).iloc[0]
         kwargs["strand"] = strand
 
-    oc = ray.get(_cluster.remote(ocdf, kwargs))
     # print("oc")
     # print(oc.head())
     # print(oc.dtypes)
     # print(oc.index.values.dtype)
-    o = NCLS(oc.Start.values, oc.End.values, oc.index.values)
+    o = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
     # print(o)
 
     # print("s")
@@ -963,29 +962,28 @@ def _lengths(df):
 
     return lengths
 
-@ray.remote
-def _jaccard(self, other, kwargs):
+# @ray.remote
+# def _jaccard(self, other, kwargs):
 
-    strandedness = kwargs["strandedness"]
+#     strandedness = kwargs["strandedness"]
 
-    if strandedness:
-        strand = True
-    else:
-        strand = False
+#     if strandedness:
+#         strand = True
+#     else:
+#         strand = False
 
-    s = _lengths(self).sum()
-    o = _lengths(other).sum()
+#     s = _lengths(self).sum()
+#     o = _lengths(other).sum()
 
-    res = ray.get(_intersection.remote(self, other, kwargs))
-    if isinstance(res, pd.DataFrame):
-        if not res.empty:
-            il = _lengths(res).sum()
-        else:
-            il = 0
-    else:
-        il = 0
+#     if isinstance(res, pd.DataFrame):
+#         if not res.empty:
+#             il = _lengths(res).sum()
+#         else:
+#             il = 0
+#     else:
+#         il = 0
 
-    return [ s, o, il ]
+#     return [ s, o, il ]
 
 
 @ray.remote

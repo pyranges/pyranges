@@ -19,7 +19,7 @@ from tabulate import tabulate
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 from pyranges.multithreaded import (_cluster, pyrange_apply_single,
-                                    _write_both, _jaccard, _coverage,
+                                    _write_both, _coverage,
                                     _intersection, pyrange_apply, _nearest,
                                     _overlap, _first_df, _subtraction, _tss,
                                     _tes, _slack, _sort, merge_dfs, _concat,
@@ -492,8 +492,11 @@ class PyRanges():
 
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs = fill_kwargs(kwargs)
+        strandedness = kwargs["strandedness"]
 
-        result = pyrange_apply(_subtraction, self, other, **kwargs)
+        strand = True if strandedness else False
+        other_clusters = other.cluster(strand=strand, **kwargs)
+        result = pyrange_apply(_subtraction, self, other_clusters, **kwargs)
 
         return PyRanges(result)
 
@@ -576,23 +579,18 @@ class PyRanges():
         strand = True if kwargs["strandedness"] else False
         self_clusters = self.cluster(strand=strand)
         other_clusters = other.cluster(strand=strand)
+        intersection = self.intersect(other, **kwargs)
 
-        results = pyrange_apply(_jaccard, self_clusters, other_clusters, **kwargs)
-        values = results.values()
-
-        ssum, osum, ilsum = 0, 0, 0
-        for s, o, il in values:
-            # print(s, o, il)
-            ssum += s
-            osum += o
-            ilsum += il
+        ssum = sum(v.sum() for v in self.lengths().values())
+        osum = sum(v.sum() for v in other.lengths().values())
+        ilsum = sum(v.sum() for v in intersection.lengths().values())
 
         if ssum + osum == ilsum:
-            jaccard = 1
+            jc = 1
         else:
-            jaccard = ilsum / (ssum + osum - ilsum)
+            jc = ilsum / (ssum + osum - ilsum)
 
-        return jaccard
+        return jc
 
     def slack(self, slack):
 
