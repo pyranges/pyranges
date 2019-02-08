@@ -224,7 +224,7 @@ def pyrange_apply(function, self, other, **kwargs):
             for (c, s), df in items:
 
                 if not c in other.chromosomes:
-                    odf = pr.PyRanges(pd.DataFrame(columns="Chromosome Start End".split()))
+                    odf = pd.DataFrame(columns="Chromosome Start End".split())
                 else:
                     odf = other.dfs[c]
 

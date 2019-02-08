@@ -30,7 +30,7 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 10
+    max_examples = 1000
     deadline = None
 
 
@@ -165,6 +165,7 @@ def test_intersect(gr, gr2, strandedness):
 @pytest.mark.parametrize("strandedness", ["same", "opposite", False]) #
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
+# @reproduce_failure('3.59.0', b'AXicY2RAA4woFBAAAABfAAQ=')
 def test_subtraction(gr, gr2, strandedness):
 
     subtract_command = "bedtools subtract {strand} -a {f1} -b {f2}"
@@ -216,17 +217,17 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_jaccard(gr, gr2, strandedness):
 
-    # jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
+    jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
-    # bedtools_result = run_bedtools(jaccard_command, gr, gr2, strandedness)
+    bedtools_result = run_bedtools(jaccard_command, gr, gr2, strandedness)
 
-    # bedtools_jaccard = float(bedtools_result.split("\n")[1].split()[2])
+    bedtools_jaccard = float(bedtools_result.split("\n")[1].split()[2])
 
     result = gr.jaccard(gr2, strandedness=strandedness)
 
     # there is a bug in bedtools, so cannot use as oracle
-    assert 0 <= result <= 1
-    # assert abs(result - bedtools_jaccard) < 0.001
+    # assert 0 <= result <= 1
+    assert abs(result - bedtools_jaccard) < 0.001
 
 # jaccard example, which should be 1, but bedtools considers 0.5:
 # +--------------+-----------+-----------+------------+-----------+----------+

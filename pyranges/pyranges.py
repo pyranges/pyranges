@@ -579,10 +579,10 @@ class PyRanges():
         strand = True if kwargs["strandedness"] else False
         self_clusters = self.cluster(strand=strand)
         other_clusters = other.cluster(strand=strand)
-        intersection = self.intersect(other, **kwargs)
+        intersection = self_clusters.intersect(other_clusters, **kwargs)
 
-        ssum = sum(v.sum() for v in self.lengths().values())
-        osum = sum(v.sum() for v in other.lengths().values())
+        ssum = sum(v.sum() for v in self_clusters.lengths().values())
+        osum = sum(v.sum() for v in other_clusters.lengths().values())
         ilsum = sum(v.sum() for v in intersection.lengths().values())
 
         if ssum + osum == ilsum:
@@ -683,6 +683,7 @@ class PyRanges():
 
     @property
     def stranded(self):
+        # print(self.keys())
         return len(list(self.keys())[0]) == 2
 
     @property
