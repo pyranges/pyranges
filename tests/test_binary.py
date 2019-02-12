@@ -226,6 +226,8 @@ def test_jaccard(gr, gr2, strandedness):
     result = gr.jaccard(gr2, strandedness=strandedness)
 
     # there is a bug in bedtools, so cannot always use as an oracle
+    # assert abs(result - bedtools_jaccard) < 0.001
+
     assert 0 <= result <= 1
 
 
