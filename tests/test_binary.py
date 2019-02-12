@@ -225,30 +225,8 @@ def test_jaccard(gr, gr2, strandedness):
 
     result = gr.jaccard(gr2, strandedness=strandedness)
 
-    # there is a bug in bedtools, so cannot use as oracle
-    # assert 0 <= result <= 1
+    # there is a bug in bedtools, so cannot always use as an oracle
     assert abs(result - bedtools_jaccard) < 0.001
-
-# jaccard example, which should be 1, but bedtools considers 0.5:
-# +--------------+-----------+-----------+------------+-----------+----------+
-# | Chromosome   |     Start |       End | Name       |     Score | Strand   |
-# | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
-# |--------------+-----------+-----------+------------+-----------+----------|
-# | chr1         |         1 |         2 | a          |         0 | +        |
-# +--------------+-----------+-----------+------------+-----------+----------+
-# PyRanges object has 1 sequences from 1 chromosomes.,
-# =+--------------+-----------+-----------+------------+-----------+----------+
-# | Chromosome   |     Start |       End | Name       |     Score | Strand   |
-# | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
-# |--------------+-----------+-----------+------------+-----------+----------|
-# | chr1         |         1 |         2 | a          |         0 | +        |
-# | chr1         |         1 |         2 | a          |         0 | -        |
-# +--------------+-----------+-----------+------------+-----------+----------+
-# PyRanges object has 2 sequences from 1 chromosomes., strandedness='same')
-#
-# bedtools jaccard -s  -a <(sort -k1,1 -k2,2n /tmp/tmpuxs7jtw0/f1.bed) -b <(sort -k1,1 -k2,2n /tmp/tmpuxs7jtw0/f2.bed)
-# intersection	union-intersection	jaccard	n_intersections
-# 1	2	0.5	1
 
 
 

@@ -174,11 +174,6 @@ def make_unary_sparse(kwargs, df):
 
 def pyrange_apply(function, self, other, **kwargs):
 
-    # if not set(self.chromosomes).intersection(other.chromosomes):
-    #     self_str = " ".join(self.chromosomes)
-    #     other_str = " ".join(other.chromosomes)
-    #     raise Exception("No overlapping chromosomes between self and other \nself: {}\nother: {}".format(self_str, other_str))
-
     strandedness = kwargs["strandedness"]
 
     other_strand = {"+": "-", "-": "+"}
@@ -421,6 +416,7 @@ def _first_df(scdf, ocdf, kwargs):
         _indexes = it.has_containment(starts, ends, indexes)
 
     return scdf.reindex(_indexes)
+
 
 @ray.remote
 def _overlap(scdf, ocdf, kwargs):
