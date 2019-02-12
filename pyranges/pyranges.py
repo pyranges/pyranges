@@ -578,17 +578,16 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         strand = True if kwargs["strandedness"] else False
 
-        intersection_sum = sum(v.sum() for v in self.intersect(other, **kwargs).lengths().values())
-        lengths_self = sum(v.sum() for v in self.lengths().values())
-        lengths_other = sum(v.sum() for v in other.lengths().values())
-        union_sum = lengths_self + lengths_other
+        intersection_sum = sum(v.sum() for v in self.set_intersect(other, **kwargs).lengths().values())
+        union_sum = sum(v.sum() for v in self.set_union(other, **kwargs).lengths().values())
+
+        # lengths_self = sum(v.sum() for v in self.lengths().values())
+        # lengths_other = sum(v.sum() for v in other.lengths().values())
+        # union_sum = lengths_self + lengths_other
         # print("union_sum", union_sum)
         # print("intersection_sum", intersection_sum)
 
-        if union_sum == intersection_sum:
-            jc = 1
-        else:
-            jc = intersection_sum / (union_sum - intersection_sum)
+        jc = intersection_sum / (union_sum)
 
         return jc
 
