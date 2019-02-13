@@ -12,12 +12,7 @@ from pyrle import PyRles, Rle
 
 from pyranges.version import __version__
 
-# from pyranges.settings import pyranges_settings
-
-# pyranges_settings = pyranges_settings
-
 get_example_path = data.get_example_path
-
 
 def read_bed(f):
 
@@ -94,24 +89,29 @@ def read_gtf(f, annotation=None):
     attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    df = pd.read_csv(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes)
+    df_iter = pd.read_csv(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes, chunksize=int(1e4))
 
-    # Since Start is 1-indexed
-    df.Start -= 1
+    dfs = []
+    for df in df_iter:
+        # Since Start is 1-indexed
+        df.Start -= 1
 
-    if sum(df.Score == ".") == len(df):
-        cols_to_concat = "Chromosome Start End Strand Feature".split()
-    else:
-        cols_to_concat = "Chromosome Start End Strand Feature Score".split()
+        if sum(df.Score == ".") == len(df):
+            cols_to_concat = "Chromosome Start End Strand Feature".split()
+        else:
+            cols_to_concat = "Chromosome Start End Strand Feature Score".split()
 
-    extract = _fetch_gene_transcript_exon_id(df.Attribute, annotation)
-    extract.columns = "GeneID TranscriptID ExonNumber ExonID".split()
+        extract = _fetch_gene_transcript_exon_id(df.Attribute, annotation)
+        extract.columns = "GeneID TranscriptID ExonNumber ExonID".split()
 
-    extract.ExonNumber = extract.ExonNumber.astype(float)
+        extract.ExonNumber = extract.ExonNumber.astype(float)
 
-    df = pd.concat([df[cols_to_concat],
-                        extract], axis=1)
+        df = pd.concat([df[cols_to_concat],
+                            extract], axis=1)
 
+        dfs.append(df)
+
+    df = pd.concat(dfs)
 
     return PyRanges(df)
 
