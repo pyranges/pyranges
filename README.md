@@ -1,6 +1,6 @@
 # pyranges
 
-[![Build Status](https://travis-ci.org/endrebak/pyranges.svg?branch=master)](https://travis-ci.org/endrebak/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
+[![Build Status](https://travis-ci.org/biocore-ntnu/pyranges.svg?branch=master)](https://travis-ci.org/biocore-ntnu/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges)
 
 
 ## Release
@@ -20,19 +20,21 @@ the data.
 PyRanges also contains a run-length encoding library for extremely efficient
 arithmetic computation of scores associated with genomic intervals.
 
-### Paper
-
-Being written here: https://github.com/endrebak/pyranges-paper
 
 ### Documentation
 
 https://endrebak.github.io/pyranges/
+
 
 ### Install
 
 ```bash
 pip install pyranges
 ```
+
+### Paper
+
+Being written here: https://github.com/endrebak/pyranges-paper
 
 ### TODO
 
@@ -47,14 +49,17 @@ For the future:
 * Nearest: upstream/downstream
 * K-nearest
 
-### Performance
 
-<img src="graphs/time.png" width="50%" height="50%" />
-<img src="graphs/memory.png" width="50%" height="50%" />
+#### Performance
 
-See how the timings are performed here:
-https://github.com/endrebak/pyranges-paper I have tried to aggressively optimize
-the R GenomicRanges runs for both time and memory.
+
+<img src="./graphs/main_paper_annotation_binary.png" />
+
+More information here:
+
+[Time](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/time.md)
+[Memory](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/memory.md)
+
 
 ### See also
 

@@ -126,10 +126,10 @@ def _index_as_col(df, kwargs):
 
 def call_f(f, df, odf, kwargs):
 
-    try:
-        return f.remote(df, odf, kwargs)
-    except:
-        return f.remote(df, odf)
+    # try:
+    return f.remote(df, odf, kwargs)
+    # except:
+    #     return f.remote(df, odf)
 
 
 def make_sparse(df):
@@ -491,7 +491,7 @@ def _intersection(scdf, ocdf, kwargs):
         _self_indexes, _other_indexes = oncls.all_overlaps_both(starts, ends, indexes)
     elif how == "containment":
         _self_indexes, _other_indexes = oncls.all_containments_both(starts, ends, indexes)
-    elif how == "both":
+    elif how == "first":
         _self_indexes, _other_indexes = oncls.first_overlap_both(starts, ends, indexes)
 
     _self_indexes = _self_indexes

@@ -30,7 +30,7 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 1000
+    max_examples = 100
     deadline = None
 
 
