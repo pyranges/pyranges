@@ -58,6 +58,7 @@ Comprehensive set of graphs for many types of functions on different datasets ar
 
 [Memory](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/memory.md)
 
+The exact code tested is found [here](https://github.com/endrebak/pyranges-paper/tree/master/supplementaries).
 
 ### See also
 
