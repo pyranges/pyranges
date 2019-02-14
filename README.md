@@ -43,10 +43,7 @@ For the future:
 * Allow writing to different UCSC genome-browser compatible formats such as
   bigwig, bedgraph, histograms, colored bed etc
 * Add visualization capabilites?
-* Enable annotation with featurefetch?
-* Add dtypes to PyRanges-header?
 * Find sequences of ranges with pyfaidx
-* Nearest: upstream/downstream
 * K-nearest
 
 
@@ -55,9 +52,10 @@ For the future:
 
 <img src="./graphs/main_paper_annotation_binary.png" />
 
-More information here:
+Comprehensive set of graphs for many types of functions on different datasets are here:
 
 [Time](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/time.md)
+
 [Memory](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/memory.md)
 
 
