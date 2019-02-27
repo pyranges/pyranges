@@ -23,7 +23,7 @@ arithmetic computation of scores associated with genomic intervals.
 
 ### Documentation
 
-https://endrebak.github.io/pyranges/
+https://biocore-ntnu.github.io/pyranges/
 
 
 ### Install
