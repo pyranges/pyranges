@@ -47,7 +47,6 @@ def get_tuple(self, val):
 
 def get_double(self, val):
 
-    # "chr1", 5:10
     if len(val) == 2 and val[0] in self.chromosomes and isinstance(val[1], slice):
         chromosome, loc = val
         start = loc.start or 0
@@ -55,8 +54,8 @@ def get_double(self, val):
             dfs = {k: df for k, df in self.items() if k[0] == chromosome}
             max_end = max([df.End.max() for df in dfs.values()])
         else:
-            dfs = self.dfs[val]
-            max_end = df.End.max()
+            dfs = {val[0]: self.dfs[val[0]]}
+            max_end = list(dfs.values())[0].End.max()
 
         # in case 1:None
         stop = loc.stop or max(max_end, start)

@@ -199,13 +199,13 @@ class PyRanges():
         if copy_df:
             df = df.copy()
 
+        if df is False or df is None:
+            df = create_pyranges_df(seqnames, starts, ends, strands)
+
         if isinstance(df, pd.DataFrame):
             df = set_dtypes(df, extended)
 
-        if df is False or df is None:
-            df = create_pyranges_df(seqnames, starts, ends, strands)
-            self.__dict__["dfs"] = create_df_dict(df)
-        elif isinstance(df, pd.DataFrame):
+        if isinstance(df, pd.DataFrame):
             self.__dict__["dfs"] = create_df_dict(df)
         else:
             # df is actually dict of dfs
