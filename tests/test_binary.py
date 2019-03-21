@@ -30,7 +30,7 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 100
+    max_examples = 1000
     deadline = None
 
 
@@ -165,7 +165,6 @@ def test_intersect(gr, gr2, strandedness):
 @pytest.mark.parametrize("strandedness", ["same", "opposite", False]) #
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
-# @reproduce_failure('3.59.0', b'AXicY2RAA4woFBAAAABfAAQ=')
 def test_subtraction(gr, gr2, strandedness):
 
     subtract_command = "bedtools subtract {strand} -a {f1} -b {f2}"
@@ -181,7 +180,6 @@ def test_subtraction(gr, gr2, strandedness):
 
 nearest_hows = [None, "upstream", "downstream"]
 overlaps = [True, False]
-strandedness = [False, "same", "opposite"]
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("nearest_how,overlap,strandedness", product(nearest_hows, overlaps, strandedness))

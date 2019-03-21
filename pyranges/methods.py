@@ -1,3 +1,31 @@
+# discarded decorators
+
+
+# def pyrange_or_df(func):
+
+#     def extension(self, other, *args, **kwargs):
+#         df = func(self, other, *args, **kwargs)
+
+#         if kwargs.get("df"):
+#             return df
+
+#         return PyRanges(df)
+
+#     return extension
+
+
+# def pyrange_or_df_single(func):
+
+#     def extension(self, *args, **kwargs):
+#         df = func(self, *args, **kwargs)
+
+#         if kwargs.get("df"):
+#             return df
+
+#         return PyRanges(df)
+
+#     return extension
+
 # import pandas as pd
 # import numpy as np
 

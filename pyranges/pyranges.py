@@ -5,6 +5,7 @@ from collections import defaultdict, OrderedDict
 
 import logging
 
+import pyranges as pr
 
 try:
     import ray
@@ -28,7 +29,7 @@ from pyranges.multithreaded import (_cluster, pyrange_apply_single,
 def fill_kwargs(kwargs):
 
     if not "strandedness" in kwargs:
-        kwargs["strandedness"] = "same"
+        kwargs["strandedness"] = None
     if not "suffix" in kwargs:
         kwargs["suffix"] = "_b"
     if not "overlap" in kwargs:
@@ -131,30 +132,6 @@ def return_empty_if_both_empty(func):
     return extended_func
 
 
-def pyrange_or_df(func):
-
-    def extension(self, other, *args, **kwargs):
-        df = func(self, other, *args, **kwargs)
-
-        if kwargs.get("df"):
-            return df
-
-        return PyRanges(df)
-
-    return extension
-
-
-def pyrange_or_df_single(func):
-
-    def extension(self, *args, **kwargs):
-        df = func(self, *args, **kwargs)
-
-        if kwargs.get("df"):
-            return df
-
-        return PyRanges(df)
-
-    return extension
 
 
 
@@ -177,10 +154,25 @@ def set_dtypes(df, extended):
         else:
             df.ExonNumber = df.ExonNumber.astype(np.int16)
 
+    df.columns = (c.replace("#Chromosome", "Chromosome") for c in df.columns)
+
     for col, dtype in dtypes.items():
 
         if df[col].dtype.name != dtype:
             df[col] = df[col].astype(dtype)
+
+    return df
+
+def read_path(p):
+
+    p = p.lower()
+    if p.endswith((".gtf", ".gff", ".gtf.gz", ".gff.gz")):
+        df = pr.read_gtf(p, output_df=True)
+    elif p.endswith((".bed", ".bed.gz")):
+        df = pr.read_bed(p, output_df=True)
+    else:
+        df = None
+        # df = pr.
 
     return df
 
@@ -190,17 +182,19 @@ class PyRanges():
     dfs = None
     gf = None
 
-    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=False, extended=False):
+    def __init__(self, data=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=False, extended=False):
 
-        if isinstance(df, PyRanges):
+        if isinstance(data, PyRanges):
             raise Exception("Object is already a PyRange.")
-
 
         if copy_df:
             df = df.copy()
 
-        if df is False or df is None:
+        if data is False or data is None:
             df = create_pyranges_df(seqnames, starts, ends, strands)
+
+        if isinstance(data, str):
+            df = read_path(data)
 
         if isinstance(df, pd.DataFrame):
             df = set_dtypes(df, extended)

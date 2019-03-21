@@ -195,7 +195,6 @@ def pyrange_apply(function, self, other, **kwargs):
     items = natsorted(self.dfs.items())
     keys = natsorted(self.dfs.keys())
 
-
     if strandedness:
 
         for (c, s), df in items:
@@ -344,19 +343,14 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["chromosome"] = c
 
             dfs = self[c]
-            # print(dfs.values)
-            # print(type(dfs.values))
-            # print(len(dfs.values))
+
             if len(dfs.keys()) == 2:
                 df1, df2 = dfs.values()
                 # merge strands
                 df1 = merge_dfs.remote(df1, df2, kwargs)
             else:
                 df1 = dfs.values()[0]
-            # print(type( df1 ))
-            # print(type( df2 ))
-            # print(df1)
-            # print(df2)
+
             df1 = make_unary_sparse(kwargs, df1)
             result = call_f_single(function, df1, kwargs)
             results.append(result)
@@ -378,9 +372,6 @@ def _cluster(df, kwargs):
     chromosome, strand = kwargs["chromosome"], kwargs.get("strand", None)
 
     cdf = df.sort_values("Start")
-
-    # print("ooooooool" * 10)
-    # cdf = sort_one_by_one(df, "Start", "End")
 
     starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
 
