@@ -182,23 +182,24 @@ class PyRanges():
     dfs = None
     gf = None
 
-    def __init__(self, data=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=False, extended=False):
+    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=False, extended=False):
 
-        if isinstance(data, PyRanges):
+        if isinstance(df, PyRanges):
             raise Exception("Object is already a PyRange.")
 
         if copy_df:
             df = df.copy()
 
-        if data is False or data is None:
+        if df is False or df is None:
             df = create_pyranges_df(seqnames, starts, ends, strands)
 
-        if isinstance(data, str):
-            df = read_path(data)
+        if isinstance(df, str):
+            df = read_path(df)
 
         if isinstance(df, pd.DataFrame):
             df = set_dtypes(df, extended)
 
+        
         if isinstance(df, pd.DataFrame):
             self.__dict__["dfs"] = create_df_dict(df)
         else:
