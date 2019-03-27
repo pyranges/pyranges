@@ -38,6 +38,16 @@ better_dfs_min = data_frames(index=indexes(dtype=np.int64, min_size=1, unique=Tr
                                       column("Strand", strands)])
 
 
+better_dfs_min_2 = data_frames(index=indexes(dtype=np.int64, min_size=2, unique=True, elements=lengths),
+                             columns=[column("Chromosome", chromosomes_small),
+                                      column("Start", elements=lengths),
+                                      column("End", elements=small_lengths),
+                                      # column("Name", elements=names),
+                                      # column("Score", elements=scores),
+                                      column("Strand", strands)])
+
+
+
 better_dfs_min_single_chromosome = data_frames(index=indexes(dtype=np.int64, min_size=1, unique=True, elements=lengths),
                                                columns=[column("Chromosome", chromosomes_small),
                                                         column("Start", elements=lengths),
@@ -52,6 +62,28 @@ runlengths_same_length_integers = data_frames(index=indexes(dtype=np.int64, min_
                                               column("Values", st.integers(min_value=1, max_value=int(1e4))),
                                               column("Values2", st.integers(min_value=1, max_value=int(1e4)))])
 
+
+
+@st.composite
+def dfs_min2(draw):
+    df = draw(better_dfs_min_2)
+    # strand = draw(use_strand)
+    df.loc[:, "End"] += df.Start
+
+    df.insert(3, "Name", "a")
+    df.insert(4, "Score", 0)
+
+    # if not strand:
+    #     df = df.drop("Strand", axis=1)
+
+    gr = PyRanges(df, extended=True)
+    # gr = PyRanges(df)
+
+    # do not sort like this, use pyranges sort
+    # np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
+    # gr.df = df.reindex(np.random.permutation(df.index.values))
+
+    return gr
 
 @st.composite
 def dfs_min(draw):

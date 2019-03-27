@@ -7,12 +7,6 @@ import logging
 
 import pyranges as pr
 
-try:
-    import ray
-    if not ray.is_initialized():
-        ray.init(local_mode=True, logging_level=logging.CRITICAL, ignore_reinit_error=True)
-except Exception as e:
-    import pyranges.raymock as ray
 
 from tabulate import tabulate
 
@@ -24,7 +18,7 @@ from pyranges.multithreaded import (_cluster, pyrange_apply_single,
                                     _intersection, pyrange_apply, _nearest,
                                     _overlap, _first_df, _subtraction, _tss,
                                     _tes, _slack, _sort, merge_dfs, _concat,
-                                    _index_as_col)
+                                    _index_as_col, _relative_distance)
 
 def fill_kwargs(kwargs):
 
@@ -574,17 +568,62 @@ class PyRanges():
         strand = True if kwargs["strandedness"] else False
 
         intersection_sum = sum(v.sum() for v in self.set_intersect(other, **kwargs).lengths().values())
-        union_sum = sum(v.sum() for v in self.set_union(other, **kwargs).lengths().values())
 
-        # lengths_self = sum(v.sum() for v in self.lengths().values())
-        # lengths_other = sum(v.sum() for v in other.lengths().values())
-        # union_sum = lengths_self + lengths_other
-        # print("union_sum", union_sum)
-        # print("intersection_sum", intersection_sum)
+        union_sum = 0
+        for gr in [self, other]:
+            union_sum += sum(v.sum() for v in gr.cluster(strand=strand).lengths().values())
 
-        jc = intersection_sum / (union_sum)
+        denominator = (union_sum - intersection_sum)
+        if denominator == 0:
+            return 1
+        else:
+            jc = intersection_sum / denominator
 
         return jc
+
+
+
+    def relative_distance(self, other, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+        result = pyrange_apply(_relative_distance, self, other, **kwargs)
+
+        result = pd.Series(np.concatenate(list(result.values())))
+
+        not_nan = ~np.isnan(result)
+        result.loc[not_nan] = np.floor(result[not_nan] * 100) / 100
+        vc = result.value_counts(dropna=False).to_frame().reset_index()
+        vc.columns = "reldist count".split()
+        vc.insert(vc.shape[1], "total", len(result))
+        vc.insert(vc.shape[1], "fraction", vc["count"] / len(result))
+        vc = vc.sort_values("reldist", ascending=True)
+        return vc
+
+        # print(vc)
+        # raise
+        
+        # d = defaultdict(int)
+        # for r in result:
+        #     d[str(r)] += 1
+
+        # total = len(result)
+        # rowdicts = []
+        # for k, v in d.items():
+
+        #     if "inf" in k:
+        #         continue
+
+        #     k = np.float(k)
+        #     rowdict = {"reldist": k, "count": v, "total": total, "fraction": v/total}
+        #     rowdicts.append(rowdict)
+
+        # # pd.DataFrame({"reldist": result, "count": len(result), "total": })
+
+        # if rowdicts:
+        #     return pd.DataFrame.from_dict(rowdicts)["reldist count total fraction".split()].sort_values("reldist")
+        # else:
+        #     return pd.DataFrame(columns="reldist count total fraction".split())
+
 
     def slack(self, slack):
 
@@ -735,6 +774,15 @@ class PyRanges():
 
         return lengths
 
+    
+    def midpoints(self):
+
+        midpoints = {}
+        for k, df in self.items():
+            midpoints[k] = (df.End + df.Start) / 2
+
+        return midpoints
+
 
     def summary(self):
 
@@ -756,7 +804,6 @@ class PyRanges():
 
         summary = pd.concat(summaries.values(), axis=1)
         summary.columns = list(summaries)
-
 
         str_repr = tabulate(summary, headers=summary.columns, tablefmt='psql')
         print(str_repr)

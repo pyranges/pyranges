@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>6 Sorting PyRanges | PyRanges documentation</title>
-  <meta name="description" content="6 Sorting PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="6 Sorting PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="6 Sorting PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-01-18">
+<meta name="date" content="2019-03-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="summarizing-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -176,35 +175,35 @@ cs <span class="op">=</span> pr.data.chipseq()
 <p>Custom sorting can be done after you are done with the PyRanges-related functionality. Then you can extract the underlying dataframes with df and sort it:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">df <span class="op">=</span> cs_sorted.df
 <span class="bu">print</span>(df.head())</code></pre></div>
-<pre><code>##   Chromosome    Start      End Name  Score Strand
-## 0       chr1  1541598  1541623   U0      0      +
-## 1       chr1  1599121  1599146   U0      0      +
-## 2       chr1  3504032  3504057   U0      0      +
-## 3       chr1  3806532  3806557   U0      0      +
-## 4       chr1  5079955  5079980   U0      0      +</code></pre>
+<pre><code>##   Chromosome    Start      End Strand
+## 0       chr1  1541598  1541623      +
+## 1       chr1  1599121  1599146      +
+## 2       chr1  3504032  3504057      +
+## 3       chr1  3806532  3806557      +
+## 4       chr1  5079955  5079980      +</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">df_sorted <span class="op">=</span> df.sort_values([<span class="st">&quot;Chromosome&quot;</span>, <span class="st">&quot;Start&quot;</span>, <span class="st">&quot;End&quot;</span>])
 <span class="bu">print</span>(df_sorted.head(<span class="dv">20</span>))</code></pre></div>
-<pre><code>##    Chromosome    Start      End Name  Score Strand
-## 0        chr1  1325303  1325328   U0      0      -
-## 0        chr1  1541598  1541623   U0      0      +
-## 1        chr1  1599121  1599146   U0      0      +
-## 1        chr1  1820285  1820310   U0      0      -
-## 2        chr1  2448322  2448347   U0      0      -
-## 3        chr1  3046141  3046166   U0      0      -
-## 4        chr1  3437168  3437193   U0      0      -
-## 2        chr1  3504032  3504057   U0      0      +
-## 5        chr1  3637087  3637112   U0      0      -
-## 6        chr1  3681903  3681928   U0      0      -
-## 3        chr1  3806532  3806557   U0      0      +
-## 7        chr1  3953790  3953815   U0      0      -
-## 8        chr1  5037292  5037317   U0      0      -
-## 4        chr1  5079955  5079980   U0      0      +
-## 5        chr1  5233543  5233568   U0      0      +
-## 6        chr1  5301327  5301352   U0      0      +
-## 7        chr1  5431308  5431333   U0      0      +
-## 8        chr1  5449222  5449247   U0      0      +
-## 9        chr1  5481750  5481775   U0      0      -
-## 10       chr1  5699351  5699376   U0      0      -</code></pre>
+<pre><code>##    Chromosome    Start      End Strand
+## 0        chr1  1325303  1325328      -
+## 0        chr1  1541598  1541623      +
+## 1        chr1  1599121  1599146      +
+## 1        chr1  1820285  1820310      -
+## 2        chr1  2448322  2448347      -
+## 3        chr1  3046141  3046166      -
+## 4        chr1  3437168  3437193      -
+## 2        chr1  3504032  3504057      +
+## 5        chr1  3637087  3637112      -
+## 6        chr1  3681903  3681928      -
+## 3        chr1  3806532  3806557      +
+## 7        chr1  3953790  3953815      -
+## 8        chr1  5037292  5037317      -
+## 4        chr1  5079955  5079980      +
+## 5        chr1  5233543  5233568      +
+## 6        chr1  5301327  5301352      +
+## 7        chr1  5431308  5431333      +
+## 8        chr1  5449222  5449247      +
+## 9        chr1  5481750  5481775      -
+## 10       chr1  5699351  5699376      -</code></pre>
 <p>Now the df is sorted and start and end with interleaved strands.</p>
 
 </div>
@@ -232,11 +231,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -244,10 +242,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

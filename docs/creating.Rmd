@@ -19,7 +19,7 @@ import pyranges as pr
 
 chipseq = pr.get_example_path("chipseq.bed")
 
-df = pd.read_table(chipseq, header=None, names="Chromosome Start End Name Score Strand".split())
+df = pd.read_csv(chipseq, header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
 
 print(df.head(2))
 print(df.tail(2))
@@ -48,7 +48,7 @@ print(gr)
 
 #### Using `read_bed`, `read_gtf` or `read_bam` {-}
 
-The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam [^1].
+The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam [^].
 
 ```{python tidy=FALSE}
 ensembl_path = pr.get_example_path("ensembl.gtf")
@@ -56,4 +56,4 @@ gr = pr.read_gtf(ensembl_path)
 print(gr)
 ```
 
-[^1]: PyRanges uses the pysam library which requires that the bam file must have an index.
+[^]: PyRanges uses the pysam library which requires that the bam file must have an index.

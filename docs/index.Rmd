@@ -33,7 +33,7 @@ chr1 4 7 23.8 +
 chr1 6 11 0.13 -
 chr2 0 14 42.42 +"""
 
-df1 = pd.read_table(StringIO(f1), sep="\s+")
+df1 = pd.read_csv(StringIO(f1), sep="\s+")
 
 gr1 = PyRanges(df1)
 ```
@@ -57,7 +57,7 @@ chr1 5 6 -0.01 -
 chr1 9 12 200 +
 chr3 0 14 21.21 -"""
 
-df2 = pd.read_table(StringIO(f2), sep="\s+")
+df2 = pd.read_csv(StringIO(f2), sep="\s+")
 
 gr2 = PyRanges(df2)
 

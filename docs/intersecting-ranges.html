@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>9 Intersecting Ranges | PyRanges documentation</title>
-  <meta name="description" content="9 Intersecting Ranges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="9 Intersecting Ranges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="9 Intersecting Ranges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-01-18">
+<meta name="date" content="2019-03-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="overlapping-ranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -137,7 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="intersecting-ranges" class="section level1">
 <h1><span class="header-section-number">9</span> Intersecting Ranges</h1>
-<p>PyRanges objects can be intersected with other PyRanges to find the subset of the genome that is contained in both. The regular intersect-method finds the intersection of all combinations of ranges: <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
+<p>PyRanges objects can be intersected with other PyRanges to find the subset of the genome that is contained in both. The regular intersect-method finds the intersection of all combinations of ranges: <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 gr <span class="op">=</span> pr.data.aorta()
 gr2 <span class="op">=</span> pr.data.aorta2()
@@ -146,27 +145,24 @@ gr2 <span class="op">=</span> pr.data.aorta2()
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand   |
 ## | (int8)       | (int32)   | (int32)   | (object)   | (int64)   | (int8)   |
 ## |--------------+-----------+-----------+------------+-----------+----------|
+## | chr1         | 9988      | 10138     | H3K27me3   | 7         | +        |
 ## | chr1         | 10073     | 10138     | H3K27me3   | 7         | +        |
-## | chr1         | 10073     | 10152     | H3K27me3   | 5         | +        |
-## | chr1         | 10073     | 10223     | H3K27me3   | 1         | +        |
+## | chr1         | 10079     | 10138     | H3K27me3   | 7         | +        |
 ## | ...          | ...       | ...       | ...        | ...       | ...      |
-## | chr1         | 10241     | 10278     | H3K27me3   | 6         | -        |
 ## | chr1         | 10241     | 10281     | H3K27me3   | 6         | -        |
 ## | chr1         | 10241     | 10348     | H3K27me3   | 6         | -        |
+## | chr1         | 10280     | 10440     | H3K27me3   | 6         | -        |
 ## +--------------+-----------+-----------+------------+-----------+----------+
-## PyRanges object has 27 sequences from 1 chromosomes.</code></pre>
-<p>The set_intersect method clusters the intervals (i.e. merges them into one) before finding the intersect: <a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></p>
+## PyRanges object has 49 sequences from 1 chromosomes.</code></pre>
+<p>The set_intersect method clusters the intervals (i.e. merges them into one) before finding the intersect: <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersect(gr2))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+
-## | Chromosome   |     Start |       End | Strand   |
-## | (int8)       |   (int32) |   (int32) | (int8)   |
-## |--------------+-----------+-----------+----------|
-## | chr1         |     10073 |     10223 | +        |
-## | chr1         |     10246 |     10272 | +        |
-## | chr1         |     10280 |     10445 | +        |
-## | chr1         |      9988 |     10348 | -        |
-## +--------------+-----------+-----------+----------+
-## PyRanges object has 4 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+-----------+-----------+
+## | Chromosome   |     Start |       End |
+## | (int8)       |   (int32) |   (int32) |
+## |--------------+-----------+-----------|
+## | chr1         |      9988 |     10445 |
+## +--------------+-----------+-----------+
+## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------+
@@ -213,9 +209,9 @@ gr2 <span class="op">=</span> pr.data.aorta2()
 </div>
 <div class="footnotes">
 <hr />
-<ol start="2">
-<li id="fn2"><p>This is the same behavior as bedtools intersect.<a href="intersecting-ranges.html#fnref2">↩</a></p></li>
-<li id="fn3"><p>This is the same behavior as Bioconductor GenomicRanges intersect.<a href="intersecting-ranges.html#fnref3">↩</a></p></li>
+<ol start="1">
+<li id="fn1"><p>This is the same behavior as bedtools intersect.<a href="intersecting-ranges.html#fnref1">↩</a></p></li>
+<li id="fn2"><p>This is the same behavior as Bioconductor GenomicRanges intersect.<a href="intersecting-ranges.html#fnref2">↩</a></p></li>
 </ol>
 </div>
             </section>
@@ -242,11 +238,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -254,10 +249,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

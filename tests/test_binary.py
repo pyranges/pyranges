@@ -18,7 +18,7 @@ import numpy as np
 
 
 from tests.helpers import assert_df_equal
-from tests.hypothesis_helper import dfs_min
+from tests.hypothesis_helper import dfs_min2, dfs_min
 
 
 
@@ -43,7 +43,7 @@ def run_bedtools(command, gr, gr2, strandedness, nearest_overlap=False, nearest_
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[nearest_overlap]
     bedtools_how = {"upstream": "-id", "downstream": "-iu", None: ""}[nearest_how] + " -D a"
-    print("bedtools how:", bedtools_how)
+    # print("bedtools how:", bedtools_how)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
@@ -213,18 +213,23 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 @pytest.mark.parametrize("strandedness", no_opposite)
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
+@reproduce_failure('4.5.7', b'AXicY2QAAUYGGGCEYEYgZoIwIEwYAAABggAQ')
 def test_jaccard(gr, gr2, strandedness):
 
     # jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
     # bedtools_result = run_bedtools(jaccard_command, gr, gr2, strandedness)
+    # print(bedtools_result)
 
     # bedtools_jaccard = float(bedtools_result.split("\n")[1].split()[2])
+    # print(bedtools_jaccard)
 
+    # https://github.com/arq5x/bedtools2/issues/645
+    # will make tests proper when bedtools is fixed
     result = gr.jaccard(gr2, strandedness=strandedness)
 
-    # there is a bug in bedtools, so cannot always use as an oracle
     # assert abs(result - bedtools_jaccard) < 0.001
+
 
     assert 0 <= result <= 1
 
@@ -251,3 +256,51 @@ def test_join(gr, gr2, strandedness):
         assert bedtools_df.empty
     else:
         assert_df_equal(result.df, bedtools_df)
+
+
+
+@pytest.mark.bedtools
+@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min2(), gr2=dfs_min2())
+# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIiBmArPAGAj+w3mMcDEoBQAcwgEN')
+# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIzhgxBQCAAC7AAc=')
+# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwiAspGFgAAAANEACA==')
+# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwiAshFCEIqZgQEAAQMADA==')
+# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwiAspGFgAAAANEACA==')
+# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIzhgRBZiZISJAQAA7QAK')
+# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIzhghAtBWVAAAAD2AAk=')
+# @reproduce_failure('4.5.7', b'AXicY2RgYGCEITBgApOMKOInGWAAAAk8ANQ=')
+def test_reldist(gr, gr2):
+
+
+    reldist_command = "bedtools reldist -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
+
+    bedtools_result = run_bedtools(reldist_command, gr, gr2, False)
+    bedtools_result = pd.read_csv(StringIO(bedtools_result), sep="\t")
+    print(bedtools_result)
+    # print(bedtools_result.dtypes)
+    # print(bedtools_result.split("\n")[1:])
+    result = gr.relative_distance(gr2)
+    print(result)
+
+    # result = pd.concat([pd.DataFrame(v) for v in result.values()])
+    assert list(bedtools_result["count"]) == result["count"].to_list()
+    # print(result)
+    # print(result.dtypes)
+
+    # if result.empty and bedtools_result.empty:
+    #     assert 1
+    # else:
+    #     assert result.equals(bedtools_result)
+
+    # bedtools_jaccard = float(bedtools_result.split("\n")[1].split()[2])
+    # print(bedtools_jaccard)
+
+    # https://github.com/arq5x/bedtools2/issues/645
+    # will make tests proper when bedtools is fixed
+    # result = gr.jaccard(gr2, strandedness=strandedness)
+
+    # assert abs(result - bedtools_jaccard) < 0.001
+
+
+    # assert 0 <= result <= 1

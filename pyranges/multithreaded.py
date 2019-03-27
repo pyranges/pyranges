@@ -13,10 +13,10 @@ from collections import defaultdict
 
 from functools import wraps
 
-try:
-    import ray
-except:
-    import pyranges.raymock as ray
+# try:
+#     import ray
+# except:
+import pyranges.raymock as ray
 
 import sys
 
@@ -789,38 +789,38 @@ def _nearest(scdf, ocdf, kwargs):
 
 #     return nearest_df, df_to_find_nearest_in
 
-def _set_union(scdf, ocdf, **kwargs):
+# def _set_union(scdf, ocdf, **kwargs):
 
-    chromosome, strand = parse_grpby_key(kwargs["key"])
+#     chromosome, strand = parse_grpby_key(kwargs["key"])
 
-    strandedness = kwargs["strandedness"]
-    strand = True if strandedness == "same" else False
+#     strandedness = kwargs["strandedness"]
+#     strand = True if strandedness == "same" else False
 
-    if len(scdf) == 0:
-        return _cluster(ocdf, chromosome, strand=strand)
-    elif len(ocdf) == 0:
-        return _cluster(scdf, chromosome, strand=strand)
+#     if len(scdf) == 0:
+#         return _cluster(ocdf, chromosome, strand=strand)
+#     elif len(ocdf) == 0:
+#         return _cluster(scdf, chromosome, strand=strand)
 
-    _starts = np.concatenate([
-        scdf.Start.values,
-        ocdf.Start.values])
-    _ends = np.concatenate([
-        scdf.End.values,
-        ocdf.End.values])
+#     _starts = np.concatenate([
+#         scdf.Start.values,
+#         ocdf.Start.values])
+#     _ends = np.concatenate([
+#         scdf.End.values,
+#         ocdf.End.values])
 
-    cdf = pd.DataFrame({"Start": _starts, "End": _ends})["Start End".split()]
-    cdf = cdf.sort_values("Start")
-    starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
+#     cdf = pd.DataFrame({"Start": _starts, "End": _ends})["Start End".split()]
+#     cdf = cdf.sort_values("Start")
+#     starts, ends = find_clusters(cdf.Start.values, cdf.End.values)
 
-    chromosome = scdf.head(1)["Chromosome"].iloc[0]
-    if strandedness == "same":
-        _strand = scdf.head(1)["Strand"].iloc[0]
-    else:
-        _strand = False
+#     chromosome = scdf.head(1)["Chromosome"].iloc[0]
+#     if strandedness == "same":
+#         _strand = scdf.head(1)["Strand"].iloc[0]
+#     else:
+#         _strand = False
 
-    cluster_df = _create_df_from_starts_ends(starts, ends, chromosome, _strand)
+#     cluster_df = _create_df_from_starts_ends(starts, ends, chromosome, _strand)
 
-    return cluster_df
+#     return cluster_df
 
 
 @ray.remote
@@ -1040,13 +1040,13 @@ if __name__ == "__main__":
     background_f = "/mnt/scratch/endrebak/pyranges_benchmark/data/download/input_1000000.bed.gz"
 
 
-    chip = pd.read_table(chip_f, sep="\t", usecols=[0, 1, 2, 5], header=None,
+    chip = pd.read_csv(chip_f, sep="\t", usecols=[0, 1, 2, 5], header=None,
                             names="Chromosome Start End Strand".split(),
                             dtype={"Chromosome": "category", "Strand": "category"} )
 
     cgr = pr.PyRanges(chip, copy_df=False)
 
-    background = pd.read_table(background_f, sep="\t", usecols=[0, 1, 2, 5],
+    background = pd.read_csv(background_f, sep="\t", usecols=[0, 1, 2, 5],
                                 header=None, names="Chromosome Start End Strand".split(),
                                 dtype={"Chromosome": "category", "Strand": "category"})
 
@@ -1090,3 +1090,89 @@ if __name__ == "__main__":
 # r.overlap(f)
 # r.overlap(f, strandedness=False)
 # f.overlap(r, strandedness=False)
+
+
+
+@ray.remote
+def _relative_distance(scdf, ocdf, kwargs):
+
+    # found = []
+    midpoints_self = ((scdf.Start + scdf.End) / 2).astype(int).sort_values().values
+    midpoints_other = ((ocdf.Start + ocdf.End) / 2).astype(int).sort_values().values
+
+    # print(midpoints_self)
+    # print(midpoints_other)
+
+    # i = 0
+    mo_length = len(midpoints_other) 
+
+    left_idx = np.searchsorted(midpoints_other, midpoints_self)
+    left_idx[left_idx != 0] -= 1
+    
+    left_idx = left_idx[left_idx != len(left_idx) - 1]
+    if len(left_idx) == 0:
+        return np.array([])
+    # print("left_idx", left_idx)
+    # print(midpoints_other)
+    left = midpoints_other[left_idx]
+    right = midpoints_other[left_idx + 1]
+    # print("left", left)
+    # print("midpoints_self", midpoints_self)
+    # print("(left > midpoints_self)", (left > midpoints_self))
+    # print("(left_idx + 1) >= mo_length", ((left_idx + 1) >= mo_length))
+    selector = ~((left > midpoints_self) | ((left_idx + 1) >= mo_length))
+    left = left[selector] 
+    right = right[selector]
+    midpoints_self = midpoints_self[selector]
+
+    left_distance = midpoints_self - left
+    right_distance = right - midpoints_self
+
+    # print(left_distance)
+    # print(right_distance)
+
+    result = np.minimum(left_distance, right_distance) / (right - left)
+
+    # print(result)
+
+    return result
+
+    # from bisect import bisect_left
+
+    # for m in midpoints_self:
+
+    #     if i == mo_length:
+    #         continue
+
+    #     left_idx = bisect_left(midpoints_other, m) 
+    #     # print("left_idx", left_idx)
+    #     # print("mo_length", mo_length)
+    #     # print("midpoints_other", midpoints_other)
+    #     # print("m", m)
+
+    #     if left_idx != 0:
+    #         print("!! left_idx != 0")
+    #         left_idx -= 1
+
+    #     print("left_idx", left_idx)
+
+    #     # if left_idx >= mo_length - 1:
+    #     #     print("!! left_idx >= mo_length - 1")
+    #     #     continue
+
+    #     left = midpoints_other[left_idx]
+
+    #     if left > m or left_idx + 1 >= mo_length:
+    #         print("!! left > m")
+    #         continue
+
+    #     right = midpoints_other[left_idx + 1]
+
+    #     left_dist = abs(m - left)
+    #     right_dist = abs(right - m)
+
+    #     result = np.float64(min(left_dist, right_dist)) / float (right - left)
+    #     print("result", result)
+    #     found.append(result)
+
+    # return found

@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>2 Loading/Creating PyRanges | PyRanges documentation</title>
-  <meta name="description" content="2 Loading/Creating PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="2 Loading/Creating PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="2 Loading/Creating PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-01-18">
+<meta name="date" content="2019-03-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="subsetting-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -149,7 +148,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd
 <span class="im">import</span> pyranges <span class="im">as</span> pr
 chipseq <span class="op">=</span> pr.get_example_path(<span class="st">&quot;chipseq.bed&quot;</span>)
-df <span class="op">=</span> pd.read_table(chipseq, header<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span><span class="st">&quot;Chromosome Start End Name Score Strand&quot;</span>.split())
+df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span><span class="st">&quot;Chromosome Start End Name Score Strand&quot;</span>.split(), sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)
 <span class="bu">print</span>(df.head(<span class="dv">2</span>))</code></pre></div>
 <pre><code>##   Chromosome      Start        End Name  Score Strand
 ## 0       chr8   28510032   28510057   U0      0      -
@@ -196,7 +195,7 @@ df <span class="op">=</span> pd.read_table(chipseq, header<span class="op">=</sp
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------+
 ## | Chromosome   |     Start |       End | Strand   |
-## | (int8)       |   (int64) |   (int64) | (int8)   |
+## | (int8)       |   (int32) |   (int32) | (int8)   |
 ## |--------------+-----------+-----------+----------|
 ## | chr1         |         0 |         3 | +        |
 ## | chr1         |         1 |         4 | +        |
@@ -205,19 +204,19 @@ df <span class="op">=</span> pd.read_table(chipseq, header<span class="op">=</sp
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(seqnames<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+
-## | Chromosome   |     Start |       End | Strand     |
-## | (object)     |   (int64) |   (int64) | (object)   |
-## |--------------+-----------+-----------+------------|
-## | chr1         |         0 |         3 | +          |
-## | chr2         |         1 |         4 | -          |
-## | chr3         |         2 |         5 | +          |
-## +--------------+-----------+-----------+------------+
+<pre><code>## +--------------+-----------+-----------+----------+
+## | Chromosome   |     Start |       End | Strand   |
+## | (int8)       |   (int32) |   (int32) | (int8)   |
+## |--------------+-----------+-----------+----------|
+## | chr1         |         0 |         3 | +        |
+## | chr2         |         1 |         4 | -        |
+## | chr3         |         2 |         5 | +        |
+## +--------------+-----------+-----------+----------+
 ## PyRanges object has 3 sequences from 3 chromosomes.</code></pre>
 </div>
 <div id="using-read_bed-read_gtf-or-read_bam" class="section level4 unnumbered">
 <h4>Using <code>read_bed</code>, <code>read_gtf</code> or <code>read_bam</code></h4>
-<p>The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
+<p>The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam [^].</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)
 gr <span class="op">=</span> pr.read_gtf(ensembl_path)
 <span class="bu">print</span>(gr)</code></pre></div>
@@ -234,14 +233,9 @@ gr <span class="op">=</span> pr.read_gtf(ensembl_path)
 ## | 1            | 120873    | 120932    | -        | exon       | ENSG00000238009 | ENST00000610542 | 3            | ENSE00003740919 |
 ## +--------------+-----------+-----------+----------+------------+-----------------+-----------------+--------------+-----------------+
 ## PyRanges object has 95 sequences from 1 chromosomes.</code></pre>
+<p>[^]: PyRanges uses the pysam library which requires that the bam file must have an index.</p>
 
 </div>
-</div>
-<div class="footnotes">
-<hr />
-<ol start="1">
-<li id="fn1"><p>This is the same behavior as bedtools intersect.<a href="loadingcreating-pyranges.html#fnref1">↩</a></p></li>
-</ol>
 </div>
             </section>
 
@@ -267,11 +261,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -279,10 +272,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },
