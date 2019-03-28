@@ -193,7 +193,6 @@ class PyRanges():
         if isinstance(df, pd.DataFrame):
             df = set_dtypes(df, extended)
 
-        
         if isinstance(df, pd.DataFrame):
             self.__dict__["dfs"] = create_df_dict(df)
         else:

@@ -831,6 +831,8 @@ def _nearest(scdf, ocdf, kwargs):
 @ray.remote
 def _subtraction(scdf, ocdf, kwargs):
 
+    # from pydbg import dbg
+
     if ocdf.empty or scdf.empty:
         return scdf
 
@@ -872,11 +874,18 @@ def _subtraction(scdf, ocdf, kwargs):
     new_ends = pd.Series(new_ends, index=idx_self)#.sort_index()
     # idx_self = np.sort(idx_self)
 
-    scdf = scdf.reindex(missing_idx.union(idx_self))
+    scdf = scdf.reindex(missing_idx.union(idx_self)).sort_index()
+    new_starts = new_starts.sort_index()
+    new_ends = new_ends.sort_index()
+
+    # dbg(idx_self)
+    # dbg(scdf)
+    # dbg(new_starts)
+    # dbg(new_ends)
 
     if len(idx_self):
-        scdf.loc[scdf.index.isin(idx_self), "Start"] = new_starts
-        scdf.loc[scdf.index.isin(idx_self), "End"] = new_ends
+        scdf.loc[scdf.index.isin(idx_self), "Start"] = new_starts.values
+        scdf.loc[scdf.index.isin(idx_self), "End"] = new_ends.values
 
     if not scdf.empty:
         return scdf

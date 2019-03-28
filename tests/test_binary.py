@@ -165,6 +165,7 @@ def test_intersect(gr, gr2, strandedness):
 @pytest.mark.parametrize("strandedness", ["same", "opposite", False]) #
 @settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
+# @reproduce_failure('4.5.7', b'AXicLYaJCQAACIS0/YfuuQRRAbVG94Dk5LHSBgJ3ABU=')
 def test_subtraction(gr, gr2, strandedness):
 
     subtract_command = "bedtools subtract {strand} -a {f1} -b {f2}"
