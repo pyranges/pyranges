@@ -12,13 +12,14 @@ from tabulate import tabulate
 
 
 from pyranges.genomicfeatures import GenomicFeaturesMethods
+from pyranges.statistics import StatisticsMethods
 from pyranges.subset import get_string, get_slice, get_tuple
 from pyranges.multithreaded import (_cluster, pyrange_apply_single,
                                     _write_both, _coverage,
                                     _intersection, pyrange_apply, _nearest,
                                     _overlap, _first_df, _subtraction, _tss,
                                     _tes, _slack, _sort, merge_dfs, _concat,
-                                    _index_as_col, _relative_distance)
+                                    _index_as_col)
 
 def fill_kwargs(kwargs):
 
@@ -199,7 +200,8 @@ class PyRanges():
             # df is actually dict of dfs
             self.__dict__["dfs"] = df
 
-        self.__dict__["ft"] = GenomicFeaturesMethods(self)
+        self.__dict__["features"] = GenomicFeaturesMethods(self)
+        self.__dict__["stats"] = StatisticsMethods(self)
 
 
     def __len__(self):
@@ -561,43 +563,6 @@ class PyRanges():
         return PyRanges(_concat(self, other))
 
 
-    def jaccard(self, other, **kwargs):
-
-        kwargs = fill_kwargs(kwargs)
-        strand = True if kwargs["strandedness"] else False
-
-        intersection_sum = sum(v.sum() for v in self.set_intersect(other, **kwargs).lengths().values())
-
-        union_sum = 0
-        for gr in [self, other]:
-            union_sum += sum(v.sum() for v in gr.cluster(strand=strand).lengths().values())
-
-        denominator = (union_sum - intersection_sum)
-        if denominator == 0:
-            return 1
-        else:
-            jc = intersection_sum / denominator
-
-        return jc
-
-
-
-    def relative_distance(self, other, **kwargs):
-
-        kwargs = fill_kwargs(kwargs)
-        result = pyrange_apply(_relative_distance, self, other, **kwargs)
-
-        result = pd.Series(np.concatenate(list(result.values())))
-
-        not_nan = ~np.isnan(result)
-        result.loc[not_nan] = np.floor(result[not_nan] * 100) / 100
-        vc = result.value_counts(dropna=False).to_frame().reset_index()
-        vc.columns = "reldist count".split()
-        vc.insert(vc.shape[1], "total", len(result))
-        vc.insert(vc.shape[1], "fraction", vc["count"] / len(result))
-        vc = vc.sort_values("reldist", ascending=True)
-        vc = vc.reset_index(drop=True)
-        return vc
 
 
     def slack(self, slack):

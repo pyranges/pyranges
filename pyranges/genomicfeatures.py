@@ -32,6 +32,8 @@ def pyrange_or_df_single(func):
 
 def _keep_transcript_with_most_exons(df):
 
+    transcripts_with_most_exons = []
+
     for gene, gdf in df.groupby("GeneID"):
 
         max_exon = gdf.ExonNumber.max()
@@ -146,7 +148,7 @@ class GenomicFeaturesMethods():
 
         if not pr.stranded:
             raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
-        df = tss_or_tes(df, "tss")
+        df = tss_or_tes(df, "tss", slack)
 
         if drop_duplicate_tss:
             df = df.drop_duplicates("Chromosome Start End".split())
@@ -170,7 +172,7 @@ class GenomicFeaturesMethods():
 
         if not pr.stranded:
             raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
-        df = tss_or_tes(df, "tes")
+        df = tss_or_tes(df, "tes", slack)
 
         if drop_duplicate_tss:
             df = df.drop_duplicates("Chromosome Start End".split())
@@ -178,3 +180,5 @@ class GenomicFeaturesMethods():
         df = df.drop(["ExonNumber", "ExonID"], 1)
 
         return df
+
+

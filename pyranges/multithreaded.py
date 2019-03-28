@@ -1149,7 +1149,9 @@ def _relative_distance(scdf, ocdf, kwargs):
     left_distance = np.absolute(midpoints_self - left)
     right_distance = np.absolute(midpoints_self - right)
 
+    np.seterr(divide='ignore')
     result = np.minimum(left_distance, right_distance) / (right - left)
+    np.seterr(divide='warn')
     # dbg(result)
     # dbg(~(np.isnan(result)))
     # dbg(np.isfinite(result))
