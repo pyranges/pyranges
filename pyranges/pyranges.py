@@ -597,32 +597,8 @@ class PyRanges():
         vc.insert(vc.shape[1], "total", len(result))
         vc.insert(vc.shape[1], "fraction", vc["count"] / len(result))
         vc = vc.sort_values("reldist", ascending=True)
+        vc = vc.reset_index(drop=True)
         return vc
-
-        # print(vc)
-        # raise
-        
-        # d = defaultdict(int)
-        # for r in result:
-        #     d[str(r)] += 1
-
-        # total = len(result)
-        # rowdicts = []
-        # for k, v in d.items():
-
-        #     if "inf" in k:
-        #         continue
-
-        #     k = np.float(k)
-        #     rowdict = {"reldist": k, "count": v, "total": total, "fraction": v/total}
-        #     rowdicts.append(rowdict)
-
-        # # pd.DataFrame({"reldist": result, "count": len(result), "total": })
-
-        # if rowdicts:
-        #     return pd.DataFrame.from_dict(rowdicts)["reldist count total fraction".split()].sort_values("reldist")
-        # else:
-        #     return pd.DataFrame(columns="reldist count total fraction".split())
 
 
     def slack(self, slack):

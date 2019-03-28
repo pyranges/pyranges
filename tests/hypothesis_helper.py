@@ -13,6 +13,7 @@ lengths = st.integers(min_value=1, max_value=int(1e7))
 small_lengths = st.integers(min_value=1, max_value=int(1e4))
 
 strands = st.sampled_from("+ -".split())
+single_strand = st.sampled_from(["+"])
 names = st.text("abcdefghijklmnopqrstuvxyz", min_size=1)
 scores = st.integers(min_value=0, max_value=256)
 
@@ -44,7 +45,7 @@ better_dfs_min_2 = data_frames(index=indexes(dtype=np.int64, min_size=2, unique=
                                       column("End", elements=small_lengths),
                                       # column("Name", elements=names),
                                       # column("Score", elements=scores),
-                                      column("Strand", strands)])
+                                      column("Strand", single_strand)])
 
 
 

@@ -252,6 +252,8 @@ def pyrange_apply(function, self, other, **kwargs):
                 else:
                     odfs = other[c].values()
 
+                # from pydbg import dbg 
+                # dbg(odfs)
 
                 if len(odfs) == 2:
                     odf = merge_dfs.remote(*odfs, kwargs)
@@ -261,6 +263,9 @@ def pyrange_apply(function, self, other, **kwargs):
                     odf = pd.DataFrame(columns="Chromosome Start End".split())
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
+
+                # dbg(df)
+                # dbg(odf)
 
                 result = call_f(function, df, odf, kwargs)
                 results.append(result)
@@ -1096,44 +1101,51 @@ if __name__ == "__main__":
 @ray.remote
 def _relative_distance(scdf, ocdf, kwargs):
 
-    # found = []
+    # from pydbg import dbg 
+
     midpoints_self = ((scdf.Start + scdf.End) / 2).astype(int).sort_values().values
     midpoints_other = ((ocdf.Start + ocdf.End) / 2).astype(int).sort_values().values
 
-    # print(midpoints_self)
-    # print(midpoints_other)
-
-    # i = 0
-    mo_length = len(midpoints_other) 
-
+    # dbg(midpoints_self)
+    # dbg(midpoints_other)
     left_idx = np.searchsorted(midpoints_other, midpoints_self)
-    left_idx[left_idx != 0] -= 1
-    
-    left_idx = left_idx[left_idx != len(left_idx) - 1]
-    if len(left_idx) == 0:
-        return np.array([])
-    # print("left_idx", left_idx)
-    # print(midpoints_other)
+    left_idx[left_idx >= len(midpoints_other) - 1] -= 1
+    # dbg(left_idx)
+    left_idx_shift = (midpoints_other[left_idx] > midpoints_self) & (left_idx > 0)
+    # dbg(left_idx_shift)
+    left_idx[left_idx_shift] -= 1
+    # missing_left_in_other = ~(left_idx == len(midpoints_other))
+    # left_idx = left_idx[missing_left_in_other]
+    # dbg(left_idx)
+    # dbg(left_idx)
+
     left = midpoints_other[left_idx]
-    right = midpoints_other[left_idx + 1]
-    # print("left", left)
-    # print("midpoints_self", midpoints_self)
-    # print("(left > midpoints_self)", (left > midpoints_self))
-    # print("(left_idx + 1) >= mo_length", ((left_idx + 1) >= mo_length))
-    selector = ~((left > midpoints_self) | ((left_idx + 1) >= mo_length))
-    left = left[selector] 
-    right = right[selector]
-    midpoints_self = midpoints_self[selector]
+    # dbg(left)
 
-    left_distance = midpoints_self - left
-    right_distance = right - midpoints_self
+    right_idx = np.searchsorted(midpoints_other, midpoints_self, side="right")
+    # dbg(right_idx)
+    right_idx[right_idx >= len(midpoints_other)] -= 1
+    # missing_right_in_other = ~(right_idx == 0)
+    # right_idx = right_idx[missing_right_in_other]
 
-    # print(left_distance)
-    # print(right_distance)
+    if len(right_idx) == 0 or len(left_idx) == 0:
+        return np.array([])
+
+    # dbg(right_idx)
+    # right_idx[right_idx >= len(right_idx)] -= 1
+    # dbg(right_idx)
+    right = midpoints_other[right_idx]
+    # dbg(right)
+
+    left_distance = np.absolute(midpoints_self - left)
+    right_distance = np.absolute(midpoints_self - right)
 
     result = np.minimum(left_distance, right_distance) / (right - left)
-
-    # print(result)
+    # dbg(result)
+    # dbg(~(np.isnan(result)))
+    # dbg(np.isfinite(result))
+    result = result[~np.isinf(result)]
+    # dbg(result)
 
     return result
 
