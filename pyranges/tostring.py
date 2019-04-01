@@ -6,8 +6,13 @@ from tabulate import tabulate
 
 def get_terminal_size():
 
-    _, columns = os.popen('stty size', 'r').read().split()
+    try:
+        _, columns = os.popen('stty size', 'r').read().split()
+    except ValueError: # does not work on TRAVIS for some reason
+        columns = 80
+
     return int(columns)
+
 
 def tostring(self):
     # print("in str")
