@@ -128,10 +128,6 @@ def return_empty_if_both_empty(func):
     return extended_func
 
 
-
-
-
-
 def set_dtypes(df, extended):
 
     if not extended:
@@ -143,6 +139,7 @@ def set_dtypes(df, extended):
         del dtypes["Strand"]
 
     categoricals = (df.nunique() / len(df) <= 0.1).replace({True: "category", False: "object"})
+    dtypes = categoricals.update(dtypes)
 
     for col, dtype in dtypes.items():
 
@@ -186,6 +183,8 @@ class PyRanges():
 
         if isinstance(df, pd.DataFrame):
             df = set_dtypes(df, extended)
+        elif isinstance(df, dict):
+            df = {k: v for k, v in set_dtypes(v, extended)}
 
         if isinstance(df, pd.DataFrame):
             self.__dict__["dfs"] = create_df_dict(df)

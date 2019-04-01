@@ -1,4 +1,4 @@
-import subprocess
+import shutils
 
 import pandas as pd
 
@@ -6,12 +6,7 @@ from tabulate import tabulate
 
 def get_terminal_size():
 
-    try:
-        _, columns = subprocess.check_output('stty size', shell=True).decode().split()
-    except ValueError: # does not work on TRAVIS for some reason
-        columns = 80
-
-    return int(columns)
+    return shutil.get_terminal_size().columns
 
 
 def tostring(self):
