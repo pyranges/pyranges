@@ -226,7 +226,7 @@ def test_jaccard(gr, gr2, strandedness):
 
     # https://github.com/arq5x/bedtools2/issues/645
     # will make tests proper when bedtools is fixed
-    result = gr.jaccard(gr2, strandedness=strandedness)
+    result = gr.stats.jaccard(gr2, strandedness=strandedness)
 
     # assert abs(result - bedtools_jaccard) < 0.001
 
@@ -285,7 +285,7 @@ def test_reldist(gr, gr2):
     bedtools_result = pd.read_csv(StringIO(bedtools_result), sep="\t")
     print(bedtools_result)
 
-    result = gr.relative_distance(gr2)
+    result = gr.stats.relative_distance(gr2)
     print(result)
 
     # bug in bedtools, therefore not testing this properly

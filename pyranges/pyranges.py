@@ -142,15 +142,7 @@ def set_dtypes(df, extended):
     if not "Strand" in df:
         del dtypes["Strand"]
 
-
-    if "ExonNumber" in df:
-        df.ExonNumber = df.ExonNumber.fillna(-1)
-        if df.ExonNumber.max() < 128:
-            df.ExonNumber = df.ExonNumber.astype(np.int8)
-        else:
-            df.ExonNumber = df.ExonNumber.astype(np.int16)
-
-    df.columns = (c.replace("#Chromosome", "Chromosome") for c in df.columns)
+    categoricals = (df.nunique() / len(df) <= 0.1).replace({True: "category", False: "object"})
 
     for col, dtype in dtypes.items():
 
