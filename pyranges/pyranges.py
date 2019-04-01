@@ -12,6 +12,7 @@ from tabulate import tabulate
 
 
 from pyranges.genomicfeatures import GenomicFeaturesMethods
+from pyranges.out import OutMethods
 from pyranges.tostring import tostring
 from pyranges.statistics import StatisticsMethods
 from pyranges.subset import get_string, get_slice, get_tuple
@@ -138,11 +139,11 @@ def set_dtypes(df, extended):
     if not "Strand" in df:
         del dtypes["Strand"]
 
-    # categoricals = (df.nunique() / len(df) <= 0.1).replace({True: "category", False: "object"}).to_dict()
-    # print(categoricals)
-    # categoricals.update(dtypes)
-    # dtypes = categoricals
-    # print(dtypes)
+    # on test data with a few rows, the below code does not work
+    if len(df) > 500:
+        categoricals = (df.nunique() / len(df) <= 0.1).replace({True: "category", False: "object"}).to_dict()
+        categoricals.update(dtypes)
+        dtypes = categoricals
 
     for col, dtype in dtypes.items():
 
@@ -150,6 +151,7 @@ def set_dtypes(df, extended):
             df[col] = df[col].astype(dtype)
 
     return df
+
 
 def read_path(p):
 
@@ -198,6 +200,7 @@ class PyRanges():
 
         self.__dict__["features"] = GenomicFeaturesMethods(self)
         self.__dict__["stats"] = StatisticsMethods(self)
+        self.__dict__["out"] = OutMethods(self)
 
 
     def __len__(self):
