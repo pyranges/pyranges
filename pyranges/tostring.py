@@ -8,6 +8,23 @@ def get_terminal_size():
 
     return shutil.get_terminal_size().columns
 
+def reduce_string_width(str_repr, s, h, n_intervals, n_chromosomes):
+
+    terminal_width = get_terminal_size()
+
+    hidden_cols = []
+    never_drop = "Chromosome Start End Strand".split()
+    while len(str_repr.split("\n", 1)[0]) > terminal_width:
+        last_column = list(s.columns)[-1]
+        if last_column not in never_drop:
+            hidden_cols.append(last_column)
+            s = s.drop(last_column, axis=1)
+            str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
+                "\nPyRanges object has {} sequences from {} chromosomes.".format(n_intervals, n_chromosomes) + \
+                "\nHidden columns: {}".format(", ".join(hidden_cols))
+
+    return str_repr
+
 
 def tostring(self):
     # print("in str")
@@ -121,15 +138,7 @@ def tostring(self):
     str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
                                     "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.chromosomes))
 
-    terminal_width = get_terminal_size()
 
-    hidden_cols = []
-    while len(str_repr.split("\n", 1)[0]) > terminal_width:
-        last_column = list(s.columns)[-1]
-        hidden_cols.append(last_column)
-        s = s.drop(last_column, axis=1)
-        str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
-            "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.chromosomes)) + \
-            "\nHidden columns: {}".format(", ".join(hidden_cols))
+    str_repr = reduce_string_width(str_repr, s, h, len(self), len(self.chromosomes))
 
     return str_repr

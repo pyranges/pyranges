@@ -102,7 +102,17 @@ def skiprows(f):
 
     return i
 
-def read_gtf(f, annotation=None, output_df=False, nrows=None):
+def read_gtf(f, full=True, annotation=None, output_df=False, nrows=None):
+
+    _skiprows = skiprows(f)
+
+    if full:
+        return read_gtf_full(f, annotation, output_df, nrows, _skiprows)
+    else:
+        return read_gtf_restricted(f, annotation, output_df, nrows, _skiprows)
+
+
+def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
 
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
@@ -115,11 +125,10 @@ def read_gtf(f, annotation=None, output_df=False, nrows=None):
     attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    _skiprows = skiprows(f)
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
     # names = "Chromosome Start End Score Strand Source Feature Frame Attribute".split()
-    df_iter = pd.read_csv(f, sep="\t", header=None, names=names, dtype=dtypes, chunksize=int(1e4), skiprows=_skiprows, nrows=int(1e5)) 
+    df_iter = pd.read_csv(f, sep="\t", header=None, names=names, dtype=dtypes, chunksize=int(1e4), skiprows=skiprows, nrows=nrows) 
 
     dfs = []
     for df in df_iter:
@@ -147,7 +156,7 @@ def to_rows(anno):
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
 
-def read_gtf_restricted(f, annotation=None, output_df=False):
+def read_gtf_restricted(f, annotation=None, output_df=False, skiprows=0, nrows=None):
 
 
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
@@ -161,7 +170,7 @@ def read_gtf_restricted(f, annotation=None, output_df=False):
     attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    df_iter = pd.read_csv(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes, chunksize=int(1e4))
+    df_iter = pd.read_csv(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes, chunksize=int(1e4), nrows=nrows)
 
     dfs = []
     for df in df_iter:

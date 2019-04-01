@@ -138,8 +138,11 @@ def set_dtypes(df, extended):
     if not "Strand" in df:
         del dtypes["Strand"]
 
-    categoricals = (df.nunique() / len(df) <= 0.1).replace({True: "category", False: "object"})
-    dtypes = categoricals.update(dtypes)
+    # categoricals = (df.nunique() / len(df) <= 0.1).replace({True: "category", False: "object"}).to_dict()
+    # print(categoricals)
+    # categoricals.update(dtypes)
+    # dtypes = categoricals
+    # print(dtypes)
 
     for col, dtype in dtypes.items():
 
@@ -183,8 +186,9 @@ class PyRanges():
 
         if isinstance(df, pd.DataFrame):
             df = set_dtypes(df, extended)
-        elif isinstance(df, dict):
-            df = {k: v for k, v in set_dtypes(v, extended)}
+        # below is not a good idea! then gr["chr1"] might change the dtypes of a gr!
+        # elif isinstance(df, dict):
+        #     df = {k: set_dtypes(v, extended) for k, v in df.items()}
 
         if isinstance(df, pd.DataFrame):
             self.__dict__["dfs"] = create_df_dict(df)
