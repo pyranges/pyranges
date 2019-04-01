@@ -126,3 +126,21 @@ class OutMethods():
         else:
             return "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for _, outdf in sorted(gr.dfs.items())])
 
+
+
+    def bigwig(self, path, rpm):
+
+        gr = self.pr.coverage(rpm=rpm).to_ranges()
+
+        unique_chromosomes = gr.chromosomes
+
+        df = gr("df[['Chromosome', 'Start', 'End', 'Strand']]").df
+
+        import pyBigWig
+
+        header = [(c, int(genome_size_dict[c])) for c in unique_chromosomes]
+
+        bw = pyBigWig.open(path, "w")
+        bw.addHeader(header)
+
+        bw.addEntries(chromosomes, starts, ends=ends, values=values)

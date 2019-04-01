@@ -10,6 +10,7 @@ import pyranges as pr
 
 from tabulate import tabulate
 
+import pyranges.raymock as ray
 
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges.out import OutMethods
@@ -398,9 +399,9 @@ class PyRanges():
         return PyRanges(df)
 
 
-    def coverage(self, value_col=None, strand=True):
+    def coverage(self, value_col=None, strand=True, rpm=False):
 
-        return _coverage(self, value_col, strand=strand)
+        return _coverage(self, value_col, strand=strand, rpm=rpm)
 
 
     def apply(self, f, strand=True, as_pyranges=True, kwargs=None):
