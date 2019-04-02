@@ -62,3 +62,14 @@ def genes(species, release="latest", path=None):
     binary_loc = 'pub/databases/gencode/Gencode_' + species + "/release_" + release + "/gencode.v{}.annotation.gtf.gz".format(release)
 
     return get_ftp_file(ftp, binary_loc, path)
+
+# goverlap -a examples/FeatureCount_ECIIvsDeep.txt \ # first input list
+#            -b examples/Simes_Binner_ECIIvsDeep.txt \ # second input list
+#            -s rnor \ # the species name; used for gene and ontology lookups
+#            -v debug \ # how much output about the running process to print to stderr
+#            -n 30 -o CC,KEGG \ # which ontologies to use
+#            -l 0.10 \ # remove any ontology category where the number of associated genes is
+#                    \ # more than 10% of the total number of genes.
+#            -x examples/experiment_genes.txt
+
+# goverlap -a examples/FeatureCount_ECIIvsDeep.txt -b examples/Simes_Binner_ECIIvsDeep.txt -s rnor -v debug -n 30 -o CC,KEGG -l 0.10 -x examples/experiment_genes.txt
