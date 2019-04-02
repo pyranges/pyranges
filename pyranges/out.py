@@ -128,7 +128,7 @@ class OutMethods():
 
 
 
-    def bigwig(self, path, rpm):
+    def bigwig(self, path, rpm=True):
 
         gr = self.pr.coverage(rpm=rpm).to_ranges()
 
