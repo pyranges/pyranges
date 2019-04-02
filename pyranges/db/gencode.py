@@ -10,6 +10,8 @@ import pyranges as pr
 
 from natsort import natsorted
 
+from pyranges.db.methods import get_ftp_file
+
 def genomes():
 
     hr = natsorted(releases("human"))
@@ -39,7 +41,7 @@ def releases(species="human"):
     return [l for l in dir_listing if "release" in l]
 
 
-def genes(species, release="latest"):
+def genes(species, release="latest", path=None):
 
     assert species in "human mouse".split()
 
@@ -59,13 +61,4 @@ def genes(species, release="latest"):
 
     binary_loc = 'pub/databases/gencode/Gencode_' + species + "/release_" + release + "/gencode.v{}.annotation.gtf.gz".format(release)
 
-    with tempfile.NamedTemporaryFile(suffix=".gz", delete=False) as t:
-
-        ftp.retrbinary("RETR {}".format(binary_loc), t.write) 
-        t.close()
-
-        gr = pr.read_gtf(t.name)
-
-        os.remove(t.name)
-
-    return gr
+    return get_ftp_file(ftp, binary_loc, path)

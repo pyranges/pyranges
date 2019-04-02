@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 
@@ -5,6 +6,7 @@ import pyranges as pr
 
 import MySQLdb
 
+from pyranges.db.methods import get_ftp_file
 
 
 
@@ -82,3 +84,31 @@ def genomes():
     df.columns = ["Genome", "Version"]
 
     return df
+
+# ftp://ftp.ensembl.org/pub/release-95/gtf/gopherus_agassizii
+
+from ftplib import FTP
+
+def genes(genome, release="latest", path=None):
+
+    ftp = FTP("ftp.ensembl.org")
+    ftp.login()
+
+    if release == "latest":
+        release = max([r.split("-")[1] for r in ftp.nlst("pub/") if "release-" in r], key=int)
+
+    _dir = "pub/release-{}/gtf/{}/".format(release, genome)
+    dir_listing = pd.Series(ftp.nlst(_dir))
+
+    matches = (dir_listing.str.lower()
+               .apply(lambda s: os.path.basename(s))
+               .str.match("{}.*{}.gtf.gz".format(genome, release)))
+
+    assert matches.sum() == 1, "More than one file matching: {}".format(dir_listing[matches])
+
+    if not len(dir_listing):
+        raise Exception("No files found for genome {}. Use pyranges.db.ensembl.genomes() to list all available genomes.".format(genome))
+
+    binary_loc = dir_listing[matches].iloc[0]
+
+    return get_ftp_file(ftp, binary_loc, path)

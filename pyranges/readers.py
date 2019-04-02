@@ -128,16 +128,16 @@ def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
     # names = "Chromosome Start End Score Strand Source Feature Frame Attribute".split()
-    df_iter = pd.read_csv(f, sep="\t", header=None, names=names, dtype=dtypes, chunksize=int(1e4), skiprows=skiprows, nrows=nrows) 
+    df_iter = pd.read_csv(f, sep="\t", header=None, names=names, dtype=dtypes, chunksize=int(1e5), skiprows=skiprows, nrows=nrows) 
 
     dfs = []
     for df in df_iter:
         extra = to_rows(df.Attribute)
         df = df.drop("Attribute", axis=1)
-        ndf = pd.concat([df, extra], axis=1) 
+        ndf = pd.concat([df, extra], axis=1, sort=False) 
         dfs.append(ndf)
 
-    df = pd.concat(dfs)
+    df = pd.concat(dfs, sort=False)
 
     if not output_df:
         return PyRanges(df)
@@ -170,7 +170,7 @@ def read_gtf_restricted(f, annotation=None, output_df=False, skiprows=0, nrows=N
     attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    df_iter = pd.read_csv(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes, chunksize=int(1e4), nrows=nrows)
+    df_iter = pd.read_csv(f, sep="\t", comment="#", usecols=[0, 2, 3, 4, 5, 6, 8], header=None, names="Chromosome Feature Start End Score Strand Attribute".split(), dtype=dtypes, chunksize=int(1e5), nrows=nrows)
 
     dfs = []
     for df in df_iter:
@@ -188,11 +188,11 @@ def read_gtf_restricted(f, annotation=None, output_df=False, skiprows=0, nrows=N
         extract.ExonNumber = extract.ExonNumber.astype(float)
 
         df = pd.concat([df[cols_to_concat],
-                            extract], axis=1)
+                            extract], axis=1, sort=False)
 
         dfs.append(df)
 
-    df = pd.concat(dfs)
+    df = pd.concat(dfs, sort=False)
 
     if not output_df:
         return PyRanges(df)

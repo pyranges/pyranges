@@ -14,15 +14,20 @@ def reduce_string_width(str_repr, s, h, n_intervals, n_chromosomes):
 
     hidden_cols = []
     never_drop = "Chromosome Start End Strand".split()
-    while len(str_repr.split("\n", 1)[0]) > terminal_width:
-        last_column = list(s.columns)[-1]
-        if last_column not in never_drop:
-            hidden_cols.append(last_column)
-            s = s.drop(last_column, axis=1)
-            str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
-                "\nPyRanges object has {} sequences from {} chromosomes.".format(n_intervals, n_chromosomes) + \
-                "\nHidden columns: {}".format(", ".join(hidden_cols))
+    header = str_repr.split("\n", 2)[1]
 
+    while len(header) > terminal_width:
+        header, hidden = header.rsplit("|", 1)
+        hidden = hidden.strip()
+        if hidden:
+            hidden_cols.append(hidden.strip())
+
+    columns = header.replace("|", "").split()
+
+    str_repr = tabulate(s.get(columns), headers=h, tablefmt='psql', showindex=False)
+
+    str_repr += "\nPyRanges object has {} sequences from {} chromosomes.".format(n_intervals, n_chromosomes) + \
+                "\nHidden columns: {}".format(", ".join(hidden_cols))
     return str_repr
 
 
