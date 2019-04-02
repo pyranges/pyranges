@@ -4,10 +4,9 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
-
 __version__ = open("pyranges/version.py").readline().split(" = ")[1].replace('"', '').strip()
 
-install_requires = ["cython", "pandas", "ncls", "tabulate", "pysam", "sorted_nearest", "pyrle"]
+install_requires = ["cython", "pandas", "ncls", "tabulate", "pysam", "sorted_nearest", "pyrle", "natsort", "mysqlclient"]
 
 setup(
     name="pyranges",

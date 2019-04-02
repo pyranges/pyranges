@@ -8,6 +8,26 @@ import tempfile
 
 import pyranges as pr
 
+from natsort import natsorted
+
+def genomes():
+
+    hr = natsorted(releases("human"))
+    mr = natsorted(releases("mouse"))
+
+    hg = ["Human"] * len(hr)
+    mg = ["Mouse"] * len(mr)
+
+    v = pd.Series(hr + mr).str.extract("release_(\w+)")
+    g = pd.Series(hg + mg)
+
+    df = pd.concat([g, v], axis=1)
+    df.columns = "Genome Version".split()
+
+    return df
+
+    
+
 def releases(species="human"):
 
     assert species in "human mouse".split()
@@ -27,13 +47,17 @@ def genes(species, release="latest"):
     _releases = []
     for r in releases(species):
         r = r.split("_")[1]
-        if r.isdecimal():
+        if r.replace("M", "").isdecimal():
             _releases.append(r)
+
+    # from pydbg import dbg
+
+    # dbg(_releases)
 
     if not release == "latest":
         assert str(release) in _releases, str(release) + " not in " + str(_releases)
     else:
-        release = max(_releases, key=int)
+        release = max(_releases, key=lambda n: int(n.replace("M", "")))
 
     ftp = FTP("ftp.ebi.ac.uk")
     ftp.login()

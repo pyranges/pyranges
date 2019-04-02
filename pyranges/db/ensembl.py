@@ -6,6 +6,8 @@ import pyranges as pr
 import MySQLdb
 
 
+
+
 def _find_correct_db_version(conn, genome, version):
 
     """ensembl dbs have names like danio_rerio_75_11 where the user has no way of knowing the last
@@ -16,9 +18,7 @@ magica number. This function connects to the correct database and version number
     df = pd.read_sql(query, conn)
 
     if df.empty:
-        # query = 'show databases like %_core_%"'
-        # df = pd.read_sql(query, conn)
-        raise Exception("Genome {} not found.".format(genome))
+        raise Exception("Genome {} not found. List all possible genomes and versions with pyranges.db.ensembl.genomes()".format(genome))
 
     df.columns = ["db"]
 
@@ -67,3 +67,18 @@ def chromosome_lengths(genome, version="latest"):
     return pd.Series(data=df.length.values, index=df.name.values)
 
 
+
+def genomes():
+
+    host = "ensembldb.ensembl.org"
+    user = "anonymous"
+    conn = MySQLdb.Connection(host=host, user=user)
+
+    query = "show databases like '%_core_%'"
+    df = pd.read_sql(query, conn)
+    df.columns = ["db"]
+
+    df = df.db.str.extract("(\w+)_core_(\d+)_*.")
+    df.columns = ["Genome", "Version"]
+
+    return df
