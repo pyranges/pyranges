@@ -21,12 +21,11 @@ def genomes():
     v = pd.Series(hr + mr).str.extract("release_(\w+)")
     g = pd.Series(hg + mg)
 
-    df = pd.concat([g, v], axis=1)
+    df = pd.concat([g, v], axis=1, sort=False)
     df.columns = "Genome Version".split()
 
     return df
 
-    
 
 def releases(species="human"):
 
@@ -50,10 +49,6 @@ def genes(species, release="latest"):
         if r.replace("M", "").isdecimal():
             _releases.append(r)
 
-    # from pydbg import dbg
-
-    # dbg(_releases)
-
     if not release == "latest":
         assert str(release) in _releases, str(release) + " not in " + str(_releases)
     else:
@@ -66,7 +61,7 @@ def genes(species, release="latest"):
 
     with tempfile.NamedTemporaryFile(suffix=".gz", delete=False) as t:
 
-        ftp.retrbinary("RETR {}".format(binary_loc), t.write) #tp.retrbinary("RETR {}".format(binary_loc), t.write)
+        ftp.retrbinary("RETR {}".format(binary_loc), t.write) 
         t.close()
 
         gr = pr.read_gtf(t.name)
