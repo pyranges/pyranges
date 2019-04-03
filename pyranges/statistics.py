@@ -26,7 +26,7 @@ class StatisticsMethods():
 
         union_sum = 0
         for gr in [self, other]:
-            union_sum += sum(v.sum() for v in gr.cluster(strand=strand).lengths().values())
+            union_sum += sum(v.sum() for v in gr.merge(strand=strand).lengths().values())
 
         denominator = (union_sum - intersection_sum)
         if denominator == 0:

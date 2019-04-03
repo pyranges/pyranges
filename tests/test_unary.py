@@ -64,7 +64,7 @@ def test_cluster(gr, strand):
             bedtools_df = pd.read_csv(StringIO(result), sep="\t", header=None, squeeze=True, names="Chromosome Start End Strand".split(), dtype={"Chromosome": "category"})
 
     print("bedtools_df\n", bedtools_df)
-    result = gr.cluster(strand=strand)
+    result = gr.merge(strand=strand)
     print("result\n", result.df)
 
     if not bedtools_df.empty:

@@ -69,7 +69,7 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
 
     if isinstance(seqnames, str):
         seqnames = pd.Series([seqnames] * len(starts), dtype="category")
-
+    
     if strands is not None:
 
         if isinstance(strands, str):
@@ -229,8 +229,8 @@ class PyRanges():
     def __len__(self):
         return sum([len(d) for d in self.values()])
 
-    def __call__(self, eval_str):
-        return self.eval(eval_str)
+    def __call__(self, eval_str, strand=True):
+        return self.eval(eval_str, strand)
 
     def __getattr__(self, name):
 
@@ -365,8 +365,8 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         strandedness = kwargs["strandedness"]
         strand = True if strandedness else False
-        self_clusters = self.cluster(strand=strand, **kwargs)
-        other_clusters = other.cluster(strand=strand, **kwargs)
+        self_clusters = self.merge(strand=strand, **kwargs)
+        other_clusters = other.merge(strand=strand, **kwargs)
         dfs = pyrange_apply(_intersection, self_clusters, other_clusters,
                             **kwargs)
 
@@ -381,7 +381,7 @@ class PyRanges():
         pr = self.concat(other)
         # print(dfs)
         # print(pr)
-        pr = pr.cluster(strand=strand, **kwargs)
+        pr = pr.merge(strand=strand, **kwargs)
 
         return pr
 
@@ -393,7 +393,7 @@ class PyRanges():
         strandedness = kwargs["strandedness"]
 
         strand = True if strandedness else False
-        other_clusters = other.cluster(strand=strand, **kwargs)
+        other_clusters = other.merge(strand=strand, **kwargs)
         result = pyrange_apply(_subtraction, self, other_clusters, **kwargs)
 
         return PyRanges(result)
@@ -407,7 +407,7 @@ class PyRanges():
 
         return PyRanges(dfs)
 
-    def cluster(self, strand=None, **kwargs):
+    def merge(self, strand=None, **kwargs):
 
         kwargs["sparse"] = True
         df = pyrange_apply_single(_cluster, self, strand, kwargs)
@@ -479,7 +479,7 @@ class PyRanges():
 
     def sort(self, columns=["Start", "End"], **kwargs):
 
-        kwargs = fill_kwargs(kwargs)
+        kwargs["sparse"] = False
         return PyRanges(
             pyrange_apply_single(_sort, self, self.stranded, kwargs))
 
@@ -629,10 +629,10 @@ class PyRanges():
         lengths["pyrange"] = self.lengths()
 
         if self.stranded:
-            c = self.cluster(strand=True)
+            c = self.merge(strand=True)
             lengths["coverage_stranded"] = c.lengths()
 
-        c = self.cluster(strand=False)
+        c = self.merge(strand=False)
         lengths["coverage_unstranded"] = c.lengths()
 
         summaries = OrderedDict()

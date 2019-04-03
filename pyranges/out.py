@@ -157,13 +157,11 @@ class OutMethods():
 
     def bigwig(self, path, chromosome_sizes, rpm=True):
 
-        gr = self.pr.coverage(rpm=rpm).to_ranges()
+        gr = self.pr.coverage(rpm=rpm, strand=False).to_ranges()
 
         unique_chromosomes = gr.chromosomes
 
-        df = gr("df[['Chromosome', 'Start', 'End', 'Strand', 'Score']]")
-        print(gr)
-        print(gr.sort())
+        df = gr("df[['Chromosome', 'Start', 'End', 'Score']]", strand=False).sort().df
 
         import pyBigWig
 
