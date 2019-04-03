@@ -67,10 +67,12 @@ def genes(genome):
     return pr.PyRanges(df)
 
 
-def chromosome_lengths(genome):
+def chromosome_sizes(genome):
 
     query = 'select chrom,size from chromInfo'
 
     df = ucsc(genome, query)
+    df.columns = ["Chromosome", "Size"]
+    s = pd.Series(data=df.Size.values, index=df.Chromosome.values)
 
-    return pd.Series(df.size, index=df.chrom)
+    return s

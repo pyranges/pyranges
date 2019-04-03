@@ -60,7 +60,7 @@ def ensembl(genome, query, version="latest"):
     return df
 
 
-def chromosome_lengths(genome, version="latest"):
+def chromosome_sizes(genome, version="latest"):
 
     query = 'select name,length from seq_region'
 

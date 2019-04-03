@@ -7,7 +7,8 @@ import pyranges as pr
 from natsort import natsorted
 
 from sorted_nearest import (find_clusters, nearest_previous_nonoverlapping,
-                            nearest_next_nonoverlapping, nearest_nonoverlapping, find_clusters)
+                            nearest_next_nonoverlapping,
+                            nearest_nonoverlapping, find_clusters)
 
 from collections import defaultdict
 
@@ -19,6 +20,7 @@ from functools import wraps
 import pyranges.raymock as ray
 
 import sys
+
 
 @ray.remote
 def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
@@ -36,7 +38,6 @@ def _create_df_from_starts_ends(starts, ends, chromosome, strand=None):
 
 
 def return_empty_if_one_empty(func):
-
     @wraps(func)
     def extended_func(self, other, **kwargs):
 
@@ -64,13 +65,14 @@ def merge_dfs(df1, df2, kwargs):
     else:
         return df1
 
+
 def process_results(results, keys):
 
     results_dict = {k: r for k, r in zip(keys, results) if r is not None}
 
     try:
         first_item = next(iter(results_dict.values()))
-    except StopIteration: # empty collection
+    except StopIteration:  # empty collection
         return results_dict
 
     if not isinstance(first_item, pd.DataFrame):
@@ -90,7 +92,6 @@ def process_results(results, keys):
     return results_dict
 
 
-
 def _concat(self, other):
 
     strand = False
@@ -104,8 +105,10 @@ def _concat(self, other):
 
     concatted = []
     for k in keys:
-        s = self.dfs.get(k, pd.DataFrame(columns="Chromosome Start End".split()))
-        o = other.dfs.get(k, pd.DataFrame(columns="Chromosome Start End".split()))
+        s = self.dfs.get(k,
+                         pd.DataFrame(columns="Chromosome Start End".split()))
+        o = other.dfs.get(k,
+                          pd.DataFrame(columns="Chromosome Start End".split()))
 
         result = merge_dfs.remote(s, o, {})
         concatted.append(result)
@@ -121,7 +124,6 @@ def _index_as_col(df, kwargs):
     df["Index"] = df.index
 
     return df
-
 
 
 def call_f(f, df, odf, kwargs):
@@ -226,13 +228,13 @@ def pyrange_apply(function, self, other, **kwargs):
                 result = call_f(function, df, odf, kwargs)
                 results.append(result)
 
-
         elif not self.stranded and other.stranded:
 
             for c, df in items:
 
                 if not c in other.chromosomes:
-                    odf = pr.PyRanges(pd.DataFrame(columns="Chromosome Start End".split()))
+                    odf = pr.PyRanges(
+                        pd.DataFrame(columns="Chromosome Start End".split()))
                 else:
                     odf1 = other[c, "+"]
                     odf2 = other[c, "-"]
@@ -248,11 +250,12 @@ def pyrange_apply(function, self, other, **kwargs):
             for (c, s), df in self.items():
 
                 if not c in other.chromosomes:
-                    odfs = pr.PyRanges(pd.DataFrame(columns="Chromosome Start End".split()))
+                    odfs = pr.PyRanges(
+                        pd.DataFrame(columns="Chromosome Start End".split()))
                 else:
                     odfs = other[c].values()
 
-                # from pydbg import dbg 
+                # from pydbg import dbg
                 # dbg(odfs)
 
                 if len(odfs) == 2:
@@ -296,7 +299,6 @@ def call_f_single(f, df, kwargs):
         return f.remote(df, kwargs)
     except:
         return f.remote(df)
-
 
 
 def pyrange_apply_single(function, self, strand, kwargs):
@@ -382,11 +384,25 @@ def _cluster(df, kwargs):
 
     nidx = pd.Index(range(len(starts)))
     if strand:
-        cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx),
-                                   "Start": starts, "End": ends,
-                                   "Strand": pd.Series(strand, dtype="category", index=nidx)})
+        cluster_df = pd.DataFrame({
+            "Chromosome":
+            pd.Series(chromosome, dtype="category", index=nidx),
+            "Start":
+            starts,
+            "End":
+            ends,
+            "Strand":
+            pd.Series(strand, dtype="category", index=nidx)
+        })
     else:
-        cluster_df = pd.DataFrame({"Chromosome": pd.Series(chromosome, dtype="category", index=nidx), "Start": starts, "End": ends})
+        cluster_df = pd.DataFrame({
+            "Chromosome":
+            pd.Series(chromosome, dtype="category", index=nidx),
+            "Start":
+            starts,
+            "End":
+            ends
+        })
 
     return cluster_df
 
@@ -451,27 +467,30 @@ def _both_dfs(scdf, ocdf, how=False):
     ends = scdf.End.values
     indexes = scdf.index.values
 
-
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how:
-        _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
+        _self_indexes, _other_indexes = it.all_overlaps_both(
+            starts, ends, indexes)
     elif how == "containment":
-        _self_indexes, _other_indexes = it.all_containments_both(starts, ends, indexes)
+        _self_indexes, _other_indexes = it.all_containments_both(
+            starts, ends, indexes)
     else:
-        _self_indexes, _other_indexes = it.first_overlap_both(starts, ends, indexes)
+        _self_indexes, _other_indexes = it.first_overlap_both(
+            starts, ends, indexes)
 
     _self_indexes = _self_indexes
     _other_indexes = _other_indexes
 
     return scdf.reindex(_self_indexes), ocdf.reindex(_other_indexes)
 
+
 @ray.remote
 def _intersection(scdf, ocdf, kwargs):
 
     how = kwargs["how"]
 
-    if ocdf.empty or scdf.empty: # just return empty df
+    if ocdf.empty or scdf.empty:  # just return empty df
         return None
     # scdf2, ocdfe#2 = ray.get(_both_dfs.remote(scdf, ocdf, how=False))
     assert how in "containment first".split() + [False, None]
@@ -484,25 +503,30 @@ def _intersection(scdf, ocdf, kwargs):
     oncls = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how or how is None:
-        _self_indexes, _other_indexes = oncls.all_overlaps_both(starts, ends, indexes)
+        _self_indexes, _other_indexes = oncls.all_overlaps_both(
+            starts, ends, indexes)
     elif how == "containment":
-        _self_indexes, _other_indexes = oncls.all_containments_both(starts, ends, indexes)
+        _self_indexes, _other_indexes = oncls.all_containments_both(
+            starts, ends, indexes)
     elif how == "first":
-        _self_indexes, _other_indexes = oncls.first_overlap_both(starts, ends, indexes)
+        _self_indexes, _other_indexes = oncls.first_overlap_both(
+            starts, ends, indexes)
 
     _self_indexes = _self_indexes
     _other_indexes = _other_indexes
 
     scdf, ocdf = scdf.reindex(_self_indexes), ocdf.reindex(_other_indexes)
 
-
     new_starts = pd.Series(
-        np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
-        index=scdf.index, dtype=in_dtype)
+        np.where(scdf.Start.values > ocdf.Start.values, scdf.Start,
+                 ocdf.Start),
+        index=scdf.index,
+        dtype=in_dtype)
 
     new_ends = pd.Series(
         np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
-        index=scdf.index, dtype=in_dtype)
+        index=scdf.index,
+        dtype=in_dtype)
 
     pd.options.mode.chained_assignment = None  # default='warn'
     scdf.loc[:, "Start"] = new_starts
@@ -513,9 +537,6 @@ def _intersection(scdf, ocdf, kwargs):
         return scdf
     else:
         return None
-
-
-
 
 
 # @ray.remote
@@ -536,7 +557,6 @@ def _intersection(scdf, ocdf, kwargs):
 #     return _intersection.remote(s, o, kwargs)
 
 
-
 def sort_one_by_one(d, col1, col2):
     """
     Equivalent to pd.sort_values(by=[col1, col2]), but faster.
@@ -544,12 +564,12 @@ def sort_one_by_one(d, col1, col2):
     d = d.sort_values(by=[col2])
     return d.sort_values(by=[col1], kind='mergesort')
 
+
 def _overlapping_for_nearest(scdf, ocdf, suffix):
 
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
     scdf2, ocdf2 = _both_dfs(scdf, ocdf, how="first")
-
 
     if not ocdf2.empty:
         # only copying data because of the eternal source buffer array is read only problem
@@ -578,7 +598,8 @@ def _next_nonoverlapping(left_ends, right_starts, right_indexes):
 
     left_ends = left_ends.sort_values()
     right_starts = right_starts.sort_values()
-    r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, right_starts.values, right_indexes)
+    r_idx, dist = nearest_next_nonoverlapping(
+        left_ends.values - 1, right_starts.values, right_indexes)
     r_idx = pd.Series(r_idx, index=left_ends.index).sort_index().values
     dist = pd.Series(dist, index=left_ends.index).sort_index().values
 
@@ -589,13 +610,13 @@ def _previous_nonoverlapping(left_starts, right_ends):
 
     left_starts = left_starts.sort_values()
     right_ends = right_ends.sort_values()
-    r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, right_ends.values - 1, right_ends.index.values)
+    r_idx, dist = nearest_previous_nonoverlapping(
+        left_starts.values, right_ends.values - 1, right_ends.index.values)
 
     r_idx = pd.Series(r_idx, index=left_starts.index).sort_index().values
     dist = pd.Series(dist, index=left_starts.index).sort_index().values
 
     return r_idx, dist
-
 
 
 @ray.remote
@@ -616,36 +637,43 @@ def _nearest(scdf, ocdf, kwargs):
         how = {"+": "next", "-": "previous"}[strand]
 
     if overlap:
-        nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(scdf, ocdf, suffix)
+        nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(
+            scdf, ocdf, suffix)
     else:
         df_to_find_nearest_in = scdf
 
     if not df_to_find_nearest_in.empty:
-        df_to_find_nearest_in = sort_one_by_one(df_to_find_nearest_in, "Start", "End")
+        df_to_find_nearest_in = sort_one_by_one(df_to_find_nearest_in, "Start",
+                                                "End")
         ocdf = sort_one_by_one(ocdf, "Start", "End")
-        df_to_find_nearest_in.index = pd.Index(range(len(df_to_find_nearest_in)))
+        df_to_find_nearest_in.index = pd.Index(
+            range(len(df_to_find_nearest_in)))
 
         if how == "next":
-            r_idx, dist = _next_nonoverlapping(df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values)
+            r_idx, dist = _next_nonoverlapping(df_to_find_nearest_in.End,
+                                               ocdf.Start, ocdf.index.values)
         elif how == "previous":
-            r_idx, dist = _previous_nonoverlapping(df_to_find_nearest_in.Start, ocdf.End)
+            r_idx, dist = _previous_nonoverlapping(df_to_find_nearest_in.Start,
+                                                   ocdf.End)
         else:
-            previous_r_idx, previous_dist = _previous_nonoverlapping(df_to_find_nearest_in.Start, ocdf.End)
+            previous_r_idx, previous_dist = _previous_nonoverlapping(
+                df_to_find_nearest_in.Start, ocdf.End)
 
-            next_r_idx, next_dist = _next_nonoverlapping(df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values)
+            next_r_idx, next_dist = _next_nonoverlapping(
+                df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values)
 
-            r_idx, dist = nearest_nonoverlapping(previous_r_idx,
-                                                previous_dist,
-                                                next_r_idx, next_dist)
-
+            r_idx, dist = nearest_nonoverlapping(previous_r_idx, previous_dist,
+                                                 next_r_idx, next_dist)
 
         ocdf = ocdf.reindex(r_idx)
 
         ocdf.index = df_to_find_nearest_in.index
-        ocdf.insert(ocdf.shape[1], "Distance", pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
+        ocdf.insert(ocdf.shape[1], "Distance",
+                    pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
 
         r_idx = pd.Series(r_idx, index=ocdf.index)
-        df_to_find_nearest_in = df_to_find_nearest_in.drop(r_idx.loc[r_idx == -1].index)
+        df_to_find_nearest_in = df_to_find_nearest_in.drop(
+            r_idx.loc[r_idx == -1].index)
 
         df = df_to_find_nearest_in.join(ocdf, rsuffix=suffix)
 
@@ -656,7 +684,6 @@ def _nearest(scdf, ocdf, kwargs):
 
     df = df.drop("Chromosome" + suffix, axis=1)
     return df
-
 
 
 # @ray.remote
@@ -675,7 +702,6 @@ def _nearest(scdf, ocdf, kwargs):
 #         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(scdf, ocdf, strandedness, suffix)
 #     else:
 #         df_to_find_nearest_in = scdf
-
 
 #     if not df_to_find_nearest_in.empty:
 #         df_to_find_nearest_in = sort_one_by_one(df_to_find_nearest_in, "Start", "End")
@@ -713,9 +739,6 @@ def _nearest(scdf, ocdf, kwargs):
 #     # df = df.drop("Chromosome" + suffix, axis=1)
 #     return df
 
-
-
-
 # def _next_nonoverlapping(left_ends, right_starts):
 
 #     # print("le", left_ends)
@@ -731,7 +754,6 @@ def _nearest(scdf, ocdf, kwargs):
 
 #     return l_idx, r_idx, dist
 
-
 # def _previous_nonoverlapping(left_starts, right_ends):
 
 #     left_starts = left_starts.sort_values()
@@ -745,7 +767,6 @@ def _nearest(scdf, ocdf, kwargs):
 #     return l_idx, r_idx, dist
 
 # # from memory_profiler import profile
-
 
 # def _both_indexes(self, other, how):
 
@@ -766,7 +787,6 @@ def _nearest(scdf, ocdf, kwargs):
 #         _self_indexes, _other_indexes = it.first_overlap_both(starts, ends, indexes)
 
 #     return _self_indexes, _other_indexes
-
 
 # def _overlapping_for_nearest(self, other, strandedness, suffix):
 #     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
@@ -858,9 +878,7 @@ def _subtraction(scdf, ocdf, kwargs):
     # print(scdf.dtypes)
     # print(scdf.index.values.dtype)
     idx_self, new_starts, new_ends = o.set_difference_helper(
-        scdf.Start.values,
-        scdf.End.values,
-        scdf.index.values)
+        scdf.Start.values, scdf.End.values, scdf.index.values)
 
     missing_idx = pd.Index(scdf.index).difference(idx_self)
 
@@ -870,8 +888,8 @@ def _subtraction(scdf, ocdf, kwargs):
     new_ends = new_ends[idx_to_drop]
 
     idx_self = idx_self[idx_to_drop]
-    new_starts = pd.Series(new_starts, index=idx_self)#.sort_index()
-    new_ends = pd.Series(new_ends, index=idx_self)#.sort_index()
+    new_starts = pd.Series(new_starts, index=idx_self)  #.sort_index()
+    new_ends = pd.Series(new_ends, index=idx_self)  #.sort_index()
     # idx_self = np.sort(idx_self)
 
     scdf = scdf.reindex(missing_idx.union(idx_self)).sort_index()
@@ -899,7 +917,8 @@ def _coverage(ranges, value_col=None, strand=True, rpm=False):
         from pyrle.methods import coverage
         from pyrle import PyRles
     except ImportError:
-        raise Exception("Using the coverage method requires that pyrle is installed.")
+        raise Exception(
+            "Using the coverage method requires that pyrle is installed.")
 
     kwargs = {"value_col": value_col}
     # from pydbg import dbg
@@ -911,7 +930,6 @@ def _coverage(ranges, value_col=None, strand=True, rpm=False):
         result = {k: v * multiplier for k, v in result.items()}
 
     return PyRles(result)
-
 
 
 @ray.remote
@@ -938,38 +956,58 @@ def _write_both(scdf, ocdf, kwargs):
     elif new_pos == "intersection":
 
         new_starts = pd.Series(
-            np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
-            index=scdf.index, dtype=np.long)
+            np.where(scdf.Start.values > ocdf.Start.values, scdf.Start,
+                     ocdf.Start),
+            index=scdf.index,
+            dtype=np.long)
 
         new_ends = pd.Series(
             np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
-            index=scdf.index, dtype=np.long)
+            index=scdf.index,
+            dtype=np.long)
         df = scdf.join(ocdf, lsuffix=suffixes[0], rsuffix=suffixes[1])
         df.insert(1, "Start", new_starts)
         df.insert(2, "End", new_ends)
-        df.rename(index=str, columns={"Chromosome" + suffixes[0]: "Chromosome", "Strand" + suffixes[0]: "Strand"}, inplace=True)
+        df.rename(
+            index=str,
+            columns={
+                "Chromosome" + suffixes[0]: "Chromosome",
+                "Strand" + suffixes[0]: "Strand"
+            },
+            inplace=True)
 
     elif new_pos == "union":
 
         new_starts = pd.Series(
-            np.where(scdf.Start.values < ocdf.Start.values, scdf.Start, ocdf.Start),
-            index=scdf.index, dtype=np.long)
+            np.where(scdf.Start.values < ocdf.Start.values, scdf.Start,
+                     ocdf.Start),
+            index=scdf.index,
+            dtype=np.long)
 
         new_ends = pd.Series(
             np.where(scdf.End.values > ocdf.End.values, scdf.End, ocdf.End),
-            index=scdf.index, dtype=np.long)
+            index=scdf.index,
+            dtype=np.long)
         df = scdf.join(ocdf, lsuffix=suffixes[0], rsuffix=suffixes[1])
         df.insert(1, "Start", new_starts)
         df.insert(2, "End", new_ends)
-        df.rename(index=str, columns={"Chromosome" + suffixes[0]: "Chromosome", "Strand" + suffixes[0]: "Strand"}, inplace=True)
+        df.rename(
+            index=str,
+            columns={
+                "Chromosome" + suffixes[0]: "Chromosome",
+                "Strand" + suffixes[0]: "Strand"
+            },
+            inplace=True)
 
     return df
+
 
 def _lengths(df):
 
     lengths = df.End - df.Start
 
     return lengths
+
 
 # @ray.remote
 # def _jaccard(self, other, kwargs):
@@ -1050,8 +1088,10 @@ def _slack(df, kwargs):
 
     return df
 
+
 @ray.remote
 def _sort(df, kwargs):
+    print(kwargs)
 
     return sort_one_by_one(df, "Start", "End")
 
@@ -1061,16 +1101,29 @@ if __name__ == "__main__":
     chip_f = "/mnt/scratch/endrebak/pyranges_benchmark/data/download/chip_1000000.bed.gz"
     background_f = "/mnt/scratch/endrebak/pyranges_benchmark/data/download/input_1000000.bed.gz"
 
-
-    chip = pd.read_csv(chip_f, sep="\t", usecols=[0, 1, 2, 5], header=None,
-                            names="Chromosome Start End Strand".split(),
-                            dtype={"Chromosome": "category", "Strand": "category"} )
+    chip = pd.read_csv(
+        chip_f,
+        sep="\t",
+        usecols=[0, 1, 2, 5],
+        header=None,
+        names="Chromosome Start End Strand".split(),
+        dtype={
+            "Chromosome": "category",
+            "Strand": "category"
+        })
 
     cgr = pr.PyRanges(chip, copy_df=False)
 
-    background = pd.read_csv(background_f, sep="\t", usecols=[0, 1, 2, 5],
-                                header=None, names="Chromosome Start End Strand".split(),
-                                dtype={"Chromosome": "category", "Strand": "category"})
+    background = pd.read_csv(
+        background_f,
+        sep="\t",
+        usecols=[0, 1, 2, 5],
+        header=None,
+        names="Chromosome Start End Strand".split(),
+        dtype={
+            "Chromosome": "category",
+            "Strand": "category"
+        })
 
     bgr = pr.PyRanges(background, copy_df=False)
 
@@ -1114,21 +1167,23 @@ if __name__ == "__main__":
 # f.overlap(r, strandedness=False)
 
 
-
 @ray.remote
 def _relative_distance(scdf, ocdf, kwargs):
 
-    # from pydbg import dbg 
+    # from pydbg import dbg
 
-    midpoints_self = ((scdf.Start + scdf.End) / 2).astype(int).sort_values().values
-    midpoints_other = ((ocdf.Start + ocdf.End) / 2).astype(int).sort_values().values
+    midpoints_self = (
+        (scdf.Start + scdf.End) / 2).astype(int).sort_values().values
+    midpoints_other = (
+        (ocdf.Start + ocdf.End) / 2).astype(int).sort_values().values
 
     # dbg(midpoints_self)
     # dbg(midpoints_other)
     left_idx = np.searchsorted(midpoints_other, midpoints_self)
     left_idx[left_idx >= len(midpoints_other) - 1] -= 1
     # dbg(left_idx)
-    left_idx_shift = (midpoints_other[left_idx] > midpoints_self) & (left_idx > 0)
+    left_idx_shift = (midpoints_other[left_idx] > midpoints_self) & (left_idx >
+                                                                     0)
     # dbg(left_idx_shift)
     left_idx[left_idx_shift] -= 1
     # missing_left_in_other = ~(left_idx == len(midpoints_other))
@@ -1174,7 +1229,7 @@ def _relative_distance(scdf, ocdf, kwargs):
     #     if i == mo_length:
     #         continue
 
-    #     left_idx = bisect_left(midpoints_other, m) 
+    #     left_idx = bisect_left(midpoints_other, m)
     #     # print("left_idx", left_idx)
     #     # print("mo_length", mo_length)
     #     # print("midpoints_other", midpoints_other)

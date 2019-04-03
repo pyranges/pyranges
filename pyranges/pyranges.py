@@ -7,7 +7,6 @@ import logging
 
 import pyranges as pr
 
-
 from tabulate import tabulate
 
 import pyranges.raymock as ray
@@ -17,12 +16,11 @@ from pyranges.out import OutMethods
 from pyranges.tostring import tostring
 from pyranges.statistics import StatisticsMethods
 from pyranges.subset import get_string, get_slice, get_tuple
-from pyranges.multithreaded import (_cluster, pyrange_apply_single,
-                                    _write_both, _coverage,
-                                    _intersection, pyrange_apply, _nearest,
-                                    _overlap, _first_df, _subtraction, _tss,
-                                    _tes, _slack, _sort, merge_dfs, _concat,
-                                    _index_as_col)
+from pyranges.multithreaded import (
+    _cluster, pyrange_apply_single, _write_both, _coverage, _intersection,
+    pyrange_apply, _nearest, _overlap, _first_df, _subtraction, _tss, _tes,
+    _slack, _sort, merge_dfs, _concat, _index_as_col)
+
 
 def fill_kwargs(kwargs):
 
@@ -46,6 +44,7 @@ def fill_kwargs(kwargs):
         kwargs["sparse"] = {"self": False, "other": False}
 
     return kwargs
+
 
 def return_copy_if_view(df, df2):
     # https://stackoverflow.com/questions/26879073/checking-whether-data-frame-is-copy-or-view-in-pandas
@@ -78,12 +77,18 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
 
         columns = [seqnames, starts, ends, strands]
         lengths = list(str(len(s)) for s in columns)
-        assert len(set(lengths)) == 1, "seqnames, starts, ends and strands must be of equal length. But are {}".format(", ".join(lengths))
+        assert len(
+            set(lengths)
+        ) == 1, "seqnames, starts, ends and strands must be of equal length. But are {}".format(
+            ", ".join(lengths))
         colnames = "Chromosome Start End Strand".split()
     else:
         columns = [seqnames, starts, ends]
         lengths = list(str(len(s)) for s in columns)
-        assert len(set(lengths)) == 1, "seqnames, starts and ends must be of equal length. But are {}".format(", ".join(lengths))
+        assert len(
+            set(lengths)
+        ) == 1, "seqnames, starts and ends must be of equal length. But are {}".format(
+            ", ".join(lengths))
         colnames = "Chromosome Start End".split()
 
     idx = range(len(starts))
@@ -103,7 +108,6 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
 
 
 def return_empty_if_one_empty(func):
-
     def extended_func(self, other, *args, **kwargs):
 
         if len(self) == 0 or len(other) == 0:
@@ -117,7 +121,6 @@ def return_empty_if_one_empty(func):
 
 
 def return_empty_if_both_empty(func):
-
     def extended_func(self, other, *args, **kwargs):
 
         if len(self) == 0 and len(other) == 0:
@@ -133,16 +136,29 @@ def return_empty_if_both_empty(func):
 def set_dtypes(df, extended):
 
     if not extended:
-        dtypes = {"Start": np.int32, "End": np.int32, "Chromosome": "category", "Strand": "category"}
+        dtypes = {
+            "Start": np.int32,
+            "End": np.int32,
+            "Chromosome": "category",
+            "Strand": "category"
+        }
     else:
-        dtypes = {"Start": np.int64, "End": np.int64, "Chromosome": "category", "Strand": "category"}
+        dtypes = {
+            "Start": np.int64,
+            "End": np.int64,
+            "Chromosome": "category",
+            "Strand": "category"
+        }
 
     if not "Strand" in df:
         del dtypes["Strand"]
 
     # on test data with a few rows, the below code does not work
     if len(df) > 500:
-        categoricals = (df.nunique() / len(df) <= 0.1).replace({True: "category", False: "object"}).to_dict()
+        categoricals = (df.nunique() / len(df) <= 0.1).replace({
+            True: "category",
+            False: "object"
+        }).to_dict()
         categoricals.update(dtypes)
         dtypes = categoricals
 
@@ -173,7 +189,14 @@ class PyRanges():
     dfs = None
     gf = None
 
-    def __init__(self, df=None, seqnames=None, starts=None, ends=None, strands=None, copy_df=False, extended=False):
+    def __init__(self,
+                 df=None,
+                 seqnames=None,
+                 starts=None,
+                 ends=None,
+                 strands=None,
+                 copy_df=False,
+                 extended=False):
 
         if isinstance(df, PyRanges):
             raise Exception("Object is already a PyRange.")
@@ -203,9 +226,8 @@ class PyRanges():
         self.__dict__["stats"] = StatisticsMethods(self)
         self.__dict__["out"] = OutMethods(self)
 
-
     def __len__(self):
-        return sum([ len(d) for d in self.values() ])
+        return sum([len(d) for d in self.values()])
 
     def __call__(self, eval_str):
         return self.eval(eval_str)
@@ -217,13 +239,14 @@ class PyRanges():
         else:
             raise Exception("PyRanges object has no attribute", name)
 
-
     def __setattr__(self, column_name, column):
 
         if column_name in "Chromosome Strand".split():
-            raise Exception("The columns Chromosome and Strand can not be reset.")
+            raise Exception(
+                "The columns Chromosome and Strand can not be reset.")
 
-        isiterable = isinstance(column, list) or isinstance(column, pd.Series) or isinstance(column, np.ndarray)
+        isiterable = isinstance(column, list) or isinstance(
+            column, pd.Series) or isinstance(column, np.ndarray)
         if isiterable:
             if not len(self) == len(column):
                 raise Exception("DataFrame and column must be same length.")
@@ -256,7 +279,6 @@ class PyRanges():
 
         self.__dict__["dfs"] = dfs
 
-
     def __eq__(self, other):
 
         return self.df.equals(other.df)
@@ -279,16 +301,13 @@ class PyRanges():
         # print(ray.get(df))
         return PyRanges(df)
 
-
     def __str__(self):
 
         return tostring(self)
-        
 
     def __repr__(self):
 
         return str(self)
-
 
     # @pyrange_or_df
     # @return_empty_if_one_empty
@@ -303,7 +322,6 @@ class PyRanges():
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
         return PyRanges(dfs)
-
 
     def no_overlap(self, other, **kwargs):
 
@@ -349,7 +367,8 @@ class PyRanges():
         strand = True if strandedness else False
         self_clusters = self.cluster(strand=strand, **kwargs)
         other_clusters = other.cluster(strand=strand, **kwargs)
-        dfs = pyrange_apply(_intersection, self_clusters, other_clusters, **kwargs)
+        dfs = pyrange_apply(_intersection, self_clusters, other_clusters,
+                            **kwargs)
 
         return PyRanges(dfs)
 
@@ -366,7 +385,6 @@ class PyRanges():
 
         return pr
 
-
     # @pyrange_or_df
     def subtract(self, other, **kwargs):
 
@@ -380,7 +398,6 @@ class PyRanges():
 
         return PyRanges(result)
 
-
     # @pyrange_or_df
     # @return_empty_if_one_empty
     def join(self, other, **kwargs):
@@ -390,7 +407,6 @@ class PyRanges():
 
         return PyRanges(dfs)
 
-
     def cluster(self, strand=None, **kwargs):
 
         kwargs["sparse"] = True
@@ -398,11 +414,9 @@ class PyRanges():
 
         return PyRanges(df)
 
-
     def coverage(self, value_col=None, strand=True, rpm=False):
 
         return _coverage(self, value_col, strand=strand, rpm=rpm)
-
 
     def apply(self, f, strand=True, as_pyranges=True, kwargs=None):
 
@@ -418,7 +432,6 @@ class PyRanges():
         else:
             return PyRanges(result)
 
-
     def apply_pair(self, other, f, kwargs, strand=True, as_pyranges=True):
 
         f = ray.remote(f)
@@ -429,7 +442,6 @@ class PyRanges():
             return result
         else:
             return PyRanges(result)
-
 
     def eval(self, eval_cmd, strand=True, as_pyranges=True, kwargs=None):
 
@@ -447,39 +459,40 @@ class PyRanges():
         else:
             return PyRanges(result)
 
-
     def concat(self, other):
 
         return PyRanges(_concat(self, other))
 
-
-
-
     def slack(self, slack):
 
         kwargs = {"slack": slack}
-        prg = PyRanges(pyrange_apply_single(_slack, self, self.stranded, kwargs))
+        prg = PyRanges(
+            pyrange_apply_single(_slack, self, self.stranded, kwargs))
 
         return prg
 
     def tssify(self, slack=0):
 
         kwargs = {"slack": slack}
-        return PyRanges(pyrange_apply_single(_tss, self, self.stranded, kwargs))
+        return PyRanges(
+            pyrange_apply_single(_tss, self, self.stranded, kwargs))
 
     def sort(self, columns=["Start", "End"], **kwargs):
 
         kwargs = fill_kwargs(kwargs)
-        return PyRanges(pyrange_apply_single(_sort, self, self.stranded, kwargs))
+        return PyRanges(
+            pyrange_apply_single(_sort, self, self.stranded, kwargs))
 
     def tesify(self, slack=0):
 
         kwargs = {"slack": slack}
-        return PyRanges(pyrange_apply_single(_tes, self, self.stranded, kwargs))
+        return PyRanges(
+            pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
     def index_as_col(self, **kwargs):
         kwargs = fill_kwargs(kwargs)
-        return PyRanges(pyrange_apply_single(_index_as_col, self, self.stranded, kwargs))
+        return PyRanges(
+            pyrange_apply_single(_index_as_col, self, self.stranded, kwargs))
 
     def drop_empty(self):
 
@@ -503,7 +516,8 @@ class PyRanges():
         # turn int-tuple into slice
         newval = []
         for v in val:
-            if isinstance(v, tuple) and len(v) == 2 and isinstance(v[0], int) and isinstance(v[1], int):
+            if isinstance(v, tuple) and len(v) == 2 and isinstance(
+                    v[0], int) and isinstance(v[1], int):
                 newval.append(slice(v[0], v[1]))
             else:
                 newval.append(v)
@@ -520,10 +534,10 @@ class PyRanges():
         elif isinstance(val, slice):
             df = get_slice(self, val)
         else:
-            raise Exception("Invalid type for indexer. Must be str, slice, or 2/3-tuple.")
+            raise Exception(
+                "Invalid type for indexer. Must be str, slice, or 2/3-tuple.")
 
         return return_copy_if_view(df, self.df)
-
 
     # always returns df
     def get(self, column, values, **kwargs):
@@ -538,7 +552,6 @@ class PyRanges():
             df = df.loc[df[column].isin(values)]
 
         return return_copy_if_view(df, self.df)
-
 
     # @property
     def keys(self):
@@ -564,7 +577,6 @@ class PyRanges():
             return natsorted(set([k[0] for k in self.keys()]))
         else:
             return natsorted(set([k for k in self.keys()]))
-
 
     # @property
     def items(self):
@@ -595,7 +607,6 @@ class PyRanges():
         else:
             return pd.concat(self.values())
 
-
     def lengths(self):
 
         lengths = {}
@@ -604,7 +615,6 @@ class PyRanges():
 
         return lengths
 
-    
     def midpoints(self):
 
         midpoints = {}
@@ -612,7 +622,6 @@ class PyRanges():
             midpoints[k] = (df.End + df.Start) / 2
 
         return midpoints
-
 
     def summary(self):
 
@@ -630,7 +639,6 @@ class PyRanges():
 
         for summary, d in lengths.items():
             summaries[summary] = pd.concat(d.values()).describe()
-
 
         summary = pd.concat(summaries.values(), axis=1)
         summary.columns = list(summaries)

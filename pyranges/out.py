@@ -17,7 +17,8 @@ def _fill_missing(df, all_columns):
         missing = set(all_columns) - set(columns)
         missing_idx = {all_columns.index(m): m for m in missing}
         not_missing = set(columns).intersection(set(all_columns))
-        not_missing_ordered = sorted(not_missing, key=lambda x: all_columns.index(x))
+        not_missing_ordered = sorted(
+            not_missing, key=lambda x: all_columns.index(x))
         outdf = df.get(not_missing_ordered)
 
         for idx, missing in sorted(missing_idx.items()):
@@ -40,14 +41,10 @@ def _bed(df, all_cols=False):
         return outdf
 
 
-
-
-
-
-
 def _gtf(df):
 
-    all_columns = "Chromosome   Source   Feature    Start     End       Score    Strand   Frame".split()
+    all_columns = "Chromosome   Source   Feature    Start     End       Score    Strand   Frame".split(
+    )
     columns = list(df.columns)
 
     outdf = _fill_missing(df, all_columns)
@@ -64,14 +61,13 @@ def _gtf(df):
         new_val = c + ' "' + col + '";'
         # dbg(new_val)
         rest_df.loc[:, c] = rest_df[c].astype(str)
-        rest_df.loc[~isnull, c] = new_val 
+        rest_df.loc[~isnull, c] = new_val
         rest_df.loc[isnull, c] = ""
 
     attribute = rest_df.apply(lambda r: " ".join([v for v in r if v]), axis=1)
     outdf.insert(outdf.shape[1], "Attribute", attribute)
 
     return outdf
-
 
 
 class OutMethods():
@@ -91,11 +87,22 @@ class OutMethods():
         if path:
             mode = "w+"
             for outdf in outdfs:
-                outdf.to_csv(path, index=False, header=False, mode=mode, sep="\t", quoting=csv.QUOTE_NONE)
+                outdf.to_csv(
+                    path,
+                    index=False,
+                    header=False,
+                    mode=mode,
+                    sep="\t",
+                    quoting=csv.QUOTE_NONE)
                 mode = "a"
         else:
-            return "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for outdf in outdfs])
-
+            return "".join([
+                outdf.to_csv(
+                    index=False,
+                    header=False,
+                    sep="\t",
+                    quoting=csv.QUOTE_NONE) for outdf in outdfs
+            ])
 
     def csv(self, path=None, sep=","):
 
@@ -104,11 +111,20 @@ class OutMethods():
         if path:
             mode = "w+"
             for _, outdf in natsorted(gr.dfs.items()):
-                outdf.to_csv(path, index=False, header=False, mode=mode, sep=sep, quoting=csv.QUOTE_NONE)
+                outdf.to_csv(
+                    path,
+                    index=False,
+                    header=False,
+                    mode=mode,
+                    sep=sep,
+                    quoting=csv.QUOTE_NONE)
                 mode = "a"
         else:
-            return "".join([outdf.to_csv(index=False, header=False, sep=sep, quoting=csv.QUOTE_NONE) for _, outdf in sorted(gr.dfs.items())])
-
+            return "".join([
+                outdf.to_csv(
+                    index=False, header=False, sep=sep, quoting=csv.QUOTE_NONE)
+                for _, outdf in sorted(gr.dfs.items())
+            ])
 
     def bed(self, path=None, sep="\t", all_cols=False):
 
@@ -120,27 +136,45 @@ class OutMethods():
         if path:
             mode = "w+"
             for outdf in outdfs:
-                outdf.to_csv(path, index=False, header=False, mode=mode, sep="\t", quoting=csv.QUOTE_NONE)
+                outdf.to_csv(
+                    path,
+                    index=False,
+                    header=False,
+                    mode=mode,
+                    sep="\t",
+                    quoting=csv.QUOTE_NONE)
                 mode = "a"
- 
+
         else:
-            return "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for _, outdf in sorted(gr.dfs.items())])
+            return "".join([
+                outdf.to_csv(
+                    index=False,
+                    header=False,
+                    sep="\t",
+                    quoting=csv.QUOTE_NONE)
+                for _, outdf in sorted(gr.dfs.items())
+            ])
 
-
-
-    def bigwig(self, path, rpm=True):
+    def bigwig(self, path, chromosome_sizes, rpm=True):
 
         gr = self.pr.coverage(rpm=rpm).to_ranges()
 
         unique_chromosomes = gr.chromosomes
 
-        df = gr("df[['Chromosome', 'Start', 'End', 'Strand']]").df
+        df = gr("df[['Chromosome', 'Start', 'End', 'Strand', 'Score']]")
+        print(gr)
+        print(gr.sort())
 
         import pyBigWig
 
-        header = [(c, int(genome_size_dict[c])) for c in unique_chromosomes]
+        header = [(c, int(chromosome_sizes[c])) for c in unique_chromosomes]
 
         bw = pyBigWig.open(path, "w")
         bw.addHeader(header)
+
+        chromosomes = df.Chromosome.tolist()
+        starts = df.Start.tolist()
+        ends = df.End.tolist()
+        values = df.Score.tolist()
 
         bw.addEntries(chromosomes, starts, ends=ends, values=values)
