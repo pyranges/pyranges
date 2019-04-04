@@ -9,6 +9,7 @@ from pyranges import PyRanges
 def names():
     return "Chromosome  Start  End  Name Score Strand".split()
 
+
 @pytest.fixture
 def chip_10(names):
 
@@ -20,10 +21,15 @@ def chip_10(names):
 
     return gr
 
+
 @pytest.fixture
 def f1(names):
 
-    df = pd.read_csv("tests/f1.bed", sep="\t", header=None, names="Chromosome  Start  End  Name Score Strand".split())
+    df = pd.read_csv(
+        "tests/f1.bed",
+        sep="\t",
+        header=None,
+        names="Chromosome  Start  End  Name Score Strand".split())
 
     return PyRanges(df)
 
