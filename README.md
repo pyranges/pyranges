@@ -5,21 +5,11 @@
 
 ## Release
 
-PyRanges is slated for an early 2019 release, late February at the latest.
+PyRanges is in a beta state.
 
 #### Introduction
 
-GenomicRanges for Python.
-
-This library is a thin, transparent wrapper around genomic data contained in
-pandas dataframes. This allows for all the wonderful functionality of
-bedtools/bedops and/or GenomicRanges, while being able to use the the enormous
-universe of Python datascience libraries to manipulate and do computations on
-the data.
-
-PyRanges also contains a run-length encoding library for extremely efficient
-arithmetic computation of scores associated with genomic intervals.
-
+GenomicRanges and genomic Rle-objects for Python.
 
 ### Documentation
 
@@ -40,11 +30,8 @@ Being written here: https://github.com/endrebak/pyranges-paper
 
 For the future:
 
-* Allow writing to different UCSC genome-browser compatible formats such as
-  bigwig, bedgraph, histograms, colored bed etc
-* Add visualization capabilites?
-* Find sequences of ranges with pyfaidx
 * K-nearest
+* write bam
 
 
 #### Performance

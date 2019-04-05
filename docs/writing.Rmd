@@ -1,0 +1,30 @@
+# Writing PyRanges to disk
+
+The PyRanges can be written to several formats, namely csv, gtf and bigwig.
+
+If no path-argument is given, the string representation of the data is written.
+(It may potentially be very large.)
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.aorta()
+
+gr.out.gtf("aorta.gtf")
+
+print(gr[:10000].out.gtf())
+```
+
+The bigwig writer needs to know the chromosome sizes. You can fetch these using
+the pyranges database functions.
+
+```{python tidy=FALSE}
+chromsizes = pr.db.ucsc.chromosome_sizes("hg19")
+gr.out.bigwig("aorta.bw", chromsizes)
+```
+
+If you want to write one bigwig for each strand, you need to do it manually.
+
+```{python tidy=FALSE}
+gr["+"].out.bigwig("aorta_plus.bw", chromsizes)
+gr["-"].out.bigwig("aorta_minus.bw", chromsizes)
+```

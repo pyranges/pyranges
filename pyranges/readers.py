@@ -44,7 +44,14 @@ def read_bed(f, output_df=False):
         return df
 
 
-def read_bam(f, mapq=5, required_flag=0, filter_flag=1540):
+def read_bam(f, output_df=False, mapq=0, required_flag=0, filter_flag=1540):
+
+    df = bamread.read_bam(f, mapq, required_flag, filter_flag)
+
+    if output_df:
+        return df
+    else:
+        return PyRanges(df)
 
     return bamread.read_bam(f, mapq, required_flag, filter_flag)
 

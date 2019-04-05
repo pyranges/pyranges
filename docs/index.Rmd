@@ -72,7 +72,7 @@ print(gr1.intersect(gr2, strandedness=False))
 There are also convenience methods for single PyRanges:
 
 ```{python}
-print(gr1.cluster())
+print(gr1.merge())
 ```
 
 The underlying dataframe can always be accessed:

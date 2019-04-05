@@ -1,4 +1,4 @@
-# Computing PyRanges-similarity
+# Statistics: similarity between PyRanges
 
 PyRanges can compute a normalized Jaccard-statistic (ranging from 0 to 1) to
 compute the similarities between two ranges.
@@ -7,17 +7,5 @@ compute the similarities between two ranges.
 import pyranges as pr
 gr = pr.data.chipseq()
 gr2 = pr.data.chipseq_background()
-print(gr.jaccard(gr2, strandedness="same"))
+print(gr.stats.jaccard(gr2, strandedness="same"))
 ```
-
-# reldist -a /home/endrebak/code/pyranges/pyranges/example_data/f1.bed -b /home/endrebak/code/pyranges/pyranges/example_data/f2.bed
-# reldist count   total   fraction
-# 0.00    1       2       0.500
-# 0.40    1       2       0.500
-# biocore-home ~ cat /home/endrebak/code/pyranges/pyranges/example_data/f1.bed
-# chr1    3       6       interval1       0       +
-# chr1    5       7       interval2       0       -
-# chr1    8       9       interval3       0       +
-# biocore-home ~ cat /home/endrebak/code/pyranges/pyranges/example_data/f2.bed
-# chr1    1       2       a       0       +
-# chr1    6       7       b       0       -

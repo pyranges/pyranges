@@ -11,7 +11,7 @@ gr2 = pr.data.aorta2()
 print(gr.intersect(gr2))
 ```
 
-The set_intersect method clusters the intervals (i.e. merges them into one) before finding the intersect: [^2]
+The set_intersect method merges the intervals before finding the intersect: [^2]
 
 ```{python tidy=FALSE}
 print(gr.set_intersect(gr2))

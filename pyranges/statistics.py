@@ -5,7 +5,6 @@ import pyranges as pr
 from pyranges.multithreaded import pyrange_apply, _relative_distance
 
 
-
 class StatisticsMethods():
 
     pr = None
@@ -14,19 +13,22 @@ class StatisticsMethods():
 
         self.pr = pr
 
-
     def jaccard(self, other, **kwargs):
 
         self = self.pr
 
+        kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges.fill_kwargs(kwargs)
         strand = True if kwargs["strandedness"] else False
 
-        intersection_sum = sum(v.sum() for v in self.set_intersect(other, **kwargs).lengths().values())
+        intersection_sum = sum(
+            v.sum()
+            for v in self.set_intersect(other, **kwargs).lengths().values())
 
         union_sum = 0
         for gr in [self, other]:
-            union_sum += sum(v.sum() for v in gr.merge(strand=strand).lengths().values())
+            union_sum += sum(
+                v.sum() for v in gr.merge(strand=strand).lengths().values())
 
         denominator = (union_sum - intersection_sum)
         if denominator == 0:
@@ -36,11 +38,11 @@ class StatisticsMethods():
 
         return jc
 
-
     def relative_distance(self, other, **kwargs):
 
         self = self.pr
 
+        kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges.fill_kwargs(kwargs)
         result = pyrange_apply(_relative_distance, self, other, **kwargs)
 
@@ -56,4 +58,3 @@ class StatisticsMethods():
         vc = vc.reset_index(drop=True)
 
         return vc
-

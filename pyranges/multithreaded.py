@@ -524,7 +524,6 @@ def _intersection(scdf, ocdf, kwargs):
         return None
 
 
-
 def sort_one_by_one(d, col1, col2):
     """
     Equivalent to pd.sort_values(by=[col1, col2]), but faster.
@@ -652,7 +651,6 @@ def _nearest(scdf, ocdf, kwargs):
 
     df = df.drop("Chromosome" + suffix, axis=1)
     return df
-
 
 
 @ray.remote
@@ -878,7 +876,6 @@ def _sort(df, kwargs):
     return sort_one_by_one(df, "Start", "End")
 
 
-
 @ray.remote
 def _relative_distance(scdf, ocdf, kwargs):
 
@@ -888,7 +885,7 @@ def _relative_distance(scdf, ocdf, kwargs):
         (ocdf.Start + ocdf.End) / 2).astype(int).sort_values().values
 
     left_idx = np.searchsorted(midpoints_other, midpoints_self)
-    left_idx[left_idx >= len(midpoints_other) - 1] -= 1
+    left_idx[left_idx >= len(midpoints_other)] -= 1
     left_idx_shift = (midpoints_other[left_idx] > midpoints_self) & (left_idx >
                                                                      0)
     left_idx[left_idx_shift] -= 1
@@ -941,5 +938,3 @@ if __name__ == "__main__":
         })
 
     bgr = pr.PyRanges(background, copy_df=False)
-
-

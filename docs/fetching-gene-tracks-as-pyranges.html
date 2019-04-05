@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>8 Sorting PyRanges | PyRanges documentation</title>
-  <meta name="description" content="8 Sorting PyRanges | PyRanges documentation">
+  <title>3 Fetching gene tracks as PyRanges | PyRanges documentation</title>
+  <meta name="description" content="3 Fetching gene tracks as PyRanges | PyRanges documentation">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="8 Sorting PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="3 Fetching gene tracks as PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="8 Sorting PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="3 Fetching gene tracks as PyRanges | PyRanges documentation" />
   
   
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="concatenating-pyranges.html">
-<link rel="next" href="summarizing-pyranges.html">
+<link rel="prev" href="loadingcreating-pyranges.html">
+<link rel="next" href="writing-pyranges-to-disk.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -139,77 +139,42 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="sorting-pyranges" class="section level1">
-<h1><span class="header-section-number">8</span> Sorting PyRanges</h1>
-<p>pyranges are always sorted on chromosome and strand to enable faster operations.</p>
-<p>pyranges can in addition be sorted on start and end by using the function sort:</p>
+<div id="fetching-gene-tracks-as-pyranges" class="section level1">
+<h1><span class="header-section-number">3</span> Fetching gene tracks as PyRanges</h1>
+<p>PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges.db module.</p>
+<p>Each database contains at least two methods, namely genes and genomes. UCSC and Ensembl also has the method chromosome_sizes.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
-<span class="im">import</span> pandas <span class="im">as</span> pd
-<span class="im">from</span> io <span class="im">import</span> StringIO
-cs <span class="op">=</span> pr.data.chipseq()
-<span class="bu">print</span>(cs)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+----------+----------+
-## | Chromosome   | Start     | End       | Name     | Score    | Strand   |
-## | (int8)       | (int32)   | (int32)   | (int8)   | (int8)   | (int8)   |
-## |--------------+-----------+-----------+----------+----------+----------|
-## | chr1         | 212609534 | 212609559 | U0       | 0        | +        |
-## | chr1         | 169887529 | 169887554 | U0       | 0        | +        |
-## | chr1         | 216711011 | 216711036 | U0       | 0        | +        |
-## | ...          | ...       | ...       | ...      | ...      | ...      |
-## | chrY         | 13517892  | 13517917  | U0       | 0        | -        |
-## | chrY         | 8010951   | 8010976   | U0       | 0        | -        |
-## | chrY         | 7405376   | 7405401   | U0       | 0        | -        |
-## +--------------+-----------+-----------+----------+----------+----------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">cs_sorted <span class="op">=</span> cs.sort()
-<span class="bu">print</span>(cs)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+----------+----------+
-## | Chromosome   | Start     | End       | Name     | Score    | Strand   |
-## | (int8)       | (int32)   | (int32)   | (int8)   | (int8)   | (int8)   |
-## |--------------+-----------+-----------+----------+----------+----------|
-## | chr1         | 212609534 | 212609559 | U0       | 0        | +        |
-## | chr1         | 169887529 | 169887554 | U0       | 0        | +        |
-## | chr1         | 216711011 | 216711036 | U0       | 0        | +        |
-## | ...          | ...       | ...       | ...      | ...      | ...      |
-## | chrY         | 13517892  | 13517917  | U0       | 0        | -        |
-## | chrY         | 8010951   | 8010976   | U0       | 0        | -        |
-## | chrY         | 7405376   | 7405401   | U0       | 0        | -        |
-## +--------------+-----------+-----------+----------+----------+----------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
-<p>This will sort them on Chromosome, Strand, Start and then End.</p>
-<p>Custom sorting can be done after you are done with the PyRanges-related functionality. Then you can extract the underlying dataframes with df and sort it:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">df <span class="op">=</span> cs_sorted.df
-<span class="bu">print</span>(df.head())</code></pre></div>
-<pre><code>##   Chromosome    Start      End Name Score Strand
-## 0       chr1  1541598  1541623   U0     0      +
-## 1       chr1  1599121  1599146   U0     0      +
-## 2       chr1  3504032  3504057   U0     0      +
-## 3       chr1  3806532  3806557   U0     0      +
-## 4       chr1  5079955  5079980   U0     0      +</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">df_sorted <span class="op">=</span> df.sort_values([<span class="st">&quot;Chromosome&quot;</span>, <span class="st">&quot;Start&quot;</span>, <span class="st">&quot;End&quot;</span>])
-<span class="bu">print</span>(df_sorted.head(<span class="dv">20</span>))</code></pre></div>
-<pre><code>##    Chromosome    Start      End Name Score Strand
-## 0        chr1  1325303  1325328   U0     0      -
-## 0        chr1  1541598  1541623   U0     0      +
-## 1        chr1  1599121  1599146   U0     0      +
-## 1        chr1  1820285  1820310   U0     0      -
-## 2        chr1  2448322  2448347   U0     0      -
-## 3        chr1  3046141  3046166   U0     0      -
-## 4        chr1  3437168  3437193   U0     0      -
-## 2        chr1  3504032  3504057   U0     0      +
-## 5        chr1  3637087  3637112   U0     0      -
-## 6        chr1  3681903  3681928   U0     0      -
-## 3        chr1  3806532  3806557   U0     0      +
-## 7        chr1  3953790  3953815   U0     0      -
-## 8        chr1  5037292  5037317   U0     0      -
-## 4        chr1  5079955  5079980   U0     0      +
-## 5        chr1  5233543  5233568   U0     0      +
-## 6        chr1  5301327  5301352   U0     0      +
-## 7        chr1  5431308  5431333   U0     0      +
-## 8        chr1  5449222  5449247   U0     0      +
-## 9        chr1  5481750  5481775   U0     0      -
-## 10       chr1  5699351  5699376   U0     0      -</code></pre>
-<p>Now the df is sorted and start and end with interleaved strands.</p>
+genomes <span class="op">=</span> pr.db.ucsc.genomes()
+<span class="bu">print</span>(genomes.head())</code></pre></div>
+<pre><code>##     Genome
+## 0  acaChl1
+## 1  ailMel1
+## 2  allMis1
+## 3  allSin1
+## 4  amaVit1</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">chr_sizes <span class="op">=</span> pr.db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)
+<span class="bu">print</span>(chr_sizes.head())</code></pre></div>
+<pre><code>## chr1    248956422
+## chr2    242193529
+## chr3    198295559
+## chr4    190214555
+## chr5    181538259
+## dtype: int64</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">genes <span class="op">=</span> pr.db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>)
+<span class="bu">print</span>(genes)</code></pre></div>
+<pre><code>## +---------------------+-----------+-----------+----------+-----------+----------------+--------------+
+## | Chromosome          | Start     | End       | Strand   | Feature   | TranscriptID   | ExonNumber   |
+## | (int16)             | (int32)   | (int32)   | (int8)   | (int8)    | (int32)        | (int16)      |
+## |---------------------+-----------+-----------+----------+-----------+----------------+--------------|
+## | chr1                | 11873     | 12227     | +        | exon      | NR_046018      | 1            |
+## | chr1                | 11873     | 12227     | +        | exon      | NR_046018      | 2            |
+## | chr1                | 11873     | 12227     | +        | exon      | NR_046018      | 3            |
+## | ...                 | ...       | ...       | ...      | ...       | ...            | ...          |
+## | chrY_KZ208924v1_fix | 54153099  | 54153293  | -        | exon      | NR_001537      | 4            |
+## | chrY_KZ208924v1_fix | 54153099  | 54153293  | -        | exon      | NR_001537      | 5            |
+## | chrY_KZ208924v1_fix | 54153099  | 54153293  | -        | exon      | NR_001537      | 6            |
+## +---------------------+-----------+-----------+----------+-----------+----------------+--------------+
+## PyRanges object has 863085 sequences from 367 chromosomes.</code></pre>
 
 </div>
             </section>
@@ -217,8 +182,8 @@ cs <span class="op">=</span> pr.data.chipseq()
           </div>
         </div>
       </div>
-<a href="concatenating-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="summarizing-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="loadingcreating-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="writing-pyranges-to-disk.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
