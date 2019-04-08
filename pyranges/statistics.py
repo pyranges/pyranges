@@ -46,7 +46,8 @@ class StatisticsMethods():
 
         kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges.fill_kwargs(kwargs)
-        result = pyrange_apply(_relative_distance, self, other, **kwargs)
+
+        result = pyrange_apply(_relative_distance, self, other, **kwargs)  # pylint: disable=E1132
 
         result = pd.Series(np.concatenate(list(result.values())))
 
