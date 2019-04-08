@@ -12,7 +12,7 @@ GenomicRanges and genomic Rle-objects for Python.
 
 ## Documentation
 
-https://biocore-ntnu.github.io/pyranges/
+<https://biocore-ntnu.github.io/pyranges/>
 
 ## Install
 
@@ -22,14 +22,14 @@ pip install pyranges
 
 ## Paper
 
-Being written here: https://github.com/endrebak/pyranges-paper
+Being written here: <https://github.com/endrebak/pyranges-paper>
 
 ## TODO
 
 For the future:
 
-* K-nearest
-* write bam
+  * K-nearest
+  * write bam
 
 ## Performance
 

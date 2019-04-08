@@ -30,7 +30,7 @@ merge_command = "bedtools merge -o first -c 6 {} -i <(sort -k1,1 -k2,2n {})"
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min())  # nosec
+@given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
 def test_cluster(gr, strand):
 
     bedtools_strand = {True: "-s", False: ""}[strand]
