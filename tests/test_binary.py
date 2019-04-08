@@ -1,7 +1,7 @@
 import pytest
 
 from hypothesis import given, settings, HealthCheck
-from hypothesis import reproduce_failure  # nosec
+from hypothesis import reproduce_failure  # pylint: disable=unused-import
 
 from itertools import product
 import tempfile
