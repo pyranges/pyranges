@@ -7,7 +7,7 @@ import hypothesis.strategies as st
 
 from itertools import product
 import tempfile
-import subprocess
+import subprocess  # nosec
 from io import StringIO
 
 from pyrle import Rle
@@ -64,8 +64,10 @@ def run_bedtools(command,
             bedtools_how=bedtools_how)
         print("cmd " * 5)
         print(cmd)
-        result = subprocess.check_output(
-            cmd, shell=True, executable="/bin/bash").decode()
+        # ignoring the below line in bandit as only strings created by
+        # the test suite is run here; no user input ever sought
+        result = subprocess.check_output(  # nosec
+            cmd, shell=True, executable="/bin/bash").decode()  #nosec
 
     return result
 

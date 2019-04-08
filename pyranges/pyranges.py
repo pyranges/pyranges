@@ -70,8 +70,8 @@ class PyRanges():
     def __len__(self):
         return sum([len(d) for d in self.values()])
 
-    def __call__(self, eval_str, strand=True):
-        return self.eval(eval_str, strand)
+    def __call__(self, f, strand=True):
+        return self.apply(f)
 
     def __getattr__(self, name):
 
@@ -223,22 +223,6 @@ class PyRanges():
         f = ray.remote(f)
 
         result = pyrange_apply(f, self, other, strand, kwargs)
-
-        if not as_pyranges:
-            return result
-        else:
-            return PyRanges(result)
-
-    def eval(self, eval_cmd, strand=True, as_pyranges=True, kwargs=None):
-
-        f = lambda df: eval(eval_cmd)
-
-        if kwargs is None:
-            kwargs = {}
-
-        f = ray.remote(f)
-
-        result = pyrange_apply_single(f, self, strand, kwargs)
 
         if not as_pyranges:
             return result

@@ -1,18 +1,10 @@
-import numpy as np
 import pandas as pd
-from ncls import NCLS
 
 import pyranges as pr
 
 from natsort import natsorted
 
-from collections import defaultdict
-
-from functools import wraps
-
 import pyranges.raymock as ray
-
-import sys
 
 
 @ray.remote

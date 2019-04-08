@@ -1,11 +1,6 @@
-import os
 import pandas as pd
 
 from ftplib import FTP
-
-import tempfile
-
-import pyranges as pr
 
 from natsort import natsorted
 
@@ -45,15 +40,15 @@ def genes(species, release="latest", path=None):
 
     assert species in "human mouse".split()
 
-    _releases = []
+    releases = []
     for r in _releases(species):
         r = r.split("_")[1]
         if r.replace("M", "").isdecimal():
-            _releases.append(r)
+            releases.append(r)
 
     if not release == "latest":
         assert str(
-            release) in _releases, str(release) + " not in " + str(_releases)
+            release) in releases, str(release) + " not in " + str(releases)
     else:
         release = max(_releases, key=lambda n: int(n.replace("M", "")))
 
