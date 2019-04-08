@@ -1,6 +1,7 @@
 import pytest
 
-from hypothesis import given, settings, reproduce_failure, HealthCheck
+from hypothesis import given, settings, HealthCheck
+from hypothesis import reproduce_failure  # nosec
 
 import tempfile
 import subprocess  # nosec

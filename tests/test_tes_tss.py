@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_tssify(f1):
 
     result = f1.tssify(slack=5)

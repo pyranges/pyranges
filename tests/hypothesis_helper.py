@@ -1,4 +1,4 @@
-from hypothesis.extra.pandas import data_frames, columns, column, indexes
+from hypothesis.extra.pandas import data_frames, column, indexes
 import hypothesis.strategies as st
 
 from pyranges import PyRanges

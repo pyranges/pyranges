@@ -43,7 +43,7 @@ def process_results(results, keys):
             results_dict[k].index = range(len(results_dict[k]))
 
     for k in to_delete:
-        results_dict[k]
+        del results_dict[k]
 
     return results_dict
 
@@ -225,11 +225,6 @@ def pyrange_apply_single(function, self, strand, kwargs):
     if strand:
         assert self.stranded, \
             "Can only do stranded operation when PyRange contains strand info"
-
-    if self.stranded and strand:
-        grpby_key = ["Chromosome", "Strand"]
-    else:
-        grpby_key = "Chromosome"
 
     items = self.items()
 

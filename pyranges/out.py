@@ -3,8 +3,6 @@ import csv
 
 from natsort import natsorted
 
-import pyranges as pr
-
 
 def _fill_missing(df, all_columns):
 

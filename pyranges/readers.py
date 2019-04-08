@@ -5,7 +5,6 @@ import sys
 import pandas as pd
 
 from pyranges.pyranges import PyRanges
-from pyranges import data
 
 import bamread
 

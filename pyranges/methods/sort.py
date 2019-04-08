@@ -1,7 +1,5 @@
 import pyranges.raymock as ray
 
-import pandas as pd
-
 
 @ray.remote
 def _sort(df, kwargs):
