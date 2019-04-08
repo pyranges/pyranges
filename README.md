@@ -28,8 +28,8 @@ Being written here: <https://github.com/endrebak/pyranges-paper>
 
 For the future:
 
-*  K-nearest
-*  write bam
+*   K-nearest
+*   write bam
 
 ## Performance
 
