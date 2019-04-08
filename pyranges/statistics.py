@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 
 import pyranges as pr
-from pyranges.multithreaded import pyrange_apply, _relative_distance
+from pyranges.multithreaded import pyrange_apply
+
+from pyranges.methods.statistics import _relative_distance
 
 
 class StatisticsMethods():

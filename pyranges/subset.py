@@ -1,9 +1,25 @@
-from pyranges.ncls import find_overlaps
+from ncls import NCLS
+
+
+def create_ncls(df):
+
+    return NCLS(df.Start.values, df.End.values, df.index.values)
+
+
+def find_overlaps(df, start, end):
+
+    n = create_ncls(df)
+
+    idxes = []
+    for r in n.find_overlap(start, end):
+        idxes.append(r[2])
+
+    return idxes
+
 
 def get_slice(self, val):
 
     # 100:999
-
 
     d = {}
 
@@ -15,9 +31,6 @@ def get_slice(self, val):
         d[k] = df.reindex(idxes)
 
     return d
-
-
-
 
 
 def get_string(self, val):
@@ -34,7 +47,6 @@ def get_string(self, val):
         return {}
 
 
-
 def get_tuple(self, val):
 
     if len(val) == 2:
@@ -47,7 +59,8 @@ def get_tuple(self, val):
 
 def get_double(self, val):
 
-    if len(val) == 2 and val[0] in self.chromosomes and isinstance(val[1], slice):
+    if len(val) == 2 and val[0] in self.chromosomes and isinstance(
+            val[1], slice):
         chromosome, loc = val
         start = loc.start or 0
         if self.stranded:
@@ -85,7 +98,6 @@ def get_double(self, val):
                 dfs2[k] = df.loc[idxes]
 
         return dfs2
-
 
     # "chr1", "+"
     if len(val) == 2 and val[1] in "+ -".split():

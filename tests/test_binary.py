@@ -16,11 +16,8 @@ import pyranges as pr
 import pandas as pd
 import numpy as np
 
-
 from tests.helpers import assert_df_equal
 from tests.hypothesis_helper import dfs_min2, dfs_min
-
-
 
 import numpy as np
 
@@ -30,19 +27,27 @@ if environ.get("TRAVIS"):
     max_examples = 100
     deadline = None
 else:
-    max_examples = 1000
+    max_examples = 100
     deadline = None
-
 
 strandedness = [False, "same", "opposite"]
 no_opposite = [False, "same"]
 
 
-def run_bedtools(command, gr, gr2, strandedness, nearest_overlap=False, nearest_how=None):
+def run_bedtools(command,
+                 gr,
+                 gr2,
+                 strandedness,
+                 nearest_overlap=False,
+                 nearest_how=None):
 
     bedtools_strand = {False: "", "same": "-s", "opposite": "-S"}[strandedness]
     bedtools_overlap = {True: "", False: "-io"}[nearest_overlap]
-    bedtools_how = {"upstream": "-id", "downstream": "-iu", None: ""}[nearest_how] + " -D a"
+    bedtools_how = {
+        "upstream": "-id",
+        "downstream": "-iu",
+        None: ""
+    }[nearest_how] + " -D a"
     # print("bedtools how:", bedtools_how)
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -51,11 +56,16 @@ def run_bedtools(command, gr, gr2, strandedness, nearest_overlap=False, nearest_
         gr.df.to_csv(f1, sep="\t", header=False, index=False)
         gr2.df.to_csv(f2, sep="\t", header=False, index=False)
 
-        cmd = command.format(f1=f1, f2=f2, strand=bedtools_strand, overlap=bedtools_overlap,
-                             bedtools_how=bedtools_how)
+        cmd = command.format(
+            f1=f1,
+            f2=f2,
+            strand=bedtools_strand,
+            overlap=bedtools_overlap,
+            bedtools_how=bedtools_how)
         print("cmd " * 5)
         print(cmd)
-        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+        result = subprocess.check_output(
+            cmd, shell=True, executable="/bin/bash").decode()
 
     return result
 
@@ -69,7 +79,12 @@ def read_bedtools_result_set_op(bedtools_result, strandedness):
         usecols = [0, 1, 2]
         names = "Chromosome Start End".split()
 
-    return pd.read_csv(StringIO(bedtools_result), header=None, usecols=usecols, names=names, sep="\t")
+    return pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        usecols=usecols,
+        names=names,
+        sep="\t")
 
 
 def compare_results(bedtools_df, result):
@@ -96,12 +111,17 @@ def compare_results_nearest(bedtools_df, result):
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", no_opposite)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_set_intersect(gr, gr2, strandedness):
 
     set_intersect_command = "bedtools intersect {strand} -a <(sort -k1,1 -k2,2n {f1} | bedtools merge {strand} -c 4,5,6 -o first -i -) -b <(sort -k1,1 -k2,2n {f2} | bedtools merge {strand} -c 4,5,6 -o first -i -)"
-    bedtools_result = run_bedtools(set_intersect_command, gr, gr2, strandedness)
+    bedtools_result = run_bedtools(set_intersect_command, gr, gr2,
+                                   strandedness)
 
     bedtools_df = read_bedtools_result_set_op(bedtools_result, strandedness)
 
@@ -112,11 +132,15 @@ def test_set_intersect(gr, gr2, strandedness):
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", no_opposite)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_set_union(gr, gr2, strandedness):
 
-    set_union_command = "cat {f1} {f2} | bedtools sort | bedtools merge {strand} -c 4,5,6 -o first -i -"    # set_union_command = "bedtools merge {strand} -c 4,5,6 -o first -i {f1}"
+    set_union_command = "cat {f1} {f2} | bedtools sort | bedtools merge {strand} -c 4,5,6 -o first -i -"  # set_union_command = "bedtools merge {strand} -c 4,5,6 -o first -i {f1}"
     bedtools_result = run_bedtools(set_union_command, gr, gr2, strandedness)
 
     bedtools_df = read_bedtools_result_set_op(bedtools_result, strandedness)
@@ -128,7 +152,11 @@ def test_set_union(gr, gr2, strandedness):
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", strandedness)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_overlap(gr, gr2, strandedness):
 
@@ -136,7 +164,11 @@ def test_overlap(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(overlap_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
+    bedtools_df = pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        names="Chromosome Start End Name Score Strand".split(),
+        sep="\t")
 
     result = gr.overlap(gr2, strandedness=strandedness)
 
@@ -145,7 +177,11 @@ def test_overlap(gr, gr2, strandedness):
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", strandedness)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 # @reproduce_failure('4.5.7', b'AXicY2RAA4zoAgAAVQAD')
 def test_intersect(gr, gr2, strandedness):
@@ -154,7 +190,11 @@ def test_intersect(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(intersect_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
+    bedtools_df = pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        names="Chromosome Start End Name Score Strand".split(),
+        sep="\t")
 
     # from pydbg import dbg
     # dbg(gr)
@@ -165,10 +205,13 @@ def test_intersect(gr, gr2, strandedness):
     compare_results(bedtools_df, result)
 
 
-
 @pytest.mark.bedtools
-@pytest.mark.parametrize("strandedness", ["same", "opposite", False]) #
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@pytest.mark.parametrize("strandedness", ["same", "opposite", False])  #
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 # @reproduce_failure('4.5.7', b'AXicLYaJCQAACIS0/YfuuQRRAbVG94Dk5LHSBgJ3ABU=')
 def test_subtraction(gr, gr2, strandedness):
@@ -177,7 +220,11 @@ def test_subtraction(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(subtract_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
+    bedtools_df = pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        names="Chromosome Start End Name Score Strand".split(),
+        sep="\t")
 
     result = gr.subtract(gr2, strandedness=strandedness)
 
@@ -187,24 +234,37 @@ def test_subtraction(gr, gr2, strandedness):
 nearest_hows = [None, "upstream", "downstream"]
 overlaps = [True, False]
 
+
 @pytest.mark.bedtools
-@pytest.mark.parametrize("nearest_how,overlap,strandedness", product(nearest_hows, overlaps, strandedness))
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@pytest.mark.parametrize("nearest_how,overlap,strandedness",
+                         product(nearest_hows, overlaps, strandedness))
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
     nearest_command = "bedtools closest {bedtools_how} {strand} {overlap} -t first -d -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
-    bedtools_result = run_bedtools(nearest_command, gr, gr2, strandedness, overlap, nearest_how)
+    bedtools_result = run_bedtools(nearest_command, gr, gr2, strandedness,
+                                   overlap, nearest_how)
 
-    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, names="Chromosome Start End Strand Chromosome2 Distance".split(), usecols=[0, 1, 2, 5, 6, 12], sep="\t")
+    bedtools_df = pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        names="Chromosome Start End Strand Chromosome2 Distance".split(),
+        usecols=[0, 1, 2, 5, 6, 12],
+        sep="\t")
 
     bedtools_df.Distance = bedtools_df.Distance.abs()
 
     bedtools_df = bedtools_df[bedtools_df.Chromosome2 != "."]
     bedtools_df = bedtools_df.drop("Chromosome2", 1)
 
-    result = gr.nearest(gr2, strandedness=strandedness, overlap=overlap, how=nearest_how)
+    result = gr.nearest(
+        gr2, strandedness=strandedness, overlap=overlap, how=nearest_how)
 
     print("bedtools " * 5)
     print(bedtools_df)
@@ -214,10 +274,13 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     compare_results_nearest(bedtools_df, result)
 
 
-
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", no_opposite)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_jaccard(gr, gr2, strandedness):
 
@@ -235,15 +298,16 @@ def test_jaccard(gr, gr2, strandedness):
 
     # assert abs(result - bedtools_jaccard) < 0.001
 
-
     assert 0 <= result <= 1
-
-
 
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", strandedness)
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_join(gr, gr2, strandedness):
 
@@ -251,9 +315,18 @@ def test_join(gr, gr2, strandedness):
 
     bedtools_result = run_bedtools(join_command, gr, gr2, strandedness)
 
-    bedtools_df = pd.read_csv(StringIO(bedtools_result), header=None, sep="\t",
-                                names="Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap".split(),
-                                dtype={"Chromosome": "category", "Strand": "category"}).drop("Chromosome_b Overlap".split(), axis=1)
+    bedtools_df = pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        sep="\t",
+        names=
+        "Chromosome Start End Name Score Strand Chromosome_b Start_b End_b Name_b Score_b Strand_b Overlap"
+        .split(),
+        dtype={
+            "Chromosome": "category",
+            "Strand": "category"
+        }).drop(
+            "Chromosome_b Overlap".split(), axis=1)
 
     result = gr.join(gr2, strandedness=strandedness)
 
@@ -263,9 +336,11 @@ def test_join(gr, gr2, strandedness):
         assert_df_equal(result.df, bedtools_df)
 
 
-
 @pytest.mark.bedtools
-@settings(max_examples=max_examples, deadline=deadline, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min2(), gr2=dfs_min2())
 # @reproduce_failure('4.5.7', b'AXicY2RgYGAEQihghLDBJCMjXJiBAQABIwAM')
 # @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwhgBDNBIkDMxAAHAAEIAAs=')
