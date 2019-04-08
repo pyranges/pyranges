@@ -1,8 +1,6 @@
 import pyranges.raymock as ray
 
-import numpy as np
 import pandas as pd
-from ncls import NCLS
 
 from sorted_nearest import find_clusters
 

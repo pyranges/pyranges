@@ -15,7 +15,6 @@ def reduce_string_width(str_repr, s, h, n_intervals, n_chromosomes):
     terminal_width = get_terminal_size()
 
     hidden_cols = []
-    never_drop = "Chromosome Start End Strand".split()
     header = str_repr.split("\n", 2)[1]
 
     while len(header) > terminal_width:

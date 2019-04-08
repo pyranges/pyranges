@@ -1,18 +1,11 @@
 import pandas as pd
 from natsort import natsorted
-import numpy as np
-from collections import defaultdict, OrderedDict
-
-import logging
 
 import pyranges as pr
-
-from tabulate import tabulate
 
 import pyranges.raymock as ray
 
 from pyranges.tostring import tostring
-from pyranges.subset import get_string, get_slice, get_tuple
 
 from pyranges.methods.intersection import _intersection
 from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, _slack, _tes, _tss

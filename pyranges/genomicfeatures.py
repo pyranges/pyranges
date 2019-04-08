@@ -3,8 +3,8 @@ import pandas as pd
 # from pyranges.pyranges import pyrange_or_df_single
 import pyranges as pr
 
-def pyrange_or_df(func):
 
+def pyrange_or_df(func):
     def extension(self, other, *args, **kwargs):
         df = func(self, other, *args, **kwargs)
 
@@ -34,7 +34,7 @@ def _keep_transcript_with_most_exons(df):
 
     transcripts_with_most_exons = []
 
-    for gene, gdf in df.groupby("GeneID"):
+    for _, gdf in df.groupby("GeneID"):
 
         max_exon = gdf.ExonNumber.max()
         max_transcript = gdf.loc[gdf.ExonNumber == max_exon].Transcript.iloc[0]
@@ -46,7 +46,6 @@ def _keep_transcript_with_most_exons(df):
     return pd.concat(transcripts_with_most_exons).reset_index(drop=True)
 
 
-
 def tss_or_tes(df, which, slack=0):
 
     assert which in "tes tss".split()
@@ -54,11 +53,10 @@ def tss_or_tes(df, which, slack=0):
     if "Feature" not in df:
         raise Exception("No Feature information in object.")
 
-
     _df = df[df.Feature == "transcript"]
 
     if which == "tss":
-         _df = _tss(_df, slack)
+        _df = _tss(_df, slack)
     elif which == "tes":
         _df = _tes(_df, slack)
 
@@ -68,7 +66,6 @@ def tss_or_tes(df, which, slack=0):
 def filter_transcripts(df, keep="most_exons"):
 
     return _keep_transcript_with_most_exons(df)
-
 
 
 def _tss(df, slack=0, drop_duplicates=True):
@@ -147,7 +144,9 @@ class GenomicFeaturesMethods():
             df = _keep_transcript_with_most_exons(df)
 
         if not pr.stranded:
-            raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
+            raise Exception(
+                "Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?"
+            )
         df = tss_or_tes(df, "tss", slack)
 
         if drop_duplicate_tss:
@@ -171,7 +170,9 @@ class GenomicFeaturesMethods():
             df = _keep_transcript_with_most_exons(df)
 
         if not pr.stranded:
-            raise Exception("Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?")
+            raise Exception(
+                "Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?"
+            )
         df = tss_or_tes(df, "tes", slack)
 
         if drop_duplicate_tss:
@@ -180,5 +181,3 @@ class GenomicFeaturesMethods():
         df = df.drop(["ExonNumber", "ExonID"], 1)
 
         return df
-
-

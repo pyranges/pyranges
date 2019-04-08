@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from ncls import NCLS
 
 
 def _setattr(self, column_name, column):

@@ -1,14 +1,4 @@
-
-
 import pytest
-from tests.helpers import assert_df_equal
-
-from pyranges.pyranges import PyRanges
-import pyranges as pr
-
-import pandas as pd
-
-from io import StringIO
 
 
 def test_tssify(f1):

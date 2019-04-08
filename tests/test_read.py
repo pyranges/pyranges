@@ -1,11 +1,4 @@
-import pytest
-
-from pyranges.pyranges import PyRanges
 import pyranges as pr
-
-import pandas as pd
-
-from io import StringIO
 
 
 def test_read_bam():
@@ -25,6 +18,7 @@ def test_read_gff3():
     gr = pr.read_gtf("tests/test_data/gencode.gff3", full=False)
 
     assert list(gr.df.columns[:4]) == "Chromosome Start End Strand".split()
+
 
 def test_read_bed():
 

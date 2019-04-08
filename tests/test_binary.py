@@ -1,6 +1,6 @@
 import pytest
 
-from hypothesis import given, settings, reproduce_failure, unlimited, HealthCheck, seed
+from hypothesis import given, settings, reproduce_failure, HealthCheck
 from hypothesis.extra.pandas import data_frames, columns, range_indexes, column, indexes
 from hypothesis.extra.numpy import arrays
 import hypothesis.strategies as st
@@ -116,7 +116,6 @@ def compare_results_nearest(bedtools_df, result):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_set_intersect(gr, gr2, strandedness):
@@ -137,7 +136,6 @@ def test_set_intersect(gr, gr2, strandedness):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_set_union(gr, gr2, strandedness):
@@ -157,7 +155,6 @@ def test_set_union(gr, gr2, strandedness):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_overlap(gr, gr2, strandedness):
@@ -182,7 +179,6 @@ def test_overlap(gr, gr2, strandedness):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 # @reproduce_failure('4.5.7', b'AXicY2RAA4zoAgAAVQAD')
@@ -212,7 +208,6 @@ def test_intersect(gr, gr2, strandedness):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 # @reproduce_failure('4.5.7', b'AXicLYaJCQAACIS0/YfuuQRRAbVG94Dk5LHSBgJ3ABU=')
@@ -243,7 +238,6 @@ overlaps = [True, False]
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
@@ -281,7 +275,6 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_jaccard(gr, gr2, strandedness):
@@ -308,7 +301,6 @@ def test_jaccard(gr, gr2, strandedness):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    timeout=unlimited,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())
 def test_join(gr, gr2, strandedness):

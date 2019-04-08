@@ -1,6 +1,5 @@
 import os
 import pyranges as pr
-from ftplib import FTP
 
 import tempfile
 

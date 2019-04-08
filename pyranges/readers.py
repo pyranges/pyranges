@@ -3,16 +3,11 @@ from __future__ import print_function
 import sys
 
 import pandas as pd
-import numpy as np
-
-import pkg_resources
 
 from pyranges.pyranges import PyRanges
 from pyranges import data
 
 import bamread
-
-from pyrle import PyRles, Rle
 
 from pyranges.version import __version__
 

@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import csv
 
 from natsort import natsorted
@@ -161,7 +160,9 @@ class OutMethods():
 
         unique_chromosomes = gr.chromosomes
 
-        df = gr("df[['Chromosome', 'Start', 'End', 'Score']]", strand=False).sort().df
+        df = gr(
+            "df[['Chromosome', 'Start', 'End', 'Score']]",
+            strand=False).sort().df
 
         import pyBigWig
 

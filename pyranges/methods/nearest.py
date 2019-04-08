@@ -1,15 +1,13 @@
 import pyranges.raymock as ray
 
-import numpy as np
 import pandas as pd
-from ncls import NCLS
 
 from .join import _both_dfs
 from .sort import sort_one_by_one
 
-from sorted_nearest import (find_clusters, nearest_previous_nonoverlapping,
+from sorted_nearest import (nearest_previous_nonoverlapping,
                             nearest_next_nonoverlapping,
-                            nearest_nonoverlapping, find_clusters)
+                            nearest_nonoverlapping)
 
 
 def _overlapping_for_nearest(scdf, ocdf, suffix):

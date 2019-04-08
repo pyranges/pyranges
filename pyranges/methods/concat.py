@@ -1,8 +1,5 @@
-from pyranges.multithreaded import merge_dfs
 import pyranges as pr
 import pandas as pd
-
-import pyranges.raymock as ray
 
 from collections import defaultdict
 
