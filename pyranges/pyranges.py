@@ -22,7 +22,6 @@ def fill_kwargs(kwargs):
 
     defaults = {
         "strandedness": None,
-        "suffix": "_b",
         "overlap": True,
         "how": None,
         "invert": None,
@@ -243,7 +242,7 @@ class PyRanges():
         return PyRanges(
             pyrange_apply_single(_tss, self, self.stranded, kwargs))
 
-    def sort(self, columns=["Start", "End"], **kwargs):
+    def sort(self, columns=("Start", "End"), **kwargs):
         from pyranges.methods.sort import _sort
         kwargs["sparse"] = False
         return PyRanges(

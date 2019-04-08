@@ -89,7 +89,7 @@ def skiprows(f):
         for i, l in enumerate(fh):
             if l.decode()[0] != "#":
                 break
-    except:
+    except OSError:  # not a gzipped file
         fh = open(f)
         for i, l in enumerate(fh):
             if l[0] != "#":
