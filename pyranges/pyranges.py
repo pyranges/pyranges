@@ -214,7 +214,7 @@ class PyRanges():
 
         f = ray.remote(f)
 
-        result = pyrange_apply(f, self, other, strand, kwargs)
+        result = pyrange_apply(f, self, other, kwargs)
 
         if not as_pyranges:
             return result

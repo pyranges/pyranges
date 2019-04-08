@@ -109,7 +109,7 @@ def compare_results_nearest(bedtools_df, result):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 def test_set_intersect(gr, gr2, strandedness):
 
     set_intersect_command = "bedtools intersect {strand} -a <(sort -k1,1 -k2,2n {f1} | bedtools merge {strand} -c 4,5,6 -o first -i -) -b <(sort -k1,1 -k2,2n {f2} | bedtools merge {strand} -c 4,5,6 -o first -i -)"
@@ -129,7 +129,7 @@ def test_set_intersect(gr, gr2, strandedness):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 def test_set_union(gr, gr2, strandedness):
 
     set_union_command = "cat {f1} {f2} | bedtools sort | bedtools merge {strand} -c 4,5,6 -o first -i -"  # set_union_command = "bedtools merge {strand} -c 4,5,6 -o first -i {f1}"
@@ -148,7 +148,7 @@ def test_set_union(gr, gr2, strandedness):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 def test_overlap(gr, gr2, strandedness):
 
     overlap_command = "bedtools intersect -wa {strand} -a {f1} -b {f2}"
@@ -172,7 +172,7 @@ def test_overlap(gr, gr2, strandedness):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 # @reproduce_failure('4.5.7', b'AXicY2RAA4zoAgAAVQAD')
 def test_intersect(gr, gr2, strandedness):
 
@@ -201,7 +201,7 @@ def test_intersect(gr, gr2, strandedness):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 # @reproduce_failure('4.5.7', b'AXicLYaJCQAACIS0/YfuuQRRAbVG94Dk5LHSBgJ3ABU=')
 def test_subtraction(gr, gr2, strandedness):
 
@@ -231,7 +231,7 @@ overlaps = [True, False]
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
     nearest_command = "bedtools closest {bedtools_how} {strand} {overlap} -t first -d -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
@@ -268,7 +268,7 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 def test_jaccard(gr, gr2, strandedness):
 
     # jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
@@ -294,7 +294,7 @@ def test_jaccard(gr, gr2, strandedness):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())
+@given(gr=dfs_min(), gr2=dfs_min())  # nosec
 def test_join(gr, gr2, strandedness):
 
     join_command = "bedtools intersect {strand} -wo -a {f1} -b {f2}"
@@ -327,7 +327,7 @@ def test_join(gr, gr2, strandedness):
     max_examples=max_examples,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min2(), gr2=dfs_min2())
+@given(gr=dfs_min2(), gr2=dfs_min2())  # nosec
 # @reproduce_failure('4.5.7', b'AXicY2RgYGAEQihghLDBJCMjXJiBAQABIwAM')
 # @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwhgBDNBIkDMxAAHAAEIAAs=')
 # @reproduce_failure('4.5.7', b'AXicY2RgYGAEIxhghIoAMRNCFAAA8AAK')
