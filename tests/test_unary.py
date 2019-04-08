@@ -1,4 +1,3 @@
-
 import pytest
 
 from hypothesis import given, settings, reproduce_failure, unlimited, HealthCheck, seed
@@ -8,7 +7,7 @@ import hypothesis.strategies as st
 
 from itertools import product
 import tempfile
-import subprocess
+import subprocess  # nosec
 from io import StringIO
 
 from pyrle import Rle
@@ -17,11 +16,8 @@ import pyranges as pr
 import pandas as pd
 import numpy as np
 
-
 from tests.helpers import assert_df_equal
 from tests.hypothesis_helper import dfs_min
-
-
 
 import numpy as np
 
@@ -34,13 +30,16 @@ else:
     max_examples = 100
     deadline = None
 
-
 merge_command = "bedtools merge -o first -c 6 {} -i <(sort -k1,1 -k2,2n {})"
 
 
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strand", [True, False])
-@settings(max_examples=max_examples, deadline=deadline, timeout=unlimited, suppress_health_check=HealthCheck.all())
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    timeout=unlimited,
+    suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min())
 def test_cluster(gr, strand):
 
@@ -56,12 +55,27 @@ def test_cluster(gr, strand):
         cmd = merge_command.format(bedtools_strand, f1)
         print(cmd)
 
-        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()
+        # ignoring bandit security warning. All strings created by test suite
+        result = subprocess.check_output(  # nosec
+            cmd, shell=True, executable="/bin/bash").decode()  # nosec
 
         if not strand:
-            bedtools_df = pd.read_csv(StringIO(result), sep="\t", header=None, squeeze=True, usecols=[0, 1, 2], names="Chromosome Start End".split(), dtype={"Chromosome": "category"})
+            bedtools_df = pd.read_csv(
+                StringIO(result),
+                sep="\t",
+                header=None,
+                squeeze=True,
+                usecols=[0, 1, 2],
+                names="Chromosome Start End".split(),
+                dtype={"Chromosome": "category"})
         else:
-            bedtools_df = pd.read_csv(StringIO(result), sep="\t", header=None, squeeze=True, names="Chromosome Start End Strand".split(), dtype={"Chromosome": "category"})
+            bedtools_df = pd.read_csv(
+                StringIO(result),
+                sep="\t",
+                header=None,
+                squeeze=True,
+                names="Chromosome Start End Strand".split(),
+                dtype={"Chromosome": "category"})
 
     print("bedtools_df\n", bedtools_df)
     result = gr.merge(strand=strand)
@@ -70,8 +84,12 @@ def test_cluster(gr, strand):
     if not bedtools_df.empty:
         # need to sort because bedtools sometimes gives the result in non-natsorted chromosome order!
         if result.stranded:
-            assert_df_equal(result.df.sort_values("Chromosome Start Strand".split()), bedtools_df.sort_values("Chromosome Start Strand".split()))
+            assert_df_equal(
+                result.df.sort_values("Chromosome Start Strand".split()),
+                bedtools_df.sort_values("Chromosome Start Strand".split()))
         else:
-            assert_df_equal(result.df.sort_values("Chromosome Start".split()), bedtools_df.sort_values("Chromosome Start".split()))
+            assert_df_equal(
+                result.df.sort_values("Chromosome Start".split()),
+                bedtools_df.sort_values("Chromosome Start".split()))
     else:
         assert bedtools_df.empty == result.df.empty
