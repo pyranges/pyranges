@@ -14,8 +14,7 @@ def _fill_missing(df, all_columns):
         missing = set(all_columns) - set(columns)
         missing_idx = {all_columns.index(m): m for m in missing}
         not_missing = set(columns).intersection(set(all_columns))
-        not_missing_ordered = sorted(
-            not_missing, key=lambda x: all_columns.index(x))
+        not_missing_ordered = sorted(not_missing, key=all_columns.index)
         outdf = df.get(not_missing_ordered)
 
         for idx, missing in sorted(missing_idx.items()):
@@ -48,7 +47,7 @@ def _gtf(df):
 
     # gotten all needed columns, need to join the rest
     rest = set(df.columns) - set(all_columns)
-    rest = sorted(rest, key=lambda x: columns.index(x))
+    rest = sorted(rest, key=columns.index)
     rest_df = df.get(rest).copy()
     for c in rest_df:
         col = rest_df[c]

@@ -105,9 +105,8 @@ def genes(genome, release="latest", path=None):
     _dir = "pub/release-{}/gtf/{}/".format(release, genome)
     dir_listing = pd.Series(ftp.nlst(_dir))
 
-    matches = (
-        dir_listing.str.lower().apply(lambda s: os.path.basename(s)).str.match(
-            "{}.*{}.gtf.gz".format(genome, release)))
+    matches = (dir_listing.str.lower().apply(os.path.basename).str.match(
+        "{}.*{}.gtf.gz".format(genome, release)))
 
     assert matches.sum() == 1, "More than one file matching: {}".format(
         dir_listing[matches])
