@@ -83,7 +83,6 @@ def _overlap(scdf, ocdf, kwargs):
     else:
         _indexes = it.has_overlaps(starts, ends, indexes)
 
-    from pydbg import dbg
     # dbg(_indexes)
 
     if invert:
