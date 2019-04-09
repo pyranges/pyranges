@@ -86,12 +86,10 @@ def make_binary_sparse(kwargs, df, odf):
 
 def make_unary_sparse(kwargs, df):
 
-    sparse = kwargs.get("sparse")
+    sparse = kwargs.get("sparse").get("self")
 
-    if not sparse:
-        return df
-
-    df = make_sparse(df)
+    if sparse:
+        df = make_sparse(df)
 
     return df
 
@@ -217,7 +215,13 @@ def pyrange_apply(function, self, other, **kwargs):
 
 def call_f_single(f, df, kwargs):
 
-    return f.remote(df, kwargs)
+    import inspect
+    nparams = len(inspect.signature(f).parameters)
+
+    if nparams == 2:
+        return f.remote(df, kwargs)
+    else:
+        return f.remote(df)
 
 
 def pyrange_apply_single(function, self, strand, kwargs):

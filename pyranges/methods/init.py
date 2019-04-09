@@ -55,29 +55,29 @@ def create_df_dict(df):
     return {k: v for k, v in df.groupby(grpby_key)}
 
 
-def create_pyranges_df(seqnames, starts, ends, strands=None):
+def create_pyranges_df(chromosomes, starts, ends, strands=None):
 
-    if isinstance(seqnames, str):
-        seqnames = pd.Series([seqnames] * len(starts), dtype="category")
+    if isinstance(chromosomes, str):
+        chromosomes = pd.Series([chromosomes] * len(starts), dtype="category")
 
     if strands is not None:
 
         if isinstance(strands, str):
             strands = pd.Series([strands] * len(starts), dtype="category")
 
-        columns = [seqnames, starts, ends, strands]
+        columns = [chromosomes, starts, ends, strands]
         lengths = list(str(len(s)) for s in columns)
         assert len(
             set(lengths)
-        ) == 1, "seqnames, starts, ends and strands must be of equal length. But are {}".format(
+        ) == 1, "chromosomes, starts, ends and strands must be of equal length. But are {}".format(
             ", ".join(lengths))
         colnames = "Chromosome Start End Strand".split()
     else:
-        columns = [seqnames, starts, ends]
+        columns = [chromosomes, starts, ends]
         lengths = list(str(len(s)) for s in columns)
         assert len(
             set(lengths)
-        ) == 1, "seqnames, starts and ends must be of equal length. But are {}".format(
+        ) == 1, "chromosomes, starts and ends must be of equal length. But are {}".format(
             ", ".join(lengths))
         colnames = "Chromosome Start End".split()
 
@@ -99,7 +99,7 @@ def create_pyranges_df(seqnames, starts, ends, strands=None):
 
 def _init(self,
           df=None,
-          seqnames=None,
+          chromosomes=None,
           starts=None,
           ends=None,
           strands=None,
@@ -113,10 +113,7 @@ def _init(self,
         df = df.copy()
 
     if df is False or df is None:
-        df = create_pyranges_df(seqnames, starts, ends, strands)
-
-    if isinstance(df, str):
-        df = read_path(df)
+        df = create_pyranges_df(chromosomes, starts, ends, strands)
 
     if isinstance(df, pd.DataFrame):
         df = set_dtypes(df, extended)

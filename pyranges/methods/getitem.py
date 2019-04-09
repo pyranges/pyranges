@@ -13,4 +13,7 @@ def _getitem(self, val):
     else:
         raise Exception("Not valid subsetter: {}".format(str(val)))
 
-    return PyRanges(df)
+    if not df is None:
+        return PyRanges(df)
+    else:
+        return PyRanges({})

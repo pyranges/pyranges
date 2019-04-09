@@ -7,7 +7,7 @@ __version__ = open("pyranges/version.py").readline().split(" = ")[1].replace(
 
 install_requires = [
     "cython", "pandas", "ncls", "tabulate", "sorted_nearest", "pyrle",
-    "natsort", "mysqlclient", "bamread", "requests"
+    "natsort", "mysqlclient", "bamread", "requests", "pybigwig"
 ]
 
 if os.getenv("TRAVIS"):

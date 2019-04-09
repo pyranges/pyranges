@@ -195,6 +195,38 @@ def test_intersect(gr, gr2, strandedness):
     compare_results(bedtools_df, result)
 
 
+# @pytest.mark.bedtools
+# @pytest.mark.parametrize("strandedness", strandedness)
+# @settings(
+#     max_examples=max_examples,
+#     deadline=deadline,
+#     suppress_health_check=HealthCheck.all())
+# @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+# @reproduce_failure('4.15.0', b'AXicY2RgYGAEIzgAsRkZUfkMDAAA2AAI')
+# def test_no_intersect(gr, gr2, strandedness):
+
+#     intersect_command = "bedtools intersect -v {strand} -a {f1} -b {f2}"
+
+#     bedtools_result = run_bedtools(intersect_command, gr, gr2, strandedness)
+
+#     bedtools_df = pd.read_csv(
+#         StringIO(bedtools_result),
+#         header=None,
+#         names="Chromosome Start End Name Score Strand".split(),
+#         sep="\t")
+
+#     # bedtools bug: https://github.com/arq5x/bedtools2/issues/719
+#     result = gr.no_overlap(gr2, strandedness=strandedness)
+
+#     from pydbg import dbg
+#     dbg(result)
+#     dbg(bedtools_df)
+
+#     # result2 = gr.intersect(gr2, strandedness)
+
+#     compare_results(bedtools_df, result)
+
+
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strandedness", ["same", "opposite", False])  #
 @settings(
@@ -358,3 +390,33 @@ def test_reldist(gr, gr2):
     # https://github.com/arq5x/bedtools2/issues/711
 
     assert 1
+
+
+new_pos = ["union"]  # ["intersection", "union"]
+
+
+@pytest.mark.parametrize("strandedness,new_pos", product(
+    strandedness, new_pos))
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+def test_join_new_pos(gr, gr2, strandedness, new_pos):
+
+    result = gr.join(gr2, strandedness=strandedness, new_pos=new_pos)
+
+    import numpy as np
+    result2 = gr.join(gr2, strandedness=strandedness)
+
+    if result.df.empty:
+        assert result2.df.empty
+    else:
+        if new_pos == "union":
+            new_starts = np.minimum(result2.Start, result2.Start_b)
+            new_ends = np.maximum(result2.End, result2.End_b)
+        else:
+            new_starts = np.maximum(result2.Start, result2.Start_b)
+            new_ends = np.minimum(result2.End, result2.End_b)
+        assert list(result.Start.values) == list(new_starts)
+        assert list(result.End.values) == list(new_ends)

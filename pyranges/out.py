@@ -157,9 +157,11 @@ class OutMethods():
 
         unique_chromosomes = gr.chromosomes
 
-        df = gr(
-            "df[['Chromosome', 'Start', 'End', 'Score']]",
-            strand=False).sort().df
+        def subset(df):
+            return df[['Chromosome', 'Start', 'End', 'Score']]
+
+        gr = gr(subset, strand=False)
+        df = gr.sort(strand=False).df
 
         import pyBigWig
 

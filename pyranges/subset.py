@@ -1,4 +1,5 @@
 from ncls import NCLS
+import pandas as pd
 
 
 def create_ncls(df):
@@ -119,7 +120,12 @@ def get_triple(self, val):
     if strand not in "+ -".split():
         raise Exception("Strand '{}' invalid.".format(val))
 
-    df = self[chromosome, strand].values()[0]
+    r = self[chromosome, strand].values()
+    if len(r):
+        df = r[0]
+    else:
+        df = pd.DataFrame(columns="Chromosome Start End".split())
+        return df
 
     max_end = df.End.max()
 

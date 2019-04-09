@@ -3,6 +3,7 @@ import hypothesis.strategies as st
 
 from pyranges import PyRanges
 
+import pandas as pd
 import numpy as np
 
 lengths = st.integers(min_value=1, max_value=int(1e7))
@@ -12,6 +13,8 @@ strands = st.sampled_from("+ -".split())
 single_strand = st.sampled_from(["+"])
 names = st.text("abcdefghijklmnopqrstuvxyz", min_size=1)
 scores = st.integers(min_value=0, max_value=256)
+
+datatype = st.sampled_from([pd.Series, np.array, list])
 
 chromosomes = st.sampled_from(
     ["chr{}".format(str(e)) for e in list(range(1, 23)) + "X Y M".split()])
@@ -114,6 +117,25 @@ def dfs_min(draw):  # nosec
 
 
 @st.composite
+def df_data(draw):
+
+    df = draw(better_dfs_min)
+    df.loc[:, "End"] += df.Start
+
+    chromosome_type = draw(datatype)
+    start_type = draw(datatype)
+    end_type = draw(datatype)
+    strand_type = draw(datatype)
+
+    strand = chromosome_type(df.Strand)
+    chromosome = chromosome_type(df.Chromosome)
+    start = chromosome_type(df.Start)
+    end = chromosome_type(df.End)
+
+    return chromosome, start, end, strand
+
+
+@st.composite
 def dfs_min_single_chromosome(draw):
     df = draw(better_dfs_min_single_chromosome)
     df.loc[:, "End"] += df.Start
@@ -121,3 +143,36 @@ def dfs_min_single_chromosome(draw):
     df.insert(4, "Score", 0)
 
     return df
+
+
+@st.composite
+def selector(draw):
+
+    df = draw(better_dfs_min)
+    h = df.head(1)
+    chromosome = h["Chromosome"].iloc[0]
+    start = h["Start"].iloc[0]
+    end = h["End"].iloc[0]
+    strand = h["Strand"].iloc[0]
+
+    chromosome_bool = draw(st.booleans())
+    strand_bool = draw(st.booleans())
+    start_bool = draw(st.booleans())
+    end_bool = draw(st.booleans())
+
+    _slice = {
+        (True, True): slice(start, end),
+        (True, False): slice(start, None),
+        (False, True): slice(None, end),
+        (False, False): slice(None, None)
+    }[start_bool, end_bool]
+
+    to_return = []
+    if chromosome_bool:
+        to_return.append(chromosome)
+    if strand_bool:
+        to_return.append(strand)
+    if start_bool or end_bool:
+        to_return.append(_slice)
+
+    return to_return

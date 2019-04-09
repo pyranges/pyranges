@@ -7,7 +7,7 @@ import pyranges.raymock as ray
 
 from pyranges.tostring import tostring
 
-from pyranges.methods.intersection import _intersection
+from pyranges.methods.intersection import _intersection, _overlap
 from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, _slack, _tes, _tss
 
 
@@ -32,15 +32,6 @@ def fill_kwargs(kwargs):
     return defaults
 
 
-def return_copy_if_view(df, df2):
-    # https://stackoverflow.com/questions/26879073/checking-whether-data-frame-is-copy-or-view-in-pandas
-
-    if df.values.base is df2.values.base:
-        return df.copy(deep=True)
-    else:
-        return df
-
-
 class PyRanges():
 
     dfs = None
@@ -48,7 +39,7 @@ class PyRanges():
 
     def __init__(self,
                  df=None,
-                 seqnames=None,
+                 chromosomes=None,
                  starts=None,
                  ends=None,
                  strands=None,
@@ -57,12 +48,12 @@ class PyRanges():
 
         from pyranges.methods.init import _init
 
-        _init(self, df, seqnames, starts, ends, strands, copy_df, extended)
+        _init(self, df, chromosomes, starts, ends, strands, copy_df, extended)
 
     def __len__(self):
         return sum([len(d) for d in self.values()])
 
-    def __call__(self, f, strand=True):
+    def __call__(self, f, strand=False):
         return self.apply(f)
 
     def __getattr__(self, name):
@@ -77,9 +68,9 @@ class PyRanges():
 
         _setattr(self, column_name, column)
 
-    def __eq__(self, other):
+    # def __eq__(self, other):
 
-        return self.df.equals(other.df)
+    #     return self.df.equals(other.df)
 
     def __getitem__(self, val):
 
@@ -100,21 +91,25 @@ class PyRanges():
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs = fill_kwargs(kwargs)
 
-        from pyranges.methods.intersection import _overlap
-
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
         return PyRanges(dfs)
 
-    def no_overlap(self, other, **kwargs):
+    # # TODO: use subtract code here instead, easier
+    # def no_overlap(self, other, **kwargs):
 
-        kwargs = fill_kwargs(kwargs)
-        kwargs["invert"] = True
-        kwargs["sparse"] = {"self": False, "other": True}
+    #     kwargs = fill_kwargs(kwargs)
+    #     kwargs["invert"] = True
+    #     kwargs["sparse"] = {"self": False, "other": True}
 
-        dfs = pyrange_apply(_overlap, self, other, **kwargs)
+    #     # if kwargs["strandedness"] in ["same", "opposite"]:
+    #     #     kwargs["strandedness"] = {
+    #     #         "same": "opposite",
+    #     #         "opposite": "same"
+    #     #     }[kwargs["strandedness"]]
+    #     dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
-        return PyRanges(dfs)
+    #     return PyRanges(dfs)
 
     def nearest(self, other, **kwargs):
 
@@ -185,21 +180,22 @@ class PyRanges():
 
         from pyranges.methods.merge import _merge
 
-        kwargs["sparse"] = True
+        kwargs["sparse"] = {"self": True}
         df = pyrange_apply_single(_merge, self, strand, kwargs)
 
         return PyRanges(df)
 
-    def coverage(self, value_col=None, strand=True, rpm=False):
+    def coverage(self, value_col=None, strand=False, rpm=False):
 
         from pyranges.methods.coverage import _coverage
 
         return _coverage(self, value_col, strand=strand, rpm=rpm)
 
-    def apply(self, f, strand=True, as_pyranges=True, kwargs=None):
+    def apply(self, f, strand=False, as_pyranges=True, kwargs=None):
 
-        if kwargs is None:
+        if not kwargs:
             kwargs = {}
+        kwargs = fill_kwargs(kwargs)
 
         f = ray.remote(f)
 
@@ -210,7 +206,7 @@ class PyRanges():
         else:
             return PyRanges(result)
 
-    def apply_pair(self, other, f, kwargs, strand=True, as_pyranges=True):
+    def apply_pair(self, other, f, kwargs, strand=False, as_pyranges=True):
 
         f = ray.remote(f)
 
@@ -223,7 +219,7 @@ class PyRanges():
 
     def slack(self, slack):
 
-        kwargs = {"slack": slack}
+        kwargs = fill_kwargs({"slack": slack})
         prg = PyRanges(
             pyrange_apply_single(_slack, self, self.stranded, kwargs))
 
@@ -231,19 +227,20 @@ class PyRanges():
 
     def tssify(self, slack=0):
 
-        kwargs = {"slack": slack}
+        kwargs = fill_kwargs({"slack": slack})
         return PyRanges(
             pyrange_apply_single(_tss, self, self.stranded, kwargs))
 
     def sort(self, columns=("Start", "End"), **kwargs):
         from pyranges.methods.sort import _sort
-        kwargs["sparse"] = False
+        kwargs["sparse"] = {"self": False}
+        kwargs = fill_kwargs(kwargs)
         return PyRanges(
             pyrange_apply_single(_sort, self, self.stranded, kwargs))
 
     def tesify(self, slack=0):
 
-        kwargs = {"slack": slack}
+        kwargs = fill_kwargs({"slack": slack})
         return PyRanges(
             pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
@@ -300,13 +297,13 @@ class PyRanges():
 
         return lengths
 
-    def midpoints(self):
+    # def midpoints(self):
 
-        midpoints = {}
-        for k, df in self.items():
-            midpoints[k] = (df.End + df.Start) / 2
+    #     midpoints = {}
+    #     for k, df in self.items():
+    #         midpoints[k] = (df.End + df.Start) / 2
 
-        return midpoints
+    #     return midpoints
 
     def summary(self):
 
