@@ -92,7 +92,7 @@ def genomes():
 from ftplib import FTP
 
 
-def genes(genome, release="latest", path=None):
+def genes(genome, release="latest", path=None, head=False):
 
     ftp = FTP("ftp.ensembl.org")
     ftp.login()
@@ -118,4 +118,5 @@ def genes(genome, release="latest", path=None):
 
     binary_loc = dir_listing[matches].iloc[0]
 
-    return get_ftp_file(ftp, binary_loc, path)
+    host = "ftp.ensembl.org"
+    return get_ftp_file(host, binary_loc, path, test=head)

@@ -1,3 +1,4 @@
+import os
 from distutils.core import setup
 from setuptools import find_packages
 
@@ -6,8 +7,11 @@ __version__ = open("pyranges/version.py").readline().split(" = ")[1].replace(
 
 install_requires = [
     "cython", "pandas", "ncls", "tabulate", "sorted_nearest", "pyrle",
-    "natsort", "mysqlclient", "bamread"
+    "natsort", "mysqlclient", "bamread", "requests"
 ]
+
+if os.getenv("TRAVIS"):
+    install_requires.append("coveralls")
 
 setup(
     name="pyranges",

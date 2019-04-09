@@ -13,10 +13,8 @@ def _exons(df):
     _df = df.drop(["Start", "End"], axis=1)
 
     cols = _df.columns.difference(['XS', 'XE'])
-    exon_starts = _df['XS'].str.decode("utf-8").str.replace(",$",
-                                                            "").str.split(',')
-    exon_ends = _df['XE'].str.decode("utf-8").str.replace(",$",
-                                                          "").str.split(',')
+    exon_starts = _df['XS'].str.replace(",$", "").str.split(',')
+    exon_ends = _df['XE'].str.replace(",$", "").str.split(',')
 
     exon_numbers = exon_starts.apply(lambda x:
                                      [i for i in range(1,
@@ -29,11 +27,11 @@ def _exons(df):
     exon_ends = pd.Series(exon_ends, dtype=np.int32)
     exon_numbers = pd.Series(
         list(chain.from_iterable(exon_numbers.tolist())), dtype="category")
-    _exons = (_df.loc[_df.index.repeat(ls), cols].assign(
+    exons = (_df.loc[_df.index.repeat(ls), cols].assign(
         Start=exon_starts, End=exon_ends,
         Feature="exon").reset_index(drop=True).assign(ExonNumber=exon_numbers))
 
-    return _exons
+    return exons
 
 
 def ucsc(genome, query):
@@ -51,11 +49,32 @@ def ucsc(genome, query):
     return df
 
 
-def genes(genome):
+def genes(genome, head=False):
 
-    query = 'select chrom, txStart, txEnd, exonStarts, exonEnds, name, name2, strand from refGene'
+    if not head:
+        df = genes_df(genome)
+    else:
+        df = genes_df(
+            genome,
+            'select chrom, txStart, txEnd, exonStarts, exonEnds, name, name2, strand from refGene limit 500;'
+        )
 
-    df = ucsc(genome, query)
+    return parse_genes(df)
+
+
+def genes_df(
+        genome,
+        __query='select chrom, txStart, txEnd, exonStarts, exonEnds, name, name2, strand from refGene'
+):
+
+    df = ucsc(genome, __query)
+    df.loc[:, "exonStarts"] = df["exonStarts"].str.decode("utf-8")
+    df.loc[:, "exonEnds"] = df["exonEnds"].str.decode("utf-8")
+
+    return df
+
+
+def parse_genes(df):
 
     df.columns = "Chromosome Start End XS XE TranscriptID GeneID Strand".split(
     )
@@ -70,7 +89,7 @@ def genes(genome):
     })
 
     exons = _exons(df)
-    _df = (df.drop("XS XE".split(), axis=1).assign(Feature="TranscriptID"))
+    _df = (df.drop("XS XE".split(), axis=1).assign(Feature="transcript"))
 
     df = pd.concat([_df, exons], sort=False).sort_values(
         "Chromosome Start End".split()

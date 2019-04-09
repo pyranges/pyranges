@@ -5,13 +5,14 @@ import pyranges as pr
 
 def get_example_path(basename):
 
-    full_path = pkg_resources.resource_filename("pyranges", "example_data/{}".format(basename))
+    full_path = pkg_resources.resource_filename(
+        "pyranges", "example_data/{}".format(basename))
 
     if full_path.endswith(".bam"):
-        _hack_to_load_idx = pkg_resources.resource_filename("pyranges", "example_data/{}.bai".format(basename))
+        _hack_to_load_idx = pkg_resources.resource_filename(
+            "pyranges", "example_data/{}.bai".format(basename))
 
     return full_path
-
 
 
 def f1():
@@ -27,11 +28,13 @@ def f2():
 
     return pr.read_bed(full_path)
 
+
 def chipseq():
 
     full_path = get_example_path("chipseq.bed")
 
     return pr.read_bed(full_path)
+
 
 def epigenome_roadmap():
 
@@ -46,11 +49,13 @@ def chipseq_background():
 
     return pr.read_bed(full_path)
 
+
 def aorta():
 
     full_path = get_example_path("aorta.bed")
 
     return pr.read_bed(full_path)
+
 
 def aorta2():
 
@@ -58,8 +63,16 @@ def aorta2():
 
     return pr.read_bed(full_path)
 
+
 def ensembl_gtf():
 
     full_path = get_example_path("ensembl.gtf")
 
     return pr.read_gtf(full_path)
+
+
+def control_bam():
+
+    full_path = get_example_path("control.bam")
+
+    return pr.read_bam(full_path)

@@ -36,7 +36,7 @@ def _releases(species="human"):
     return [l for l in dir_listing if "release" in l]
 
 
-def genes(species, release="latest", path=None):
+def genes(species, release="latest", path=None, head=False):
 
     assert species in "human mouse".split()
 
@@ -50,12 +50,13 @@ def genes(species, release="latest", path=None):
         assert str(
             release) in releases, str(release) + " not in " + str(releases)
     else:
-        release = max(_releases, key=lambda n: int(n.replace("M", "")))
+        release = max(releases, key=lambda n: int(n.replace("M", "")))
 
-    ftp = FTP("ftp.ebi.ac.uk")
-    ftp.login()
+    # ftp = FTP("ftp.ebi.ac.uk")
+    # ftp.login()
+    ftp_host = "ftp.ebi.ac.uk"
 
     binary_loc = 'pub/databases/gencode/Gencode_' + species + "/release_" + release + "/gencode.v{}.annotation.gtf.gz".format(
         release)
 
-    return get_ftp_file(ftp, binary_loc, path)
+    return get_ftp_file(ftp_host, binary_loc, path, test=head)

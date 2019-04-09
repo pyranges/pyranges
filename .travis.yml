@@ -25,4 +25,6 @@ install:
   - python -c 'import pandas as pd; print(pd.__version__)'
   - ls tests
 
-script: py.test -v tests # verbose to see that tests run and so that travis does not time out on hypothesis tests
+script: python -m pytest -sv --cov=pyranges tests
+
+after_success: coveralls

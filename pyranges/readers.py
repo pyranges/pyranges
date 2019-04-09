@@ -83,7 +83,7 @@ def skiprows(f):
         for i, l in enumerate(fh):
             if l.decode()[0] != "#":
                 break
-    except OSError:  # not a gzipped file
+    except (OSError, TypeError):  # not a gzipped file, or StringIO
         fh = open(f)
         for i, l in enumerate(fh):
             if l[0] != "#":

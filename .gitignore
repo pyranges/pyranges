@@ -1,4 +1,6 @@
 
+.coverage
+htmlcov/
 *flycheck*
 *.pyc*
 *bk
