@@ -1,6 +1,6 @@
+# pragma: no cover
 import pandas as pd
 
-# from pyranges.pyranges import pyrange_or_df_single
 import pyranges as pr
 
 

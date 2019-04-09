@@ -12,3 +12,4 @@ def test_all_data():
             aorta2, ensembl_gtf, control_bam
     ]:
         gr = f()
+        print(gr)  # to avoid unused variable warning

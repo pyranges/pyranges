@@ -36,10 +36,7 @@ def test_ucsc_genes_parse(df_to_parse):
 @pytest.mark.external()
 def test_ucsc_genes(df_to_parse):
 
-    gr = db.ucsc.genes_df(
-        "hg19",
-        'select chrom, txStart, txEnd, exonStarts, exonEnds, name, name2, strand from refGene limit 10;'
-    )
+    gr = db.ucsc.genes("hg19", head=True)
     print(gr)
 
 
