@@ -25,6 +25,6 @@ install:
   - python -c 'import pandas as pd; print(pd.__version__)'
   - ls tests
 
-script: python -m pytest -m "no ftp" --cov=pyranges tests
+script: python -m pytest -m "not ftp" --cov=pyranges tests
 
 after_success: coveralls
