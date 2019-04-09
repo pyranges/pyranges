@@ -103,6 +103,7 @@ def dfs_min(draw):  # nosec
     df.insert(3, "Name", "a")
     df.insert(4, "Score", 0)
 
+    # stranded = draw(st.booleans())
     # if not strand:
     #     df = df.drop("Strand", axis=1)
 

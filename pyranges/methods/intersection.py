@@ -94,24 +94,24 @@ def _overlap(scdf, ocdf, kwargs):
     return scdf.reindex(_indexes)
 
 
-@ray.remote
-def _first_df(scdf, ocdf, kwargs):
+# @ray.remote
+# def _first_df(scdf, ocdf, kwargs):
 
-    if scdf.empty or ocdf.empty:
-        return None
+#     if scdf.empty or ocdf.empty:
+#         return None
 
-    how = kwargs["how"]
+#     how = kwargs["how"]
 
-    assert how in "containment first".split() + [False, None]
-    starts = scdf.Start.values
-    ends = scdf.End.values
-    indexes = scdf.index.values
+#     assert how in "containment first".split() + [False, None]
+#     starts = scdf.Start.values
+#     ends = scdf.End.values
+#     indexes = scdf.index.values
 
-    it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
+#     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
-    if not how:
-        _indexes = it.has_overlaps(starts, ends, indexes)
-    elif how == "containment":
-        _indexes = it.has_containment(starts, ends, indexes)
+#     if not how:
+#         _indexes = it.has_overlaps(starts, ends, indexes)
+#     elif how == "containment":
+#         _indexes = it.has_containment(starts, ends, indexes)
 
-    return scdf.reindex(_indexes)
+#     return scdf.reindex(_indexes)

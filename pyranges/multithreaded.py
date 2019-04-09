@@ -50,10 +50,7 @@ def process_results(results, keys):
 
 def call_f(f, df, odf, kwargs):
 
-    # try:
     return f.remote(df, odf, kwargs)
-    # except:
-    #     return f.remote(df, odf)
 
 
 def make_sparse(df):
