@@ -29,7 +29,7 @@ setup(
     author_email="endrebak85@gmail.com",
     url="http://github.com/endrebak/pyranges",
     keywords=["Bioinformatics"],
-    license=["MIT"],
+    license="MIT",
     install_requires=install_requires,
     classifiers=[
         "Programming Language :: Python :: 2.7",
