@@ -1,0 +1,11 @@
+# .coveragerc to control coverage.py
+
+[report]
+omit = 
+    pyranges/*flycheck*
+    # genomicfeatures not officially supported yet
+    pyranges/genomicfeatures.py
+    # .coveragerc to control coverage.py
+    pyranges/db/ensembl.py 
+    pyranges/db/gencode.py
+    pyranges/db/methods.py
