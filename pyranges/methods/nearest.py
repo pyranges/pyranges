@@ -81,6 +81,8 @@ def _nearest(scdf, ocdf, kwargs):
     elif how == "downstream":
         how = {"+": "next", "-": "previous"}[strand]
 
+    ocdf = ocdf.reset_index(drop=True)
+
     if overlap:
         nearest_df, df_to_find_nearest_in = _overlapping_for_nearest(
             scdf, ocdf, suffix)
