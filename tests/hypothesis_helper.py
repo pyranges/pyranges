@@ -30,6 +30,17 @@ runlengths = data_frames(
         column("Values", st.integers(min_value=-int(1e7), max_value=int(1e7)))
     ])
 
+better_dfs_no_min = data_frames(
+    index=indexes(dtype=np.int64, min_size=0, unique=True, elements=lengths),
+    columns=[
+        column("Chromosome", cs),
+        column("Start", elements=lengths),
+        column("End", elements=small_lengths),
+        # column("Name", elements=names),
+        # column("Score", elements=scores),
+        column("Strand", strands)
+    ])
+
 better_dfs_min = data_frames(
     index=indexes(dtype=np.int64, min_size=1, unique=True, elements=lengths),
     columns=[
@@ -118,6 +129,29 @@ def dfs_min(draw):  # nosec
 
 
 @st.composite
+def dfs_no_min(draw):  # nosec
+    df = draw(better_dfs_no_min)
+    # strand = draw(use_strand)
+    df.loc[:, "End"] += df.Start
+
+    df.insert(3, "Name", "a")
+    df.insert(4, "Score", 0)
+
+    # stranded = draw(st.booleans())
+    # if not strand:
+    #     df = df.drop("Strand", axis=1)
+
+    gr = PyRanges(df, extended=True)
+    # gr = PyRanges(df)
+
+    # do not sort like this, use pyranges sort
+    # np.random.seed(draw(st.integers(min_value=0, max_value=int(1e6))))
+    # gr.df = df.reindex(np.random.permutation(df.index.values))
+
+    return gr
+
+
+@st.composite
 def df_data(draw):
 
     df = draw(better_dfs_min)
@@ -128,10 +162,10 @@ def df_data(draw):
     end_type = draw(datatype)
     strand_type = draw(datatype)
 
-    strand = chromosome_type(df.Strand)
+    strand = strand_type(df.Strand)
     chromosome = chromosome_type(df.Chromosome)
-    start = chromosome_type(df.Start)
-    end = chromosome_type(df.End)
+    start = start_type(df.Start)
+    end = end_type(df.End)
 
     return chromosome, start, end, strand
 

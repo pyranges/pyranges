@@ -20,6 +20,6 @@ def concat(pyranges, strand=False):
     new_pyrange = {}
 
     for k, v in grs_per_chromosome.items():
-        new_pyrange[k] = pd.concat(v)
+        new_pyrange[k] = pd.concat(v, sort=False)
 
     return pr.PyRanges(new_pyrange)

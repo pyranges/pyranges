@@ -206,7 +206,12 @@ class PyRanges():
         else:
             return PyRanges(result)
 
-    def apply_pair(self, other, f, kwargs, strand=False, as_pyranges=True):
+    def apply_pair(self, other, f, kwargs=None, strand=False,
+                   as_pyranges=True):
+
+        if kwargs is None:
+            kwargs = {}
+        kwargs = fill_kwargs(kwargs)
 
         f = ray.remote(f)
 
@@ -249,6 +254,9 @@ class PyRanges():
 
     @property
     def stranded(self):
+        if not len(self.keys()):
+            return True
+
         return len(list(self.keys())[0]) == 2
 
     @property

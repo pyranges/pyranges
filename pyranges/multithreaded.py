@@ -50,7 +50,13 @@ def process_results(results, keys):
 
 def call_f(f, df, odf, kwargs):
 
-    return f.remote(df, odf, kwargs)
+    import inspect
+    nparams = len(inspect.signature(f).parameters)
+
+    if nparams == 3:
+        return f.remote(df, odf, kwargs)
+    else:
+        return f.remote(df, odf)
 
 
 def make_sparse(df):
@@ -150,8 +156,7 @@ def pyrange_apply(function, self, other, **kwargs):
             for c, df in items:
 
                 if not c in other.chromosomes:
-                    odf = pr.PyRanges(
-                        pd.DataFrame(columns="Chromosome Start End".split()))
+                    odf = pd.DataFrame(columns="Chromosome Start End".split())
                 else:
                     odf1 = other[c, "+"]
                     odf2 = other[c, "-"]
