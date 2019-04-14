@@ -142,8 +142,8 @@ def _init(self,
                 for k, v in empty_removed.items():
                     for s, sdf in v.groupby("Strand"):
                         new_dfs[k, s] = sdf
-
-            self.__dict__["dfs"] = empty_removed
+                empty_removed = new_dfs
+        self.__dict__["dfs"] = empty_removed
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
     self.__dict__["stats"] = StatisticsMethods(self)

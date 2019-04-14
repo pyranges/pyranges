@@ -352,6 +352,7 @@ class PyRanges():
             return True
 
         key = keys[0]
+
         return isinstance(key, tuple)
 
     @property
@@ -382,12 +383,18 @@ class PyRanges():
 
     def unstrand(self):
 
+        from pydbg import dbg
+        dbg(self.stranded)
+
         if not self.stranded:
             return self
 
         gr = pr.concat([self["+"], self["-"]])
+        dbg(gr)
 
-        return gr.drop("Strand", drop_strand=True)
+        gr = gr.drop("Strand", drop_strand=True)
+        dbg(gr)
+        return gr
 
     @property
     def df(self):
