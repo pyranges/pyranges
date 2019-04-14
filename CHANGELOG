@@ -1,0 +1,13 @@
+# 0.0.21 (14.04.19)
+Additions:
+  - gr.cluster(): assign ID to each cluster found by merge
+  - gr.columns: return the columns in the pyranges
+  - gr.drop: drop columns based on regex or list
+  - gr[["Score", "Name"]]: select subset of columns
+Fixes:
+  - gr.stranded errored if chromosomes were ints
+  - gr.join errored if other had duplicate indexes
+
+# 0.0.20 (14.04.19)
+- changelog introduced
+- plenty of fixes for tiny bugs
