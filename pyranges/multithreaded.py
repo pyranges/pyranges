@@ -8,7 +8,7 @@ import pyranges.raymock as ray
 
 
 @ray.remote
-def merge_dfs(df1, df2, kwargs):
+def merge_dfs(df1, df2):
 
     if not df1.empty and not df2.empty:
         return pd.concat([df1, df2], sort=False)
@@ -40,6 +40,10 @@ def process_results(results, keys):
         if results_dict[k] is None or results_dict[k].empty:
             to_delete.append(k)
         else:
+            # pandas might make a df that is not always C-contiguous
+            # copying fixes this
+            # TODO: better to only fix columns that are not C-contiguous?
+            results_dict[k] = results_dict[k].copy(deep=True)
             results_dict[k].index = range(len(results_dict[k]))
 
     for k in to_delete:
@@ -158,8 +162,9 @@ def pyrange_apply(function, self, other, **kwargs):
                 if not c in other.chromosomes:
                     odf = pd.DataFrame(columns="Chromosome Start End".split())
                 else:
-                    odf1 = other[c, "+"]
-                    odf2 = other[c, "-"]
+                    odf1 = other[c, "+"].df
+                    odf2 = other[c, "-"].df
+
                     odf = merge_dfs.remote(odf1, odf2)
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
