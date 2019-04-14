@@ -6,6 +6,14 @@
 
 PyRanges is in a beta state.
 
+## Changelog
+
+```
+# 0.0.20 (14.04.19)
+- changelog introduced
+- plenty of fixes for tiny bugs
+```
+
 ## Introduction
 
 GenomicRanges and genomic Rle-objects for Python.
