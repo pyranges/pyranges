@@ -1,4 +1,4 @@
-from pyranges.subset import get_string, get_tuple, get_slice
+from pyranges.subset import (get_string, get_tuple, get_slice, get_booldict)
 from pyranges.methods.drop import _drop
 
 from pyranges import PyRanges
@@ -7,17 +7,19 @@ from pyranges import PyRanges
 def _getitem(self, val):
 
     if isinstance(val, list):
-        df = _drop(self, keep=val).dfs
+        dfs = _drop(self, keep=val).dfs
     elif isinstance(val, str):
-        df = get_string(self, val)
+        dfs = get_string(self, val)
     elif isinstance(val, tuple):
-        df = get_tuple(self, val)
+        dfs = get_tuple(self, val)
     elif isinstance(val, slice):
-        df = get_slice(self, val)
+        dfs = get_slice(self, val)
+    elif isinstance(val, dict):
+        dfs = get_booldict(self, val)
     else:
         raise Exception("Not valid subsetter: {}".format(str(val)))
 
-    if not df is None:
-        return PyRanges(df)
+    if not dfs is None:
+        return PyRanges(dfs)
     else:
         return PyRanges({})

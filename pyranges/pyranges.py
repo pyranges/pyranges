@@ -48,13 +48,36 @@ class PyRanges():
 
         from pyranges.methods.init import _init
 
+        if df is None and chromosomes is None:
+            df = pd.DataFrame(columns="Chromosome Start End".split())
+
         _init(self, df, chromosomes, starts, ends, strands, copy_df, extended)
 
     def __len__(self):
         return sum([len(d) for d in self.values()])
 
-    def __call__(self, f, strand=False):
-        return self.apply(f)
+    def __call__(self, f, strand=None, as_pyranges=True):
+        # if nothing given autodetect
+        if strand is None:
+            strand = self.stranded
+
+        if self.stranded and not strand:
+            self = self.unstrand()
+        result = self.eval(f, strand, as_pyranges=False)
+
+        if as_pyranges:
+            if not result:
+                return pr.PyRanges()
+
+            first_hit = list(result.values())[0]
+
+            if isinstance(first_hit, pd.Series) and first_hit.dtype == bool:
+                return self[result]
+            else:
+                return pr.PyRanges(result)
+
+        else:
+            return result
 
     def __getattr__(self, name):
 
@@ -85,6 +108,21 @@ class PyRanges():
     def __repr__(self):
 
         return str(self)
+
+    def eval(self, eval_cmd, strand=True, as_pyranges=True, **kwargs):
+
+        f = lambda df: eval(eval_cmd)
+
+        kwargs = fill_kwargs(kwargs)
+
+        f = ray.remote(f)
+
+        result = pyrange_apply_single(f, self, strand, kwargs)
+
+        if not as_pyranges:
+            return result
+        else:
+            return PyRanges(result)
 
     def overlap(self, other, **kwargs):
 
@@ -333,6 +371,10 @@ class PyRanges():
     def values(self):
 
         return [df for k, df in self.items() if not df.empty]
+
+    def unstrand(self):
+        gr = pr.concat([self["+"], self["-"]])
+        return gr.drop("Strand", drop_strand=True)
 
     @property
     def df(self):

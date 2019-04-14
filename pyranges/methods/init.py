@@ -29,13 +29,12 @@ def set_dtypes(df, extended):
 
     # on test data with a few rows, the below code does not work
     # therefore test for a good number of rows
-    if len(df) > 500:
-        categoricals = (df.nunique() / len(df) <= 0.1).replace({
-            True: "category",
-            False: "object"
-        }).to_dict()
-        categoricals.update(dtypes)
-        dtypes = categoricals
+    # categoricals = (df.nunique() / len(df) <= 0.1).replace({
+    #     True: "category",
+    #     False: "object"
+    # }).to_dict()
+    # categoricals.update(dtypes)
+    # dtypes = categoricals
 
     for col, dtype in dtypes.items():
 
@@ -105,6 +104,7 @@ def _init(self,
           strands=None,
           copy_df=False,
           extended=False):
+    # TODO: add categorize argument with dict of args to categorize?
 
     if isinstance(df, PyRanges):
         raise Exception("Object is already a PyRange.")
@@ -126,7 +126,7 @@ def _init(self,
         self.__dict__["dfs"] = create_df_dict(df)
     else:
         # df is actually dict of dfs
-        self.__dict__["dfs"] = df
+        self.__dict__["dfs"] = {k: v for k, v in df.items() if not v.empty}
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
     self.__dict__["stats"] = StatisticsMethods(self)

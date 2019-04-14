@@ -1,6 +1,7 @@
 import pkg_resources
 
 import pyranges as pr
+import pandas as pd
 
 
 def get_example_path(basename):
@@ -32,13 +33,6 @@ def f2():
 def chipseq():
 
     full_path = get_example_path("chipseq.bed")
-
-    return pr.read_bed(full_path)
-
-
-def epigenome_roadmap():
-
-    full_path = get_example_path("epigenome_roadmap.bed")
 
     return pr.read_bed(full_path)
 
@@ -76,3 +70,22 @@ def control_bam():
     full_path = get_example_path("control.bam")
 
     return pr.read_bam(full_path)
+
+
+def cpg():
+    full_path = get_example_path("cpg.bed")
+
+    df = pd.read_csv(
+        full_path,
+        sep="\t",
+        header=None,
+        names="Chromosome Start End CpG".split())
+
+    return pr.PyRanges(df)
+
+
+def exons():
+
+    full_path = get_example_path("exons.bed")
+
+    return pr.read_bed(full_path)

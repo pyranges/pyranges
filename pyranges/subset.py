@@ -133,3 +133,14 @@ def get_triple(self, val):
 
     idxes = find_overlaps(df, start, stop)
     return df.reindex(idxes)
+
+
+def get_booldict(self, df):
+
+    _overlapping = set(self.dfs.keys()).intersection(set(df.keys()))
+
+    new_dfs = {}
+    for k in _overlapping:
+        new_dfs[k] = self.dfs[k][df[k]]
+
+    return new_dfs

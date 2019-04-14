@@ -1,3 +1,19 @@
+# 0.0.22 (14.04.19)
+Additions:
+  - pr.PyRanges() returns empty PyRange # before you needed pr.PyRanges({})
+  - pyranges are now callable. Examples: gr("df.Score > 0") and gr("df.A.astype(str) + mysuffix")
+  - can subset PyRanges with a dict of boolean vectors
+  - pr.data.exons(), pr.data.cpg()
+  - gr.unstrand() removes strand information from a PyRanges
+  - throw exception if trying to drop Strand from df without setting drop_strand=True
+
+Fixes:
+  - remove empty dfs in the dict given to the PyRanges constructor
+
+Removed:
+  - gr.data.epigenome_roadmap()
+
+
 # 0.0.21 (14.04.19)
 Additions:
   - gr.cluster(): assign ID to each cluster found by merge

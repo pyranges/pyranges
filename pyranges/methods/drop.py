@@ -17,8 +17,6 @@ def _drop(self, drop=None, keep=None, drop_strand=False):
         r = re.compile(drop)
         _to_drop = [c for c in columns if not r.search(c) == None]
     elif isinstance(drop, Iterable) or isinstance(drop, list):
-        assert not set(always_keep).intersection(drop), \
-        "Can never drop Chromosome, Start or End. Cannot drop Strand unless drop_strand is True"
         _to_drop = drop
     elif isinstance(keep, str):
         r = re.compile(keep)
@@ -28,6 +26,9 @@ def _drop(self, drop=None, keep=None, drop_strand=False):
     else:
         raise Exception("Not valid subsetters!")
 
+    if not drop_strand:
+        assert not set(always_keep).intersection(_to_drop), \
+            "Can never drop Chromosome, Start or End. Cannot drop Strand unless drop_strand is True"
     _to_drop = set(_to_drop) - set(always_keep)
 
     return self.apply(lambda df: df.drop(_to_drop, axis=1))
