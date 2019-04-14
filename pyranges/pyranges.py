@@ -383,17 +383,17 @@ class PyRanges():
 
     def unstrand(self):
 
-        from pydbg import dbg
-        dbg(self.stranded)
+        # from pydbg import dbg
+        # dbg(self.stranded)
 
         if not self.stranded:
             return self
 
         gr = pr.concat([self["+"], self["-"]])
-        dbg(gr)
+        # dbg(gr)
 
         gr = gr.drop("Strand", drop_strand=True)
-        dbg(gr)
+        # dbg(gr)
         return gr
 
     @property

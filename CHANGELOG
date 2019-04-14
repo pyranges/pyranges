@@ -1,3 +1,8 @@
+
+# 0.0.24 (15.04.19)
+Hotfix:
+  - left in dbg statements
+
 # 0.0.23 (15.04.19)
 Hotfix:
   - unstrand() did not always remove strand info
