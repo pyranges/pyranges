@@ -186,7 +186,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 # dbg(odfs)
 
                 if len(odfs) == 2:
-                    odf = merge_dfs.remote(*odfs, kwargs)
+                    odf = merge_dfs.remote(*odfs)
                 elif len(odfs) == 1:
                     odf = odfs[0]
                 else:
@@ -237,13 +237,11 @@ def pyrange_apply_single(function, self, strand, kwargs):
         assert self.stranded, \
             "Can only do stranded operation when PyRange contains strand info"
 
-    items = self.items()
-
     results = []
 
     if strand:
 
-        for (c, s), df in items:
+        for (c, s), df in self.items():
 
             kwargs["chromosome"] = c
             _strand = s
@@ -258,7 +256,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
     elif not self.stranded:
 
         keys = []
-        for c, df in items:
+        for c, df in self.items():
 
             kwargs["chromosome"] = c
 
@@ -279,7 +277,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             if len(dfs.keys()) == 2:
                 df1, df2 = dfs.values()
                 # merge strands
-                df1 = merge_dfs.remote(df1, df2, kwargs)
+                df1 = merge_dfs.remote(df1, df2)
             else:
                 df1 = dfs.values()[0]
 

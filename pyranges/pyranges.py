@@ -116,6 +116,8 @@ class PyRanges():
         from pyranges.methods.nearest import _nearest
 
         kwargs = fill_kwargs(kwargs)
+        if kwargs.get("how") in "upstream downstream".split():
+            assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
 
         dfs = pyrange_apply(_nearest, self, other, **kwargs)
 
@@ -148,7 +150,7 @@ class PyRanges():
         strandedness = kwargs["strandedness"]
         strand = True if strandedness else False
 
-        gr = pr.concat([self, other])
+        gr = pr.concat([self, other], strand)
         gr = gr.merge(strand=strand, **kwargs)
 
         return gr
@@ -276,6 +278,8 @@ class PyRanges():
             return natsorted(set([k for k in self.keys()]))
 
     def items(self):
+        # from pydbg import dbg
+        # dbg(self.dfs.items())
 
         return natsorted([(k, df) for (k, df) in self.dfs.items()])
 
