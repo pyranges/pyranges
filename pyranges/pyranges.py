@@ -178,6 +178,27 @@ class PyRanges():
 
         return PyRanges(dfs)
 
+    def cluster(self, strand=False, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+
+        # TODO: implement in Cython. Will lead to 2X speedup.
+
+        mr = self.merge(strand=strand)
+        # from pydbg import dbg
+        # dbg(mr)
+
+        clusters = list(range(1, len(mr) + 1))
+        # dbg(clusters)
+        mr.Cluster = clusters
+        # dbg(mr)
+        j = self.join(mr, how="first", strandedness="same" if strand else None)
+        # dbg(j.df)
+        j = j.drop(drop="(Start|End|Strand)_b")
+        # dbg(j.df)
+
+        return j
+
     def merge(self, strand=None, **kwargs):
 
         from pyranges.methods.merge import _merge
@@ -255,11 +276,37 @@ class PyRanges():
         return natsorted(self.dfs.keys())
 
     @property
+    def columns(self):
+        """Return the list of column names in the dataframes."""
+        columns = [list(df.columns) for df in self.values()]
+        assert all([c == columns[0] for c in columns[1:]])
+        return columns[0]
+
+    def drop(self, drop=None, keep=None, drop_strand=False):
+        """Drop column(s) from the PyRanges object.
+
+        If no arguments are given, all the columns except Chromosome, Start, End and Strand are
+        dropped. To drop Strand, the drop_strand argument needs to be given.
+
+        Args:
+            drop (None, iterable or str): An iterable of columns to drop or a string containing a
+            substring/regex of the columns to drop.
+            keep (None, iterable or str): An iterable of columns to drop or a string containing a
+            substring/regex of the columns not to drop.
+            drop_strand (bool): Whether or not to drop the Strand column
+        """
+        from pyranges.methods.drop import _drop
+        return _drop(self, drop, keep, drop_strand)
+
+    @property
     def stranded(self):
-        if not len(self.keys()):
+        keys = self.keys()
+        if not len(keys):
+            # so that stranded ops work with empty dataframes
             return True
 
-        return len(list(self.keys())[0]) == 2
+        key = keys[0]
+        return isinstance(key, tuple)
 
     @property
     def strands(self):

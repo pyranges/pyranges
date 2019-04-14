@@ -86,6 +86,73 @@ def test_merge(gr, strand):
         assert bedtools_df.empty == result.df.empty
 
 
+cluster_command = "bedtools cluster {} -i <(sort -k1,1 -k2,2n {})"
+
+
+@pytest.mark.bedtools
+@pytest.mark.parametrize("strand", [True, False])
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
+# @reproduce_failure('4.15.0', b'AXicY2RgYGAEISDBCWZCAQAA6AAP')
+def test_cluster(gr, strand):
+
+    bedtools_strand = {True: "-s", False: ""}[strand]
+
+    print(gr)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+
+        cmd = cluster_command.format(bedtools_strand, f1)
+        print(cmd)
+
+        # ignoring bandit security warning. All strings created by test suite
+        result = subprocess.check_output(  # nosec
+            cmd, shell=True, executable="/bin/bash").decode()  # nosec
+
+        bedtools_df = pd.read_csv(
+            StringIO(result),
+            sep="\t",
+            header=None,
+            squeeze=True,
+            names="Chromosome Start End Name Score Strand Cluster".split(),
+            dtype={"Chromosome": "category"})
+
+    print("bedtools_df\n", bedtools_df)
+
+    # from pydbg import dbg
+    # dbg(gr.cluster(strand=strand))
+
+    result = gr.cluster(strand=strand)
+    print("result\n", result.df)
+
+    if not bedtools_df.empty:
+        # need to sort because bedtools sometimes gives the result in non-natsorted chromosome order!
+        if result.stranded:
+            sort_values = "Chromosome Start Strand".split()
+        else:
+            sort_values = "Chromosome Start".split()
+
+        result_df = result.df.sort_values(sort_values)
+        bedtools_df = bedtools_df.sort_values(sort_values)
+
+        cluster_ids = {
+            k: v
+            for k, v in zip(result_df.Cluster.drop_duplicates(),
+                            bedtools_df.Cluster.drop_duplicates())
+        }
+
+        # bedtools gives different cluster ids than pyranges
+        result_df.Cluster.replace(cluster_ids, inplace=True)
+        assert_df_equal(result_df, bedtools_df)
+    else:
+        assert bedtools_df.empty == result.df.empty
+
+
 @pytest.mark.parametrize("strand", [True, False])
 @settings(
     max_examples=max_examples,

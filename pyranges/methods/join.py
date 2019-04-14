@@ -12,6 +12,7 @@ def _both_dfs(scdf, ocdf, how=False):
     ends = scdf.End.values
     indexes = scdf.index.values
 
+    ocdf = ocdf.reset_index(drop=True)
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how:
@@ -26,8 +27,10 @@ def _both_dfs(scdf, ocdf, how=False):
 
     _self_indexes = _self_indexes
     _other_indexes = _other_indexes
+    scdf = scdf.reindex(_self_indexes)
+    ocdf = ocdf.reindex(_other_indexes)
 
-    return scdf.reindex(_self_indexes), ocdf.reindex(_other_indexes)
+    return scdf, ocdf
 
 
 @ray.remote
