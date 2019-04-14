@@ -44,7 +44,7 @@ class PyRanges():
                  ends=None,
                  strands=None,
                  copy_df=False,
-                 extended=False):
+                 extended=None):
 
         from pyranges.methods.init import _init
 
@@ -188,6 +188,10 @@ class PyRanges():
         strandedness = kwargs["strandedness"]
         strand = True if strandedness else False
 
+        if not strand:
+            self = self.unstrand()
+            other = other.unstrand()
+
         gr = pr.concat([self, other], strand)
         gr = gr.merge(strand=strand, **kwargs)
 
@@ -316,9 +320,13 @@ class PyRanges():
     @property
     def columns(self):
         """Return the list of column names in the dataframes."""
+
         columns = [list(df.columns) for df in self.values()]
         assert all([c == columns[0] for c in columns[1:]])
-        return columns[0]
+        if columns:
+            return columns[0]
+        else:
+            return []
 
     def drop(self, drop=None, keep=None, drop_strand=False):
         """Drop column(s) from the PyRanges object.
@@ -373,7 +381,12 @@ class PyRanges():
         return [df for k, df in self.items() if not df.empty]
 
     def unstrand(self):
+
+        if not self.stranded:
+            return self
+
         gr = pr.concat([self["+"], self["-"]])
+
         return gr.drop("Strand", drop_strand=True)
 
     @property

@@ -144,8 +144,9 @@ def tostring(self):
     else:
         dtypes = []
         for col, dtype in zip(s.columns, first_df.dtypes):
-            if str(dtype) == "category":
-                dtype = first_df[col].cat.codes.dtype
+            # if str(dtype) == "category":
+
+            #     dtype = first_df[col].cat.codes.dtype
 
             # dtype = str(dtype).replace("float", "f_").replace("int", "i_")
             dtypes.append(dtype)

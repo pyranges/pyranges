@@ -40,6 +40,7 @@ def _write_both(scdf, ocdf, kwargs):
         return None
 
     suffixes = kwargs["suffixes"]
+    suffix = kwargs.get("suffix", "_b")
     how = kwargs["how"]
     new_pos = kwargs["new_pos"]
 
@@ -51,7 +52,7 @@ def _write_both(scdf, ocdf, kwargs):
     ocdf = ocdf.drop("Chromosome", axis=1)
 
     if not new_pos:
-        df = scdf.join(ocdf, rsuffix=suffixes[1])
+        df = scdf.join(ocdf, rsuffix=suffix)
 
     elif new_pos == "intersection":
 

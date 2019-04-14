@@ -6,6 +6,10 @@ Additions:
   - pr.data.exons(), pr.data.cpg()
   - gr.unstrand() removes strand information from a PyRanges
   - throw exception if trying to drop Strand from df without setting drop_strand=True
+  - adding a Strand column to the PyRanges makes it stranded
+
+Changes:
+  - write dtype as category, not int8/int16/...
 
 Fixes:
   - remove empty dfs in the dict given to the PyRanges constructor

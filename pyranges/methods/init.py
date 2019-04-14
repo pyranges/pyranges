@@ -9,6 +9,9 @@ from pyranges import PyRanges
 
 def set_dtypes(df, extended):
 
+    if extended is None:
+        extended = False if df.Start.dtype == np.int32 else True
+
     if not extended:
         dtypes = {
             "Start": np.int32,
@@ -103,7 +106,7 @@ def _init(self,
           ends=None,
           strands=None,
           copy_df=False,
-          extended=False):
+          extended=None):
     # TODO: add categorize argument with dict of args to categorize?
 
     if isinstance(df, PyRanges):
@@ -126,7 +129,21 @@ def _init(self,
         self.__dict__["dfs"] = create_df_dict(df)
     else:
         # df is actually dict of dfs
-        self.__dict__["dfs"] = {k: v for k, v in df.items() if not v.empty}
+        empty_removed = {k: v for k, v in df.items() if not v.empty}
+
+        # empty
+        if not empty_removed:
+            self.__dict__["dfs"] = {}
+        else:
+            first_key, first_df = list(empty_removed.items())[0]
+            # has the df gotten strand info since the last time?
+            if not isinstance(first_key, tuple) and "Strand" in first_df:
+                new_dfs = {}
+                for k, v in empty_removed.items():
+                    for s, sdf in v.groupby("Strand"):
+                        new_dfs[k, s] = sdf
+
+            self.__dict__["dfs"] = empty_removed
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
     self.__dict__["stats"] = StatisticsMethods(self)
