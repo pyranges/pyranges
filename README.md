@@ -10,76 +10,49 @@ PyRanges is in a beta state.
 
 GenomicRanges and genomic Rle-objects for Python.
 
-## Changelog
-
-```
-# 0.0.22 (14.04.19)
-Additions:
-  - pr.PyRanges() returns empty PyRange # before you needed pr.PyRanges({})
-  - pyranges are now callable. Examples: gr("df.Score > 0") and gr("df.A.astype(str) + mysuffix")
-  - can subset PyRanges with a dict of boolean vectors
-  - pr.data.exons(), pr.data.cpg()
-  - gr.unstrand() removes strand information from a PyRanges
-  - throw exception if trying to drop Strand from df without setting drop_strand=True
-  - adding a Strand column to the PyRanges makes it stranded
-
-Changes:
-  - write dtype as category, not int8/int16/...
-
-Fixes:
-  - remove empty dfs in the dict given to the PyRanges constructor
-
-# 0.0.21 (14.04.19)
-Additions:
-  - gr.cluster(): assign ID to each cluster found by merge
-  - gr.columns: return the columns in the pyranges
-  - gr.drop: drop columns based on regex or list
-  - gr[["Score", "Name"]]: select subset of columns
-Fixes:
-  - gr.stranded errored if chromosomes were ints
-  - gr.join errored if other had duplicate indexes
-```
-
 ## Quick example
 
-```
+```python
 import pyranges as pr
 # load example datasets
 exons, cpg = pr.data.exons(), pr.data.cpg()
 
 # subsetting pyranges is easy
 exons["chrY", "-",  15591259:27197945]
-# +--------------|-----------|-----------|----------------------------------------|-----------|----------+
-# | Chromosome   | Start     | End       | Name                                   | Score     | Strand   |
-# | (int8)       | (int32)   | (int32)   | (object)                               | (int64)   | (int8)   |
-# |--------------|-----------|-----------|----------------------------------------|-----------|----------|
-# | chrY         | 15591393  | 15592550  | NR_047610_exon_27_0_chrY_15591394_r    | 0         | -        |
-# | chrY         | 15591393  | 15592550  | NR_047607_exon_29_0_chrY_15591394_r    | 0         | -        |
-# | chrY         | 15591393  | 15592550  | NM_001258269_exon_29_0_chrY_15591394_r | 0         | -        |
-# | ...          | ...       | ...       | ...                                    | ...       | ...      |
-# | chrY         | 26952215  | 26952307  | NM_020364_exon_16_0_chrY_26952216_r    | 0         | -        |
-# | chrY         | 27197822  | 27197945  | NM_004678_exon_7_0_chrY_27197823_r     | 0         | -        |
-# | chrY         | 27197822  | 27197945  | NM_001002760_exon_7_0_chrY_27197823_r  | 0         | -        |
-# +--------------|-----------|-----------|----------------------------------------|-----------|----------+
+# +--------------|-----------|-----------|----------------------------------------|-----------|--------------+
+# | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
+# | (category)   | (int64)   | (int64)   | (object)                               | (int64)   | (category)   |
+# |--------------|-----------|-----------|----------------------------------------|-----------|--------------|
+# | chrY         | 15591393  | 15592550  | NR_047610_exon_27_0_chrY_15591394_r    | 0         | -            |
+# | chrY         | 15591393  | 15592550  | NR_047607_exon_29_0_chrY_15591394_r    | 0         | -            |
+# | chrY         | 15591393  | 15592550  | NM_001258269_exon_29_0_chrY_15591394_r | 0         | -            |
+# | ...          | ...       | ...       | ...                                    | ...       | ...          |
+# | chrY         | 26952215  | 26952307  | NM_020364_exon_16_0_chrY_26952216_r    | 0         | -            |
+# | chrY         | 27197822  | 27197945  | NM_004678_exon_7_0_chrY_27197823_r     | 0         | -            |
+# | chrY         | 27197822  | 27197945  | NM_001002760_exon_7_0_chrY_27197823_r  | 0         | -            |
+# +--------------|-----------|-----------|----------------------------------------|-----------|--------------+
 # PyRanges object has 22 sequences from 1 chromosomes.
 
-# plenty of other ways to subset:
-# or exons["chrY", 50:20000], or exons["-"] or exons["chrX", "+"] or ...
-
-# chaining operations a delight
-
-# use the cpg dataset
-(cpg
-  # to join with the exons dataset
-  # and give colnames in exons that exist in cpg the suffix "_xn"
-  .join(exons, suffix="_xn")
-  # keep only rows with a CpG score over 30
-  ('df.CpG > 30')
+# the API allows for easy and terse chaining
+(cpg # use the cpg dataset
+  .join(exons, suffix="_xn") # join with exons, use suffix _xn for duplicate cols
+  ('df.CpG > 30') # keep only rows with a CpG score over 30
   .sort()
-  # drop rows where the name starts with NR
-  ('~df.Name.str.startswith("NR")')
-  # remove the strand info
-  .unstrand())
+  ('~df.Name.str.startswith("NR")') # drop rows where the name starts with NR
+  .unstrand()) # remove the strand info
+# +--------------|-----------|-----------|-----------|------------|-----------|----------------------------------------|-----------|--------------+
+# | Chromosome   | Start     | End       | CpG       | Start_xn   | End_xn    | Name                                   | Score     | Strand       |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)    | (int64)   | (object)                               | (int64)   | (category)   |
+# |--------------|-----------|-----------|-----------|------------|-----------|----------------------------------------|-----------|--------------|
+# | chrX         | 584563    | 585326    | 66        | 585078     | 585337    | NM_000451_exon_0_0_chrX_585079_f       | 0         | +            |
+# | chrX         | 1510501   | 1511838   | 173       | 1510791    | 1511039   | NM_001636_exon_3_0_chrX_1510792_r      | 0         | -            |
+# | chrX         | 2846195   | 2847511   | 92        | 2847272    | 2847416   | NM_001669_exon_9_0_chrX_2847273_r      | 0         | -            |
+# | ...          | ...       | ...       | ...       | ...        | ...       | ...                                    | ...       | ...          |
+# | chrY         | 241398    | 245968    | 310       | 244667     | 245252    | NM_013239_exon_0_0_chrY_244668_r       | 0         | -            |
+# | chrY         | 15591259  | 15591720  | 33        | 15591393   | 15592550  | NM_001258269_exon_29_0_chrY_15591394_r | 0         | -            |
+# | chrY         | 16941822  | 16942188  | 32        | 16941609   | 16942399  | NM_014893_exon_4_0_chrY_16941610_f     | 0         | +            |
+# +--------------|-----------|-----------|-----------|------------|-----------|----------------------------------------|-----------|--------------+
+# PyRanges object has 57 sequences from 2 chromosomes.
 ```
 
 ## Documentation
