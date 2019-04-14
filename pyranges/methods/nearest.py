@@ -10,6 +10,24 @@ from sorted_nearest import (nearest_previous_nonoverlapping,
                             nearest_nonoverlapping)
 
 
+def _insert_distance(ocdf, dist, suffix):
+
+    if "Distance" not in ocdf:
+        distance_column_name = "Distance"
+    elif "Distance_" + suffix not in ocdf:
+        distance_column_name = "Distance_" + suffix
+    else:
+        i = 1
+        while "Distance_" + str(i) in ocdf:
+            i += 1
+        distance_column_name = "Distance_" + str(i)
+
+    ocdf.insert(ocdf.shape[1], distance_column_name,
+                pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
+
+    return ocdf
+
+
 def _overlapping_for_nearest(scdf, ocdf, suffix):
 
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
@@ -17,7 +35,6 @@ def _overlapping_for_nearest(scdf, ocdf, suffix):
     scdf2, ocdf2 = _both_dfs(scdf, ocdf, how="first")
 
     if not ocdf2.empty:
-        # only copying data because of the eternal source buffer array is read only problem
         original_idx = scdf.index
 
         idxs = scdf2.index
@@ -32,7 +49,7 @@ def _overlapping_for_nearest(scdf, ocdf, suffix):
         sdf = scdf.reindex(idxs)
 
         nearest_df = sdf.join(odf, rsuffix=suffix)
-        nearest_df.insert(nearest_df.shape[1], "Distance", 0)
+        nearest_df = _insert_distance(nearest_df, 0, suffix)
     else:
         df_to_find_nearest_in = scdf
 
@@ -70,15 +87,15 @@ def _nearest(scdf, ocdf, kwargs):
     if scdf.empty or ocdf.empty:
         return None
 
-    strand = scdf.Strand.iloc[0]
-
     overlap = kwargs["overlap"]
     how = kwargs["how"]
     suffix = kwargs["suffix"]
 
     if how == "upstream":
+        strand = scdf.Strand.iloc[0]
         how = {"+": "previous", "-": "next"}[strand]
     elif how == "downstream":
+        strand = scdf.Strand.iloc[0]
         how = {"+": "next", "-": "previous"}[strand]
 
     ocdf = ocdf.reset_index(drop=True)
@@ -115,8 +132,8 @@ def _nearest(scdf, ocdf, kwargs):
         ocdf = ocdf.reindex(r_idx)
 
         ocdf.index = df_to_find_nearest_in.index
-        ocdf.insert(ocdf.shape[1], "Distance",
-                    pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
+
+        ocdf = _insert_distance(ocdf, dist, suffix)
 
         r_idx = pd.Series(r_idx, index=ocdf.index)
         df_to_find_nearest_in = df_to_find_nearest_in.drop(
