@@ -135,8 +135,12 @@ def _init(self,
         if not empty_removed:
             self.__dict__["dfs"] = {}
         else:
+            # if the df has has Strand added to them we must update
+            # the PyRanges dict
             first_key, first_df = list(empty_removed.items())[0]
-            # has the df gotten strand info since the last time?
+            assert all(c in first_df for c in "Chromosome Start End".split(
+            )), "Columns Chromosome, Start and End must be in the dataframe!"
+
             if not isinstance(first_key, tuple) and "Strand" in first_df:
                 new_dfs = {}
                 for k, v in empty_removed.items():

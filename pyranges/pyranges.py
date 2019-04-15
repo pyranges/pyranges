@@ -56,28 +56,33 @@ class PyRanges():
     def __len__(self):
         return sum([len(d) for d in self.values()])
 
-    def __call__(self, f, strand=None, as_pyranges=True):
-        # if nothing given autodetect
-        if strand is None:
-            strand = self.stranded
+    def __call__(self, f, col=None, strand=None, as_pyranges=True):
+        """Apply a function to each chromosome or chromosome/strand pair.
 
-        if self.stranded and not strand:
-            self = self.unstrand()
-        result = self.eval(f, strand, as_pyranges=False)
+        Example:
+            # add 5 to the Score column
+            gr.apply(lambda df: df.Score + 5)
+            # subset on rows whose sequence does not contain GC.
+            gr.apply(lambda df: ~df.Sequence.str.contains("GC"))
 
-        if as_pyranges:
-            if not result:
-                return pr.PyRanges()
+        Args:
+            f (function): a function which takes a pandas dataframe and modifies it.
+            col (string): if the function returns a series, add it to the df with name col (or update
+                the col, if it exists). Default: None.
+            strand (bool or None): whether or not to do the operation on chromosome/strand pairs. None
+                means auto, i.e. use strand if it exists in the PyRanges. Default: None.
+            subset (bool): if True, and the return value is a boolean series, use it to subset the
+                data. Default: True
+            as_pyranges (bool): whether to return as a PyRanges or as a dict. Default: True
 
-            first_hit = list(result.values())[0]
+        Returns:
+            A PyRanges or a dict of objects.
+        """
 
-            if isinstance(first_hit, pd.Series) and first_hit.dtype == bool:
-                return self[result]
-            else:
-                return pr.PyRanges(result)
+        from pyranges.methods.call import _call
 
-        else:
-            return result
+        return _call(
+            self, f, col=col, strand=None, subset=True, as_pyranges=True)
 
     def __getattr__(self, name):
 

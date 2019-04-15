@@ -1,3 +1,11 @@
+# 0.0.25 (unreleased)
+Additions:
+  - Can set columns on a PyRanges using a dict of iterables
+  - gr() takes subset and col argument, like dplyr mutate and select
+
+Removed:
+  - disallow eval string, must use lambdas, e.g.: gr(lambda df: df.Score > 0)
+
 
 # 0.0.24 (15.04.19)
 Hotfix:

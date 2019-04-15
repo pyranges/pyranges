@@ -36,9 +36,9 @@ exons["chrY", "-",  15591259:27197945]
 # the API allows for easy and terse chaining
 (cpg # use the cpg dataset
   .join(exons, suffix="_xn") # join with exons, use suffix _xn for duplicate cols
-  ('df.CpG > 30') # keep only rows with a CpG score over 30
+  (lambda df: df.CpG > 30) # keep only rows with a CpG score over 30
   .sort()
-  ('~df.Name.str.startswith("NR")') # drop rows where the name starts with NR
+  (lambda df: ~df.Name.str.startswith("NR")) # drop rows where the name starts with NR
   .unstrand()) # remove the strand info
 # +--------------|-----------|-----------|-----------|------------|-----------|----------------------------------------|-----------+
 # | Chromosome   | Start     | End       | CpG       | Start_xn   | End_xn    | Name                                   | Score     |

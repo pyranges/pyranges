@@ -9,6 +9,8 @@ def _setattr(self, column_name, column):
 
     isiterable = isinstance(column, list) or isinstance(
         column, pd.Series) or isinstance(column, np.ndarray)
+    isdict = isinstance(column, dict)
+
     if isiterable:
         if not len(self) == len(column):
             raise Exception("DataFrame and column must be same length.")
@@ -32,6 +34,8 @@ def _setattr(self, column_name, column):
 
         if isiterable:
             df.insert(pos, column_name, column[start_length:end_length])
+        elif isdict:
+            df.insert(pos, column_name, column[k])
         else:
             df.insert(pos, column_name, column)
 
