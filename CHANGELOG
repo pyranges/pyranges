@@ -6,6 +6,11 @@ Additions:
 Removed:
   - disallow eval string, must use lambdas, e.g.: gr(lambda df: df.Score > 0)
 
+Fixes:
+  - drop (and getitem) small fix
+  - sometimes had empty dfs in dict because of unused categoricals
+
+
 
 # 0.0.24 (15.04.19)
 Hotfix:

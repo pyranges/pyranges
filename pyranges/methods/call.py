@@ -18,18 +18,13 @@ def _handle_eval_return(self, result, col, as_pyranges, subset):
             if first_hit.dtype == bool and subset:
                 return self[result]
             elif col:
-
                 self.__setattr__(col, result)
                 return self
             else:
                 raise Exception(
                     "Cannot return PyRanges when function returns a Series! Use as_pyranges=False."
                 )
-        if not isinstance(result, pd.DataFrame):
-            raise Exception(
-                "Cannot return PyRanges when function does not return a dataframe! Use as_pyranges=False."
-            )
-            return pr.PyRanges(result)
+        return pr.PyRanges(result)
     else:
         return result
 

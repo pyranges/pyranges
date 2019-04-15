@@ -22,7 +22,7 @@ def _drop(self, drop=None, keep=None, drop_strand=False):
         r = re.compile(keep)
         _to_drop = [c for c in columns if r.search(c) is None]
     elif isinstance(keep, Iterable) or isinstance(keep, list):
-        _to_drop = set(columns) - set(keep)
+        _to_drop = set(columns) - set(keep) - set(always_keep)
     else:
         raise Exception("Not valid subsetters!")
 

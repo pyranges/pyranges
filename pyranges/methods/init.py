@@ -49,8 +49,16 @@ def set_dtypes(df, extended):
 
 def create_df_dict(df):
 
+    chrs = df.Chromosome.cat.remove_unused_categories()
+
+    # with Debug(locals()):
+    #     f = df.head(1).head(1)
+
+    df["Chromosome"] = chrs
+
     if "Strand" in df:
         grpby_key = "Chromosome Strand".split()
+        df["Strand"] = df.Strand.cat.remove_unused_categories()
     else:
         grpby_key = "Chromosome"
 

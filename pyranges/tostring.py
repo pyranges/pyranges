@@ -37,6 +37,7 @@ def reduce_string_width(str_repr, s, h, n_intervals, n_chromosomes):
 
 
 def tostring(self):
+    # TODO: test this f
     # print("in str")
     if len(self) == 0:
         return "Empty PyRanges"
@@ -93,6 +94,7 @@ def tostring(self):
 
             tails = []
             tl = 0
+
             for k in keys[::-1]:
                 if k in keys_covered:
                     continue
