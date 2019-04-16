@@ -9,7 +9,7 @@ import pandas as pd
 
 from io import StringIO
 
-gr = pr.data.epigenome_roadmap()
+gr = pr.data.exons()
 
 print(gr)
 

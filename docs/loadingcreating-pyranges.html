@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>2 Loading/Creating PyRanges | PyRanges documentation</title>
-  <meta name="description" content="2 Loading/Creating PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="2 Loading/Creating PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="2 Loading/Creating PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-05">
+<meta name="date" content="2019-04-16">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,10 +33,9 @@
   
   
 <link rel="prev" href="index.html">
-<link rel="next" href="fetching-gene-tracks-as-pyranges.html">
+<link rel="next" href="writing-pyranges-to-disk.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -102,11 +101,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to PyRanges</a></li>
 <li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
-<li class="chapter" data-level="3" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>3</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="4" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>4</b> Writing PyRanges to disk</a></li>
-<li class="chapter" data-level="5" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>5</b> Subsetting PyRanges</a></li>
-<li class="chapter" data-level="6" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>6</b> Manipulating the data in PyRanges</a></li>
-<li class="chapter" data-level="7" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>7</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="3" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>3</b> Writing PyRanges to disk</a></li>
+<li class="chapter" data-level="4" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>4</b> Subsetting PyRanges</a></li>
+<li class="chapter" data-level="5" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>5</b> Manipulating the data in PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>6</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="piping-pyranges.html"><a href="piping-pyranges.html"><i class="fa fa-check"></i><b>7</b> Piping PyRanges</a></li>
 <li class="chapter" data-level="8" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>8</b> Sorting PyRanges</a></li>
 <li class="chapter" data-level="9" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>9</b> Summarizing PyRanges</a></li>
 <li class="chapter" data-level="10" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>10</b> Methods for manipulating single PyRanges</a></li>
@@ -122,6 +121,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="20" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>20</b> Subsetting Rles</a></li>
 <li class="chapter" data-level="21" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>21</b> Subsetting PyRles</a></li>
 <li class="chapter" data-level="22" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>22</b> Using multiple cores</a></li>
+<li class="chapter" data-level="23" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>23</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -144,7 +144,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>A PyRanges object can be built in three ways:</p>
 <ol style="list-style-type: decimal">
 <li>from a Pandas dataframe</li>
-<li>using the PyRanges constructor with the seqnames, starts and ends (and optionally strands), individually.</li>
+<li>using the PyRanges constructor with the chromosomes, starts and ends (and optionally strands), individually.</li>
 <li>using one of the custom reader functions for genomic data (<code>read_bed</code>, <code>read_bam</code> or <code>read_gtf</code>)</li>
 </ol>
 <div id="using-a-dataframe" class="section level4 unnumbered">
@@ -163,28 +163,28 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 ## 9998       chr1  194245558  194245583   U0      0      +
 ## 9999       chr8   57916061   57916086   U0      0      +</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(pr.PyRanges(df))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+----------+----------+
-## | Chromosome   | Start     | End       | Name     | Score    | Strand   |
-## | (int8)       | (int32)   | (int32)   | (int8)   | (int8)   | (int8)   |
-## |--------------+-----------+-----------+----------+----------+----------|
-## | chr1         | 212609534 | 212609559 | U0       | 0        | +        |
-## | chr1         | 169887529 | 169887554 | U0       | 0        | +        |
-## | chr1         | 216711011 | 216711036 | U0       | 0        | +        |
-## | ...          | ...       | ...       | ...      | ...      | ...      |
-## | chrY         | 13517892  | 13517917  | U0       | 0        | -        |
-## | chrY         | 8010951   | 8010976   | U0       | 0        | -        |
-## | chrY         | 7405376   | 7405401   | U0       | 0        | -        |
-## +--------------+-----------+-----------+----------+----------+----------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 </div>
 <div id="using-constructor-keywords" class="section level4 unnumbered">
 <h4>Using constructor keywords</h4>
 <p>The other way to instantiate a PyRanges object is to use the constructor with keywords:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(seqnames<span class="op">=</span>df.Chromosome, starts<span class="op">=</span>df.Start, ends<span class="op">=</span>df.End)
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span>df.Chromosome, starts<span class="op">=</span>df.Start, ends<span class="op">=</span>df.End)
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       |
-## | (int8)       | (int32)   | (int32)   |
+## | (category)   | (int64)   | (int64)   |
 ## |--------------+-----------+-----------|
 ## | chr1         | 100079649 | 100079674 |
 ## | chr1         | 212609534 | 212609559 |
@@ -196,27 +196,27 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 ## +--------------+-----------+-----------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>It is possible to make PyRanges objects out of basic Python datatypes:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(seqnames<span class="op">=</span><span class="st">&quot;chr1&quot;</span>, strands<span class="op">=</span><span class="st">&quot;+&quot;</span>, starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1&quot;</span>, strands<span class="op">=</span><span class="st">&quot;+&quot;</span>, starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+
-## | Chromosome   |     Start |       End | Strand   |
-## | (int8)       |   (int32) |   (int32) | (int8)   |
-## |--------------+-----------+-----------+----------|
-## | chr1         |         0 |         3 | +        |
-## | chr1         |         1 |         4 | +        |
-## | chr1         |         2 |         5 | +        |
-## +--------------+-----------+-----------+----------+
+<pre><code>## +--------------+-----------+-----------+--------------+
+## | Chromosome   |     Start |       End | Strand       |
+## | (category)   |   (int64) |   (int64) | (category)   |
+## |--------------+-----------+-----------+--------------|
+## | chr1         |         0 |         3 | +            |
+## | chr1         |         1 |         4 | +            |
+## | chr1         |         2 |         5 | +            |
+## +--------------+-----------+-----------+--------------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(seqnames<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+
-## | Chromosome   |     Start |       End | Strand   |
-## | (int8)       |   (int32) |   (int32) | (int8)   |
-## |--------------+-----------+-----------+----------|
-## | chr1         |         0 |         3 | +        |
-## | chr2         |         1 |         4 | -        |
-## | chr3         |         2 |         5 | +        |
-## +--------------+-----------+-----------+----------+
+<pre><code>## +--------------+-----------+-----------+--------------+
+## | Chromosome   |     Start |       End | Strand       |
+## | (category)   |   (int64) |   (int64) | (category)   |
+## |--------------+-----------+-----------+--------------|
+## | chr1         |         0 |         3 | +            |
+## | chr2         |         1 |         4 | -            |
+## | chr3         |         2 |         5 | +            |
+## +--------------+-----------+-----------+--------------+
 ## PyRanges object has 3 sequences from 3 chromosomes.</code></pre>
 </div>
 <div id="using-read_bed-read_gtf-or-read_bam" class="section level4 unnumbered">
@@ -225,20 +225,20 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)
 gr <span class="op">=</span> pr.read_gtf(ensembl_path)
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+------------+------------+-----------+-----------+------------+----------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------+
-## | Chromosome   | Source     | Feature    | Start     | End       | Score      | Strand   | Frame      | (assigned   | ccds_id    | exon_id         | exon_number   | exon_version   | gene_biotype                       | gene_id         | gene_name   | gene_source    |
-## | (int8)       | (object)   | (int8)     | (int32)   | (int32)   | (object)   | (int8)   | (object)   | (object)    | (object)   | (object)        | (object)      | (object)       | (object)                           | (object)        | (object)    | (object)       |
-## |--------------+------------+------------+-----------+-----------+------------+----------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------|
-## | 1            | havana     | gene       | 11869     | 14409     | .          | +        | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
-## | 1            | havana     | transcript | 11869     | 14409     | .          | +        | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
-## | 1            | havana     | exon       | 11869     | 12227     | .          | +        | .          | nan         | nan        | ENSE00002234944 | 1             | 1              | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
-## | ...          | ...        | ...        | ...       | ...       | ...        | ...      | ...        | ...         | ...        | ...             | ...           | ...            | ...                                | ...             | ...         | ...            |
-## | 1            | ensembl    | exon       | 133374    | 133723    | .          | -        | .          | nan         | nan        | ENSE00003748456 | 1             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
-## | 1            | ensembl    | exon       | 129055    | 129223    | .          | -        | .          | nan         | nan        | ENSE00003734824 | 2             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
-## | 1            | ensembl    | exon       | 120874    | 120932    | .          | -        | .          | nan         | nan        | ENSE00003740919 | 3             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
-## +--------------+------------+------------+-----------+-----------+------------+----------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------+
+<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+
+## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | (assigned   | ccds_id    | exon_id         | exon_number   | exon_version   |
+## | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)    | (object)   | (object)        | (object)      | (object)       |
+## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------|
+## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            |
+## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            |
+## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | nan         | nan        | ENSE00002234944 | 1             | 1              |
+## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...         | ...        | ...             | ...           | ...            |
+## | 1            | ensembl    | exon         | 133374    | 133723    | .          | -            | .          | nan         | nan        | ENSE00003748456 | 1             | 1              |
+## | 1            | ensembl    | exon         | 129055    | 129223    | .          | -            | .          | nan         | nan        | ENSE00003734824 | 2             | 1              |
+## | 1            | ensembl    | exon         | 120874    | 120932    | .          | -            | .          | nan         | nan        | ENSE00003740919 | 3             | 1              |
+## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+
 ## PyRanges object has 95 sequences from 1 chromosomes.
-## Hidden columns: transcript_version, transcript_support_level, transcript_source, transcript_name, transcript_id, transcript_biotype, tag, protein_version, protein_id, previous, gene_version</code></pre>
+## Hidden columns: transcript_version, transcript_support_level, transcript_source, transcript_name, transcript_id, transcript_biotype, tag, protein_version, protein_id, previous, gene_version, gene_source, gene_name, gene_id, gene_biotype</code></pre>
 <p>[^]: PyRanges uses the pysam library which requires that the bam file must have an index.</p>
 
 </div>
@@ -249,7 +249,7 @@ gr <span class="op">=</span> pr.read_gtf(ensembl_path)
         </div>
       </div>
 <a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="fetching-gene-tracks-as-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="writing-pyranges-to-disk.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -267,11 +267,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -279,10 +278,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

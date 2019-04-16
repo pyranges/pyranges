@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>9 Summarizing PyRanges | PyRanges documentation</title>
-  <meta name="description" content="9 Summarizing PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="9 Summarizing PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="9 Summarizing PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-05">
+<meta name="date" content="2019-04-16">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="methods-for-manipulating-single-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -102,11 +101,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to PyRanges</a></li>
 <li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
-<li class="chapter" data-level="3" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>3</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="4" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>4</b> Writing PyRanges to disk</a></li>
-<li class="chapter" data-level="5" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>5</b> Subsetting PyRanges</a></li>
-<li class="chapter" data-level="6" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>6</b> Manipulating the data in PyRanges</a></li>
-<li class="chapter" data-level="7" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>7</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="3" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>3</b> Writing PyRanges to disk</a></li>
+<li class="chapter" data-level="4" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>4</b> Subsetting PyRanges</a></li>
+<li class="chapter" data-level="5" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>5</b> Manipulating the data in PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>6</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="piping-pyranges.html"><a href="piping-pyranges.html"><i class="fa fa-check"></i><b>7</b> Piping PyRanges</a></li>
 <li class="chapter" data-level="8" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>8</b> Sorting PyRanges</a></li>
 <li class="chapter" data-level="9" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>9</b> Summarizing PyRanges</a></li>
 <li class="chapter" data-level="10" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>10</b> Methods for manipulating single PyRanges</a></li>
@@ -122,6 +121,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="20" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>20</b> Subsetting Rles</a></li>
 <li class="chapter" data-level="21" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>21</b> Subsetting PyRles</a></li>
 <li class="chapter" data-level="22" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>22</b> Using multiple cores</a></li>
+<li class="chapter" data-level="23" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>23</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -145,33 +145,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 <span class="im">import</span> pandas <span class="im">as</span> pd
 <span class="im">from</span> io <span class="im">import</span> StringIO
-gr <span class="op">=</span> pr.data.epigenome_roadmap()
+gr <span class="op">=</span> pr.data.exons()
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------------------------------+----------+----------+
-## | Chromosome   | Start     | End       | Name                             | Score    | Strand   |
-## | (int8)       | (int32)   | (int32)   | (object)                         | (int8)   | (int8)   |
-## |--------------+-----------+-----------+----------------------------------+----------+----------|
-## | chr1         | 9916      | 10115     | HWI-ST216_313:3:1203:10227:6568  | 1        | -        |
-## | chr1         | 9939      | 10138     | HWI-ST216_313:3:2301:15791:16298 | 1        | -        |
-## | chr1         | 9951      | 10150     | HWI-ST216_313:3:2205:20086:33508 | 1        | -        |
-## | ...          | ...       | ...       | ...                              | ...      | ...      |
-## | chr1         | 2305200   | 2305399   | HWI-ST216_313:3:1104:10021:17863 | 1        | -        |
-## | chr1         | 2305536   | 2305735   | HWI-ST216_313:3:1205:4034:30559  | 1        | -        |
-## | chr1         | 2305881   | 2306080   | HWI-ST216_313:3:1103:8788:36161  | 1        | -        |
-## +--------------+-----------+-----------+----------------------------------+----------+----------+
-## PyRanges object has 10000 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
+## | (category)   | (int64)   | (int64)   | (object)                               | (int64)   | (category)   |
+## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
+## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
+## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f     | 0         | +            |
+## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15478146  | 15478273  | NR_047634_exon_18_0_chrY_15478147_r    | 0         | -            |
+## | chrY         | 15360258  | 15361762  | NR_047601_exon_0_0_chrY_15360259_r     | 0         | -            |
+## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## PyRanges object has 1000 sequences from 2 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.summary())</code></pre></div>
 <pre><code>## +-------+-----------+---------------------+-----------------------+
 ## |       |   pyrange |   coverage_stranded |   coverage_unstranded |
 ## |-------+-----------+---------------------+-----------------------|
-## | count |     10000 |            2415     |              2415     |
-## | mean  |       199 |             398.469 |               398.469 |
-## | std   |         0 |             345.098 |               345.098 |
-## | min   |       199 |             199     |               199     |
-## | 25%   |       199 |             199     |               199     |
-## | 50%   |       199 |             270     |               270     |
-## | 75%   |       199 |             448     |               448     |
-## | max   |       199 |            3975     |              3975     |
+## | count |  1000     |             873     |               873     |
+## | mean  |   304.292 |             314.255 |               314.255 |
+## | std   |   640.013 |             666.23  |               666.23  |
+## | min   |     4     |               4     |                 4     |
+## | 25%   |    88     |              88     |                88     |
+## | 50%   |   127     |             127     |               127     |
+## | 75%   |   195.5   |             199     |               199     |
+## | max   |  6063     |            6063     |              6063     |
 ## +-------+-----------+---------------------+-----------------------+
 ## None</code></pre>
 <p>The column <code>coverage_stranded</code> tells you how the data looks when merging all overlapping features (taking strand into account), and <code>coverage_unstranded</code> is the same, but all features are merged independent of their strand.</p>
@@ -201,11 +201,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -213,10 +212,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

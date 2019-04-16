@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>14 Finding the closest intervals | PyRanges documentation</title>
-  <meta name="description" content="14 Finding the closest intervals | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="14 Finding the closest intervals | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="14 Finding the closest intervals | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-05">
+<meta name="date" content="2019-04-16">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="statistics-similarity-between-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -102,11 +101,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to PyRanges</a></li>
 <li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
-<li class="chapter" data-level="3" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>3</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="4" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>4</b> Writing PyRanges to disk</a></li>
-<li class="chapter" data-level="5" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>5</b> Subsetting PyRanges</a></li>
-<li class="chapter" data-level="6" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>6</b> Manipulating the data in PyRanges</a></li>
-<li class="chapter" data-level="7" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>7</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="3" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>3</b> Writing PyRanges to disk</a></li>
+<li class="chapter" data-level="4" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>4</b> Subsetting PyRanges</a></li>
+<li class="chapter" data-level="5" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>5</b> Manipulating the data in PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>6</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="piping-pyranges.html"><a href="piping-pyranges.html"><i class="fa fa-check"></i><b>7</b> Piping PyRanges</a></li>
 <li class="chapter" data-level="8" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>8</b> Sorting PyRanges</a></li>
 <li class="chapter" data-level="9" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>9</b> Summarizing PyRanges</a></li>
 <li class="chapter" data-level="10" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>10</b> Methods for manipulating single PyRanges</a></li>
@@ -122,6 +121,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="20" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>20</b> Subsetting Rles</a></li>
 <li class="chapter" data-level="21" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>21</b> Subsetting PyRles</a></li>
 <li class="chapter" data-level="22" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>22</b> Using multiple cores</a></li>
+<li class="chapter" data-level="23" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>23</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -146,81 +146,81 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 gr <span class="op">=</span> pr.data.chipseq()
 gr2 <span class="op">=</span> pr.data.chipseq_background()
 <span class="bu">print</span>(gr.nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+----------+----------+---------------+-------------+--------------+---------------+----------------+------------+
-## | Chromosome   | Start     | End       | Name     | Score    | Strand   | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
-## | (int8)       | (int32)   | (int32)   | (int8)   | (int8)   | (int8)   | (int32)       | (int32)     | (int8)       | (int8)        | (int8)         | (int64)    |
-## |--------------+-----------+-----------+----------+----------+----------+---------------+-------------+--------------+---------------+----------------+------------|
-## | chr1         | 226987592 | 226987617 | U0       | 0        | +        | 226987603     | 226987628   | U0           | 0             | -              | 0          |
-## | chr1         | 1541598   | 1541623   | U0       | 0        | +        | 1770383       | 1770408     | U0           | 0             | -              | 228761     |
-## | chr1         | 1599121   | 1599146   | U0       | 0        | +        | 1770383       | 1770408     | U0           | 0             | -              | 171238     |
-## | ...          | ...       | ...       | ...      | ...      | ...      | ...           | ...         | ...          | ...           | ...            | ...        |
-## | chrY         | 21910706  | 21910731  | U0       | 0        | -        | 20557165      | 20557190    | U0           | 0             | +              | 1353517    |
-## | chrY         | 22054002  | 22054027  | U0       | 0        | -        | 20557165      | 20557190    | U0           | 0             | +              | 1496813    |
-## | chrY         | 22210637  | 22210662  | U0       | 0        | -        | 20557165      | 20557190    | U0           | 0             | +              | 1653448    |
-## +--------------+-----------+-----------+----------+----------+----------+---------------+-------------+--------------+---------------+----------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
+## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (int64)       | (int64)     | (object)     | (int64)       | (category)     | (int64)    |
+## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------|
+## | chr1         | 226987592 | 226987617 | U0         | 0         | +            | 226987603     | 226987628   | U0           | 0             | -              | 0          |
+## | chr1         | 1541598   | 1541623   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 228761     |
+## | chr1         | 1599121   | 1599146   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 171238     |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...          | ...           | ...            | ...        |
+## | chrY         | 21910706  | 21910731  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1353517    |
+## | chrY         | 22054002  | 22054027  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1496813    |
+## | chrY         | 22210637  | 22210662  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1653448    |
+## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>The nearest method takes a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+----------+----------+----------+---------------+-------------+--------------+---------------+----------------+------------+
-## | Chromosome   | Start     | End       | Name     | Score    | Strand   | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
-## | (int8)       | (int32)   | (int32)   | (int8)   | (int8)   | (int8)   | (int32)       | (int32)     | (int8)       | (int8)        | (int8)         | (int64)    |
-## |--------------+-----------+-----------+----------+----------+----------+---------------+-------------+--------------+---------------+----------------+------------|
-## | chr1         | 226987592 | 226987617 | U0       | 0        | +        | 226987603     | 226987628   | U0           | 0             | -              | 0          |
-## | chr1         | 1541598   | 1541623   | U0       | 0        | +        | 1770383       | 1770408     | U0           | 0             | -              | 228761     |
-## | chr1         | 1599121   | 1599146   | U0       | 0        | +        | 1770383       | 1770408     | U0           | 0             | -              | 171238     |
-## | ...          | ...       | ...       | ...      | ...      | ...      | ...           | ...         | ...          | ...           | ...            | ...        |
-## | chrY         | 21910706  | 21910731  | U0       | 0        | -        | 20557165      | 20557190    | U0           | 0             | +              | 1353517    |
-## | chrY         | 22054002  | 22054027  | U0       | 0        | -        | 20557165      | 20557190    | U0           | 0             | +              | 1496813    |
-## | chrY         | 22210637  | 22210662  | U0       | 0        | -        | 20557165      | 20557190    | U0           | 0             | +              | 1653448    |
-## +--------------+-----------+-----------+----------+----------+----------+---------------+-------------+--------------+---------------+----------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
+## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (int64)       | (int64)     | (object)     | (int64)       | (category)     | (int64)    |
+## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------|
+## | chr1         | 226987592 | 226987617 | U0         | 0         | +            | 226987603     | 226987628   | U0           | 0             | -              | 0          |
+## | chr1         | 1541598   | 1541623   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 228761     |
+## | chr1         | 1599121   | 1599146   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 171238     |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...          | ...           | ...            | ...        |
+## | chrY         | 21910706  | 21910731  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1353517    |
+## | chrY         | 22054002  | 22054027  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1496813    |
+## | chrY         | 22210637  | 22210662  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1653448    |
+## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>The nearest method also takes two variables, namely how and overlap. How can take the values <code>None</code>, <code>&quot;upstream&quot;</code>, <code>&quot;downstream&quot;</code>, <code>&quot;next&quot;</code> and <code>&quot;previous&quot;</code>. <code>&quot;upstream&quot;</code> and <code>&quot;downstream&quot;</code> are always in reference to the PyRange the method is called on. <code>&quot;next&quot;</code> (to the right) and <code>&quot;previous&quot;</code> (to the left) are most useful to implement your own custom nearest methods. The default is <code>None</code>, which means that PyRanges looks in both directions. The overlap argument is a bool which indicates whether you want to include overlaps or not.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1 <span class="op">=</span> pr.data.f1()
 <span class="bu">print</span>(f1)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
-## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
-## |--------------+-----------+-----------+------------+-----------+----------|
-## | chr1         |         3 |         6 | interval1  |         0 | +        |
-## | chr1         |         8 |         9 | interval3  |         0 | +        |
-## | chr1         |         5 |         7 | interval2  |         0 | -        |
-## +--------------+-----------+-----------+------------+-----------+----------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         |         3 |         6 | interval1  |         0 | +            |
+## | chr1         |         8 |         9 | interval3  |         0 | +            |
+## | chr1         |         5 |         7 | interval2  |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f2 <span class="op">=</span> pr.data.f2()
 <span class="bu">print</span>(f2)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand   |
-## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |
-## |--------------+-----------+-----------+------------+-----------+----------|
-## | chr1         |         1 |         2 | a          |         0 | +        |
-## | chr1         |         6 |         7 | b          |         0 | -        |
-## +--------------+-----------+-----------+------------+-----------+----------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         |         1 |         2 | a          |         0 | +            |
+## | chr1         |         6 |         7 | b          |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f2.nearest(f1, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>, how<span class="op">=</span><span class="st">&quot;next&quot;</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand   |   Start_b |     End_b | Name_b     |   Score_b | Strand_b   |   Distance |
-## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |   (int32) |   (int32) | (object)   |   (int64) | (int8)     |    (int64) |
-## |--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------|
-## | chr1         |         1 |         2 | a          |         0 | +        |         5 |         7 | interval2  |         0 | -          |          4 |
-## | chr1         |         6 |         7 | b          |         0 | -        |         8 |         9 | interval3  |         0 | +          |          2 |
-## +--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |   Distance |
+## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |    (int64) |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------|
+## | chr1         |         1 |         2 | a          |         0 | +            |         5 |         7 | interval2  |         0 | -            |          4 |
+## | chr1         |         6 |         7 | b          |         0 | -            |         8 |         9 | interval3  |         0 | +            |          2 |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
 ## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f2.nearest(f1, how<span class="op">=</span><span class="st">&quot;upstream&quot;</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand   |   Start_b |     End_b | Name_b     |   Score_b | Strand_b   |   Distance |
-## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |   (int32) |   (int32) | (object)   |   (int64) | (int8)     |    (int64) |
-## |--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------|
-## | chr1         |         6 |         7 | b          |         0 | -        |         5 |         7 | interval2  |         0 | -          |          0 |
-## +--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |   Distance |
+## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |    (int64) |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------|
+## | chr1         |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  |         0 | -            |          0 |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
 ## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f2.nearest(f1, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>, how<span class="op">=</span><span class="st">&quot;next&quot;</span>, overlap<span class="op">=</span><span class="va">False</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand   |   Start_b |     End_b | Name_b     |   Score_b | Strand_b   |   Distance |
-## | (int8)       |   (int32) |   (int32) | (object)   |   (int64) | (int8)   |   (int32) |   (int32) | (object)   |   (int64) | (int8)     |    (int64) |
-## |--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------|
-## | chr1         |         1 |         2 | a          |         0 | +        |         5 |         7 | interval2  |         0 | -          |          4 |
-## | chr1         |         6 |         7 | b          |         0 | -        |         8 |         9 | interval3  |         0 | +          |          2 |
-## +--------------+-----------+-----------+------------+-----------+----------+-----------+-----------+------------+-----------+------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |   Distance |
+## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |    (int64) |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------|
+## | chr1         |         1 |         2 | a          |         0 | +            |         5 |         7 | interval2  |         0 | -            |          4 |
+## | chr1         |         6 |         7 | b          |         0 | -            |         8 |         9 | interval3  |         0 | +            |          2 |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+------------+
 ## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
 
 </div>
@@ -248,11 +248,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -260,10 +259,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="methods-for-manipulating-single-pyranges.html">
-<link rel="next" href="overlapping-ranges.html">
+<link rel="prev" href="concatenating-pyranges.html">
+<link rel="next" href="sorting-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -139,93 +139,136 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="intersecting-ranges" class="section level1">
-<h1><span class="header-section-number">11</span> Intersecting Ranges</h1>
-<p>PyRanges objects can be intersected with other PyRanges to find the subset of the genome that is contained in both. The regular intersect-method finds the intersection of all combinations of ranges: <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
+<div id="piping-pyranges" class="section level1">
+<h1><span class="header-section-number">7</span> Piping PyRanges</h1>
+<p>The PyRanges API supports chaining operations out of the box. It is often terser than the equivalent in pandas or dplyr.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
-gr <span class="op">=</span> pr.data.aorta()
-gr2 <span class="op">=</span> pr.data.aorta2()
-<span class="bu">print</span>(gr.intersect(gr2))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9988      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 10073     | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 10079     | 10138     | H3K27me3   | 7         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr1         | 10241     | 10281     | H3K27me3   | 6         | -            |
-## | chr1         | 10241     | 10348     | H3K27me3   | 6         | -            |
-## | chr1         | 10280     | 10440     | H3K27me3   | 6         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 49 sequences from 1 chromosomes.</code></pre>
-<p>The set_intersect method merges the intervals before finding the intersect: <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersect(gr2))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+
-## | Chromosome   |     Start |       End |
-## | (category)   |   (int64) |   (int64) |
-## |--------------+-----------+-----------|
-## | chr1         |      9988 |     10445 |
-## +--------------+-----------+-----------+
-## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
-<p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.set_intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+
-## | Chromosome   |     Start |       End | Strand       |
-## | (category)   |   (int64) |   (int64) | (category)   |
-## |--------------+-----------+-----------+--------------|
-## | chr1         |      9988 |     10223 | +            |
-## | chr1         |     10246 |     10348 | +            |
-## | chr1         |     10073 |     10272 | -            |
-## +--------------+-----------+-----------+--------------+
-## PyRanges object has 4 sequences from 1 chromosomes.</code></pre>
-<p>The intersect method also takes a how argument, which currently accepts the option <code>&quot;containment&quot;</code>, which requires that the intervals in self be completely within the intervals in other.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1 <span class="op">=</span> pr.data.f1()
-<span class="bu">print</span>(f1)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f2 <span class="op">=</span> pr.data.f2()
-<span class="bu">print</span>(f2)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         1 |         2 | a          |         0 | +            |
-## | chr1         |         6 |         7 | b          |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">result <span class="op">=</span> f2.intersect(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>)
-<span class="bu">print</span>(result)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         6 |         7 | b          |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
+<span class="im">import</span> pandas <span class="im">as</span> pd
+exons <span class="op">=</span> pr.data.exons()
+cpg <span class="op">=</span> pr.data.cpg()
+cpg.join(exons.unstrand())(<span class="kw">lambda</span> df: df.CpG <span class="op">&gt;</span> <span class="dv">25</span>)[[<span class="st">&quot;CpG&quot;</span>]](<span class="kw">lambda</span> df: df.head(<span class="dv">3</span>))[<span class="st">&quot;chrX&quot;</span>].slack(<span class="dv">500</span>)</code></pre></div>
+<p>To debug pipelines, you can use the experimental <code>pr.sandbox.Debug()</code>. Since the debugging context-manager reads source files, it needs to be used in a file, not a REPL. See <a href="https://github.com/endrebak/piedpiper">piedpiper</a> for more info.</p>
+<pre><code>import pyranges as pr
+from pyranges.sandbox import Debug as D
 
-</div>
-<div class="footnotes">
-<hr />
-<ol start="1">
-<li id="fn1"><p>This is the same behavior as bedtools intersect.<a href="intersecting-ranges.html#fnref1">↩</a></p></li>
-<li id="fn2"><p>This is the same behavior as Bioconductor GenomicRanges intersect.<a href="intersecting-ranges.html#fnref2">↩</a></p></li>
-</ol>
+exons = pr.data.exons()
+cpg = pr.data.cpg()
+
+with D():
+    cpg.join(exons.unstrand())(lambda df: df.CpG &gt; 25)[[&quot;CpG&quot;]](lambda df: df.head(3))[&quot;chrX&quot;].slack(500)
+# Start data:
+# +--------------+-----------+-----------+-----------+
+# | Chromosome   | Start     | End       | CpG       |
+# | (category)   | (int64)   | (int64)   | (int64)   |
+# |--------------+-----------+-----------+-----------|
+# | chrX         | 64181     | 64793     | 62        |
+# | chrX         | 69133     | 70029     | 100       |
+# | chrX         | 148685    | 149461    | 85        |
+# | ...          | ...       | ...       | ...       |
+# | chrY         | 28773315  | 28773544  | 25        |
+# | chrY         | 59213794  | 59214183  | 36        |
+# | chrY         | 59349266  | 59349574  | 29        |
+# +--------------+-----------+-----------+-----------+
+# PyRanges object has 1077 sequences from 2 chromosomes.
+# 
+# .join(exons.unstrand())
+# 
+# +--------------+-----------+-----------+-----------+-----------+-----------+---------------------------------------+-----------+
+# | Chromosome   | Start     | End       | CpG       | Start_b   | End_b     | Name                                  | Score     |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   | (object)                              | (int64)   |
+# |--------------+-----------+-----------+-----------+-----------+-----------+---------------------------------------+-----------|
+# | chrX         | 584563    | 585326    | 66        | 585078    | 585337    | NM_000451_exon_0_0_chrX_585079_f      | 0         |
+# | chrX         | 1510501   | 1511838   | 173       | 1510791   | 1511039   | NM_001636_exon_3_0_chrX_1510792_r     | 0         |
+# | chrX         | 1553851   | 1554115   | 20        | 1553914   | 1553976   | NM_004192_exon_8_0_chrX_1553915_r     | 0         |
+# | ...          | ...       | ...       | ...       | ...       | ...       | ...                                   | ...       |
+# | chrY         | 15591259  | 15591720  | 33        | 15591393  | 15592550  | NR_047599_exon_28_0_chrY_15591394_r   | 0         |
+# | chrY         | 16941822  | 16942188  | 32        | 16941609  | 16942399  | NM_014893_exon_4_0_chrY_16941610_f    | 0         |
+# | chrY         | 26979889  | 26980116  | 21        | 26979966  | 26980276  | NM_001005375_exon_0_0_chrY_26979967_f | 0         |
+# +--------------+-----------+-----------+-----------+-----------+-----------+---------------------------------------+-----------+
+# PyRanges object has 79 sequences from 2 chromosomes.
+# 
+# (lambda df: df.CpG &gt; 25)
+# 
+# +--------------+-----------+-----------+-----------+-----------+-----------+----------------------------------------+-----------+
+# | Chromosome   | Start     | End       | CpG       | Start_b   | End_b     | Name                                   | Score     |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   | (object)                               | (int64)   |
+# |--------------+-----------+-----------+-----------+-----------+-----------+----------------------------------------+-----------|
+# | chrX         | 584563    | 585326    | 66        | 585078    | 585337    | NM_000451_exon_0_0_chrX_585079_f       | 0         |
+# | chrX         | 1510501   | 1511838   | 173       | 1510791   | 1511039   | NM_001636_exon_3_0_chrX_1510792_r      | 0         |
+# | chrX         | 2846195   | 2847511   | 92        | 2847272   | 2847416   | NM_001669_exon_9_0_chrX_2847273_r      | 0         |
+# | ...          | ...       | ...       | ...       | ...       | ...       | ...                                    | ...       |
+# | chrY         | 15591259  | 15591720  | 33        | 15591393  | 15592550  | NM_001258269_exon_29_0_chrY_15591394_r | 0         |
+# | chrY         | 15591259  | 15591720  | 33        | 15591393  | 15592550  | NR_047599_exon_28_0_chrY_15591394_r    | 0         |
+# | chrY         | 16941822  | 16942188  | 32        | 16941609  | 16942399  | NM_014893_exon_4_0_chrY_16941610_f     | 0         |
+# +--------------+-----------+-----------+-----------+-----------+-----------+----------------------------------------+-----------+
+# PyRanges object has 68 sequences from 2 chromosomes.
+# 
+# [[&quot;CpG&quot;]]
+# 
+# +--------------+-----------+-----------+-----------+
+# | Chromosome   | Start     | End       | CpG       |
+# | (category)   | (int64)   | (int64)   | (int64)   |
+# |--------------+-----------+-----------+-----------|
+# | chrX         | 584563    | 585326    | 66        |
+# | chrX         | 1510501   | 1511838   | 173       |
+# | chrX         | 2846195   | 2847511   | 92        |
+# | ...          | ...       | ...       | ...       |
+# | chrY         | 15591259  | 15591720  | 33        |
+# | chrY         | 15591259  | 15591720  | 33        |
+# | chrY         | 16941822  | 16942188  | 32        |
+# +--------------+-----------+-----------+-----------+
+# PyRanges object has 68 sequences from 2 chromosomes.
+# 
+# (lambda df: df.head(3))
+# 
+# +--------------+-----------+-----------+-----------+
+# | Chromosome   | Start     | End       | CpG       |
+# | (category)   | (int64)   | (int64)   | (int64)   |
+# |--------------+-----------+-----------+-----------|
+# | chrX         | 584563    | 585326    | 66        |
+# | chrX         | 1510501   | 1511838   | 173       |
+# | chrX         | 2846195   | 2847511   | 92        |
+# | ...          | ...       | ...       | ...       |
+# | chrY         | 241398    | 245968    | 310       |
+# | chrY         | 14532115  | 14533600  | 126       |
+# | chrY         | 15591259  | 15591720  | 33        |
+# +--------------+-----------+-----------+-----------+
+# PyRanges object has 6 sequences from 2 chromosomes.
+# 
+# [&quot;chrX&quot;]
+# 
+# +--------------+-----------+-----------+-----------+
+# | Chromosome   |     Start |       End |       CpG |
+# | (category)   |   (int64) |   (int64) |   (int64) |
+# |--------------+-----------+-----------+-----------|
+# | chrX         |    584563 |    585326 |        66 |
+# | chrX         |   1510501 |   1511838 |       173 |
+# | chrX         |   2846195 |   2847511 |        92 |
+# +--------------+-----------+-----------+-----------+
+# PyRanges object has 3 sequences from 1 chromosomes.
+# 
+# .slack(500)
+# 
+# +--------------+-----------+-----------+-----------+
+# | Chromosome   |     Start |       End |       CpG |
+# | (category)   |   (int64) |   (int64) |   (int64) |
+# |--------------+-----------+-----------+-----------|
+# | chrX         |    584063 |    585826 |        66 |
+# | chrX         |   1510001 |   1512338 |       173 |
+# | chrX         |   2845695 |   2848011 |        92 |
+# +--------------+-----------+-----------+-----------+
+# PyRanges object has 3 sequences from 1 chromosomes.
+# 
+# [exons.py:7]</code></pre>
+
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="methods-for-manipulating-single-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="overlapping-ranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="concatenating-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sorting-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

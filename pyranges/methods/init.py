@@ -127,6 +127,7 @@ def _init(self,
         df = create_pyranges_df(chromosomes, starts, ends, strands)
 
     if isinstance(df, pd.DataFrame):
+
         df = set_dtypes(df, extended)
 
     # below is not a good idea! then gr["chr1"] might change the dtypes of a gr!

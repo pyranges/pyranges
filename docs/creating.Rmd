@@ -3,7 +3,7 @@
 A PyRanges object can be built in three ways:
 
 1. from a Pandas dataframe
-2. using the PyRanges constructor with the seqnames, starts and ends (and optionally strands), individually.
+2. using the PyRanges constructor with the chromosomes, starts and ends (and optionally strands), individually.
 3. using one of the custom reader functions for genomic data (`read_bed`, `read_bam` or `read_gtf`)
 
 #### Using a DataFrame {-}
@@ -32,17 +32,17 @@ print(pr.PyRanges(df))
 The other way to instantiate a PyRanges object is to use the constructor with keywords:
 
 ```{python tidy=FALSE}
-gr = pr.PyRanges(seqnames=df.Chromosome, starts=df.Start, ends=df.End)
+gr = pr.PyRanges(chromosomes=df.Chromosome, starts=df.Start, ends=df.End)
 print(gr)
 ```
 
 It is possible to make PyRanges objects out of basic Python datatypes:
 
 ```{python tidy=FALSE}
-gr = pr.PyRanges(seqnames="chr1", strands="+", starts=[0, 1, 2], ends=(3, 4, 5))
+gr = pr.PyRanges(chromosomes="chr1", strands="+", starts=[0, 1, 2], ends=(3, 4, 5))
 print(gr)
 
-gr = pr.PyRanges(seqnames="chr1 chr2 chr3".split(), strands="+ - +".split(), starts=[0, 1, 2], ends=(3, 4, 5))
+gr = pr.PyRanges(chromosomes="chr1 chr2 chr3".split(), strands="+ - +".split(), starts=[0, 1, 2], ends=(3, 4, 5))
 print(gr)
 ```
 

@@ -1,7 +1,8 @@
 from pyranges.multithreaded import pyrange_apply_single
+from pyranges.pyranges import fill_kwargs
 
 
-def _coverage(ranges, value_col=None, strand=True, rpm=False):
+def _coverage(ranges, value_col=None, strand=True, rpm=False, **kwargs):
 
     try:
         from pyrle.methods import coverage
@@ -10,9 +11,8 @@ def _coverage(ranges, value_col=None, strand=True, rpm=False):
         raise Exception(
             "Using the coverage method requires that pyrle is installed.")
 
-    kwargs = {"value_col": value_col}
-    if value_col is None:
-        kwargs["sparse"] = {"self": True}
+    keep = [value_col if not value_col is None else "Score"]
+    kwargs = {"value_col": value_col, "sparse": {"self": False}} # already sparse
     # from pydbg import dbg
 
     result = pyrange_apply_single(coverage, ranges, strand, kwargs)

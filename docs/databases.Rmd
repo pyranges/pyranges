@@ -5,6 +5,8 @@ PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges.db m
 Each database contains at least two methods, namely genes and genomes. UCSC and
 Ensembl also has the method chromosome_sizes.
 
+The genes-methods all take a boolean flag head If true, it only fetches a few hundred rows of data.
+
 ```{python tidy=FALSE}
 import pyranges as pr
 
@@ -16,7 +18,7 @@ chr_sizes = pr.db.ucsc.chromosome_sizes("hg38")
 
 print(chr_sizes.head())
 
-genes = pr.db.ucsc.genes("hg38")
+genes = pr.db.ucsc.genes("hg38", head=True)
 
 print(genes)
 ```
