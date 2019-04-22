@@ -80,9 +80,9 @@ exons["chrY", "-",  15591259:27197945]
 pip install pyranges
 ```
 
-## Paper
+## Paper/Cite
 
-Being written here: <https://github.com/endrebak/pyranges-paper>
+https://www.biorxiv.org/content/10.1101/609396v1
 
 ## TODO
 
@@ -102,7 +102,7 @@ PyRanges should always be the fastest general-purpose genomics library for
 Python. So I will happily change the multithreading library and overlap
 datastructures sometime in the future, if rigorous tests show that the proposed
 alternatives are indeed faster. (As the multithreading requires about 30 lines
-of code and the overlap queries about 15, this is not hard.)
+of code and the overlap queries about 15, this will not be hard.)
 
 ## Performance
 
