@@ -101,8 +101,8 @@ Potentially:
 PyRanges should always be the fastest general-purpose genomics library for
 Python. So I will happily change the multithreading library and overlap
 datastructures sometime in the future, if rigorous tests show that the proposed
-alternatives are indeed faster. (As these multithreading requires about 30 and
-the overlap queries about 15 lines of code, this is not hard.)
+alternatives are indeed faster. (As the multithreading requires about 30 lines
+of code and the overlap queries about 15, this is not hard.)
 
 ## Performance
 
