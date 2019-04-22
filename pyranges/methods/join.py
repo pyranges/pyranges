@@ -1,5 +1,3 @@
-import pyranges.raymock as ray
-
 import numpy as np
 import pandas as pd
 from ncls import NCLS
@@ -33,7 +31,6 @@ def _both_dfs(scdf, ocdf, how=False):
     return scdf, ocdf
 
 
-@ray.remote
 def _write_both(scdf, ocdf, kwargs):
 
     if scdf.empty or ocdf.empty:

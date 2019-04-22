@@ -1,10 +1,7 @@
-import pyranges.raymock as ray
-
 import pandas as pd
 from ncls import NCLS
 
 
-@ray.remote
 def _subtraction(scdf, ocdf, kwargs):
 
     if ocdf.empty or scdf.empty:

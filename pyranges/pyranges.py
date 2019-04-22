@@ -3,8 +3,6 @@ from natsort import natsorted
 
 import pyranges as pr
 
-import pyranges.raymock as ray
-
 from pyranges.tostring import tostring
 
 from pyranges.methods.intersection import _intersection, _overlap
@@ -119,8 +117,6 @@ class PyRanges():
         f = lambda df: eval(eval_cmd)
 
         kwargs = fill_kwargs(kwargs)
-
-        f = ray.remote(f)
 
         result = pyrange_apply_single(f, self, strand, kwargs)
 
@@ -267,8 +263,6 @@ class PyRanges():
             kwargs = {}
         kwargs = fill_kwargs(kwargs)
 
-        f = ray.remote(f)
-
         result = pyrange_apply_single(f, self, strand, kwargs)
 
         if not as_pyranges:
@@ -282,8 +276,6 @@ class PyRanges():
         if kwargs is None:
             kwargs = {}
         kwargs = fill_kwargs(kwargs)
-
-        f = ray.remote(f)
 
         result = pyrange_apply(f, self, other, **kwargs)
 

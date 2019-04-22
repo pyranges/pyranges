@@ -12,8 +12,12 @@ def _coverage(ranges, value_col=None, strand=True, rpm=False, **kwargs):
             "Using the coverage method requires that pyrle is installed.")
 
     keep = [value_col if not value_col is None else "Score"]
-    kwargs = {"value_col": value_col, "sparse": {"self": False}} # already sparse
-    # from pydbg import dbg
+    kwargs = {
+        "value_col": value_col,
+        "sparse": {
+            "self": False
+        }
+    }  # already sparse
 
     result = pyrange_apply_single(coverage, ranges, strand, kwargs)
 

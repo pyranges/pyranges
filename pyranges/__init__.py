@@ -1,7 +1,5 @@
 from __future__ import print_function
 
-import pyranges.raymock as ray
-
 import sys
 
 import pandas as pd

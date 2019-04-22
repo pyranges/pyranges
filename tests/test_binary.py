@@ -264,7 +264,6 @@ overlaps = [True, False]
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
-# @reproduce_failure('4.15.0', b'AXicY2RgYGAEIygBp5FJEAONzwAAAZYACw==')
 def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
 
     nearest_command = "bedtools closest {bedtools_how} {strand} {overlap} -t first -d -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"

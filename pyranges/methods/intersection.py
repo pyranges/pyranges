@@ -1,11 +1,8 @@
-import pyranges.raymock as ray
-
 import numpy as np
 import pandas as pd
 from ncls import NCLS
 
 
-@ray.remote
 def _intersection(scdf, ocdf, kwargs):
 
     how = kwargs["how"]
@@ -59,7 +56,6 @@ def _intersection(scdf, ocdf, kwargs):
         return None
 
 
-@ray.remote
 def _overlap(scdf, ocdf, kwargs):
 
     invert = kwargs["invert"]
@@ -93,7 +89,6 @@ def _overlap(scdf, ocdf, kwargs):
     return scdf.reindex(_indexes)
 
 
-# @ray.remote
 # def _first_df(scdf, ocdf, kwargs):
 
 #     if scdf.empty or ocdf.empty:

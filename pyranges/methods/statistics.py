@@ -1,9 +1,6 @@
-import pyranges.raymock as ray
-
 import numpy as np
 
 
-@ray.remote
 def _relative_distance(scdf, ocdf, kwargs):
 
     midpoints_self = (

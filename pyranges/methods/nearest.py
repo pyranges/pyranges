@@ -1,5 +1,3 @@
-import pyranges.raymock as ray
-
 import pandas as pd
 
 from .join import _both_dfs
@@ -81,7 +79,6 @@ def _previous_nonoverlapping(left_starts, right_ends):
     return r_idx, dist
 
 
-@ray.remote
 def _nearest(scdf, ocdf, kwargs):
 
     if scdf.empty or ocdf.empty:

@@ -4,10 +4,9 @@ import pyranges as pr
 
 from natsort import natsorted
 
-import pyranges.raymock as ray
+import sys
 
 
-@ray.remote
 def merge_dfs(df1, df2):
 
     if not df1.empty and not df2.empty:
@@ -101,7 +100,45 @@ def make_unary_sparse(kwargs, df):
     return df
 
 
+def ray_initialized():
+    def test_function():
+        pass
+
+    try:
+        test_function = ray.remote(test_function)
+    except Exception as e:
+        if type(e) == NameError:
+            return False
+
+        raise e
+
+    try:
+        test_function.remote()
+    except Exception as e:
+        if "RayConnectionError" in str(type(e)):
+            return True
+        else:
+            raise e
+
+
+def get_multithreaded_funcs(function):
+
+    if ray_initialized():
+        _merge_dfs = ray.remote(merge_dfs)
+        get = ray.get
+        function = ray.remote(function)
+    else:
+        _merge_dfs = lambda: "dummy value"
+        _merge_dfs.remote = merge_dfs
+        get = lambda x: x
+        function.remote = function
+
+    return function, get, _merge_dfs
+
+
 def pyrange_apply(function, self, other, **kwargs):
+
+    function, get, _merge_dfs = get_multithreaded_funcs(function)
 
     strandedness = kwargs["strandedness"]
 
@@ -165,7 +202,7 @@ def pyrange_apply(function, self, other, **kwargs):
                     odf1 = other[c, "+"].df
                     odf2 = other[c, "-"].df
 
-                    odf = merge_dfs.remote(odf1, odf2)
+                    odf = _merge_dfs.remote(odf1, odf2)
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
@@ -186,7 +223,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 # dbg(odfs)
 
                 if len(odfs) == 2:
-                    odf = merge_dfs.remote(*odfs)
+                    odf = _merge_dfs.remote(*odfs)
                 elif len(odfs) == 1:
                     odf = odfs[0]
                 else:
@@ -213,7 +250,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 result = call_f(function, df, odf, kwargs)
                 results.append(result)
 
-    results = ray.get(results)
+    results = get(results)
 
     results = process_results(results, keys)
 
@@ -232,6 +269,8 @@ def call_f_single(f, df, kwargs):
 
 
 def pyrange_apply_single(function, self, strand, kwargs):
+
+    function, get, _merge_dfs = get_multithreaded_funcs(function)
 
     if strand:
         assert self.stranded, \
@@ -277,7 +316,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             if len(dfs.keys()) == 2:
                 df1, df2 = dfs.values()
                 # merge strands
-                df1 = merge_dfs.remote(df1, df2)
+                df1 = _merge_dfs.remote(df1, df2)
             else:
                 df1 = dfs.values()[0]
 
@@ -286,7 +325,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             results.append(result)
             keys.append(c)
 
-    results = ray.get(results)
+    results = get(results)
 
     results = process_results(results, keys)
 
@@ -300,7 +339,6 @@ def _lengths(df):
     return lengths
 
 
-@ray.remote
 def _tss(df, kwargs):
 
     slack = kwargs["slack"]
@@ -322,7 +360,6 @@ def _tss(df, kwargs):
     return tss.reindex(df.index)
 
 
-@ray.remote
 def _tes(df, kwargs):
 
     slack = kwargs["slack"]
@@ -344,7 +381,6 @@ def _tes(df, kwargs):
     return tes.reindex(df.index)
 
 
-@ray.remote
 def _slack(df, kwargs):
 
     slack = kwargs["slack"]

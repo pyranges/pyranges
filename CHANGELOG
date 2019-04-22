@@ -1,5 +1,7 @@
-# 0.0.27 (22.04.19)
+# 0.0.28 (22.04.19)
+- Only refer to and use ray in dispatcher
 
+# 0.0.27 (22.04.19)
 Fixes:
   - raise Exception when encountering non-"+-" Strand values
 

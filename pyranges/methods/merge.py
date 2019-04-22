@@ -1,11 +1,8 @@
-import pyranges.raymock as ray
-
 import pandas as pd
 
 from sorted_nearest import find_clusters
 
 
-@ray.remote
 def _merge(df, kwargs):
 
     if df.empty:

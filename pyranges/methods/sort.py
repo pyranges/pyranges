@@ -1,7 +1,3 @@
-import pyranges.raymock as ray
-
-
-@ray.remote
 def _sort(df, kwargs):
 
     return sort_one_by_one(df, "Start", "End")
