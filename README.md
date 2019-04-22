@@ -10,8 +10,8 @@ GenomicRanges and genomic Rle-objects for Python.
 
 ## Release
 
-PyRanges is in a beta state. We are extremely responsive to bugreports, so if you
-have a problem or come accross unexpected behavior, please create an issue.
+PyRanges is in a beta state. We are extremely responsive to bug-reports, so if you
+have problems or come across unexpected behavior, please create an issue.
 
 ## Quick example
 
@@ -39,10 +39,10 @@ exons["chrY", "-",  15591259:27197945]
 # the API allows for easy and terse chaining
 (cpg # use the cpg dataset
   .join(exons, suffix="_xn") # join with exons, use suffix _xn for duplicate cols
-  (lambda df: df.CpG > 30) # keep only rows with a CpG score over 30
+  .subset(lambda df: df.CpG > 30) # keep only rows with a CpG score over 30
   .sort() # sort on Chromosome, Start and End
   ["chrX"] # keep only chromosome X
-  (lambda df: ~df.Name.str.startswith("NR")) # drop rows where the name starts with NR
+  .assign(lambda df: ~df.Name.str.startswith("NR")) # drop rows where the name starts with NR
   .unstrand()) # remove the strand info
 # +--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------+
 # | Chromosome   | Start     | End       | CpG       | Start_xn   | End_xn    | Name                                    | Score     |
@@ -110,7 +110,7 @@ of code and the overlap queries about 15, this is not hard.)
 
 Comprehensive set of graphs for many types of functions on different datasets are here:
 
-[Time](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/time.md))
+[Time](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/time.md)
 
 [Memory](https://github.com/endrebak/pyranges-paper/blob/master/supplementary_paper/memory.md)
 
