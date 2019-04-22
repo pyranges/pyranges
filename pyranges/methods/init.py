@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import pandas as pd
 
@@ -107,6 +109,24 @@ def create_pyranges_df(chromosomes, starts, ends, strands=None):
     return df
 
 
+def check_strandedness(df):
+    """Check whether strand contains '.'"""
+
+    contains_more_than_plus_minus_in_strand_col = False
+
+    if "Strand" in df:
+        if str(df.Strand.dtype) == "category" and (
+                set(df.Strand.cat.categories) - set("+-")):
+            contains_more_than_plus_minus_in_strand_col = True
+        elif not ((df.Strand == "+") | (df.Strand == "-")).all():
+            contains_more_than_plus_minus_in_strand_col = True
+
+        if contains_more_than_plus_minus_in_strand_col:
+            raise Exception(
+                "Strand contained more symbols than '+' or '-'. Not supported (yet) in PyRanges."
+            )
+
+
 def _init(self,
           df=None,
           chromosomes=None,
@@ -127,6 +147,8 @@ def _init(self,
         df = create_pyranges_df(chromosomes, starts, ends, strands)
 
     if isinstance(df, pd.DataFrame):
+
+        check_strandedness(df)
 
         df = set_dtypes(df, extended)
 

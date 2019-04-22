@@ -23,3 +23,6 @@ dist/
 *.cpp
 *.lprof
 *.egg-*
+
+pyranges-*/
+*.bw

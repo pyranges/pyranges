@@ -7,7 +7,7 @@ __version__ = open("pyranges/version.py").readline().split(" = ")[1].replace(
 
 install_requires = [
     "cython", "pandas", "ncls", "tabulate", "sorted_nearest", "pyrle",
-    "natsort", "mysqlclient", "bamread", "requests", "pybigwig"
+    "natsort", "mysqlclient", "bamread", "requests", "pybigwig", "piedpiper"
 ]
 
 if os.getenv("TRAVIS"):
@@ -32,7 +32,6 @@ setup(
     license="MIT",
     install_requires=install_requires,
     classifiers=[
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta", "Environment :: Other Environment",
         "Intended Audience :: Developers",
