@@ -10,7 +10,7 @@ GenomicRanges and genomic Rle-objects for Python.
 
 ## Release
 
-PyRanges is in a beta state. We are extremely responsive to bugreport, so if you
+PyRanges is in a beta state. We are extremely responsive to bugreports, so if you
 have a problem or come accross unexpected behavior, please create an issue.
 
 ## Quick example
@@ -89,10 +89,14 @@ Being written here: <https://github.com/endrebak/pyranges-paper>
 For the future:
 
 *   groupby
-*   create a settings-module
+*   settings
 *   write docstrings, autogenerate API-docs
 *   K-nearest
 *   write bam
+
+Potentially:
+
+*   support mixes of stranded and unstranded data
 
 PyRanges should always be the fastest general-purpose genomics library for
 Python. So I will happily change the multithreading library and overlap
