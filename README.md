@@ -2,13 +2,16 @@
 
 [![Coverage Status](https://img.shields.io/coveralls/github/biocore-ntnu/pyranges.svg)](https://coveralls.io/github/biocore-ntnu/pyranges?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b61a53346d764a8d8f0ab2a6afd7b100)](https://www.codacy.com/app/endrebak/pyranges?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=biocore-ntnu/pyranges&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/biocore-ntnu/pyranges.svg?branch=master)](https://travis-ci.org/biocore-ntnu/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges) [![MIT](https://img.shields.io/pypi/l/pyranges.svg?color=green)](https://opensource.org/licenses/MIT)
 
-## Release
-
-PyRanges is in a beta state.
+"This was what Python badly needed for years." - Heng Li
 
 ## Introduction
 
 GenomicRanges and genomic Rle-objects for Python.
+
+## Release
+
+PyRanges is in a beta state. We are extremely responsive to bugreport, so if you
+have a problem or come accross unexpected behavior, please create an issue.
 
 ## Quick example
 
@@ -37,23 +40,33 @@ exons["chrY", "-",  15591259:27197945]
 (cpg # use the cpg dataset
   .join(exons, suffix="_xn") # join with exons, use suffix _xn for duplicate cols
   (lambda df: df.CpG > 30) # keep only rows with a CpG score over 30
-  .sort()
+  .sort() # sort on Chromosome, Start and End
+  ["chrX"] # keep only chromosome X
   (lambda df: ~df.Name.str.startswith("NR")) # drop rows where the name starts with NR
   .unstrand()) # remove the strand info
-# +--------------|-----------|-----------|-----------|------------|-----------|----------------------------------------|-----------+
-# | Chromosome   | Start     | End       | CpG       | Start_xn   | End_xn    | Name                                   | Score     |
-# | (category)   | (int64)   | (int64)   | (int64)   | (int64)    | (int64)   | (object)                               | (int64)   |
-# |--------------|-----------|-----------|-----------|------------|-----------|----------------------------------------|-----------|
-# | chrX         | 584563    | 585326    | 66        | 585078     | 585337    | NM_000451_exon_0_0_chrX_585079_f       | 0         |
-# | chrX         | 13587648  | 13588221  | 49        | 13587693   | 13588054  | NM_001167890_exon_0_0_chrX_13587694_f  | 0         |
-# | chrX         | 17755053  | 17756648  | 117       | 17755568   | 17755800  | NM_001037535_exon_0_0_chrX_17755569_f  | 0         |
-# | ...          | ...       | ...       | ...       | ...        | ...       | ...                                    | ...       |
-# | chrY         | 16941822  | 16942188  | 32        | 16941609   | 16942399  | NM_014893_exon_4_0_chrY_16941610_f     | 0         |
-# | chrY         | 241398    | 245968    | 310       | 244667     | 245252    | NM_013239_exon_0_0_chrY_244668_r       | 0         |
-# | chrY         | 15591259  | 15591720  | 33        | 15591393   | 15592550  | NM_001258269_exon_29_0_chrY_15591394_r | 0         |
-# +--------------|-----------|-----------|-----------|------------|-----------|----------------------------------------|-----------+
-# PyRanges object has 57 sequences from 2 chromosomes.
+# +--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------+
+# | Chromosome   | Start     | End       | CpG       | Start_xn   | End_xn    | Name                                    | Score     |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)    | (int64)   | (object)                                | (int64)   |
+# |--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------|
+# | chrX         | 584563    | 585326    | 66        | 585078     | 585337    | NM_000451_exon_0_0_chrX_585079_f        | 0         |
+# | chrX         | 13587648  | 13588221  | 49        | 13587693   | 13588054  | NM_001167890_exon_0_0_chrX_13587694_f   | 0         |
+# | chrX         | 17755053  | 17756648  | 117       | 17755568   | 17755800  | NM_001037535_exon_0_0_chrX_17755569_f   | 0         |
+# | ...          | ...       | ...       | ...       | ...        | ...       | ...                                     | ...       |
+# | chrX         | 153068787 | 153070353 | 134       | 153067622  | 153070355 | NM_032512_exon_0_0_chrX_153067623_r     | 0         |
+# | chrX         | 153284685 | 153285655 | 94        | 153284647  | 153284779 | NM_001025243_exon_10_0_chrX_153284648_r | 0         |
+# | chrX         | 153598874 | 153600604 | 164       | 153599240  | 153599729 | NM_001456_exon_45_0_chrX_153599241_r    | 0         |
+# +--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------+
+# PyRanges object has 54 sequences from 1 chromosomes.
 ```
+
+## Features
+
+- fast
+- memory-efficient
+- featureful
+- pythonic/pandastic
+- supports chaining with a terse syntax
+- uses Pandas DataFrames, so the whole Python data science stack works on PyRanges.
 
 ## Documentation
 
@@ -75,8 +88,17 @@ Being written here: <https://github.com/endrebak/pyranges-paper>
 
 For the future:
 
+*   groupby
+*   create a settings-module
+*   write docstrings, autogenerate API-docs
 *   K-nearest
 *   write bam
+
+PyRanges should always be the fastest general-purpose genomics library for
+Python. So I will happily change the multithreading library and overlap
+datastructures sometime in the future, if rigorous tests show that the proposed
+alternatives are indeed faster. (As these multithreading requires about 30 and
+the overlap queries about 15 lines of code, this is not hard.)
 
 ## Performance
 
