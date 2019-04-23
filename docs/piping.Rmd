@@ -1,7 +1,8 @@
 # Piping PyRanges
 
 The PyRanges API supports chaining operations out of the box.
-It is often terser than the equivalent in pandas or dplyr.
+
+To set a new column in a PyRanges you would use the `assign` method and for subsetting you would use the `subset` method.
 
 ```{python tidy=FALSE}
 import pyranges as pr
@@ -11,7 +12,7 @@ import pandas as pd
 exons = pr.data.exons()
 cpg = pr.data.cpg()
 
-cpg.join(exons.unstrand())(lambda df: df.CpG > 25)[["CpG"]](lambda df: df.head(3))["chrX"].slack(500)
+cpg.join(exons.unstrand()).subset(lambda df: df.CpG > 25)[["CpG"]].assign(lambda df: df.CpG % 10, "CpGDecile")["chrX"].slack(500)
 ```
 
 To debug pipelines, you can use the experimental `pr.sandbox.Debug()`. Since the debugging context-manager reads source files, it needs to be used in a file, not a REPL. See [piedpiper](https://github.com/endrebak/piedpiper) for more info.
@@ -24,7 +25,7 @@ exons = pr.data.exons()
 cpg = pr.data.cpg()
 
 with D():
-    cpg.join(exons.unstrand())(lambda df: df.CpG > 25)[["CpG"]](lambda df: df.head(3))["chrX"].slack(500)
+    cpg.join(exons.unstrand()).subset(lambda df: df.CpG > 25)[["CpG"]].assign(lambda df: df.CpG % 10, "CpGDecile")["chrX"].slack(500)
 # Start data:
 # +--------------+-----------+-----------+-----------+
 # | Chromosome   | Start     | End       | CpG       |
@@ -39,9 +40,9 @@ with D():
 # | chrY         | 59349266  | 59349574  | 29        |
 # +--------------+-----------+-----------+-----------+
 # PyRanges object has 1077 sequences from 2 chromosomes.
-# 
+#
 # .join(exons.unstrand())
-# 
+#
 # +--------------+-----------+-----------+-----------+-----------+-----------+---------------------------------------+-----------+
 # | Chromosome   | Start     | End       | CpG       | Start_b   | End_b     | Name                                  | Score     |
 # | (category)   | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   | (object)                              | (int64)   |
@@ -55,9 +56,9 @@ with D():
 # | chrY         | 26979889  | 26980116  | 21        | 26979966  | 26980276  | NM_001005375_exon_0_0_chrY_26979967_f | 0         |
 # +--------------+-----------+-----------+-----------+-----------+-----------+---------------------------------------+-----------+
 # PyRanges object has 79 sequences from 2 chromosomes.
-# 
-# (lambda df: df.CpG > 25)
-# 
+#
+# .subset(lambda df: df.CpG > 25)
+#
 # +--------------+-----------+-----------+-----------+-----------+-----------+----------------------------------------+-----------+
 # | Chromosome   | Start     | End       | CpG       | Start_b   | End_b     | Name                                   | Score     |
 # | (category)   | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   | (object)                               | (int64)   |
@@ -71,9 +72,9 @@ with D():
 # | chrY         | 16941822  | 16942188  | 32        | 16941609  | 16942399  | NM_014893_exon_4_0_chrY_16941610_f     | 0         |
 # +--------------+-----------+-----------+-----------+-----------+-----------+----------------------------------------+-----------+
 # PyRanges object has 68 sequences from 2 chromosomes.
-# 
+#
 # [["CpG"]]
-# 
+#
 # +--------------+-----------+-----------+-----------+
 # | Chromosome   | Start     | End       | CpG       |
 # | (category)   | (int64)   | (int64)   | (int64)   |
@@ -87,46 +88,54 @@ with D():
 # | chrY         | 16941822  | 16942188  | 32        |
 # +--------------+-----------+-----------+-----------+
 # PyRanges object has 68 sequences from 2 chromosomes.
-# 
-# (lambda df: df.head(3))
-# 
-# +--------------+-----------+-----------+-----------+
-# | Chromosome   | Start     | End       | CpG       |
-# | (category)   | (int64)   | (int64)   | (int64)   |
-# |--------------+-----------+-----------+-----------|
-# | chrX         | 584563    | 585326    | 66        |
-# | chrX         | 1510501   | 1511838   | 173       |
-# | chrX         | 2846195   | 2847511   | 92        |
-# | ...          | ...       | ...       | ...       |
-# | chrY         | 241398    | 245968    | 310       |
-# | chrY         | 14532115  | 14533600  | 126       |
-# | chrY         | 15591259  | 15591720  | 33        |
-# +--------------+-----------+-----------+-----------+
-# PyRanges object has 6 sequences from 2 chromosomes.
-# 
+#
+# .assign(lambda df: df.CpG % 10, "CpGDecile")
+#
+# +--------------+-----------+-----------+-----------+-------------+
+# | Chromosome   | Start     | End       | CpG       | CpGDecile   |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)     |
+# |--------------+-----------+-----------+-----------+-------------|
+# | chrX         | 584563    | 585326    | 66        | 6           |
+# | chrX         | 1510501   | 1511838   | 173       | 3           |
+# | chrX         | 2846195   | 2847511   | 92        | 2           |
+# | ...          | ...       | ...       | ...       | ...         |
+# | chrY         | 15591259  | 15591720  | 33        | 3           |
+# | chrY         | 15591259  | 15591720  | 33        | 3           |
+# | chrY         | 16941822  | 16942188  | 32        | 2           |
+# +--------------+-----------+-----------+-----------+-------------+
+# PyRanges object has 68 sequences from 2 chromosomes.
+#
 # ["chrX"]
-# 
-# +--------------+-----------+-----------+-----------+
-# | Chromosome   |     Start |       End |       CpG |
-# | (category)   |   (int64) |   (int64) |   (int64) |
-# |--------------+-----------+-----------+-----------|
-# | chrX         |    584563 |    585326 |        66 |
-# | chrX         |   1510501 |   1511838 |       173 |
-# | chrX         |   2846195 |   2847511 |        92 |
-# +--------------+-----------+-----------+-----------+
-# PyRanges object has 3 sequences from 1 chromosomes.
-# 
+#
+# +--------------+-----------+-----------+-----------+-------------+
+# | Chromosome   | Start     | End       | CpG       | CpGDecile   |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)     |
+# |--------------+-----------+-----------+-----------+-------------|
+# | chrX         | 584563    | 585326    | 66        | 6           |
+# | chrX         | 1510501   | 1511838   | 173       | 3           |
+# | chrX         | 2846195   | 2847511   | 92        | 2           |
+# | ...          | ...       | ...       | ...       | ...         |
+# | chrX         | 153284685 | 153285655 | 94        | 4           |
+# | chrX         | 153598874 | 153600604 | 164       | 4           |
+# | chrX         | 153990840 | 153991831 | 105       | 5           |
+# +--------------+-----------+-----------+-----------+-------------+
+# PyRanges object has 61 sequences from 1 chromosomes.
+#
 # .slack(500)
-# 
-# +--------------+-----------+-----------+-----------+
-# | Chromosome   |     Start |       End |       CpG |
-# | (category)   |   (int64) |   (int64) |   (int64) |
-# |--------------+-----------+-----------+-----------|
-# | chrX         |    584063 |    585826 |        66 |
-# | chrX         |   1510001 |   1512338 |       173 |
-# | chrX         |   2845695 |   2848011 |        92 |
-# +--------------+-----------+-----------+-----------+
-# PyRanges object has 3 sequences from 1 chromosomes.
-# 
+#
+# +--------------+-----------+-----------+-----------+-------------+
+# | Chromosome   | Start     | End       | CpG       | CpGDecile   |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)     |
+# |--------------+-----------+-----------+-----------+-------------|
+# | chrX         | 584063    | 585826    | 66        | 6           |
+# | chrX         | 1510001   | 1512338   | 173       | 3           |
+# | chrX         | 2845695   | 2848011   | 92        | 2           |
+# | ...          | ...       | ...       | ...       | ...         |
+# | chrX         | 153284185 | 153286155 | 94        | 4           |
+# | chrX         | 153598374 | 153601104 | 164       | 4           |
+# | chrX         | 153990340 | 153992331 | 105       | 5           |
+# +--------------+-----------+-----------+-----------+-------------+
+# PyRanges object has 61 sequences from 1 chromosomes.
+#
 # [exons.py:7]
 ```

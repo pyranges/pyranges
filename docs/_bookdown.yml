@@ -1,15 +1,15 @@
 delete_merged_file: true
 
 rmd_files: ["index.Rmd", "creating.Rmd",  "writing.Rmd", "subset.Rmd", "manipulation.Rmd",
-"concat.Rmd", "piping.Rmd", "sort.Rmd", "summary.Rmd", "single_range_methods.Rmd",
+"concat.Rmd", "piping.Rmd", "iterate.Rmd", "sort.Rmd", "summary.Rmd", "single_range_methods.Rmd",
 "intersection.Rmd", "overlap.Rmd", "join.Rmd", "nearest.Rmd", "jaccard.Rmd",
 "reldist.Rmd", "coverage.Rmd", "runlengths.Rmd", "runlength_dict.Rmd",
 "subsetting_rles.Rmd", "subsetting_pyrles.Rmd", "multithreading.Rmd", "databases.Rmd"]
 
-# rmd_files: ["piping.Rmd"]
+# rmd_files: ["iterate.Rmd"]
 # rmd_files: ["concat.Rmd"]
 
 output_dir: "."
 
-bookdown::gitbook:
-  css: css.css
+bookdown::html_document2:
+#   css: css.css

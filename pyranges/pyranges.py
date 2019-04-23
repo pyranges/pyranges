@@ -112,6 +112,10 @@ class PyRanges():
 
         return str(self)
 
+    def __iter__(self):
+
+        return iter(self.dfs.items())
+
     def eval(self, eval_cmd, strand=True, as_pyranges=True, **kwargs):
 
         f = lambda df: eval(eval_cmd)
@@ -250,6 +254,40 @@ class PyRanges():
         df = pyrange_apply_single(_merge, self, strand, kwargs)
 
         return PyRanges(df)
+
+    def subset(self, function, strand=False, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+
+        result = pyrange_apply_single(function, self, strand, kwargs)
+
+        first_result = next(iter(result.values()))
+
+        assert first_result.dtype == bool, "result of subset function must be bool, but is {}".format(
+            first_result.dtype)
+
+        return self[result]
+
+    def assign(self, function, col, strand=False, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+
+        result = pyrange_apply_single(function, self, strand, kwargs)
+
+        first_result = next(iter(result.values()))
+
+        assert type(
+            first_result
+        ) == pd.Series, "result of assign function must be Series, but is {}".format(
+            type(first_result))
+
+        self.__setattr__(col, result)
+
+        return self
+
+    # def groupby():
+
+    # df2 = df.assign(Group=df.groupby("CpG").ngroup()).sort_values("Group")
 
     def coverage(self, value_col=None, strand=False, rpm=False):
 

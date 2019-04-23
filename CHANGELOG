@@ -1,5 +1,11 @@
 # 0.0.29 (unreleased)
-- Move pyranges db to own module to remove mysql-requirement (made wheelmaking hard)
+Changes:
+  - Move pyranges db to own module to remove mysql-requirement (made wheelmaking hard)
+
+Additions:
+  - add assign and subset methods on pyrange
+
+
 
 # 0.0.28 (22.04.19)
 - Only refer to and use ray in dispatcher

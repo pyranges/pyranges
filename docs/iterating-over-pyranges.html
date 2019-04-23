@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>23 Using multiple cores | PyRanges documentation</title>
-  <meta name="description" content="23 Using multiple cores | PyRanges documentation">
+  <title>8 Iterating over PyRanges | PyRanges documentation</title>
+  <meta name="description" content="8 Iterating over PyRanges | PyRanges documentation">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="23 Using multiple cores | PyRanges documentation" />
+  <meta property="og:title" content="8 Iterating over PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="23 Using multiple cores | PyRanges documentation" />
+  <meta name="twitter:title" content="8 Iterating over PyRanges | PyRanges documentation" />
   
   
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="subsetting-pyrles.html">
-<link rel="next" href="fetching-gene-tracks-as-pyranges.html">
+<link rel="prev" href="piping-pyranges.html">
+<link rel="next" href="sorting-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -141,16 +141,96 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="using-multiple-cores" class="section level1">
-<h1><span class="header-section-number">23</span> Using multiple cores</h1>
-<p>Most PyRanges and PyRle-operations can be run in parallel. Even user-made functions can be run in parallel using the apply or apply_pair functions.</p>
-<p>PyRanges uses Ray, a “flexible, high-performance distributed execution framework” to run in parallel-mode. To start Ray in parallel-mode you need to import and initialize Ray before importing PyRanges or PyRles.</p>
-<pre><code>import ray
-ray.init()
-# then
-import pyranges as pr</code></pre>
-<p>Now PyRanges and PyRles is running in multi-core mode.</p>
-<p>Note: By default PyRanges uses no extra cores. Unless the data are reasonably big (at least 10^7) number of intervals or the functions are very long-running, running in parallel-mode is actually more time-consuming than single-core mode. Also, if the PyRanges contains a lot of text data, there is less to be gained by using multithreading. This is due to how strings are represented in memory in Python and Pandas. However, this is something that will be fixed in pandas2 and then the multithreading capabilities of PyRanges will be more useful for these kinds of data.</p>
+<div id="iterating-over-pyranges" class="section level1">
+<h1><span class="header-section-number">8</span> Iterating over PyRanges</h1>
+<p>PyRanges can be iterated over by a simple for loop, and the data is guaranteed to come back in natsorted order:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
+<span class="im">import</span> pandas <span class="im">as</span> pd
+exons <span class="op">=</span> pr.data.exons()
+cpg <span class="op">=</span> pr.data.cpg()
+<span class="cf">for</span> k, df <span class="kw">in</span> cpg:
+    <span class="bu">print</span>(k)
+    <span class="bu">print</span>(df.head(<span class="dv">3</span>))</code></pre></div>
+<pre><code>## chrX
+##   Chromosome   Start     End  CpG
+## 0       chrX   64181   64793   62
+## 1       chrX   69133   70029  100
+## 2       chrX  148685  149461   85
+## chrY
+##     Chromosome  Start    End  CpG
+## 896       chrY  14181  14793   62
+## 897       chrY  19133  20029  100
+## 898       chrY  98685  99461   85</code></pre>
+<p>If the data is unstranded, the key is just the chromosome names, but if the data is stranded the key is a tuple of the chromosome and strand:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="cf">for</span> k, df <span class="kw">in</span> exons:
+    <span class="bu">print</span>(k)
+    <span class="bu">print</span>(df.head(<span class="dv">3</span>))</code></pre></div>
+<pre><code>## (&#39;chrX&#39;, &#39;+&#39;)
+##   Chromosome      Start        End                                 Name  Score Strand
+## 0       chrX  135721701  135721963  NR_038462_exon_0_0_chrX_135721702_f      0      +
+## 2       chrX  135574120  135574598  NM_001727_exon_2_0_chrX_135574121_f      0      +
+## 3       chrX   47868945   47869126   NM_205856_exon_4_0_chrX_47868946_f      0      +
+## (&#39;chrX&#39;, &#39;-&#39;)
+##   Chromosome      Start        End                                    Name  Score Strand
+## 1       chrX   49069126   49069255  NM_001256790_exon_15_0_chrX_49069127_r      0      -
+## 4       chrX  154006958  154007628  NM_001166460_exon_0_0_chrX_154006959_r      0      -
+## 6       chrX   52257919   52258046   NM_001097593_exon_1_0_chrX_52257920_r      0      -
+## (&#39;chrY&#39;, &#39;+&#39;)
+##    Chromosome     Start       End                                  Name  Score Strand
+## 14       chrY   1693161   1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +
+## 82       chrY   1357411   1357535  NM_001161531_exon_4_0_chrY_1357412_f      0      +
+## 98       chrY  59233166  59233257    NR_033715_exon_4_0_chrY_59233167_f      0      +
+## (&#39;chrY&#39;, &#39;-&#39;)
+##   Chromosome     Start       End                                 Name  Score Strand
+## 5       chrY   1481624   1481747    NM_004192_exon_1_0_chrY_1481625_r      0      -
+## 8       chrY  15526614  15526673  NR_047607_exon_25_0_chrY_15526615_r      0      -
+## 9       chrY  15591393  15592550  NR_047610_exon_27_0_chrY_15591394_r      0      -</code></pre>
+<p>If you would like to iterate over the chromosomes in a stranded PyRange the idiom is</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="cf">for</span> c <span class="kw">in</span> exons.chromosomes:
+    <span class="bu">print</span>(c)
+    df <span class="op">=</span> exons[c].df
+    <span class="bu">print</span>(df.head())</code></pre></div>
+<pre><code>## chrX
+##    Chromosome      Start        End                                   Name  Score Strand
+## 0        chrX  135721701  135721963    NR_038462_exon_0_0_chrX_135721702_f      0      +
+## 2        chrX  135574120  135574598    NM_001727_exon_2_0_chrX_135574121_f      0      +
+## 3        chrX   47868945   47869126     NM_205856_exon_4_0_chrX_47868946_f      0      +
+## 7        chrX   77294333   77294480    NM_000052_exon_17_0_chrX_77294334_f      0      +
+## 11       chrX   91090459   91091043  NM_001168360_exon_0_0_chrX_91090460_f      0      +
+## chrY
+##     Chromosome     Start       End                                  Name  Score Strand
+## 14        chrY   1693161   1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +
+## 82        chrY   1357411   1357535  NM_001161531_exon_4_0_chrY_1357412_f      0      +
+## 98        chrY  59233166  59233257    NR_033715_exon_4_0_chrY_59233167_f      0      +
+## 99        chrY   1693161   1693291  NM_001171038_exon_2_0_chrY_1693162_f      0      +
+## 199       chrY   1664276   1664425     NM_005088_exon_2_0_chrY_1664277_f      0      +</code></pre>
+<p>but notice that we need the .df accessor, because subsetting a PyRange always returns a PyRange.</p>
+<p>There are three more ways to iterate over a pyrange, namely the keys, values and items methods. These return a list, not a custom object like the python dict.</p>
+<p>If you want to create a new PyRange while iterating over it, the idiom is</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">d <span class="op">=</span> {}
+<span class="cf">for</span> k, df <span class="kw">in</span> exons:
+    <span class="bu">print</span>(k)
+    d[k] <span class="op">=</span> df.head(<span class="dv">3</span>)</code></pre></div>
+<pre><code>## (&#39;chrX&#39;, &#39;+&#39;)
+## (&#39;chrX&#39;, &#39;-&#39;)
+## (&#39;chrY&#39;, &#39;+&#39;)
+## (&#39;chrY&#39;, &#39;-&#39;)</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">new_gr <span class="op">=</span> pr.PyRanges(d)
+<span class="bu">print</span>(new_gr)</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-------------------------------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name                                | Score     | Strand       |
+## | (category)   | (int64)   | (int64)   | (object)                            | (int64)   | (category)   |
+## |--------------+-----------+-----------+-------------------------------------+-----------+--------------|
+## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f | 0         | +            |
+## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f | 0         | +            |
+## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f  | 0         | +            |
+## | ...          | ...       | ...       | ...                                 | ...       | ...          |
+## | chrY         | 1481624   | 1481747   | NM_004192_exon_1_0_chrY_1481625_r   | 0         | -            |
+## | chrY         | 15526614  | 15526673  | NR_047607_exon_25_0_chrY_15526615_r | 0         | -            |
+## | chrY         | 15591393  | 15592550  | NR_047610_exon_27_0_chrY_15591394_r | 0         | -            |
+## +--------------+-----------+-----------+-------------------------------------+-----------+--------------+
+## PyRanges object has 12 sequences from 2 chromosomes.</code></pre>
+<p>Note that this is basically the same as using the apply method of the PyRange, only that the for loops are never multithreaded.</p>
 
 </div>
             </section>
@@ -158,8 +238,8 @@ import pyranges as pr</code></pre>
           </div>
         </div>
       </div>
-<a href="subsetting-pyrles.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="fetching-gene-tracks-as-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="piping-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sorting-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
