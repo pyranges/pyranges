@@ -1,4 +1,9 @@
-# 0.0.29 (unreleased)
+# 0.0.30 (23.04.19)
+Changes:
+  - Make col first argument of assign
+
+
+# 0.0.29 (23.04.19)
 Changes:
   - Move pyranges db to own module to remove mysql-requirement (made wheelmaking hard)
 

@@ -259,7 +259,16 @@ class PyRanges():
 
         kwargs = fill_kwargs(kwargs)
 
+        if strand is None:
+            strand = self.stranded
+
+        if self.stranded and not strand:
+            self = self.unstrand()
+
         result = pyrange_apply_single(function, self, strand, kwargs)
+
+        if not result:
+            return pr.PyRanges()
 
         first_result = next(iter(result.values()))
 
@@ -268,7 +277,7 @@ class PyRanges():
 
         return self[result]
 
-    def assign(self, function, col, strand=False, **kwargs):
+    def assign(self, col, function, strand=False, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
 

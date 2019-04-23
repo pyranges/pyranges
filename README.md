@@ -1,6 +1,6 @@
 # pyranges
 
-[![Coverage Status](https://img.shields.io/coveralls/github/biocore-ntnu/pyranges.svg)](https://coveralls.io/github/biocore-ntnu/pyranges?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b61a53346d764a8d8f0ab2a6afd7b100)](https://www.codacy.com/app/endrebak/pyranges?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=biocore-ntnu/pyranges&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/biocore-ntnu/pyranges.svg?branch=master)](https://travis-ci.org/biocore-ntnu/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges) [![MIT](https://img.shields.io/pypi/l/pyranges.svg?color=green)](https://opensource.org/licenses/MIT)
+[![Coverage Status](https://img.shields.io/coveralls/github/biocore-ntnu/pyranges.svg)](https://coveralls.io/github/biocore-ntnu/pyranges?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b61a53346d764a8d8f0ab2a6afd7b100)](https://www.codacy.com/app/endrebak/pyranges?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=biocore-ntnu/pyranges&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/biocore-ntnu/pyranges.svg?branch=master)](https://travis-ci.org/biocore-ntnu/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges) [![MIT](https://img.shields.io/pypi/l/pyranges.svg?color=green)](https://opensource.org/licenses/MIT) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyranges.svg)
 
 ## Introduction
 
@@ -42,21 +42,20 @@ exons["chrY", "-",  15591259:27197945]
   .subset(lambda df: df.CpG > 30) # keep only rows with a CpG score over 30
   .sort() # sort on Chromosome, Start and End
   ["chrX"] # keep only chromosome X
-  .assign(lambda df: ~df.Name.str.startswith("NR")) # drop rows where the name starts with NR
+  .assign("CpGDecile", lambda df: df.CpG / 10) # Insert new column
   .unstrand()) # remove the strand info
-# +--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------+
-# | Chromosome   | Start     | End       | CpG       | Start_xn   | End_xn    | Name                                    | Score     |
-# | (category)   | (int64)   | (int64)   | (int64)   | (int64)    | (int64)   | (object)                                | (int64)   |
-# |--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------|
-# | chrX         | 584563    | 585326    | 66        | 585078     | 585337    | NM_000451_exon_0_0_chrX_585079_f        | 0         |
-# | chrX         | 13587648  | 13588221  | 49        | 13587693   | 13588054  | NM_001167890_exon_0_0_chrX_13587694_f   | 0         |
-# | chrX         | 17755053  | 17756648  | 117       | 17755568   | 17755800  | NM_001037535_exon_0_0_chrX_17755569_f   | 0         |
-# | ...          | ...       | ...       | ...       | ...        | ...       | ...                                     | ...       |
-# | chrX         | 153068787 | 153070353 | 134       | 153067622  | 153070355 | NM_032512_exon_0_0_chrX_153067623_r     | 0         |
-# | chrX         | 153284685 | 153285655 | 94        | 153284647  | 153284779 | NM_001025243_exon_10_0_chrX_153284648_r | 0         |
-# | chrX         | 153598874 | 153600604 | 164       | 153599240  | 153599729 | NM_001456_exon_45_0_chrX_153599241_r    | 0         |
-# +--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------+
-# PyRanges object has 54 sequences from 1 chromosomes.
+# +--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------|-------------+
+# | Chromosome   | Start     | End       | CpG       | Start_xn   | End_xn    | Name                                    | Score     | CpGDecile   |
+# | (category)   | (int64)   | (int64)   | (int64)   | (int64)    | (int64)   | (object)                                | (int64)   | (int64)     |
+# |--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------|-------------|
+# | chrX         | 584563    | 585326    | 66        | 585078     | 585337    | NM_000451_exon_0_0_chrX_585079_f        | 0         | 6           |
+# | chrX         | 1510501   | 1511838   | 173       | 1510791    | 1511039   | NM_001636_exon_3_0_chrX_1510792_r       | 0         | 3           |
+# | chrX         | 2846195   | 2847511   | 92        | 2847272    | 2847416   | NM_001669_exon_9_0_chrX_2847273_r       | 0         | 2           |
+# | ...          | ...       | ...       | ...       | ...        | ...       | ...                                     | ...       | ...         |
+# | chrX         | 153284685 | 153285655 | 94        | 153284647  | 153284779 | NM_001025243_exon_10_0_chrX_153284648_r | 0         | 4           |
+# | chrX         | 153598874 | 153600604 | 164       | 153599240  | 153599729 | NM_001456_exon_45_0_chrX_153599241_r    | 0         | 4           |
+# | chrX         | 153990840 | 153991831 | 105       | 153991030  | 153991256 | NM_001363_exon_0_0_chrX_153991031_f     | 0         | 5           |
+# +--------------|-----------|-----------|-----------|------------|-----------|-----------------------------------------|-----------|-------------+
 ```
 
 ## Features
