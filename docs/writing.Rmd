@@ -7,6 +7,7 @@ If no path-argument is given, the string representation of the data is written.
 
 ```{python tidy=FALSE}
 import pyranges as pr
+import pyranges_db as pr_db
 gr = pr.data.aorta()
 
 gr.out.gtf("aorta.gtf")
@@ -18,7 +19,7 @@ The bigwig writer needs to know the chromosome sizes. You can fetch these using
 the pyranges database functions.
 
 ```{python tidy=FALSE}
-chromsizes = pr.db.ucsc.chromosome_sizes("hg19")
+chromsizes = pr_db.ucsc.chromosome_sizes("hg19")
 gr.out.bigwig("aorta.bw", chromsizes)
 ```
 

@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-16">
+<meta name="date" content="2019-04-23">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -225,20 +225,20 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)
 gr <span class="op">=</span> pr.read_gtf(ensembl_path)
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+
-## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | (assigned   | ccds_id    | exon_id         | exon_number   | exon_version   |
-## | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)    | (object)   | (object)        | (object)      | (object)       |
-## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------|
-## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            |
-## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            |
-## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | nan         | nan        | ENSE00002234944 | 1             | 1              |
-## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...         | ...        | ...             | ...           | ...            |
-## | 1            | ensembl    | exon         | 133374    | 133723    | .          | -            | .          | nan         | nan        | ENSE00003748456 | 1             | 1              |
-## | 1            | ensembl    | exon         | 129055    | 129223    | .          | -            | .          | nan         | nan        | ENSE00003734824 | 2             | 1              |
-## | 1            | ensembl    | exon         | 120874    | 120932    | .          | -            | .          | nan         | nan        | ENSE00003740919 | 3             | 1              |
-## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+
+<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------+
+## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | (assigned   | ccds_id    | exon_id         | exon_number   | exon_version   | gene_biotype                       | gene_id         | gene_name   | gene_source    |
+## | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)    | (object)   | (object)        | (object)      | (object)       | (object)                           | (object)        | (object)    | (object)       |
+## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------|
+## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
+## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
+## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | nan         | nan        | ENSE00002234944 | 1             | 1              | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
+## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...         | ...        | ...             | ...           | ...            | ...                                | ...             | ...         | ...            |
+## | 1            | ensembl    | exon         | 133374    | 133723    | .          | -            | .          | nan         | nan        | ENSE00003748456 | 1             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
+## | 1            | ensembl    | exon         | 129055    | 129223    | .          | -            | .          | nan         | nan        | ENSE00003734824 | 2             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
+## | 1            | ensembl    | exon         | 120874    | 120932    | .          | -            | .          | nan         | nan        | ENSE00003740919 | 3             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
+## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------+
 ## PyRanges object has 95 sequences from 1 chromosomes.
-## Hidden columns: transcript_version, transcript_support_level, transcript_source, transcript_name, transcript_id, transcript_biotype, tag, protein_version, protein_id, previous, gene_version, gene_source, gene_name, gene_id, gene_biotype</code></pre>
+## Hidden columns: transcript_version, transcript_support_level, transcript_source, transcript_name, transcript_id, transcript_biotype, tag, protein_version, protein_id, previous, gene_version</code></pre>
 <p>[^]: PyRanges uses the pysam library which requires that the bam file must have an index.</p>
 
 </div>

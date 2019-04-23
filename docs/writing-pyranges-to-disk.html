@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-16">
+<meta name="date" content="2019-04-23">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -144,6 +144,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The PyRanges can be written to several formats, namely csv, gtf and bigwig.</p>
 <p>If no path-argument is given, the string representation of the data is written. (It may potentially be very large.)</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
+<span class="im">import</span> pyranges_db <span class="im">as</span> pr_db
 gr <span class="op">=</span> pr.data.aorta()
 gr.out.gtf(<span class="st">&quot;aorta.gtf&quot;</span>)
 <span class="bu">print</span>(gr[:<span class="dv">10000</span>].out.gtf())</code></pre></div>
@@ -153,7 +154,7 @@ gr.out.gtf(<span class="st">&quot;aorta.gtf&quot;</span>)
 ## chr1 .   .   9951    10150   8   -   .   Name &quot;H3K27me3&quot;;
 ## chr1 .   .   9978    10177   7   -   .   Name &quot;H3K27me3&quot;;</code></pre>
 <p>The bigwig writer needs to know the chromosome sizes. You can fetch these using the pyranges database functions.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">chromsizes <span class="op">=</span> pr.db.ucsc.chromosome_sizes(<span class="st">&quot;hg19&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">chromsizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg19&quot;</span>)
 gr.out.bigwig(<span class="st">&quot;aorta.bw&quot;</span>, chromsizes)</code></pre></div>
 <p>If you want to write one bigwig for each strand, you need to do it manually.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr[<span class="st">&quot;+&quot;</span>].out.bigwig(<span class="st">&quot;aorta_plus.bw&quot;</span>, chromsizes)

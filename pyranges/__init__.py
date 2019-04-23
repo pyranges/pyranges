@@ -10,7 +10,6 @@ import pkg_resources
 from pyranges.pyranges import PyRanges
 from pyranges.readers import read_gtf, read_bam, read_bed
 from pyranges import data
-from pyranges import db
 from pyranges.methods.concat import concat
 
 from pyrle import PyRles, Rle

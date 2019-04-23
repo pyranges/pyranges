@@ -1,24 +1,25 @@
 # Fetching gene tracks as PyRanges
 
-PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges.db module.
+PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges_db add-on package.
+Do `pip install pyranges_db`.
 
 Each database contains at least two methods, namely genes and genomes. UCSC and
 Ensembl also has the method chromosome_sizes.
 
-The genes-methods all take a boolean flag head If true, it only fetches a few hundred rows of data.
+The genes-methods all take a boolean flag `head`. If true, it only fetches a few hundred rows of data.
 
 ```{python tidy=FALSE}
-import pyranges as pr
+import pyranges_db as pr_db
 
-genomes = pr.db.ucsc.genomes()
+genomes = pr_db.ucsc.genomes()
 
 print(genomes.head())
 
-chr_sizes = pr.db.ucsc.chromosome_sizes("hg38")
+chr_sizes = pr_db.ucsc.chromosome_sizes("hg38")
 
 print(chr_sizes.head())
 
-genes = pr.db.ucsc.genes("hg38", head=True)
+genes = pr_db.ucsc.genes("hg38", head=True)
 
 print(genes)
 ```

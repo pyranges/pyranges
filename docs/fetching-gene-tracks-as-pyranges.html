@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-16">
+<meta name="date" content="2019-04-23">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -141,11 +141,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="fetching-gene-tracks-as-pyranges" class="section level1">
 <h1><span class="header-section-number">23</span> Fetching gene tracks as PyRanges</h1>
-<p>PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges.db module.</p>
+<p>PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges_db add-on package. Do <code>pip install pyranges_db</code>.</p>
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and Ensembl also has the method chromosome_sizes.</p>
-<p>The genes-methods all take a boolean flag head If true, it only fetches a few hundred rows of data.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
-genomes <span class="op">=</span> pr.db.ucsc.genomes()
+<p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few hundred rows of data.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db
+genomes <span class="op">=</span> pr_db.ucsc.genomes()
 <span class="bu">print</span>(genomes.head())</code></pre></div>
 <pre><code>##     Genome
 ## 0  acaChl1
@@ -153,7 +153,7 @@ genomes <span class="op">=</span> pr.db.ucsc.genomes()
 ## 2  allMis1
 ## 3  allSin1
 ## 4  amaVit1</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">chr_sizes <span class="op">=</span> pr.db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)
 <span class="bu">print</span>(chr_sizes.head())</code></pre></div>
 <pre><code>## chr1    248956422
 ## chr2    242193529
@@ -161,7 +161,7 @@ genomes <span class="op">=</span> pr.db.ucsc.genomes()
 ## chr4    190214555
 ## chr5    181538259
 ## dtype: int64</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">genes <span class="op">=</span> pr.db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)
 <span class="bu">print</span>(genes)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+------------+----------------+--------------+
 ## | Chromosome   | Start     | End       | Strand       | Feature    | TranscriptID   | ExonNumber   |
