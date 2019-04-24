@@ -114,11 +114,16 @@ def dfs_min(draw):  # nosec
     df.insert(3, "Name", "a")
     df.insert(4, "Score", 0)
 
+    # df.Start = df.Start.astype(np.int32)
+    # df.End = df.End.astype(np.int32)
+    # print(df.dtypes)
     # stranded = draw(st.booleans())
     # if not strand:
     #     df = df.drop("Strand", axis=1)
 
     gr = PyRanges(df, extended=True)
+    # print(gr)
+    # raise
     # gr = PyRanges(df)
 
     # do not sort like this, use pyranges sort

@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>11 Methods for manipulating single PyRanges | PyRanges documentation</title>
-  <meta name="description" content="11 Methods for manipulating single PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="11 Methods for manipulating single PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="11 Methods for manipulating single PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-23">
+<meta name="date" content="2019-04-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="intersecting-ranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -150,18 +149,31 @@ f1 <span class="op">=</span> pr.data.f1()
 <span class="bu">print</span>(f1.merge())</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   |     Start |       End |
-## | (category)   |   (int64) |   (int64) |
+## | (category)   |   (int32) |   (int32) |
 ## |--------------+-----------+-----------|
 ## | chr1         |         3 |         7 |
 ## | chr1         |         8 |         9 |
 ## +--------------+-----------+-----------+
 ## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
+<p>Cluster finds which intervals overlap, but give each interval a cluster ID instead of merging them:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
+f1 <span class="op">=</span> pr.data.f1()
+<span class="bu">print</span>(f1.cluster())</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int64) |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------|
+## | chr1         |         3 |         6 | interval1  |         0 | +            |         1 |
+## | chr1         |         8 |         9 | interval3  |         0 | +            |         2 |
+## | chr1         |         5 |         7 | interval2  |         0 | -            |         1 |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
+## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
 <p><code>tssify</code> finds the starts of the regions (taking direction of transcription into account). It is named -ify to make clear that it is not finding the actual tsses (which requires metadata that signifies which intervals represent transcripts).</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1.tssify()
 <span class="bu">print</span>(f1.tssify(slack<span class="op">=</span><span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         0 |         9 | interval1  |         0 | +            |
 ## | chr1         |         3 |        14 | interval3  |         0 | +            |
@@ -173,7 +185,7 @@ f1 <span class="op">=</span> pr.data.f1()
 <span class="bu">print</span>(f1.tesify(slack<span class="op">=</span><span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         1 |        12 | interval1  |         0 | +            |
 ## | chr1         |         4 |        15 | interval3  |         0 | +            |
@@ -184,13 +196,58 @@ f1 <span class="op">=</span> pr.data.f1()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f1.slack(<span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         0 |        11 | interval1  |         0 | +            |
 ## | chr1         |         3 |        14 | interval3  |         0 | +            |
 ## | chr1         |         0 |        12 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<p><code>windows</code> splits your data into windows:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">exons <span class="op">=</span> pr.data.exons()
+<span class="bu">print</span>(exons)</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
+## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
+## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
+## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f     | 0         | +            |
+## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15478146  | 15478273  | NR_047634_exon_18_0_chrY_15478147_r    | 0         | -            |
+## | chrY         | 15360258  | 15361762  | NR_047601_exon_0_0_chrY_15360259_r     | 0         | -            |
+## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## PyRanges object has 1000 sequences from 2 chromosomes.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>, keep_metadata<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
+## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
+## | chrX         | 135721701 | 135721706 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721706 | 135721711 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721711 | 135721716 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15467259  | 15467264  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467264  | 15467269  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467269  | 15467274  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## PyRanges object has 60449 sequences from 2 chromosomes.</code></pre>
+<p>If you want to all windows to start at k * window_size, use the tile argument:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>, keep_metadata<span class="op">=</span><span class="va">True</span>, tile<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
+## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
+## | chrX         | 135721700 | 135721705 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721705 | 135721710 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721710 | 135721715 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15467265  | 15467270  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467270  | 15467275  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467275  | 15467280  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## PyRanges object has 61847 sequences from 2 chromosomes.</code></pre>
 
 </div>
             </section>
@@ -217,11 +274,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -229,10 +285,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

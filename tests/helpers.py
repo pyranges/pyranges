@@ -1,7 +1,13 @@
 import pandas as pd
+import numpy as np
 
 
 def assert_df_equal(df1, df2):
+
+    # df1.loc[:, "Start"] = df1.Start.astype(np.int64)
+    # df2.loc[:, "Start"] = df1.Start.astype(np.int64)
+    # df1.loc[:, "End"] = df1.End.astype(np.int64)
+    # df2.loc[:, "End"] = df1.End.astype(np.int64)
 
     pd.options.mode.chained_assignment = None
     if "Strand" in df1 and "Strand" in df2:

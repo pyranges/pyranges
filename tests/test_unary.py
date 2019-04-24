@@ -153,6 +153,52 @@ def test_cluster(gr, strand):
         assert bedtools_df.empty == result.df.empty
 
 
+makewindows_command = "bedtools makewindows -w 10 -b <(sort -k1,1 -k2,2n {})"
+
+
+@pytest.mark.bedtools
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
+# @reproduce_failure('4.15.0', b'AXicY2RgYGAEISDBCWZCAQAA6AAP')
+# @reproduce_failure('4.15.0', b'AAEAAAAAAAEAAAAAAAAKAAA=')
+def test_windows(gr):
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        f1 = "{}/f1.bed".format(temp_dir)
+        gr.df.to_csv(f1, sep="\t", header=False, index=False)
+
+        cmd = makewindows_command.format(f1)
+        print(cmd)
+
+        # ignoring bandit security warning. All strings created by test suite
+        result = subprocess.check_output(  # nosec
+            cmd, shell=True, executable="/bin/bash").decode()  # nosec
+
+        bedtools_df = pd.read_csv(
+            StringIO(result),
+            sep="\t",
+            header=None,
+            squeeze=True,
+            names="Chromosome Start End".split(),
+            dtype={"Chromosome": "category"})
+
+    print("bedtools_df\n", bedtools_df)
+
+    # from pydbg import dbg
+    # dbg(gr.cluster(strand=strand))
+
+    result = gr.windows(10)
+    print("result\n", result.df)
+
+    if not bedtools_df.empty:
+        assert_df_equal(result.df, bedtools_df)
+    else:
+        assert bedtools_df.empty == result.df.empty
+
+
 @pytest.mark.parametrize("strand", [True, False])
 @settings(
     max_examples=max_examples,

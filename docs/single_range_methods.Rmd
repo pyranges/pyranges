@@ -10,6 +10,14 @@ f1 = pr.data.f1()
 print(f1.merge())
 ```
 
+Cluster finds which intervals overlap, but give each interval a cluster ID instead of merging them:
+
+```{python tidy=FALSE}
+import pyranges as pr
+f1 = pr.data.f1()
+print(f1.cluster())
+```
+
 `tssify` finds the starts of the regions (taking direction of transcription into
 account). It is named -ify to make clear that it is not finding the actual tsses
 (which requires metadata that signifies which intervals represent transcripts).
@@ -31,4 +39,18 @@ print(f1.tesify(slack=5))
 
 ```{python tidy=FALSE}
 print(f1.slack(5))
+```
+
+`windows` splits your data into windows:
+
+```{python tidy=FALSE}
+exons = pr.data.exons()
+print(exons)
+print(exons.windows(5, keep_metadata=True))
+```
+
+If you want to all windows to start at k * window_size, use the tile argument:
+
+```{python tidy=FALSE}
+print(exons.windows(5, keep_metadata=True, tile=True))
 ```

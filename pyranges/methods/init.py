@@ -11,8 +11,8 @@ from pyranges import PyRanges
 
 def set_dtypes(df, extended):
 
-    if extended is None:
-        extended = False if df.Start.dtype == np.int32 else True
+    # if extended is None:
+    #     extended = False if df.Start.dtype == np.int32 else True
 
     if not extended:
         dtypes = {
@@ -158,8 +158,8 @@ def _init(self,
 
     if isinstance(df, pd.DataFrame):
         self.__dict__["dfs"] = create_df_dict(df)
+    # df is actually dict of dfs
     else:
-        # df is actually dict of dfs
         empty_removed = {k: v for k, v in df.items() if not v.empty}
 
         # empty

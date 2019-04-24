@@ -12,13 +12,13 @@ def _insert_distance(ocdf, dist, suffix):
 
     if "Distance" not in ocdf:
         distance_column_name = "Distance"
-    elif "Distance_" + suffix not in ocdf:
-        distance_column_name = "Distance_" + suffix
+    elif "Distance" + suffix not in ocdf:
+        distance_column_name = "Distance" + suffix
     else:
         i = 1
-        while "Distance_" + str(i) in ocdf:
+        while "Distance" + str(i) in ocdf:
             i += 1
-        distance_column_name = "Distance_" + str(i)
+        distance_column_name = "Distance" + str(i)
 
     ocdf.insert(ocdf.shape[1], distance_column_name,
                 pd.Series(dist, index=ocdf.index).fillna(-1).astype(int))
@@ -139,7 +139,8 @@ def _nearest(scdf, ocdf, kwargs):
         df = df_to_find_nearest_in.join(ocdf, rsuffix=suffix)
 
     if overlap and "df" in locals() and not df.empty and not nearest_df.empty:
-        df = pd.concat([nearest_df, df])
+
+        df = pd.concat([nearest_df, df], sort=False)
     elif overlap and not nearest_df.empty:
         df = nearest_df
 

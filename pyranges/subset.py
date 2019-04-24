@@ -40,7 +40,7 @@ def get_string(self, val):
         if self.stranded:
             return {k: self.dfs[k] for k in self.keys() if k[0] == val}
         else:
-            return self.dfs[val]
+            return {val: self.dfs[val]}
 
     elif val in "+ -".split():
         return {k: v for k, v in self.items() if k[1] == val}
@@ -51,11 +51,11 @@ def get_string(self, val):
 def get_tuple(self, val):
 
     if len(val) == 2:
-        df = get_double(self, val)
+        dfs = get_double(self, val)
     elif len(val) == 3:
-        df = get_triple(self, val)
+        dfs = get_triple(self, val)
 
-    return df
+    return dfs
 
 
 def get_double(self, val):
@@ -132,7 +132,7 @@ def get_triple(self, val):
     stop = loc.stop or max(max_end, start)
 
     idxes = find_overlaps(df, start, stop)
-    return df.reindex(idxes)
+    return {(chromosome, strand): df.reindex(idxes)}
 
 
 def get_booldict(self, df):

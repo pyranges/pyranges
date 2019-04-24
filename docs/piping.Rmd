@@ -12,7 +12,7 @@ import pandas as pd
 exons = pr.data.exons()
 cpg = pr.data.cpg()
 
-cpg.join(exons.unstrand()).subset(lambda df: df.CpG > 25)[["CpG"]].assign(lambda df: df.CpG % 10, "CpGDecile")["chrX"].slack(500)
+cpg.join(exons.unstrand()).subset(lambda df: df.CpG > 25)[["CpG"]].assign("CpGDecile", lambda df: df.CpG % 10)["chrX"].slack(500)
 ```
 
 To debug pipelines, you can use the experimental `pr.sandbox.Debug()`. Since the debugging context-manager reads source files, it needs to be used in a file, not a REPL. See [piedpiper](https://github.com/endrebak/piedpiper) for more info.
@@ -25,7 +25,7 @@ exons = pr.data.exons()
 cpg = pr.data.cpg()
 
 with D():
-    cpg.join(exons.unstrand()).subset(lambda df: df.CpG > 25)[["CpG"]].assign(lambda df: df.CpG % 10, "CpGDecile")["chrX"].slack(500)
+    cpg.join(exons.unstrand()).subset(lambda df: df.CpG > 25)[["CpG"]].assign("CpGDecile", lambda df: df.CpG % 10)["chrX"].slack(500)
 # Start data:
 # +--------------+-----------+-----------+-----------+
 # | Chromosome   | Start     | End       | CpG       |

@@ -197,8 +197,16 @@ class PyRanges():
             self = self.unstrand()
             other = other.unstrand()
 
+        # from pydbg import dbg
+        # dbg(self)
+        # dbg(other)
         gr = pr.concat([self, other], strand)
+
+        # from pydbg import dbg
+        # dbg(gr)
+
         gr = gr.merge(strand=strand, **kwargs)
+        # dbg(gr)
 
         return gr
 
@@ -245,6 +253,21 @@ class PyRanges():
         # dbg(j.df)
 
         return j
+
+    def windows(self, window_size, strand=None, **kwargs):
+
+        from pyranges.methods.windows import _windows
+
+        sparse = True
+        if kwargs.get("keep_metadata"):
+            sparse = False
+
+        kwargs["sparse"] = {"self": sparse}
+        kwargs["window_size"] = window_size
+
+        df = pyrange_apply_single(_windows, self, strand, kwargs)
+
+        return PyRanges(df)
 
     def merge(self, strand=None, **kwargs):
 
@@ -444,6 +467,10 @@ class PyRanges():
     def df(self):
 
         return self.as_df()
+
+    @property
+    def empty(self):
+        return len(self) == 0
 
     def as_df(self):
 

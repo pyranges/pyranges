@@ -9,6 +9,7 @@ import subprocess  # nosec
 from io import StringIO
 
 import pandas as pd
+import numpy as np
 
 from tests.helpers import assert_df_equal
 from tests.hypothesis_helper import dfs_min2, dfs_min
@@ -78,10 +79,18 @@ def read_bedtools_result_set_op(bedtools_result, strandedness):
         header=None,
         usecols=usecols,
         names=names,
+        # dtype={
+        #     "Start": np.int32,
+        #     "End": np.int32
+        # },
         sep="\t")
 
 
 def compare_results(bedtools_df, result):
+
+    # from pydbg import dbg
+    # dbg(bedtools_df.dtypes)
+    # dbg(result.df.dtypes)
 
     if not bedtools_df.empty:
         assert_df_equal(result.df, bedtools_df)
@@ -130,6 +139,7 @@ def test_set_intersect(gr, gr2, strandedness):
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+# @reproduce_failure('4.15.0', b'AXicY2RAA4zoAgAAVQAD')
 def test_set_union(gr, gr2, strandedness):
 
     set_union_command = "cat {f1} {f2} | bedtools sort | bedtools merge {strand} -c 4,5,6 -o first -i -"  # set_union_command = "bedtools merge {strand} -c 4,5,6 -o first -i {f1}"
@@ -235,6 +245,7 @@ def test_intersect(gr, gr2, strandedness):
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
 # @reproduce_failure('4.5.7', b'AXicLYaJCQAACIS0/YfuuQRRAbVG94Dk5LHSBgJ3ABU=')
+# @reproduce_failure('4.15.0', b'AXicY2QAAUYGGAVlIQAAAIIABQ==')
 def test_subtraction(gr, gr2, strandedness):
 
     subtract_command = "bedtools subtract {strand} -a {f1} -b {f2}"

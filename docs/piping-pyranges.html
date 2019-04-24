@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>7 Piping PyRanges | PyRanges documentation</title>
-  <meta name="description" content="7 Piping PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="7 Piping PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="7 Piping PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-23">
+<meta name="date" content="2019-04-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="iterating-over-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -149,7 +148,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="im">import</span> pandas <span class="im">as</span> pd
 exons <span class="op">=</span> pr.data.exons()
 cpg <span class="op">=</span> pr.data.cpg()
-cpg.join(exons.unstrand()).subset(<span class="kw">lambda</span> df: df.CpG <span class="op">&gt;</span> <span class="dv">25</span>)[[<span class="st">&quot;CpG&quot;</span>]].assign(<span class="kw">lambda</span> df: df.CpG <span class="op">%</span> <span class="dv">10</span>, <span class="st">&quot;CpGDecile&quot;</span>)[<span class="st">&quot;chrX&quot;</span>].slack(<span class="dv">500</span>)</code></pre></div>
+cpg.join(exons.unstrand()).subset(<span class="kw">lambda</span> df: df.CpG <span class="op">&gt;</span> <span class="dv">25</span>)[[<span class="st">&quot;CpG&quot;</span>]].assign(<span class="st">&quot;CpGDecile&quot;</span>, <span class="kw">lambda</span> df: df.CpG <span class="op">%</span> <span class="dv">10</span>)[<span class="st">&quot;chrX&quot;</span>].slack(<span class="dv">500</span>)</code></pre></div>
 <p>To debug pipelines, you can use the experimental <code>pr.sandbox.Debug()</code>. Since the debugging context-manager reads source files, it needs to be used in a file, not a REPL. See <a href="https://github.com/endrebak/piedpiper">piedpiper</a> for more info.</p>
 <pre><code>import pyranges as pr
 from pyranges.sandbox import Debug as D
@@ -158,7 +157,7 @@ exons = pr.data.exons()
 cpg = pr.data.cpg()
 
 with D():
-    cpg.join(exons.unstrand()).subset(lambda df: df.CpG &gt; 25)[[&quot;CpG&quot;]].assign(lambda df: df.CpG % 10, &quot;CpGDecile&quot;)[&quot;chrX&quot;].slack(500)
+    cpg.join(exons.unstrand()).subset(lambda df: df.CpG &gt; 25)[[&quot;CpG&quot;]].assign(&quot;CpGDecile&quot;, lambda df: df.CpG % 10)[&quot;chrX&quot;].slack(500)
 # Start data:
 # +--------------+-----------+-----------+-----------+
 # | Chromosome   | Start     | End       | CpG       |
@@ -297,11 +296,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -309,10 +307,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

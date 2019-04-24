@@ -1,3 +1,15 @@
+# 0.0.31 (24.04.19)
+Changes:
+  - Make int32 default for Start/End
+
+Additions:
+  - PyRanges now has window-function, like bedtools makewindows
+
+Fixes:
+  - getitem sometimes returned int32-pyrange despite being given int64-pyrange
+  - doing nearest two times in a row sometimes failed due to minor suffix-bug
+
+
 # 0.0.30 (23.04.19)
 Changes:
   - Make col first argument of assign

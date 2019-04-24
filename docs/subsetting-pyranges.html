@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>4 Subsetting PyRanges | PyRanges documentation</title>
-  <meta name="description" content="4 Subsetting PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="4 Subsetting PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="4 Subsetting PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-23">
+<meta name="date" content="2019-04-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="manipulating-the-data-in-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -149,7 +148,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
 ## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -164,7 +163,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 13843759  | 13843784  | U0         | 0         | +            |
 ## | chrX         | 114673546 | 114673571 | U0         | 0         | +            |
@@ -179,7 +178,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 41852946  | 41852971  | U0         | 0         | -            |
 ## | chrX         | 69979838  | 69979863  | U0         | 0         | -            |
@@ -194,7 +193,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 151324943 | 151324968 | U0         | 0         | +            |
 ## | chrX         | 152902449 | 152902474 | U0         | 0         | +            |
@@ -209,7 +208,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 150277236 | 150277261 | U0         |         0 | -            |
 ## | chrX         | 151277790 | 151277815 | U0         |         0 | -            |
@@ -221,7 +220,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="dv">0</span>:<span class="dv">100000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr2         |     33241 |     33266 | U0         |         0 | +            |
 ## | chr2         |     13611 |     13636 | U0         |         0 | -            |
@@ -234,7 +233,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
 ## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -249,7 +248,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>, <span class="dv">0</span>:<span class="dv">100000</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr2         |     33241 |     33266 | U0         |         0 | +            |
 ## | chr3         |     87179 |     87204 | U0         |         0 | +            |
@@ -281,11 +280,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -293,10 +291,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

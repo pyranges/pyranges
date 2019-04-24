@@ -19,7 +19,5 @@ def _getitem(self, val):
     else:
         raise Exception("Not valid subsetter: {}".format(str(val)))
 
-    if not dfs is None:
-        return PyRanges(dfs)
-    else:
-        return PyRanges({})
+    gr = PyRanges(dfs)
+    return gr
