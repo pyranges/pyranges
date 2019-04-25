@@ -139,8 +139,6 @@ def _to_bed(self, path=None, sep="\t", keep=True):
                 index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
             for _, outdf in sorted(gr.dfs.items())
         ])
-        from pydbg import dbg
-        dbg(res)
         return res
 
 

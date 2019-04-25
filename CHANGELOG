@@ -1,3 +1,8 @@
+# 0.0.33 (25.04.19)
+Changes:
+  - minor bugfix
+
+
 # 0.0.32 (25.04.19)
 Changes:
   - Use gr.to_bed for output_methods, not gr.out.bed
