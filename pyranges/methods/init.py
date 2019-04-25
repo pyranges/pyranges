@@ -1,5 +1,4 @@
 import sys
-
 import numpy as np
 import pandas as pd
 
@@ -155,7 +154,7 @@ def _init(self,
         self.__dict__["dfs"] = create_df_dict(df)
     # df is actually dict of dfs
     else:
-        empty_removed = {k: v for k, v in df.items() if not v.empty}
+        empty_removed = {k: v.copy() for k, v in df.items() if not v.empty}
 
         # empty
         if not empty_removed:

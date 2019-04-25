@@ -312,9 +312,11 @@ class PyRanges():
         ) == pd.Series, "result of assign function must be Series, but is {}".format(
             type(first_result))
 
-        self.__setattr__(col, result)
+        # do a deepcopy of object
+        new_self = pr.PyRanges({k: v.copy() for k, v in self.items()})
+        new_self.__setattr__(col, result)
 
-        return self
+        return new_self
 
     # def groupby():
 
