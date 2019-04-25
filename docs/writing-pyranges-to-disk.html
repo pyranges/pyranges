@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-04-24">
+<meta name="date" content="2019-04-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -143,23 +143,31 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="writing-pyranges-to-disk" class="section level1">
 <h1><span class="header-section-number">3</span> Writing PyRanges to disk</h1>
 <p>The PyRanges can be written to several formats, namely csv, gtf and bigwig.</p>
-<p>If no path-argument is given, the string representation of the data is written. (It may potentially be very large.)</p>
+<p>If no path-argument is given, the string representation of the data is returned. (It may potentially be very large.)</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 <span class="im">import</span> pyranges_db <span class="im">as</span> pr_db
 gr <span class="op">=</span> pr.data.aorta()
-gr.out.gtf(<span class="st">&quot;aorta.gtf&quot;</span>)
-<span class="bu">print</span>(gr[:<span class="dv">10000</span>].out.gtf())</code></pre></div>
+gr.to_gtf(<span class="st">&quot;aorta.gtf&quot;</span>)
+<span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gtf())</code></pre></div>
 <pre><code>## chr1 .   .   9939    10138   7   +   .   Name &quot;H3K27me3&quot;;
 ## chr1 .   .   9953    10152   5   +   .   Name &quot;H3K27me3&quot;;
 ## chr1 .   .   9916    10115   5   -   .   Name &quot;H3K27me3&quot;;
 ## chr1 .   .   9951    10150   8   -   .   Name &quot;H3K27me3&quot;;
 ## chr1 .   .   9978    10177   7   -   .   Name &quot;H3K27me3&quot;;</code></pre>
+<p>The to_csv method takes the arguments header and sep.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr.to_csv(<span class="st">&quot;aorta.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, header<span class="op">=</span><span class="va">True</span>)
+<span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_csv(sep<span class="op">=</span><span class="st">&quot;|&quot;</span>, header<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<pre><code>## chr1|9939|10138|H3K27me3|7|+
+## chr1|9953|10152|H3K27me3|5|+
+## chr1|9916|10115|H3K27me3|5|-
+## chr1|9951|10150|H3K27me3|8|-
+## chr1|9978|10177|H3K27me3|7|-</code></pre>
 <p>The bigwig writer needs to know the chromosome sizes. You can fetch these using the pyranges database functions.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">chromsizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg19&quot;</span>)
-gr.out.bigwig(<span class="st">&quot;aorta.bw&quot;</span>, chromsizes)</code></pre></div>
+gr.to_bigwig(<span class="st">&quot;aorta.bw&quot;</span>, chromsizes)</code></pre></div>
 <p>If you want to write one bigwig for each strand, you need to do it manually.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr[<span class="st">&quot;+&quot;</span>].out.bigwig(<span class="st">&quot;aorta_plus.bw&quot;</span>, chromsizes)
-gr[<span class="st">&quot;-&quot;</span>].out.bigwig(<span class="st">&quot;aorta_minus.bw&quot;</span>, chromsizes)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;aorta_plus.bw&quot;</span>, chromsizes)
+gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;aorta_minus.bw&quot;</span>, chromsizes)</code></pre></div>
 
 </div>
             </section>

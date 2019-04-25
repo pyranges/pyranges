@@ -1,4 +1,5 @@
 
+wheelhouse/
 .coverage
 htmlcov/
 *flycheck*

@@ -2,7 +2,7 @@
 
 The PyRanges can be written to several formats, namely csv, gtf and bigwig.
 
-If no path-argument is given, the string representation of the data is written.
+If no path-argument is given, the string representation of the data is returned.
 (It may potentially be very large.)
 
 ```{python tidy=FALSE}
@@ -10,9 +10,17 @@ import pyranges as pr
 import pyranges_db as pr_db
 gr = pr.data.aorta()
 
-gr.out.gtf("aorta.gtf")
+gr.to_gtf("aorta.gtf")
 
-print(gr[:10000].out.gtf())
+print(gr[:10000].to_gtf())
+```
+
+The to_csv method takes the arguments header and sep.
+
+```{python tidy=FALSE}
+gr.to_csv("aorta.csv", sep="\t", header=True)
+
+print(gr[:10000].to_csv(sep="|", header=True))
 ```
 
 The bigwig writer needs to know the chromosome sizes. You can fetch these using
@@ -20,12 +28,12 @@ the pyranges database functions.
 
 ```{python tidy=FALSE}
 chromsizes = pr_db.ucsc.chromosome_sizes("hg19")
-gr.out.bigwig("aorta.bw", chromsizes)
+gr.to_bigwig("aorta.bw", chromsizes)
 ```
 
 If you want to write one bigwig for each strand, you need to do it manually.
 
 ```{python tidy=FALSE}
-gr["+"].out.bigwig("aorta_plus.bw", chromsizes)
-gr["-"].out.bigwig("aorta_minus.bw", chromsizes)
+gr["+"].to_bigwig("aorta_plus.bw", chromsizes)
+gr["-"].to_bigwig("aorta_minus.bw", chromsizes)
 ```

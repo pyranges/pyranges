@@ -41,15 +41,14 @@ class PyRanges():
                  starts=None,
                  ends=None,
                  strands=None,
-                 copy_df=False,
-                 extended=None):
+                 int64=None):
 
         from pyranges.methods.init import _init
 
         if df is None and chromosomes is None:
             df = pd.DataFrame(columns="Chromosome Start End".split())
 
-        _init(self, df, chromosomes, starts, ends, strands, copy_df, extended)
+        _init(self, df, chromosomes, starts, ends, strands, int64)
 
     def __len__(self):
         return sum([len(d) for d in self.values()])
@@ -502,3 +501,23 @@ class PyRanges():
         from pyranges.methods.summary import _summary
 
         return _summary(self)
+
+    def to_csv(self, path=None, sep=",", header=False):
+        from pyranges.out import _to_csv
+
+        return _to_csv(self, path, sep=sep, header=header)
+
+    def to_bed(self, path=None, keep=True):
+        from pyranges.out import _to_bed
+
+        return _to_bed(self, path, keep=keep)
+
+    def to_gtf(self, path=None):
+        from pyranges.out import _to_gtf
+
+        return _to_gtf(self, path)
+
+    def to_bigwig(self, path, chromosome_sizes, rpm=True):
+        from pyranges.out import _to_bigwig
+
+        _to_bigwig(self, path, chromosome_sizes, rpm)

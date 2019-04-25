@@ -5,16 +5,15 @@ import pandas as pd
 
 from pyranges.statistics import StatisticsMethods
 from pyranges.genomicfeatures import GenomicFeaturesMethods
-from pyranges.out import OutMethods
 from pyranges import PyRanges
 
 
-def set_dtypes(df, extended):
+def set_dtypes(df, int64):
 
     # if extended is None:
     #     extended = False if df.Start.dtype == np.int32 else True
 
-    if not extended:
+    if not int64:
         dtypes = {
             "Start": np.int32,
             "End": np.int32,
@@ -133,15 +132,11 @@ def _init(self,
           starts=None,
           ends=None,
           strands=None,
-          copy_df=False,
-          extended=None):
+          int64=False):
     # TODO: add categorize argument with dict of args to categorize?
 
     if isinstance(df, PyRanges):
         raise Exception("Object is already a PyRange.")
-
-    if copy_df:
-        df = df.copy()
 
     if df is False or df is None:
         df = create_pyranges_df(chromosomes, starts, ends, strands)
@@ -150,7 +145,7 @@ def _init(self,
 
         check_strandedness(df)
 
-        df = set_dtypes(df, extended)
+        df = set_dtypes(df, int64)
 
     # below is not a good idea! then gr["chr1"] might change the dtypes of a gr!
     # elif isinstance(df, dict):
@@ -182,4 +177,3 @@ def _init(self,
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
     self.__dict__["stats"] = StatisticsMethods(self)
-    self.__dict__["out"] = OutMethods(self)

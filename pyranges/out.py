@@ -23,7 +23,7 @@ def _fill_missing(df, all_columns):
     return outdf
 
 
-def _bed(df, all_cols=False):
+def _bed(df, keep):
 
     all_columns = "Chromosome Start End Name Score Strand".split()
 
@@ -31,7 +31,7 @@ def _bed(df, all_cols=False):
 
     noncanonical = set(df.columns) - set(all_columns)
 
-    if all_cols:
+    if keep:
         return pd.concat([outdf, df.get(noncanonical)], axis=1)
     else:
         return outdf
@@ -53,9 +53,7 @@ def _gtf(df):
         col = rest_df[c]
         isnull = col.isnull()
         col = col.astype(str).str.replace("nan", "")
-        # dbg(col.head())
         new_val = c + ' "' + col + '";'
-        # dbg(new_val)
         rest_df.loc[:, c] = rest_df[c].astype(str)
         rest_df.loc[~isnull, c] = new_val
         rest_df.loc[isnull, c] = ""
@@ -66,112 +64,107 @@ def _gtf(df):
     return outdf
 
 
-class OutMethods():
+def _to_gtf(self, path=None):
 
-    pr = None
+    gr = self
 
-    def __init__(self, pr):
+    outdfs = [_gtf(v) for k, v in sorted(gr.dfs.items())]
 
-        self.pr = pr
+    if path:
+        mode = "w+"
+        for outdf in outdfs:
+            outdf.to_csv(
+                path,
+                index=False,
+                header=False,
+                mode=mode,
+                sep="\t",
+                quoting=csv.QUOTE_NONE)
+            mode = "a"
+    else:
+        return "".join([
+            outdf.to_csv(
+                index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
+            for outdf in outdfs
+        ])
 
-    def gtf(self, path=None):
 
-        gr = self.pr
+def _to_csv(self, path=None, sep=",", header=False):
 
-        outdfs = [_gtf(v) for k, v in sorted(gr.dfs.items())]
+    gr = self
 
-        if path:
-            mode = "w+"
-            for outdf in outdfs:
-                outdf.to_csv(
-                    path,
-                    index=False,
-                    header=False,
-                    mode=mode,
-                    sep="\t",
-                    quoting=csv.QUOTE_NONE)
-                mode = "a"
-        else:
-            return "".join([
-                outdf.to_csv(
-                    index=False,
-                    header=False,
-                    sep="\t",
-                    quoting=csv.QUOTE_NONE) for outdf in outdfs
-            ])
+    if path:
+        mode = "w+"
+        for _, outdf in natsorted(gr.dfs.items()):
+            outdf.to_csv(
+                path,
+                index=False,
+                header=header,
+                mode=mode,
+                sep=sep,
+                quoting=csv.QUOTE_NONE)
+            mode = "a"
+            header = False
+    else:
+        return "".join([
+            outdf.to_csv(
+                index=False, header=False, sep=sep, quoting=csv.QUOTE_NONE)
+            for _, outdf in sorted(gr.dfs.items())
+        ])
 
-    def csv(self, path=None, sep=","):
 
-        gr = self.pr
+def _to_bed(self, path=None, sep="\t", keep=True):
 
-        if path:
-            mode = "w+"
-            for _, outdf in natsorted(gr.dfs.items()):
-                outdf.to_csv(
-                    path,
-                    index=False,
-                    header=False,
-                    mode=mode,
-                    sep=sep,
-                    quoting=csv.QUOTE_NONE)
-                mode = "a"
-        else:
-            return "".join([
-                outdf.to_csv(
-                    index=False, header=False, sep=sep, quoting=csv.QUOTE_NONE)
-                for _, outdf in sorted(gr.dfs.items())
-            ])
+    gr = self
 
-    def bed(self, path=None, sep="\t", all_cols=False):
+    outdfs = natsorted(gr.dfs.items())
+    outdfs = [_bed(df, keep) for _, df in outdfs]
 
-        gr = self.pr
+    if path:
+        mode = "w+"
+        for outdf in outdfs:
+            outdf.to_csv(
+                path,
+                index=False,
+                header=False,
+                mode=mode,
+                sep="\t",
+                quoting=csv.QUOTE_NONE)
+            mode = "a"
 
-        outdfs = natsorted(gr.dfs.items())
-        outdfs = [_bed(df, all_cols) for _, df in outdfs]
+    else:
 
-        if path:
-            mode = "w+"
-            for outdf in outdfs:
-                outdf.to_csv(
-                    path,
-                    index=False,
-                    header=False,
-                    mode=mode,
-                    sep="\t",
-                    quoting=csv.QUOTE_NONE)
-                mode = "a"
+        res = "".join([
+            outdf.to_csv(
+                index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
+            for _, outdf in sorted(gr.dfs.items())
+        ])
+        from pydbg import dbg
+        dbg(res)
+        return res
 
-        else:
-            return "".join([
-                outdf.to_csv(
-                    index=False,
-                    header=False,
-                    sep="\t",
-                    quoting=csv.QUOTE_NONE)
-                for _, outdf in sorted(gr.dfs.items())
-            ])
 
-    def bigwig(self, path, chromosome_sizes, rpm=True):
+def _to_bigwig(self, path, chromosome_sizes, rpm=True):
 
-        gr = self.pr.coverage(rpm=rpm, strand=False).to_ranges()
+    gr = self.coverage(rpm=rpm, strand=False).to_ranges()
 
-        unique_chromosomes = gr.chromosomes
+    unique_chromosomes = gr.chromosomes
 
-        subset = ['Chromosome', 'Start', 'End', 'Score']
+    subset = ['Chromosome', 'Start', 'End', 'Score']
 
-        gr = gr.drop(keep=subset, drop_strand=True)
-        df = gr.sort(strand=False).df
+    gr = gr.drop(keep=subset, drop_strand=True)
+    df = gr.sort(strand=False).df
 
-        import pyBigWig
+    import pyBigWig
 
-        header = [(c, int(chromosome_sizes[c])) for c in unique_chromosomes]
+    header = [(c, int(chromosome_sizes[c])) for c in unique_chromosomes]
 
-        bw = pyBigWig.open(path, "w")
-        bw.addHeader(header)
+    bw = pyBigWig.open(path, "w")
+    bw.addHeader(header)
 
-        chromosomes = df.Chromosome.tolist()
-        starts = df.Start.tolist()
-        ends = df.End.tolist()
-        values = df.Score.tolist()
+    chromosomes = df.Chromosome.tolist()
+    starts = df.Start.tolist()
+    ends = df.End.tolist()
+    values = df.Score.tolist()
 
-        bw.addEntries(chromosomes, starts, ends=ends, values=values)
+    bw.addEntries(chromosomes, starts, ends=ends, values=values)

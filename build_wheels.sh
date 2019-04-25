@@ -3,7 +3,6 @@
 # docker run -it -v (pwd):/io quay.io/pypa/manylinux1_x86_64
 
 for PYBIN in /opt/python/*3[5-7]*/bin; do
-    # "${PYBIN}/pip" install cython  # install these requirements first
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
