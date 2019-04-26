@@ -1,6 +1,6 @@
-def test_tssify(f1):
+def test_five_end(f1):
 
-    result = f1.tssify(slack=5)
+    result = f1.five_end(slack=5)
 
     print(f1)
     print(result)
@@ -9,11 +9,11 @@ def test_tssify(f1):
     assert list(result.End) == [9, 14, 13]
 
 
-def test_tesify(f2):
+def test_three_end(f2):
 
     print(f2)
 
-    result = f2.tesify(slack=500)
+    result = f2.three_end(slack=500)
 
     print(result)
 

@@ -18,20 +18,19 @@ f1 = pr.data.f1()
 print(f1.cluster())
 ```
 
-`tssify` finds the starts of the regions (taking direction of transcription into
-account). It is named -ify to make clear that it is not finding the actual tsses
-(which requires metadata that signifies which intervals represent transcripts).
+`five_end` finds the starts of the regions (taking direction of transcription
+into account).
 
 ```{python tidy=FALSE}
-f1.tssify()
-print(f1.tssify(slack=5))
+f1.five_end()
+print(f1.five_end(slack=5))
 ```
 
-`tesify` finds the ends of the regions (taking direction of transcription into account).
+`three_end` finds the ends of the regions (taking direction of transcription into account).
 
 ```{python tidy=FALSE}
-f1.tesify()
-print(f1.tesify(slack=5))
+f1.three_end()
+print(f1.three_end(slack=5))
 ```
 
 `slack` extends the starts and ends of your interval.

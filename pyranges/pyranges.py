@@ -363,11 +363,17 @@ class PyRanges():
 
         return prg
 
-    def tssify(self, slack=0):
+    def five_end(self, slack=0):
 
         kwargs = fill_kwargs({"slack": slack})
         return PyRanges(
             pyrange_apply_single(_tss, self, self.stranded, kwargs))
+
+    def three_end(self, slack=0):
+
+        kwargs = fill_kwargs({"slack": slack})
+        return PyRanges(
+            pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
     def sort(self, columns=("Start", "End"), **kwargs):
         from pyranges.methods.sort import _sort
@@ -376,11 +382,6 @@ class PyRanges():
         return PyRanges(
             pyrange_apply_single(_sort, self, self.stranded, kwargs))
 
-    def tesify(self, slack=0):
-
-        kwargs = fill_kwargs({"slack": slack})
-        return PyRanges(
-            pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
     def keys(self):
         return natsorted(self.dfs.keys())
