@@ -383,9 +383,10 @@ def _tes(df, kwargs):
 
 def _slack(df, kwargs):
 
+    df = df.copy()
     slack = kwargs["slack"]
     # df = self.df.copy()
-    df.Start = df.Start - slack
+    df.loc[:, "Start"] = df.Start - slack
     df.loc[df.Start < 0, "Start"] = 0
     df.End = df.End + slack
 

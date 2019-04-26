@@ -365,12 +365,14 @@ class PyRanges():
 
     def five_end(self, slack=0):
 
+        assert self.stranded, "Need stranded pyrange to find 5'."
         kwargs = fill_kwargs({"slack": slack})
         return PyRanges(
             pyrange_apply_single(_tss, self, self.stranded, kwargs))
 
     def three_end(self, slack=0):
 
+        assert self.stranded, "Need stranded pyrange to find 3'."
         kwargs = fill_kwargs({"slack": slack})
         return PyRanges(
             pyrange_apply_single(_tes, self, self.stranded, kwargs))

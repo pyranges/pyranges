@@ -1,6 +1,11 @@
 # 0.0.35 (unreleased)
 Changes:
   - tssify/tesify renamed five_end/three_end
+  - five_end/three end fails when data does not contain strand
+
+Fixes:
+  - slack changed pyrange in-place
+
 
 # 0.0.34 (25.04.19)
 Fixes:
