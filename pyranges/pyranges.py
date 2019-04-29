@@ -232,6 +232,16 @@ class PyRanges():
 
         return PyRanges(dfs)
 
+    def insert(self, other, col, **kwargs):
+
+        from pyranges.methods.insert import _insert
+
+        kwargs["columns"] = col
+        kwargs = fill_kwargs(kwargs)
+        dfs = pyrange_apply(_insert, self, other, **kwargs)
+
+        return PyRanges(dfs)
+
     def cluster(self, strand=False, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
@@ -267,6 +277,7 @@ class PyRanges():
         df = pyrange_apply_single(_windows, self, strand, kwargs)
 
         return PyRanges(df)
+
 
     def merge(self, strand=None, **kwargs):
 

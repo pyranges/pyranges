@@ -1,4 +1,8 @@
-# 0.0.35 (unreleased)
+# 0.0.36 (unreleased)
+Additions:
+  - add insert method which uses overlap
+
+# 0.0.35 (26.04.19)
 Changes:
   - tssify/tesify renamed five_end/three_end
   - five_end/three end fails when data does not contain strand
