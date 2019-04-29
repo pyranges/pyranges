@@ -6,7 +6,7 @@
 
 GenomicRanges and genomic Rle-objects for Python.
 
-*"Finally, ... This was what Python badly needed for years."* - Heng Li
+*"Finally ... This was what Python badly needed for years."* - Heng Li
 
 ## Release
 
