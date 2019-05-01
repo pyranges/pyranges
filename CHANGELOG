@@ -2,6 +2,11 @@
 Additions:
   - add insert method which uses overlap
 
+Changes:
+  - read_bed does not fail when strand is "."
+  - read_bed considers bed unstranded if Strand has other values than +/-
+
+
 # 0.0.35 (26.04.19)
 Changes:
   - tssify/tesify renamed five_end/three_end

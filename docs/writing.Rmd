@@ -8,9 +8,9 @@ If no path-argument is given, the string representation of the data is returned.
 ```{python tidy=FALSE}
 import pyranges as pr
 import pyranges_db as pr_db
-gr = pr.data.aorta()
+gr = pr.data.chipseq()
 
-gr.to_gtf("aorta.gtf")
+gr.to_gtf("chipseq.gtf")
 
 print(gr[:10000].to_gtf())
 ```
@@ -18,7 +18,7 @@ print(gr[:10000].to_gtf())
 The to_csv method takes the arguments header and sep.
 
 ```{python tidy=FALSE}
-gr.to_csv("aorta.csv", sep="\t", header=True)
+gr.to_csv("chipseq.csv", sep="\t", header=True)
 
 print(gr[:10000].to_csv(sep="|", header=True))
 ```
@@ -28,12 +28,12 @@ the pyranges database functions.
 
 ```{python tidy=FALSE}
 chromsizes = pr_db.ucsc.chromosome_sizes("hg19")
-gr.to_bigwig("aorta.bw", chromsizes)
+gr.to_bigwig("chipseq.bw", chromsizes)
 ```
 
 If you want to write one bigwig for each strand, you need to do it manually.
 
 ```{python tidy=FALSE}
-gr["+"].to_bigwig("aorta_plus.bw", chromsizes)
-gr["-"].to_bigwig("aorta_minus.bw", chromsizes)
+gr["+"].to_bigwig("chipseq_plus.bw", chromsizes)
+gr["-"].to_bigwig("chipseq_minus.bw", chromsizes)
 ```

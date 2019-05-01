@@ -16,21 +16,34 @@ def read_bed(f, output_df=False):
     columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split(
     )
 
+
+    first_start = open(f).readline().split()[1]
+
+    header = None
+
+    try:
+        int(first_start)
+    except ValueError:
+        header = 0
+
     df = pd.read_csv(
         f,
         dtype={
             "Chromosome": "category",
             "Strand": "category"
         },
-        header=None,
+        header=header,
         sep="\t")
 
     df.columns = columns[:df.shape[1]]
 
-    if df.Strand.str.contains("\.").any():
-        print(
-            "Bed file contains '.' strands and is considered unstranded.",
-            file=sys.stderr)
+    if "Strand" in df:
+        strand_vals = set(df.Strand.drop_duplicates())
+        if strand_vals - set(["+", "-"]):
+            print(
+                "Bed file contains more values than +/- and is considered unstranded ({}).".format(", ".join(strand_vals)),
+                file=sys.stderr)
+            df = df.drop("Strand", axis=1)
 
     if not output_df:
         return PyRanges(df)
