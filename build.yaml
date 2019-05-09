@@ -1,0 +1,25 @@
+# for use with https://github.com/endrebak/build-python-package
+
+package: pyranges
+
+version_number: 0.0.36
+
+linux_wheel_python_versions: [cp35, cp36, cp37]
+
+linux_wheels: true
+
+bioconda: false
+
+prefix: /Users/endrebakkenstovner/deleteme
+
+bioconda_dependencies:
+  host:
+    - cython
+    - numpy
+
+  run:
+    - numpy
+
+home: http://github.com/hunt-genes/ncls
+license: BSD
+summary: The Nested Containment List for Python.
