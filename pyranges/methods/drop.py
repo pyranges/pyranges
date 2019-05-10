@@ -29,8 +29,19 @@ def _drop(self, drop=None, drop_strand=False):
     return self.apply(lambda df: df.drop(_to_drop, axis=1))
 
 
-    # elif isinstance(keep, str):
-    #     r = re.compile(keep)
-    #     _to_drop = [c for c in columns if r.search(c) is None]
-    # elif isinstance(keep, Iterable) or isinstance(keep, list):
-    #     _to_drop = set(columns) - set(keep) - set(always_keep)
+def _keep(self, keep, drop_strand=False):
+
+    columns = self.columns
+    if drop_strand:
+        always_keep = "Chromosome Start End".split()
+    else:
+        always_keep = "Chromosome Start End Strand".split()
+
+    _to_drop = []
+    if isinstance(keep, str):
+        r = re.compile(keep)
+        _to_drop = [c for c in columns if r.search(c) is None]
+    elif isinstance(keep, Iterable) or isinstance(keep, list):
+        _to_drop = set(columns) - set(keep) - set(always_keep)
+
+    return self.apply(lambda df: df.drop(_to_drop, axis=1))

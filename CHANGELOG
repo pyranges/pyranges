@@ -5,7 +5,7 @@ Changes:
   - no keep_metadata-flag in windows. Metadata is always kept. Can call drop() beforehand if metadata should not be kept.
 
 Remove:
-  - remove confusing keep flag from drop method
+  - remove confusing keep flag from drop method (use gr[cols_to_keep] instead)
 
 
 

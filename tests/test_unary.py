@@ -190,7 +190,7 @@ def test_windows(gr):
     # from pydbg import dbg
     # dbg(gr.cluster(strand=strand))
 
-    result = gr.windows(10)
+    result = gr.windows(10)["Chromosome Start End".split()].unstrand()
     print("result\n", result.df)
 
     if not bedtools_df.empty:

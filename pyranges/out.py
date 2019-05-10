@@ -150,7 +150,7 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True):
 
     subset = ['Chromosome', 'Start', 'End', 'Score']
 
-    gr = gr.drop(keep=subset, drop_strand=True)
+    gr = gr[subset].unstrand()
     df = gr.sort(strand=False).df
 
     import pyBigWig

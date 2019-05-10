@@ -1,5 +1,5 @@
 from pyranges.subset import (get_string, get_tuple, get_slice, get_booldict)
-from pyranges.methods.drop import _drop
+from pyranges.methods.drop import _drop, _keep
 
 from pyranges import PyRanges
 
@@ -7,7 +7,7 @@ from pyranges import PyRanges
 def _getitem(self, val):
 
     if isinstance(val, list):
-        dfs = _drop(self, keep=val).dfs
+        dfs = _keep(self, keep=val).dfs
     elif isinstance(val, str):
         dfs = get_string(self, val)
     elif isinstance(val, tuple):
