@@ -22,9 +22,13 @@ You can directly insert a column by setting the attribute on the PyRanges object
 ```{python tidy=FALSE}
 gr.stupid_example = "Hi There!"
 print(gr)
-gr.df.drop("stupid_example", axis=1, inplace=True)
+gr.drop("stupid_example", axis=1, inplace=True)
 print(gr)
 ```
+
+And as you can see, you can drop columns from the PyRanges using drop. Using
+drop by itself removes all metadata-columns. If you also want to remove the
+strand you need to use the drop_strand flag.
 
 All columns except Chromosome, Start, End and Strand can be changed in any way
 you please and more metadata-columns can be added by setting it on the PyRanges

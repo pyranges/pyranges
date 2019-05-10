@@ -2,7 +2,7 @@ import re
 from collections.abc import Iterable
 
 
-def _drop(self, drop=None, keep=None, drop_strand=False):
+def _drop(self, drop=None, drop_strand=False):
     columns = self.columns
     if drop_strand:
         always_keep = "Chromosome Start End".split()
@@ -11,18 +11,13 @@ def _drop(self, drop=None, keep=None, drop_strand=False):
 
     _to_drop = []
 
-    if not drop and not keep:
-        _to_drop = set(columns)
+    if not drop:
+        _to_drop = set(columns) - set(always_keep)
     elif isinstance(drop, str):
         r = re.compile(drop)
         _to_drop = [c for c in columns if not r.search(c) == None]
     elif isinstance(drop, Iterable) or isinstance(drop, list):
         _to_drop = drop
-    elif isinstance(keep, str):
-        r = re.compile(keep)
-        _to_drop = [c for c in columns if r.search(c) is None]
-    elif isinstance(keep, Iterable) or isinstance(keep, list):
-        _to_drop = set(columns) - set(keep) - set(always_keep)
     else:
         raise Exception("Not valid subsetters!")
 
@@ -32,3 +27,10 @@ def _drop(self, drop=None, keep=None, drop_strand=False):
     _to_drop = set(_to_drop) - set(always_keep)
 
     return self.apply(lambda df: df.drop(_to_drop, axis=1))
+
+
+    # elif isinstance(keep, str):
+    #     r = re.compile(keep)
+    #     _to_drop = [c for c in columns if r.search(c) is None]
+    # elif isinstance(keep, Iterable) or isinstance(keep, list):
+    #     _to_drop = set(columns) - set(keep) - set(always_keep)

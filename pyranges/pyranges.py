@@ -41,14 +41,15 @@ class PyRanges():
                  starts=None,
                  ends=None,
                  strands=None,
-                 int64=None):
+                 int64=None,
+                 copy_df=True):
 
         from pyranges.methods.init import _init
 
         if df is None and chromosomes is None:
             df = pd.DataFrame(columns="Chromosome Start End".split())
 
-        _init(self, df, chromosomes, starts, ends, strands, int64)
+        _init(self, df, chromosomes, starts, ends, strands, int64, copy_df)
 
     def __len__(self):
         return sum([len(d) for d in self.values()])
@@ -267,11 +268,7 @@ class PyRanges():
 
         from pyranges.methods.windows import _windows
 
-        sparse = True
-        if kwargs.get("keep_metadata"):
-            sparse = False
-
-        kwargs["sparse"] = {"self": sparse}
+        kwargs["sparse"] = {"self": False}
         kwargs["window_size"] = window_size
 
         df = pyrange_apply_single(_windows, self, strand, kwargs)
@@ -352,11 +349,11 @@ class PyRanges():
         else:
             return PyRanges(result)
 
-    def apply_pair(self, other, f, kwargs=None, strand=False,
+    def apply_pair(self, other, f, kwargs=None, strandedness=False,
                    as_pyranges=True):
 
-        if kwargs is None:
-            kwargs = {}
+
+        kwargs = {"strandedness": strandedness}
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply(f, self, other, **kwargs)
@@ -424,7 +421,7 @@ class PyRanges():
             drop_strand (bool): Whether or not to drop the Strand column
         """
         from pyranges.methods.drop import _drop
-        return _drop(self, drop, keep, drop_strand)
+        return _drop(self, drop, drop_strand)
 
     @property
     def stranded(self):
@@ -503,14 +500,6 @@ class PyRanges():
             lengths[k] = df.End - df.Start
 
         return lengths
-
-    # def midpoints(self):
-
-    #     midpoints = {}
-    #     for k, df in self.items():
-    #         midpoints[k] = (df.End + df.Start) / 2
-
-    #     return midpoints
 
     def summary(self):
 

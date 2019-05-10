@@ -37,14 +37,6 @@ def read_bed(f, output_df=False):
 
     df.columns = columns[:df.shape[1]]
 
-    if "Strand" in df:
-        strand_vals = set(df.Strand.drop_duplicates())
-        if strand_vals - set(["+", "-"]):
-            print(
-                "Bed file contains more values than +/- and is considered unstranded ({}).".format(", ".join(strand_vals)),
-                file=sys.stderr)
-            df = df.drop("Strand", axis=1)
-
     if not output_df:
         return PyRanges(df)
     else:

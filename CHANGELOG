@@ -1,3 +1,22 @@
+# 0.0.40 (unreleased)
+Changes:
+  - PyRanges can now have Strand column with other data than "+" or "-", but it is considered unstranded.
+  - Ensure that slack parameter is always integer.
+  - no keep_metadata-flag in windows. Metadata is always kept. Can call drop() beforehand if metadata should not be kept.
+
+Remove:
+  - remove confusing keep flag from drop method
+
+
+
+# 0.0.39 (09.05.19)
+Removal:
+  - remove sandbox module
+
+# 0.0.37-38 (09.05.19)
+Changes:
+  - pyranges constructor is copy-by-default
+
 # 0.0.36 (09.05.19)
 Additions:
   - add insert method which uses overlap

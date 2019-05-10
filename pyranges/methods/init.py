@@ -47,7 +47,7 @@ def set_dtypes(df, int64):
     return df
 
 
-def create_df_dict(df):
+def create_df_dict(df, stranded):
 
     chrs = df.Chromosome.cat.remove_unused_categories()
 
@@ -56,7 +56,7 @@ def create_df_dict(df):
 
     df["Chromosome"] = chrs
 
-    if "Strand" in df:
+    if stranded:
         grpby_key = "Chromosome Strand".split()
         df["Strand"] = df.Strand.cat.remove_unused_categories()
     else:
@@ -110,6 +110,20 @@ def create_pyranges_df(chromosomes, starts, ends, strands=None):
 def check_strandedness(df):
     """Check whether strand contains '.'"""
 
+
+    # if "Strand" in df:
+    #     strand_vals = set(df.Strand.drop_duplicates())
+    #     if strand_vals - set(["+", "-", "."]):
+    #         print(
+    #             "Strand column in bed file contains the following values: {}. It is therefore considered unstranded.".format(", ".join(strand_vals)),
+    #             file=sys.stderr)
+    #         df = df.drop("Strand", axis=1)
+    #     if "." in strand_vals:
+    #         df = df.drop("Strand", axis=1)
+
+    if "Strand" not in df:
+        return False
+
     contains_more_than_plus_minus_in_strand_col = False
 
     if "Strand" in df:
@@ -119,10 +133,10 @@ def check_strandedness(df):
         elif not ((df.Strand == "+") | (df.Strand == "-")).all():
             contains_more_than_plus_minus_in_strand_col = True
 
-        if contains_more_than_plus_minus_in_strand_col:
-            raise Exception(
-                "Strand contained more symbols than '+' or '-'. Not supported (yet) in PyRanges."
-            )
+        # if contains_more_than_plus_minus_in_strand_col:
+        #     logging.warning("Strand contained more symbols than '+' or '-'. Not supported (yet) in PyRanges.")
+
+    return not contains_more_than_plus_minus_in_strand_col
 
 
 def _init(self,
@@ -131,18 +145,23 @@ def _init(self,
           starts=None,
           ends=None,
           strands=None,
-          int64=False):
+          int64=False,
+          copy_df=True):
     # TODO: add categorize argument with dict of args to categorize?
+
 
     if isinstance(df, PyRanges):
         raise Exception("Object is already a PyRange.")
+
+    if isinstance(df, pd.DataFrame):
+        df = df.copy()
 
     if df is False or df is None:
         df = create_pyranges_df(chromosomes, starts, ends, strands)
 
     if isinstance(df, pd.DataFrame):
 
-        check_strandedness(df)
+        stranded = check_strandedness(df)
 
         df = set_dtypes(df, int64)
 
@@ -151,7 +170,7 @@ def _init(self,
     #     df = {k: set_dtypes(v, extended) for k, v in df.items()}
 
     if isinstance(df, pd.DataFrame):
-        self.__dict__["dfs"] = create_df_dict(df)
+        self.__dict__["dfs"] = create_df_dict(df, stranded)
     # df is actually dict of dfs
     else:
         empty_removed = {k: v.copy() for k, v in df.items() if not v.empty}

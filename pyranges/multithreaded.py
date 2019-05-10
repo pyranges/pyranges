@@ -384,10 +384,15 @@ def _tes(df, kwargs):
 def _slack(df, kwargs):
 
     df = df.copy()
+    # dtype = df.Start.dtype
     slack = kwargs["slack"]
+
+    assert type(slack) == int, "Slack parameter must be integer, is {}".format(type(slack))
     # df = self.df.copy()
     df.loc[:, "Start"] = df.Start - slack
     df.loc[df.Start < 0, "Start"] = 0
     df.End = df.End + slack
+    cs = "Start End".split()
+    # df[cs] = df[cs].astype(dtype)
 
     return df

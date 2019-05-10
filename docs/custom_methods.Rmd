@@ -1,0 +1,22 @@
+# Applying custom methods to pairs of PyRanges
+
+By using the apply or apply_pair you can run custom methods on the dataframes in
+your PyRanges. The apply function takes a single dataframe, while the apply_pair
+takes a pair of dataframes.
+
+```{python tidy=FALSE}
+import pyranges as pr
+chipseq = pr.data.chipseq()
+chipseq_background = pr.data.chipseq_background()
+
+def print_strands(df1, df2):
+    print(df1.Chromosome.iloc[0], df1.Strand.iloc[0], df2.Strand.iloc[0])
+    return df1.head(5)
+
+result = chipseq.apply_pair(chipseq_background, print_strands, strandedness="opposite")
+```
+
+
+```{python tidy=FALSE}
+print(result)
+```

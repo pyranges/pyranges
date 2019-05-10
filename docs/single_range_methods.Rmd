@@ -45,11 +45,11 @@ print(f1.slack(5))
 ```{python tidy=FALSE}
 exons = pr.data.exons()
 print(exons)
-print(exons.windows(5, keep_metadata=True))
+print(exons.windows(5))
 ```
 
 If you want to all windows to start at k * window_size, use the tile argument:
 
 ```{python tidy=FALSE}
-print(exons.windows(5, keep_metadata=True, tile=True))
+print(exons.windows(5, tile=True))
 ```
