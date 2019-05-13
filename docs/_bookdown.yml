@@ -1,7 +1,7 @@
 delete_merged_file: true
 
 rmd_files: ["index.Rmd", "creating.Rmd",  "writing.Rmd", "subset.Rmd", "manipulation.Rmd",
-"insert.Rmd", "concat.Rmd", "piping.Rmd", "iterate.Rmd", "sort.Rmd", "summary.Rmd", "single_range_methods.Rmd",
+"insert.Rmd", "concat.Rmd", "piping.Rmd", "iterate.Rmd", "sort.Rmd", "summary.Rmd", "single_range_methods.Rmd", "custom_methods.Rmd",
 "intersection.Rmd", "overlap.Rmd", "join.Rmd", "nearest.Rmd", "jaccard.Rmd",
 "reldist.Rmd", "coverage.Rmd", "runlengths.Rmd", "runlength_dict.Rmd",
 "subsetting_rles.Rmd", "subsetting_pyrles.Rmd", "multithreading.Rmd", "databases.Rmd"]

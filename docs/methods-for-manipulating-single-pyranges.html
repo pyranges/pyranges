@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>12 Methods for manipulating single PyRanges | PyRanges documentation</title>
-  <meta name="description" content="12 Methods for manipulating single PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="12 Methods for manipulating single PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="12 Methods for manipulating single PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-09">
+<meta name="date" content="2019-05-13">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,10 +33,9 @@
   
   
 <link rel="prev" href="summarizing-pyranges.html">
-<link rel="next" href="intersecting-ranges.html">
+<link rel="next" href="applying-custom-methods-to-pairs-of-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -112,19 +111,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>10</b> Sorting PyRanges</a></li>
 <li class="chapter" data-level="11" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>11</b> Summarizing PyRanges</a></li>
 <li class="chapter" data-level="12" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>12</b> Methods for manipulating single PyRanges</a></li>
-<li class="chapter" data-level="13" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>13</b> Intersecting Ranges</a></li>
-<li class="chapter" data-level="14" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>14</b> Overlapping Ranges</a></li>
-<li class="chapter" data-level="15" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>15</b> Joining Ranges</a></li>
-<li class="chapter" data-level="16" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>16</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="17" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>17</b> Statistics: similarity between PyRanges</a></li>
-<li class="chapter" data-level="18" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="19" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>19</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="20" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>20</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="21" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>21</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="22" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>22</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="23" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>23</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="24" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>24</b> Using multiple cores</a></li>
-<li class="chapter" data-level="25" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>25</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="13" data-path="applying-custom-methods-to-pairs-of-pyranges.html"><a href="applying-custom-methods-to-pairs-of-pyranges.html"><i class="fa fa-check"></i><b>13</b> Applying custom methods to pairs of PyRanges</a></li>
+<li class="chapter" data-level="14" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>14</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
+<li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
+<li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>20</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="21" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>21</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="22" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>22</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="23" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>23</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="24" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>24</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="25" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>25</b> Using multiple cores</a></li>
+<li class="chapter" data-level="26" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>26</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -215,13 +215,17 @@ f1 <span class="op">=</span> pr.data.f1()
 ## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
 ## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f     | 0         | +            |
+## | chrX         | 77294333  | 77294480  | NM_000052_exon_17_0_chrX_77294334_f    | 0         | +            |
+## | chrX         | 91090459  | 91091043  | NM_001168360_exon_0_0_chrX_91090460_f  | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15591133  | 15591197  | NR_047643_exon_27_0_chrY_15591134_r    | 0         | -            |
+## | chrY         | 15409586  | 15409728  | NR_047633_exon_3_0_chrY_15409587_r     | 0         | -            |
 ## | chrY         | 15478146  | 15478273  | NR_047634_exon_18_0_chrY_15478147_r    | 0         | -            |
 ## | chrY         | 15360258  | 15361762  | NR_047601_exon_0_0_chrY_15360259_r     | 0         | -            |
 ## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## PyRanges object has 1000 sequences from 2 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>, keep_metadata<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
@@ -229,14 +233,18 @@ f1 <span class="op">=</span> pr.data.f1()
 ## | chrX         | 135721701 | 135721706 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | chrX         | 135721706 | 135721711 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | chrX         | 135721711 | 135721716 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721716 | 135721721 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721721 | 135721726 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15361753  | 15361758  | NR_047601_exon_0_0_chrY_15360259_r     | 0         | -            |
+## | chrY         | 15467254  | 15467259  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467259  | 15467264  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467264  | 15467269  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467269  | 15467274  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## PyRanges object has 60449 sequences from 2 chromosomes.</code></pre>
 <p>If you want to all windows to start at k * window_size, use the tile argument:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>, keep_metadata<span class="op">=</span><span class="va">True</span>, tile<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>, tile<span class="op">=</span><span class="va">True</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
@@ -244,7 +252,11 @@ f1 <span class="op">=</span> pr.data.f1()
 ## | chrX         | 135721700 | 135721705 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | chrX         | 135721705 | 135721710 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | chrX         | 135721710 | 135721715 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721715 | 135721720 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721720 | 135721725 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15467255  | 15467260  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467260  | 15467265  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467265  | 15467270  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467270  | 15467275  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467275  | 15467280  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
@@ -258,7 +270,7 @@ f1 <span class="op">=</span> pr.data.f1()
         </div>
       </div>
 <a href="summarizing-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="intersecting-ranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="applying-custom-methods-to-pairs-of-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -276,11 +288,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -288,10 +299,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

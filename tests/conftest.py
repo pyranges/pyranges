@@ -46,7 +46,7 @@ def f2(names):
 def chromsizes():
 
     from io import StringIO
-    return pd.read_csv(
+    df = pd.read_csv(
         StringIO("""
 chr1                     249250621
 chr2                     243199373
@@ -74,5 +74,10 @@ chr22                     51304566
 chr21                     48129895"""),
         sep="\s+",
         header=None,
-        index_col=0,
-        squeeze=True).to_dict()
+        index_col=0)
+
+    df.insert(0, "Start", 0)
+    df = df.reset_index()
+    df.columns = ["Chromosome", "Start", "End"]
+
+    return PyRanges(df)

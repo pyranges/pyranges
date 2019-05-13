@@ -19,3 +19,5 @@ from pyranges.version import __version__
 get_example_path = data.get_example_path
 
 read_gff = read_gtf
+
+settings = {"print_n_entries": 10}

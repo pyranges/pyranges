@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>6 Inserting columns based on overlap | PyRanges documentation</title>
-  <meta name="description" content="6 Inserting columns based on overlap | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="6 Inserting columns based on overlap | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="6 Inserting columns based on overlap | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-09">
+<meta name="date" content="2019-05-13">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="concatenating-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -112,19 +111,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>10</b> Sorting PyRanges</a></li>
 <li class="chapter" data-level="11" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>11</b> Summarizing PyRanges</a></li>
 <li class="chapter" data-level="12" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>12</b> Methods for manipulating single PyRanges</a></li>
-<li class="chapter" data-level="13" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>13</b> Intersecting Ranges</a></li>
-<li class="chapter" data-level="14" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>14</b> Overlapping Ranges</a></li>
-<li class="chapter" data-level="15" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>15</b> Joining Ranges</a></li>
-<li class="chapter" data-level="16" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>16</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="17" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>17</b> Statistics: similarity between PyRanges</a></li>
-<li class="chapter" data-level="18" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="19" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>19</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="20" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>20</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="21" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>21</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="22" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>22</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="23" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>23</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="24" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>24</b> Using multiple cores</a></li>
-<li class="chapter" data-level="25" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>25</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="13" data-path="applying-custom-methods-to-pairs-of-pyranges.html"><a href="applying-custom-methods-to-pairs-of-pyranges.html"><i class="fa fa-check"></i><b>13</b> Applying custom methods to pairs of PyRanges</a></li>
+<li class="chapter" data-level="14" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>14</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
+<li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
+<li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>20</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="21" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>21</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="22" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>22</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="23" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>23</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="24" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>24</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="25" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>25</b> Using multiple cores</a></li>
+<li class="chapter" data-level="26" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>26</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -157,7 +157,11 @@ exons, cpg <span class="op">=</span> pr.data.exons(), pr.data.cpg()
 ## | chrX         | 64181     | 64793     | 62        |
 ## | chrX         | 69133     | 70029     | 100       |
 ## | chrX         | 148685    | 149461    | 85        |
+## | chrX         | 166504    | 167721    | 96        |
+## | chrX         | 170414    | 170686    | 27        |
 ## | ...          | ...       | ...       | ...       |
+## | chrY         | 27610115  | 27611088  | 76        |
+## | chrY         | 28555535  | 28555932  | 32        |
 ## | chrY         | 28773315  | 28773544  | 25        |
 ## | chrY         | 59213794  | 59214183  | 36        |
 ## | chrY         | 59349266  | 59349574  | 29        |
@@ -171,7 +175,11 @@ exons, cpg <span class="op">=</span> pr.data.exons(), pr.data.cpg()
 ## | chrX         | 585078    | 585337    | NM_000451_exon_0_0_chrX_585079_f      | 0         | +            | 66.0        |
 ## | chrX         | 585078    | 585337    | NM_000451_exon_0_0_chrX_585079_f      | 0         | +            | nan         |
 ## | chrX         | 1393647   | 1393735   | NM_172249_exon_1_0_chrX_1393648_f     | 0         | +            | nan         |
+## | chrX         | 1393647   | 1393735   | NM_006140_exon_1_0_chrX_1393648_f     | 0         | +            | nan         |
+## | chrX         | 1404670   | 1404813   | NM_172245_exon_3_0_chrX_1404671_f     | 0         | +            | nan         |
 ## | ...          | ...       | ...       | ...                                   | ...       | ...          | ...         |
+## | chrY         | 25325872  | 25325936  | NM_004081_exon_18_0_chrY_25325873_r   | 0         | -            | nan         |
+## | chrY         | 25336491  | 25336631  | NM_004081_exon_22_0_chrY_25336492_r   | 0         | -            | nan         |
 ## | chrY         | 26952215  | 26952307  | NM_020364_exon_16_0_chrY_26952216_r   | 0         | -            | nan         |
 ## | chrY         | 27197822  | 27197945  | NM_004678_exon_7_0_chrY_27197823_r    | 0         | -            | nan         |
 ## | chrY         | 27197822  | 27197945  | NM_001002760_exon_7_0_chrY_27197823_r | 0         | -            | nan         |
@@ -185,7 +193,11 @@ exons, cpg <span class="op">=</span> pr.data.exons(), pr.data.cpg()
 ## | chrX         | 585078    | 585337    | NM_000451_exon_0_0_chrX_585079_f       | 0         | +            | 66        |
 ## | chrX         | 10094153  | 10094346  | NM_015691_exon_14_0_chrX_10094154_f    | 0         | +            | 26        |
 ## | chrX         | 13587693  | 13588054  | NM_001167890_exon_0_0_chrX_13587694_f  | 0         | +            | 49        |
+## | chrX         | 17755568  | 17755800  | NM_001037535_exon_0_0_chrX_17755569_f  | 0         | +            | 117       |
+## | chrX         | 18443724  | 18443815  | NM_003159_exon_0_0_chrX_18443725_f     | 0         | +            | 132       |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          | ...       |
+## | chrY         | 14533348  | 14533389  | NR_033667_exon_4_0_chrY_14533349_r     | 0         | -            | 126       |
+## | chrY         | 15591393  | 15592550  | NR_047610_exon_27_0_chrY_15591394_r    | 0         | -            | 33        |
 ## | chrY         | 15591393  | 15592550  | NR_047607_exon_29_0_chrY_15591394_r    | 0         | -            | 33        |
 ## | chrY         | 15591393  | 15592550  | NM_001258269_exon_29_0_chrY_15591394_r | 0         | -            | 33        |
 ## | chrY         | 15591393  | 15592550  | NR_047599_exon_28_0_chrY_15591394_r    | 0         | -            | 33        |
@@ -218,11 +230,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -230,10 +241,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

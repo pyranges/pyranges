@@ -1,5 +1,6 @@
 import shutil
 
+import pyranges as pr
 import pandas as pd
 
 from tabulate import tabulate
@@ -37,6 +38,11 @@ def reduce_string_width(str_repr, s, h, n_intervals, n_chromosomes):
 
 
 def tostring(self):
+
+    entries = pr.settings.get("print_n_entries", 10)
+    half_entries = int(entries / 2)
+
+
     # TODO: test this f
     # print("in str")
     if len(self) == 0:
@@ -49,15 +55,15 @@ def tostring(self):
         # last_key = list(self.dfs.keys())[-1]
         first_df = self.dfs[first_key]
 
-        # last_df = ray.get(self.dfs[last_key]).tail(3)
-        h = first_df.head(3).astype(object)
+        # last_df = ray.get(self.dfs[last_key]).tail(half_entries)
+        h = first_df.head(half_entries).astype(object)
         m = first_df.head(1).astype(object)
-        t = first_df.tail(3).astype(object)
+        t = first_df.tail(half_entries).astype(object)
         m.loc[:, :] = "..."
 
-        if len(self) > 6:
+        if len(self) > entries:
             s = pd.concat([h, m, t])
-        elif len(self) == 6:
+        elif len(self) == entries:
             s = pd.concat([h, t])
         else:
             s = h
@@ -67,17 +73,17 @@ def tostring(self):
         last_key = keys[-1]
         # first_key = self.keys[0]
         # last_key = self.keys[-1]
-        first_df = self.dfs[first_key].head(3)
-        last_df = self.dfs[last_key].tail(3)
-        # last_df = self.dfs[list(self.dfs.keys())[-1]].tail(3)
+        first_df = self.dfs[first_key].head(half_entries)
+        last_df = self.dfs[last_key].tail(half_entries)
+        # last_df = self.dfs[list(self.dfs.keys())[-1]].tail(half_entries)
 
-        h = first_df.head(3).astype(object)
+        h = first_df.head(half_entries).astype(object)
         m = first_df.head(1).astype(object)
-        t = last_df.head(3).astype(object)
+        t = last_df.head(half_entries).astype(object)
         m.loc[:, :] = "..."
         # m.index = ["..."]
-        # print((len(h) + len(t)) < 6, len(self) >= 6)
-        if (len(h) + len(t)) < 6:
+        # print((len(h) + len(t)) < entries, len(self) >= entries)
+        if (len(h) + len(t)) < entries:
 
             keys_covered = set()
             # iterate from front until have three
@@ -85,11 +91,11 @@ def tostring(self):
             hl = 0
             for k in keys:
                 keys_covered.add(k)
-                h = self.dfs[k].head(3)
+                h = self.dfs[k].head(half_entries)
                 first_df = h
                 hl += len(h)
                 heads.append(h)
-                if hl >= 3:
+                if hl >= half_entries:
                     break
 
             tails = []
@@ -99,17 +105,17 @@ def tostring(self):
                 if k in keys_covered:
                     continue
 
-                t = self.dfs[k].tail(3)
+                t = self.dfs[k].tail(half_entries)
                 tl += len(t)
                 tails.append(t)
-                if tl >= 3:
+                if tl >= half_entries:
                     break
             # iterate from back until have three
 
-            h = pd.concat(heads).head(3).astype(object)
+            h = pd.concat(heads).head(half_entries).astype(object)
             if tails:
-                t = pd.concat(tails).tail(3).astype(object)
-                if len(h) + len(t) > 6:
+                t = pd.concat(tails).tail(half_entries).astype(object)
+                if len(h) + len(t) >= entries:
                     m = h.head(1).astype(object)
                     m.loc[:, :] = "..."
                     s = pd.concat([h, m, t])
@@ -118,7 +124,7 @@ def tostring(self):
             else:
                 s = h
 
-        elif len(h) + len(t) == 6:
+        elif len(h) + len(t) == entries:
             m.loc[:, :] = "..."
             s = pd.concat([h, m, t])
         else:

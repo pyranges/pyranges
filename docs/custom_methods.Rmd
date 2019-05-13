@@ -14,9 +14,14 @@ def print_strands(df1, df2):
     return df1.head(5)
 
 result = chipseq.apply_pair(chipseq_background, print_strands, strandedness="opposite")
+print(result)
 ```
 
 
 ```{python tidy=FALSE}
-print(result)
+def set_start_to_zero(df):
+    df.Start = 0
+    return df
+
+print(chipseq.apply(set_start_to_zero))
 ```

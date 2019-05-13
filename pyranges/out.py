@@ -155,6 +155,9 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True):
 
     import pyBigWig
 
+    size_df = chromosome_sizes.df
+    chromosome_sizes = {k: v for k, v in zip(size_df.Chromosome, size_df.End)}
+
     header = [(c, int(chromosome_sizes[c])) for c in unique_chromosomes]
 
     bw = pyBigWig.open(path, "w")

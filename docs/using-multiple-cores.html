@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>24 Using multiple cores | PyRanges documentation</title>
-  <meta name="description" content="24 Using multiple cores | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="24 Using multiple cores | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="24 Using multiple cores | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-09">
+<meta name="date" content="2019-05-13">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="fetching-gene-tracks-as-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -112,19 +111,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>10</b> Sorting PyRanges</a></li>
 <li class="chapter" data-level="11" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>11</b> Summarizing PyRanges</a></li>
 <li class="chapter" data-level="12" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>12</b> Methods for manipulating single PyRanges</a></li>
-<li class="chapter" data-level="13" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>13</b> Intersecting Ranges</a></li>
-<li class="chapter" data-level="14" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>14</b> Overlapping Ranges</a></li>
-<li class="chapter" data-level="15" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>15</b> Joining Ranges</a></li>
-<li class="chapter" data-level="16" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>16</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="17" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>17</b> Statistics: similarity between PyRanges</a></li>
-<li class="chapter" data-level="18" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="19" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>19</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="20" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>20</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="21" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>21</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="22" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>22</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="23" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>23</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="24" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>24</b> Using multiple cores</a></li>
-<li class="chapter" data-level="25" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>25</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="13" data-path="applying-custom-methods-to-pairs-of-pyranges.html"><a href="applying-custom-methods-to-pairs-of-pyranges.html"><i class="fa fa-check"></i><b>13</b> Applying custom methods to pairs of PyRanges</a></li>
+<li class="chapter" data-level="14" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>14</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
+<li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
+<li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>20</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="21" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>21</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="22" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>22</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="23" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>23</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="24" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>24</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="25" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>25</b> Using multiple cores</a></li>
+<li class="chapter" data-level="26" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>26</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -143,7 +143,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="using-multiple-cores" class="section level1">
-<h1><span class="header-section-number">24</span> Using multiple cores</h1>
+<h1><span class="header-section-number">25</span> Using multiple cores</h1>
 <p>Most PyRanges and PyRle-operations can be run in parallel. Even user-made functions can be run in parallel using the apply or apply_pair functions.</p>
 <p>PyRanges uses Ray, a “flexible, high-performance distributed execution framework” to run in parallel-mode. To start Ray in parallel-mode you need to import and initialize Ray before importing PyRanges or PyRles.</p>
 <pre><code>import ray
@@ -178,11 +178,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -190,10 +189,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },
