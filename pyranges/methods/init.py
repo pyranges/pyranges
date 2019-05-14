@@ -182,6 +182,9 @@ def _init(self,
             # if the df has has Strand added to them we must update
             # the PyRanges dict
             first_key, first_df = list(empty_removed.items())[0]
+            # from pydbg import dbg;
+            # dbg(first_df)
+
             assert all(c in first_df for c in "Chromosome Start End".split(
             )), "Columns Chromosome, Start and End must be in the dataframe!"
 

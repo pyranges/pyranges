@@ -10,38 +10,104 @@ def get_terminal_size():
 
     return shutil.get_terminal_size().columns
 
+def show_pos_merge_position(self, df, first_df):
 
-def reduce_string_width(str_repr, s, h, n_intervals, n_chromosomes):
+    if self.stranded:
+        pos = df.Chromosome.astype(str) + " " + df.Start.astype(
+            str) + "-" + df.End.astype(str) + " " + df.Strand.astype(str)
+    else:
+        pos = df.Chromosome.astype(str) + " " + df.Start.astype(
+            str) + "-" + df.End.astype(str)
+
+    return pos
+
+
+
+def increase_string_width(self, df, first_df, merge_position):
+
+    # TODO: increase until no longer fits the screen
+    # instead of decreasing. Takes long time with 60k+ cols
+
+    stranded = self.stranded
+    n_intervals = len(self)
+    n_chromosomes = len(self.chromosomes)
 
     terminal_width = get_terminal_size()
 
-    hidden_cols = []
-    header = str_repr.split("\n", 2)[1]
+    columns = []
+    all_dtypes = first_df.dtypes
+    if not merge_position:
+        if stranded:
+            # if the df is stranded, always include enough cols to show strand
+            for c in df.columns:
+                columns.append(c)
+                if c == "Strand":
+                    break
+            build_df = df.get(columns)
+            never_add = columns[:]
+        else:
+            columns = "Chromosome Start End".split()
+            build_df = df.get(columns)
+            never_add = "Chromosome Start End Strand".split()
 
-    while len(header) > terminal_width:
-        header, hidden = header.rsplit("|", 1)
-        hidden = hidden.strip()
-        if hidden:
-            hidden_cols.append(hidden.strip())
+        dtypes = []
+        for c in columns:
+            dtype = all_dtypes[c]
+            dtypes.append(dtype)
+    else:
+        build_df = show_pos_merge_position(self, df, first_df)
+        columns = ["-Position-"]
+        dtypes = ["Multiple types"]
+        never_add = "Chromosome Start End Strand".split()
 
-    columns = header.replace("|", "").split()
+    h = [c + "\n(" + str(t) + ")" for c, t in zip(columns, list(dtypes))]
 
-    str_repr = tabulate(
-        s.get(columns), headers=h, tablefmt='psql', showindex=False)
+    str_repr = tabulate(df.get(columns), headers=h, tablefmt='psql', showindex=False)
+    table_width = len(str_repr.split("\n", 1)[0])
 
-    str_repr += "\nPyRanges object has {} sequences from {} chromosomes.".format(
+    for i, c in enumerate(df.columns):
+        if c in never_add:
+            continue
+
+        columns.append(c)
+        t = all_dtypes[c]
+        dtypes.append(t)
+        _h = c + "\n(" + str(t) + ")"
+        h.append(_h)
+
+        new_build_df =  pd.concat([build_df, df[c]], axis=1)
+
+        new_str_repr = tabulate(new_build_df, headers=h, tablefmt='psql', showindex=False)
+
+        table_width = len(str_repr.split("\n", 1)[0])
+        if table_width > terminal_width:
+            break
+
+        str_repr = new_str_repr
+        build_df = new_build_df
+
+    hidden_cols = set(df.columns) - (set(columns).union(never_add))
+    n_hidden_cols = len(hidden_cols)
+    str1 = "PyRanges object has {} sequences from {} chromosomes.".format(
         n_intervals, n_chromosomes)
-    if hidden_cols:
-        str_repr += "\nHidden columns: {}".format(", ".join(hidden_cols))
+
+    if n_hidden_cols:
+        str2 = "Hidden columns: {}".format(", ".join(hidden_cols))
+        if (n_hidden_cols - 10) > 0:
+            str3 = "(+ {} more.)".format(n_hidden_cols - 10)
+            str_repr = "\n".join([str_repr, str1, str2, str3])
+        else:
+            str_repr = "\n".join([str_repr, str1, str2])
+    else:
+        str_repr = "\n".join([str_repr, str1])
 
     return str_repr
 
 
-def tostring(self):
+def tostring(self, n=8, merge_position=False):
 
-    entries = pr.settings.get("print_n_entries", 10)
+    entries = n
     half_entries = int(entries / 2)
-
 
     # TODO: test this f
     # print("in str")
@@ -130,41 +196,55 @@ def tostring(self):
         else:
             s = pd.concat([h, t])
 
-    if False:  # make setting
-        if self.stranded:
-            pos = s.Chromosome.astype(str) + " " + s.Start.astype(
-                str) + "-" + s.End.astype(str) + " " + s.Strand.astype(str)
-            s = s.drop("Chromosome Start End Strand".split(), axis=1)
-            first_df = first_df.drop(
-                "Chromosome Start End Strand".split(), axis=1)
-        else:
-            pos = s.Chromosome.astype(str) + " " + s.Start.astype(
-                str) + "-" + s.End.astype(str)
-            s = s.drop("Chromosome Start End".split(), axis=1)
-            first_df = first_df.drop("Chromosome Start End".split(), axis=1)
+    str_repr = increase_string_width(self, s, first_df, merge_position)
 
-        s.insert(0, "Position", pos)
-        h = [
-            c + "\n(" + str(t) + ")"
-            for c, t in zip(s.columns, ["multiple types"] +
-                            list(first_df.dtypes))
-        ]
+    return str_repr
+
+
+def sort_tostring(self, n=30, merge_position=False):
+
+    sort_cols = "Start End".split()
+    if self.stranded:
+        sort_cols.append("Strand")
+
+    first_df = self.values()[0]
+
+    if len(self) <= n:
+        df = self.df.sort(sort_cols)
     else:
-        dtypes = []
-        for col, dtype in zip(s.columns, first_df.dtypes):
-            # if str(dtype) == "category":
+        dfs = []
+        half_n = int(n/2)
+        current_len = 0
 
-            #     dtype = first_df[col].cat.codes.dtype
+        for chromosome in self.chromosomes:
 
-            # dtype = str(dtype).replace("float", "f_").replace("int", "i_")
-            dtypes.append(dtype)
+            df = self[chromosome].df.sort_values(sort_cols)
+            current_len += len(df)
+            dfs.append(df.head(half_n))
 
-        h = [c + "\n(" + str(t) + ")" for c, t in zip(s.columns, list(dtypes))]
+            if current_len > half_n:
+                break
 
-    str_repr = tabulate(s, headers=h, tablefmt='psql', showindex=False) + \
-                                    "\nPyRanges object has {} sequences from {} chromosomes.".format(len(self), len(self.chromosomes))
+        head = pd.concat(dfs)
 
-    str_repr = reduce_string_width(str_repr, s, h, len(self),
-                                   len(self.chromosomes))
+        current_len = 0
+        dfs = []
+        for chromosome in reversed(self.chromosomes):
+
+            df = self[chromosome].df.sort_values(sort_cols)
+            current_len += len(df)
+            dfs.append(df.tail(half_n))
+
+            if current_len > half_n:
+                break
+
+        tail = pd.concat(dfs)
+
+        middle = tail.head(1).copy().astype(object)
+        middle.loc[:, :] = "..."
+
+        df = pd.concat([head, middle, tail])
+
+    str_repr = increase_string_width(self, df, first_df, merge_position)
 
     return str_repr

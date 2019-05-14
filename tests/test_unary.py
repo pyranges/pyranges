@@ -162,8 +162,6 @@ makewindows_command = "bedtools makewindows -w 10 -b <(sort -k1,1 -k2,2n {})"
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
-# @reproduce_failure('4.15.0', b'AXicY2RgYGAEISDBCWZCAQAA6AAP')
-# @reproduce_failure('4.15.0', b'AAEAAAAAAAEAAAAAAAAKAAA=')
 def test_windows(gr):
 
     with tempfile.TemporaryDirectory() as temp_dir:

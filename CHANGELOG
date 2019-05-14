@@ -1,7 +1,19 @@
+# 0.0.41 (unreleased)
+Additions:
+ - add slack-flag to cluster/merge
+ - print joined positions possible
+ - add simple methods for printing without breaking the chain (p, mp, sp, tmp, rp)
+
+Removals:
+ - settings in pyranges. Added print methods instead.
+
+Improvement:
+ - print methods faster, especially for pyranges with many cols
+
+
 # 0.0.40 (13.05.19)
 Additions:
   - pyranges_db now out on PyPI
-  - pr.settings["print_entries"] can be set. Default now 5 (up from 3)
 
 Changes:
   - PyRanges can now have Strand column with other data than "+" or "-", but it is considered unstranded.

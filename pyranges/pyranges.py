@@ -3,7 +3,7 @@ from natsort import natsorted
 
 import pyranges as pr
 
-from pyranges.tostring import tostring
+from pyranges.tostring import tostring, sort_tostring
 
 from pyranges.methods.intersection import _intersection, _overlap
 from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, _slack, _tes, _tss
@@ -249,7 +249,7 @@ class PyRanges():
 
         # TODO: implement in Cython. Will lead to 2X speedup.
 
-        mr = self.merge(strand=strand)
+        mr = self.merge(strand=strand, slack=kwargs.get("slack", 0))
         # from pydbg import dbg
         # dbg(mr)
 
@@ -264,6 +264,15 @@ class PyRanges():
 
         return j
 
+    def merge(self, strand=None, **kwargs):
+
+        from pyranges.methods.merge import _merge
+
+        kwargs["sparse"] = {"self": True}
+        df = pyrange_apply_single(_merge, self, strand, kwargs)
+
+        return PyRanges(df)
+
     def windows(self, window_size, strand=None, **kwargs):
 
         from pyranges.methods.windows import _windows
@@ -275,15 +284,6 @@ class PyRanges():
 
         return PyRanges(df)
 
-
-    def merge(self, strand=None, **kwargs):
-
-        from pyranges.methods.merge import _merge
-
-        kwargs["sparse"] = {"self": True}
-        df = pyrange_apply_single(_merge, self, strand, kwargs)
-
-        return PyRanges(df)
 
     def subset(self, function, strand=False, **kwargs):
 
@@ -526,3 +526,33 @@ class PyRanges():
         from pyranges.out import _to_bigwig
 
         _to_bigwig(self, path, chromosome_sizes, rpm)
+
+    def p(self, n=8):
+
+        print(tostring(self, n=n))
+
+        return self
+
+    def mp(self, n=8):
+
+        print(tostring(self, n=n, merge_position=True))
+
+        return self
+
+    def sp(self, n=30):
+
+        print(sort_tostring(self, n=n))
+
+        return self
+
+    def msp(self, n=30):
+
+        print(sort_tostring(self, n=n, merge_position=True))
+
+        return self
+
+    def rp(self):
+
+        print(self.dfs)
+
+        return self

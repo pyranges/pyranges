@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="subsetting-pyranges.html">
-<link rel="next" href="inserting-columns-based-on-overlap.html">
+<link rel="prev" href="piping-pyranges.html">
+<link rel="next" href="iterating-over-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -143,97 +143,83 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="manipulating-the-data-in-pyranges" class="section level1">
-<h1><span class="header-section-number">5</span> Manipulating the data in PyRanges</h1>
-<p>PyRanges is a thin wrapper around genomic data contained in pandas dataframes. This dataframe is accessible with the df attribute of the PyRanges object.</p>
+<div id="printing-pyranges" class="section level1">
+<h1><span class="header-section-number">9</span> Printing PyRanges</h1>
+<p>There are 5 helper methods for printing PyRanges. These are p (regular print), mp (merged position print), sp (sorted print), msp (merged position sorted print) and rp (raw print).</p>
+<p>Merged means that the information about Chromosome, Start, End and Strand (if applicable) are merged into one column for printing. Sorted means that the output is sorted on position and Strand. Regular print shows the + strand first and - strand second, so if you want to display interleaved intervals from both strands, sorted print is the way to do it.</p>
+<p>Raw print (rp) just prints the underlying dict of dataframes.</p>
+<p>All print methods except rp take an n-argument to control how many entries should be displayed.</p>
+<p>The print methods return the PyRanges object itself so that print methods can be used in pipes.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
-gr <span class="op">=</span> pr.data.chipseq()
-<span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.df.head(<span class="dv">5</span>))</code></pre></div>
-<pre><code>##     Chromosome      Start        End Name  Score Strand
-## 18        chr1  212609534  212609559   U0      0      +
-## 70        chr1  169887529  169887554   U0      0      +
-## 129       chr1  216711011  216711036   U0      0      +
-## 170       chr1  144227079  144227104   U0      0      +
-## 196       chr1  148177825  148177850   U0      0      +</code></pre>
-<p>To access a column of this dataframe, you can ask for the name directly from the PyRanges object.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.Start.head())</code></pre></div>
-<pre><code>## 18     212609534
-## 70     169887529
-## 129    216711011
-## 170    144227079
-## 196    148177825
-## Name: Start, dtype: int32</code></pre>
-<p>You can directly insert a column by setting the attribute on the PyRanges object:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr.stupid_example <span class="op">=</span> <span class="st">&quot;Hi There!&quot;</span>
-<span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+------------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       | stupid_example   |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)         |
-## |--------------+-----------+-----------+------------+-----------+--------------+------------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            | Hi There!        |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            | Hi There!        |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            | Hi There!        |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            | Hi There!        |
-## | ...          | ...       | ...       | ...        | ...       | ...          | ...              |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            | Hi There!        |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            | Hi There!        |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | Hi There!        |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | Hi There!        |
-## +--------------+-----------+-----------+------------+-----------+--------------+------------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> gr.drop(<span class="st">&quot;stupid_example&quot;</span>)
-<span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
-<p>And as you can see, you can drop columns from the PyRanges using drop. Using drop by itself removes all metadata-columns. If you also want to remove the strand you need to use the drop_strand flag.</p>
-<p>All columns except Chromosome, Start, End and Strand can be changed in any way you please and more metadata-columns can be added by setting it on the PyRanges object. If you wish to change the Chromosome, Start, End and Strand columns you should make a copy of the data from the PyRanges object and use it to instantiate a new PyRanges object.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd
-gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)
-<span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | chr1_0     | 0         | +            |
-## | chr1         | 169887529 | 169887554 | chr1_1     | 0         | +            |
-## | chr1         | 216711011 | 216711036 | chr1_2     | 0         | +            |
-## | chr1         | 144227079 | 144227104 | chr1_3     | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 15224235  | 15224260  | chrY_9996  | 0         | -            |
-## | chrY         | 13517892  | 13517917  | chrY_9997  | 0         | -            |
-## | chrY         | 8010951   | 8010976   | chrY_9998  | 0         | -            |
-## | chrY         | 7405376   | 7405401   | chrY_9999  | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+exons <span class="op">=</span> pr.data.exons()
+exons.p(n<span class="op">=</span><span class="dv">2</span>).mp(n<span class="op">=</span><span class="dv">8</span>).sp()</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
+## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
+## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
+## PyRanges object has 1000 sequences from 2 chromosomes.
+## +----------------------------+----------------------------------------+-----------+
+## | -Position-                 | Name                                   | Score     |
+## | (Multiple types)           | (object)                               | (int64)   |
+## |----------------------------+----------------------------------------+-----------|
+## | chrX 135721701-135721963 + | NR_038462_exon_0_0_chrX_135721702_f    | 0         |
+## | chrX 135574120-135574598 + | NM_001727_exon_2_0_chrX_135574121_f    | 0         |
+## | chrX 47868945-47869126 +   | NM_205856_exon_4_0_chrX_47868946_f     | 0         |
+## | chrX 77294333-77294480 +   | NM_000052_exon_17_0_chrX_77294334_f    | 0         |
+## | ... ...-... ...            | ...                                    | ...       |
+## | chrY 15409586-15409728 -   | NR_047633_exon_3_0_chrY_15409587_r     | 0         |
+## | chrY 15478146-15478273 -   | NR_047634_exon_18_0_chrY_15478147_r    | 0         |
+## | chrY 15360258-15361762 -   | NR_047601_exon_0_0_chrY_15360259_r     | 0         |
+## | chrY 15467254-15467278 -   | NM_001258270_exon_13_0_chrY_15467255_r | 0         |
+## +----------------------------+----------------------------------------+-----------+
+## PyRanges object has 1000 sequences from 2 chromosomes.
+## +--------------+-----------+-----------+---------------------------------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name                                  | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)                              | (int64)   | (category)   |
+## |--------------+-----------+-----------+---------------------------------------+-----------+--------------|
+## | chrX         | 585078    | 585337    | NM_000451_exon_0_0_chrX_585079_f      | 0         | +            |
+## | chrX         | 1393647   | 1393735   | NM_172249_exon_1_0_chrX_1393648_f     | 0         | +            |
+## | chrX         | 1393647   | 1393735   | NM_006140_exon_1_0_chrX_1393648_f     | 0         | +            |
+## | chrX         | 1404670   | 1404813   | NM_172245_exon_3_0_chrX_1404671_f     | 0         | +            |
+## | chrX         | 1407411   | 1407535   | NM_172249_exon_4_0_chrX_1407412_f     | 0         | +            |
+## | chrX         | 1407651   | 1407781   | NM_001161532_exon_3_0_chrX_1407652_f  | 0         | +            |
+## | chrX         | 1414319   | 1414349   | NM_172245_exon_8_0_chrX_1414320_f     | 0         | +            |
+## | chrX         | 1419383   | 1419519   | NM_001161531_exon_9_0_chrX_1419384_f  | 0         | +            |
+## | chrX         | 1424338   | 1424420   | NM_006140_exon_11_0_chrX_1424339_f    | 0         | +            |
+## | chrX         | 1424338   | 1424420   | NM_001161530_exon_10_0_chrX_1424339_f | 0         | +            |
+## | chrX         | 1475113   | 1475229   | NM_001267713_exon_4_0_chrX_1475114_f  | 0         | +            |
+## | chrX         | 1510791   | 1511039   | NM_001636_exon_3_0_chrX_1510792_r     | 0         | -            |
+## | chrX         | 1553914   | 1553976   | NM_004192_exon_8_0_chrX_1553915_r     | 0         | -            |
+## | chrX         | 1554586   | 1554651   | NM_001173473_exon_9_0_chrX_1554587_r  | 0         | -            |
+## | chrX         | 1734025   | 1734161   | NM_004043_exon_1_0_chrX_1734026_f     | 0         | +            |
+## | ...          | ...       | ...       | ...                                   | ...       | ...          |
+## | chrY         | 25336491  | 25336631  | NM_004081_exon_22_0_chrY_25336492_r   | 0         | -            |
+## | chrY         | 26778138  | 26778263  | NM_001002761_exon_6_0_chrY_26778139_f | 0         | +            |
+## | chrY         | 26952215  | 26952307  | NM_020364_exon_16_0_chrY_26952216_r   | 0         | -            |
+## | chrY         | 26979966  | 26980276  | NM_001005375_exon_0_0_chrY_26979967_f | 0         | +            |
+## | chrY         | 26998146  | 26998238  | NM_020364_exon_2_0_chrY_26998147_f    | 0         | +            |
+## | chrY         | 26998798  | 26998850  | NM_001005785_exon_3_0_chrY_26998799_f | 0         | +            |
+## | chrY         | 26999286  | 26999350  | NM_001005375_exon_9_0_chrY_26999287_f | 0         | +            |
+## | chrY         | 27003422  | 27003494  | NM_001005786_exon_7_0_chrY_27003423_f | 0         | +            |
+## | chrY         | 27041834  | 27041906  | NM_020420_exon_13_0_chrY_27041835_f   | 0         | +            |
+## | chrY         | 27197822  | 27197945  | NM_004678_exon_7_0_chrY_27197823_r    | 0         | -            |
+## | chrY         | 27197822  | 27197945  | NM_001002760_exon_7_0_chrY_27197823_r | 0         | -            |
+## | chrY         | 27606238  | 27606322  | NR_002195_exon_8_0_chrY_27606239_f    | 0         | +            |
+## | chrY         | 27606238  | 27606322  | NR_001555_exon_8_0_chrY_27606239_f    | 0         | +            |
+## | chrY         | 59222126  | 59222216  | NR_033715_exon_1_0_chrY_59222127_f    | 0         | +            |
+## | chrY         | 59233166  | 59233257  | NR_033715_exon_4_0_chrY_59233167_f    | 0         | +            |
+## +--------------+-----------+-----------+---------------------------------------+-----------+--------------+
+## PyRanges object has 1000 sequences from 2 chromosomes.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1 <span class="op">=</span> pr.data.f1()
+f1.rp()</code></pre></div>
+<pre><code>## {(&#39;chr1&#39;, &#39;+&#39;):   Chromosome  Start  End       Name  Score Strand
+## 0       chr1      3    6  interval1      0      +
+## 2       chr1      8    9  interval3      0      +, (&#39;chr1&#39;, &#39;-&#39;):   Chromosome  Start  End       Name  Score Strand
+## 1       chr1      5    7  interval2      0      -}</code></pre>
 
 </div>
             </section>
@@ -241,8 +227,8 @@ gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</spa
           </div>
         </div>
       </div>
-<a href="subsetting-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="inserting-columns-based-on-overlap.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="piping-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="iterating-over-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
