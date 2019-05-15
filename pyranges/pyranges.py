@@ -503,23 +503,40 @@ class PyRanges():
 
     def to_csv(self, path=None, sep=",", header=False):
         from pyranges.out import _to_csv
-
-        return _to_csv(self, path, sep=sep, header=header)
+        result = _to_csv(self, path, sep=sep, header=header)
+        if path:
+            return self
+        else:
+            return result
 
     def to_bed(self, path=None, keep=True):
         from pyranges.out import _to_bed
 
-        return _to_bed(self, path, keep=keep)
+        result = _to_bed(self, path, keep=keep)
+
+        if path:
+            return self
+        else:
+            return result
+
 
     def to_gtf(self, path=None):
         from pyranges.out import _to_gtf
 
-        return _to_gtf(self, path)
+        result = _to_gtf(self, path)
+
+        if path:
+            return self
+        else:
+            return result
+
 
     def to_bigwig(self, path, chromosome_sizes, rpm=True):
         from pyranges.out import _to_bigwig
 
-        _to_bigwig(self, path, chromosome_sizes, rpm)
+        result = _to_bigwig(self, path, chromosome_sizes, rpm)
+
+        return self
 
     def p(self, n=8):
 

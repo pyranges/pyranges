@@ -3,7 +3,9 @@
 The PyRanges can be written to several formats, namely csv, gtf and bigwig.
 
 If no path-argument is given, the string representation of the data is returned.
-(It may potentially be very large.)
+(It may potentially be very large.) If a path is given, the return value is the
+object itself. This way the write methods can easily be inserted in method call
+chains.
 
 ```{python tidy=FALSE}
 import pyranges as pr

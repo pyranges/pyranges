@@ -2,6 +2,10 @@
 Additions:
  - allow keyword-arguments to apply, apply_pair (see example in the docs)
 
+Changes:
+  - to_csv etc. returns the objects themselves, so they can be used in method chains
+
+
 # 0.0.41 (14.05.19)
 Additions:
  - add slack-flag to cluster/merge

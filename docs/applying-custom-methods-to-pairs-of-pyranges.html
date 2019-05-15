@@ -237,34 +237,35 @@ result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_st
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
 <p>Keyword arguments can be sent to the function:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> set_start_to_zero(df, kwargs):
-    <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), kwargs.get(<span class="st">&quot;whatever&quot;</span>))
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> _print(df, kwargs):
+    <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))
     <span class="cf">return</span> df
-chipseq.<span class="bu">apply</span>(set_start_to_zero, value<span class="op">=</span><span class="dv">123</span>, whatever<span class="op">=</span><span class="st">&quot;hi there!&quot;</span>)</code></pre></div>
-<pre><code>## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!
-## My keyword arguments were: 123 hi there!</code></pre>
+chipseq.<span class="bu">apply</span>(_print, value<span class="op">=</span><span class="dv">123</span>, whatever<span class="op">=</span><span class="st">&quot;hi there!&quot;</span>)</code></pre></div>
+<pre><code>## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!
+## My keyword arguments were: 123 and hi there!</code></pre>
+<p>They were printed 24 times since the function was applied once per chromosome.</p>
 
 </div>
             </section>
