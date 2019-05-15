@@ -336,10 +336,9 @@ class PyRanges():
 
         return _coverage(self, value_col, strand=strand, rpm=rpm)
 
-    def apply(self, f, strand=False, as_pyranges=True, kwargs=None):
+    def apply(self, f, strand=False, as_pyranges=True, **kwargs):
 
-        if not kwargs:
-            kwargs = {}
+        kwargs.update({"strand": strand})
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply_single(f, self, strand, kwargs)
@@ -349,11 +348,10 @@ class PyRanges():
         else:
             return PyRanges(result)
 
-    def apply_pair(self, other, f, kwargs=None, strandedness=False,
-                   as_pyranges=True):
+    def apply_pair(self, other, f, strandedness=False,
+                   as_pyranges=True, **kwargs):
 
-
-        kwargs = {"strandedness": strandedness}
+        kwargs.update({"strandedness": strandedness})
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply(f, self, other, **kwargs)
@@ -462,17 +460,13 @@ class PyRanges():
 
     def unstrand(self):
 
-        # from pydbg import dbg
-        # dbg(self.stranded)
-
         if not self.stranded:
             return self
 
         gr = pr.concat([self["+"], self["-"]])
-        # dbg(gr)
 
         gr = gr.drop("Strand", drop_strand=True)
-        # dbg(gr)
+
         return gr
 
     @property

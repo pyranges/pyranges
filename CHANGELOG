@@ -1,4 +1,8 @@
-# 0.0.41 (unreleased)
+# 0.0.42 (unreleased)
+Additions:
+ - allow keyword-arguments to apply, apply_pair (see example in the docs)
+
+# 0.0.41 (14.05.19)
 Additions:
  - add slack-flag to cluster/merge
  - print joined positions possible

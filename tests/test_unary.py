@@ -185,9 +185,6 @@ def test_windows(gr):
 
     print("bedtools_df\n", bedtools_df)
 
-    # from pydbg import dbg
-    # dbg(gr.cluster(strand=strand))
-
     result = gr.windows(10)["Chromosome Start End".split()].unstrand()
     print("result\n", result.df)
 

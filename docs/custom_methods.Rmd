@@ -25,3 +25,15 @@ def set_start_to_zero(df):
 
 print(chipseq.apply(set_start_to_zero))
 ```
+
+Keyword arguments can be sent to the function:
+
+```{python tidy=FALSE}
+def set_start_to_zero(df, kwargs):
+    print("My keyword arguments were:", kwargs.get("value"), "and", kwargs.get("whatever"))
+    return df
+
+chipseq.apply(set_start_to_zero, value=123, whatever="hi there!")
+```
+
+They were printed 24 times since the function was applied once per chromosome.
