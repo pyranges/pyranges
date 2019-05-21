@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -163,7 +163,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 ## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.df.head(<span class="dv">5</span>))</code></pre></div>
 <pre><code>##     Chromosome      Start        End Name  Score Strand
 ## 18        chr1  212609534  212609559   U0      0      +
@@ -196,7 +196,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 ## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | Hi There!        |
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | Hi There!        |
 ## +--------------+-----------+-----------+------------+-----------+--------------+------------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 7 columns from 24 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> gr.drop(<span class="st">&quot;stupid_example&quot;</span>)
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
@@ -213,7 +213,7 @@ gr <span class="op">=</span> pr.data.chipseq()
 ## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
 <p>And as you can see, you can drop columns from the PyRanges using drop. Using drop by itself removes all metadata-columns. If you also want to remove the strand you need to use the drop_strand flag.</p>
 <p>All columns except Chromosome, Start, End and Strand can be changed in any way you please and more metadata-columns can be added by setting it on the PyRanges object. If you wish to change the Chromosome, Start, End and Strand columns you should make a copy of the data from the PyRanges object and use it to instantiate a new PyRanges object.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd
@@ -233,7 +233,7 @@ gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</spa
 ## | chrY         | 8010951   | 8010976   | chrY_9998  | 0         | -            |
 ## | chrY         | 7405376   | 7405401   | chrY_9999  | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
 
 </div>
             </section>

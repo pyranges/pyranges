@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -157,77 +157,77 @@ f1 <span class="op">=</span> pr.data.f1()
 ## | chr1         |         3 |         7 |
 ## | chr1         |         8 |         9 |
 ## +--------------+-----------+-----------+
-## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
+## Unstranded PyRanges object has 2 rows and 3 columns from 1 chromosomes.</code></pre>
 <p>Cluster finds which intervals overlap, but give each interval a cluster ID instead of merging them:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 f1 <span class="op">=</span> pr.data.f1()
 <span class="bu">print</span>(f1.cluster())</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int64) |
-## |--------------+-----------+-----------+------------+-----------+--------------+-----------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |         1 |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |         2 |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |         1 |
-## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |    Cluster |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |   (object) |
+## |--------------+------------+------------+------------+------------+------------+------------|
+## | chr1         |          3 |          6 | interval1  |          0 | +          |          1 |
+## | chr1         |          8 |          9 | interval3  |          0 | +          |          2 |
+## | chr1         |          5 |          7 | interval2  |          0 | -          |          1 |
+## +--------------+------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f1.cluster(strand<span class="op">=</span><span class="va">True</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int64) |
-## |--------------+-----------+-----------+------------+-----------+--------------+-----------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |         1 |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |         2 |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |         3 |
-## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |    Cluster |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |   (object) |
+## |--------------+------------+------------+------------+------------+------------+------------|
+## | chr1         |          3 |          6 | interval1  |          0 | +          |          1 |
+## | chr1         |          8 |          9 | interval3  |          0 | +          |          2 |
+## | chr1         |          5 |          7 | interval2  |          0 | -          |          3 |
+## +--------------+------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f1.cluster(slack<span class="op">=</span><span class="dv">2</span>, strand<span class="op">=</span><span class="va">True</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int64) |
-## |--------------+-----------+-----------+------------+-----------+--------------+-----------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |         1 |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |         1 |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |         2 |
-## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |    Cluster |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |   (object) |
+## |--------------+------------+------------+------------+------------+------------+------------|
+## | chr1         |          3 |          6 | interval1  |          0 | +          |          1 |
+## | chr1         |          8 |          9 | interval3  |          0 | +          |          1 |
+## | chr1         |          5 |          7 | interval2  |          0 | -          |          2 |
+## +--------------+------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.</code></pre>
 <p>Both cluster and merge take the argument slack, so that you can merge features which are not directly overlapping.</p>
 <p><code>five_end</code> finds the starts of the regions (taking direction of transcription into account).</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1.five_end()
 <span class="bu">print</span>(f1.five_end(slack<span class="op">=</span><span class="dv">5</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         0 |         9 | interval1  |         0 | +            |
-## | chr1         |         3 |        14 | interval3  |         0 | +            |
-## | chr1         |         2 |        13 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr1         |          0 |          9 | interval1  |          0 | +          |
+## | chr1         |          3 |         14 | interval3  |          0 | +          |
+## | chr1         |          2 |         13 | interval2  |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
 <p><code>three_end</code> finds the ends of the regions (taking direction of transcription into account).</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1.three_end()
 <span class="bu">print</span>(f1.three_end(slack<span class="op">=</span><span class="dv">5</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         1 |        12 | interval1  |         0 | +            |
-## | chr1         |         4 |        15 | interval3  |         0 | +            |
-## | chr1         |         2 |        13 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr1         |          1 |         12 | interval1  |          0 | +          |
+## | chr1         |          4 |         15 | interval3  |          0 | +          |
+## | chr1         |          2 |         13 | interval2  |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
 <p><code>slack</code> extends the starts and ends of your interval.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(f1.slack(<span class="dv">5</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         0 |        11 | interval1  |         0 | +            |
-## | chr1         |         3 |        14 | interval3  |         0 | +            |
-## | chr1         |         0 |        12 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
-<p><code>windows</code> splits your data into windows:</p>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr1         |          0 |         11 | interval1  |          0 | +          |
+## | chr1         |          3 |         14 | interval3  |          0 | +          |
+## | chr1         |          0 |         12 | interval2  |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
+<p><code>window</code> splits your data into windows:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">exons <span class="op">=</span> pr.data.exons()
 <span class="bu">print</span>(exons)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
@@ -244,8 +244,8 @@ f1 <span class="op">=</span> pr.data.f1()
 ## | chrY         | 15360258  | 15361762  | NR_047601_exon_0_0_chrY_15360259_r     | 0         | -            |
 ## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
-## PyRanges object has 1000 sequences from 2 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>))</code></pre></div>
+## Stranded PyRanges object has 1000 rows and 6 columns from 2 chromosomes.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.window(<span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
@@ -260,9 +260,9 @@ f1 <span class="op">=</span> pr.data.f1()
 ## | chrY         | 15467264  | 15467269  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467269  | 15467274  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
-## PyRanges object has 60269 sequences from 2 chromosomes.</code></pre>
-<p>If you want to all windows to start at k * window_size, use the tile argument:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.windows(<span class="dv">5</span>, tile<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+## Stranded PyRanges object has 60449 rows and 6 columns from 2 chromosomes.</code></pre>
+<p>If you want to all windows to start at a multiple of window_size, use the tile function:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.tile(<span class="dv">5</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
@@ -272,12 +272,12 @@ f1 <span class="op">=</span> pr.data.f1()
 ## | chrX         | 135721710 | 135721715 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | chrX         | 135721715 | 135721720 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
-## | chrY         | 15467255  | 15467260  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467260  | 15467265  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467265  | 15467270  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## | chrY         | 15467270  | 15467275  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467275  | 15467280  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
-## PyRanges object has 60847 sequences from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 61643 rows and 6 columns from 2 chromosomes.</code></pre>
 
 </div>
             </section>

@@ -44,16 +44,16 @@ print(f1.three_end(slack=5))
 print(f1.slack(5))
 ```
 
-`windows` splits your data into windows:
+`window` splits your data into windows:
 
 ```{python tidy=FALSE}
 exons = pr.data.exons()
 print(exons)
-print(exons.windows(5))
+print(exons.window(5))
 ```
 
-If you want to all windows to start at k * window_size, use the tile argument:
+If you want to all windows to start at a multiple of window_size, use the tile function:
 
 ```{python tidy=FALSE}
-print(exons.windows(5, tile=True))
+print(exons.tile(5))
 ```

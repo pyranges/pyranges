@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -173,7 +173,7 @@ genomes <span class="op">=</span> pr_db.ucsc.genomes()
 ## | chrY_KN196487v1_fix    | 0         | 101150    |
 ## | chrY_KI270740v1_random | 0         | 37240     |
 ## +------------------------+-----------+-----------+
-## PyRanges object has 595 sequences from 595 chromosomes.</code></pre>
+## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)
 <span class="bu">print</span>(genes)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+------------+----------------+--------------+
@@ -190,7 +190,7 @@ genomes <span class="op">=</span> pr_db.ucsc.genomes()
 ## | chrY         | 964348    | 964530    | +            | exon       | NM_006140      | 13           |
 ## | chrY         | 1268799   | 1309935   | +            | transcript | NM_006140      | nan          |
 ## +--------------+-----------+-----------+--------------+------------+----------------+--------------+
-## PyRanges object has 5105 sequences from 46 chromosomes.</code></pre>
+## Stranded PyRanges object has 5105 rows and 7 columns from 46 chromosomes.</code></pre>
 
 </div>
 

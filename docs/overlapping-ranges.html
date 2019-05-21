@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -164,7 +164,7 @@ gr2 <span class="op">=</span> pr.data.aorta2()
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 49 sequences from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 49 rows and 6 columns from 1 chromosomes.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.overlap(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
@@ -181,7 +181,7 @@ gr2 <span class="op">=</span> pr.data.aorta2()
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 22 sequences from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 22 rows and 6 columns from 1 chromosomes.</code></pre>
 
 </div>
             </section>

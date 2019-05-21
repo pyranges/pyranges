@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -181,7 +181,7 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 ## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
 </div>
 <div id="using-constructor-keywords" class="section level4 unnumbered">
 <h4>Using constructor keywords</h4>
@@ -202,7 +202,7 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 ## | chrY         | 7463444   | 7463469   |
 ## | chrY         | 7405376   | 7405401   |
 ## +--------------+-----------+-----------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Unstranded PyRanges object has 10000 rows and 3 columns from 24 chromosomes.</code></pre>
 <p>It is possible to make PyRanges objects out of basic Python datatypes:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1&quot;</span>, strands<span class="op">=</span><span class="st">&quot;+&quot;</span>, starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
 <span class="bu">print</span>(gr)</code></pre></div>
@@ -214,18 +214,18 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 ## | chr1         |         1 |         4 | +            |
 ## | chr1         |         2 |         5 | +            |
 ## +--------------+-----------+-----------+--------------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+
-## | Chromosome   |     Start |       End | Strand       |
-## | (category)   |   (int32) |   (int32) | (category)   |
-## |--------------+-----------+-----------+--------------|
-## | chr1         |         0 |         3 | +            |
-## | chr2         |         1 |         4 | -            |
-## | chr3         |         2 |         5 | +            |
-## +--------------+-----------+-----------+--------------+
-## PyRanges object has 3 sequences from 3 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |
+## |--------------+------------+------------+------------|
+## | chr1         |          0 |          3 | +          |
+## | chr2         |          1 |          4 | -          |
+## | chr3         |          2 |          5 | +          |
+## +--------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 4 columns from 3 chromosomes.</code></pre>
 </div>
 <div id="using-read_bed-read_gtf-or-read_bam" class="section level4 unnumbered">
 <h4>Using <code>read_bed</code>, <code>read_gtf</code> or <code>read_bam</code></h4>
@@ -233,22 +233,22 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)
 gr <span class="op">=</span> pr.read_gtf(ensembl_path)
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------+
-## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | (assigned   | ccds_id    | exon_id         | exon_number   | exon_version   | gene_biotype                       | gene_id         | gene_name   | gene_source    |
-## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)    | (object)   | (object)        | (object)      | (object)       | (object)                           | (object)        | (object)    | (object)       |
-## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------|
-## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
-## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
-## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | nan         | nan        | ENSE00002234944 | 1             | 1              | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
-## | 1            | havana     | exon         | 12613     | 12721     | .          | +            | .          | nan         | nan        | ENSE00003582793 | 2             | 1              | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         |
-## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...         | ...        | ...             | ...           | ...            | ...                                | ...             | ...         | ...            |
-## | 1            | ensembl    | transcript   | 120725    | 133723    | .          | -            | .          | nan         | nan        | nan             | nan           | nan            | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
-## | 1            | ensembl    | exon         | 133374    | 133723    | .          | -            | .          | nan         | nan        | ENSE00003748456 | 1             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
-## | 1            | ensembl    | exon         | 129055    | 129223    | .          | -            | .          | nan         | nan        | ENSE00003734824 | 2             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
-## | 1            | ensembl    | exon         | 120874    | 120932    | .          | -            | .          | nan         | nan        | ENSE00003740919 | 3             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  | ensembl_havana |
-## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+----------------+
-## PyRanges object has 95 sequences from 1 chromosomes.
-## Hidden columns: tag, protein_version, transcript_source, transcript_name, transcript_support_level, transcript_version, previous, transcript_biotype, protein_id, transcript_id</code></pre>
+<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+
+## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | (assigned   | ccds_id    | exon_id         | exon_number   | exon_version   | gene_biotype                       | gene_id         | gene_name   |
+## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)    | (object)   | (object)        | (object)      | (object)       | (object)                           | (object)        | (object)    |
+## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------|
+## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     |
+## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | nan         | nan        | nan             | nan           | nan            | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     |
+## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | nan         | nan        | ENSE00002234944 | 1             | 1              | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     |
+## | 1            | havana     | exon         | 12613     | 12721     | .          | +            | .          | nan         | nan        | ENSE00003582793 | 2             | 1              | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     |
+## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...         | ...        | ...             | ...           | ...            | ...                                | ...             | ...         |
+## | 1            | ensembl    | transcript   | 120725    | 133723    | .          | -            | .          | nan         | nan        | nan             | nan           | nan            | lincRNA                            | ENSG00000238009 | AL627309.1  |
+## | 1            | ensembl    | exon         | 133374    | 133723    | .          | -            | .          | nan         | nan        | ENSE00003748456 | 1             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  |
+## | 1            | ensembl    | exon         | 129055    | 129223    | .          | -            | .          | nan         | nan        | ENSE00003734824 | 2             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  |
+## | 1            | ensembl    | exon         | 120874    | 120932    | .          | -            | .          | nan         | nan        | ENSE00003740919 | 3             | 1              | lincRNA                            | ENSG00000238009 | AL627309.1  |
+## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+
+## Stranded PyRanges object has 95 rows and 28 columns from 1 chromosomes.
+## Hidden columns: transcript_support_level, transcript_biotype, previous, transcript_name, protein_version, transcript_version, gene_version, transcript_id, tag, transcript_source... (+ 2 more.)</code></pre>
 <p>[^]: PyRanges uses the pysam library which requires that the bam file must have an index.</p>
 
 </div>

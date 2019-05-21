@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">PyRanges documentation</h1>
 <h4 class="author"><em>Endre Bakken Stovner</em></h4>
-<h4 class="date"><em>2019-05-15</em></h4>
+<h4 class="date"><em>2019-05-21</em></h4>
 </div>
 <div id="introduction-to-pyranges" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction to PyRanges</h1>
@@ -164,15 +164,15 @@ df1 <span class="op">=</span> pd.read_csv(StringIO(f1), sep<span class="op">=</s
 gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
 <p>Now we can subset the PyRange in various ways:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         4 |         7 |       23.8  | +            |
-## | chr1         |         6 |        11 |        0.13 | -            |
-## | chr2         |         0 |        14 |       42.42 | +            |
-## +--------------+-----------+-----------+-------------+--------------+
-## PyRanges object has 3 sequences from 2 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End |      Score | Strand     |
+## | (object)     |   (object) |   (object) |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------|
+## | chr1         |          4 |          7 |      23.8  | +          |
+## | chr1         |          6 |         11 |       0.13 | -          |
+## | chr2         |          0 |         14 |      42.42 | +          |
+## +--------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="dv">0</span>:<span class="dv">5</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
@@ -180,7 +180,7 @@ gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
 ## |--------------+-----------+-----------+-------------+--------------|
 ## | chr1         |         4 |         7 |        23.8 | +            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">6</span>:<span class="dv">100</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
@@ -188,7 +188,7 @@ gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
 ## |--------------+-----------+-----------+-------------+--------------|
 ## | chr1         |         6 |        11 |        0.13 | -            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## PyRanges object has 1 sequences from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.Score)</code></pre></div>
 <pre><code>## 0    23.80
 ## 1     0.13
@@ -202,43 +202,43 @@ gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
 df2 <span class="op">=</span> pd.read_csv(StringIO(f2), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)
 gr2 <span class="op">=</span> PyRanges(df2)
 <span class="bu">print</span>(gr2)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         9 |        12 |      200    | +            |
-## | chr1         |         5 |         6 |       -0.01 | -            |
-## | chr3         |         0 |        14 |       21.21 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## PyRanges object has 3 sequences from 2 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End |      Score | Strand     |
+## | (object)     |   (object) |   (object) |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------|
+## | chr1         |          9 |         12 |     200    | +          |
+## | chr1         |          5 |          6 |      -0.01 | -          |
+## | chr3         |          0 |         14 |      21.21 | -          |
+## +--------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End |      Score | Strand     |
+## | (object)     |   (object) |   (object) |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------|
+## | chr1         |          5 |          6 |      23.8  | +          |
+## | chr1         |          9 |         11 |       0.13 | -          |
+## +--------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="va">False</span>))</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End |      Score | Strand     |
+## | (object)     |   (object) |   (object) |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------|
+## | chr1         |          5 |          6 |      23.8  | +          |
+## | chr1         |          9 |         11 |       0.13 | -          |
+## +--------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</code></pre>
 <p>There are also convenience methods for single PyRanges:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.merge())</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+
-## | Chromosome   |     Start |       End |
-## | (category)   |   (int32) |   (int32) |
-## |--------------+-----------+-----------|
-## | chr1         |         4 |        11 |
-## | chr2         |         0 |        14 |
-## +--------------+-----------+-----------+
-## PyRanges object has 2 sequences from 2 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+
+## | Chromosome   |      Start |        End |
+## | (object)     |   (object) |   (object) |
+## |--------------+------------+------------|
+## | chr1         |          4 |         11 |
+## | chr2         |          0 |         14 |
+## +--------------+------------+------------+
+## Unstranded PyRanges object has 2 rows and 3 columns from 2 chromosomes.</code></pre>
 <p>The underlying dataframe can always be accessed:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.df)</code></pre></div>
 <pre><code>##   Chromosome  Start  End  Score Strand

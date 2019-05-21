@@ -273,7 +273,7 @@ class PyRanges():
 
         return PyRanges(df)
 
-    def windows(self, window_size, strand=None, **kwargs):
+    def window(self, window_size, strand=None, **kwargs):
 
         from pyranges.methods.windows import _windows
 
@@ -284,6 +284,17 @@ class PyRanges():
 
         return PyRanges(df)
 
+
+    def tile(self, tile_size, strand=None, **kwargs):
+
+        from pyranges.methods.windows import _tiles
+
+        kwargs["sparse"] = {"self": False}
+        kwargs["tile_size"] = tile_size
+
+        df = pyrange_apply_single(_tiles, self, strand, kwargs)
+
+        return PyRanges(df)
 
     def subset(self, function, strand=False, **kwargs):
 

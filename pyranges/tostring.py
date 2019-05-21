@@ -79,23 +79,26 @@ def increase_string_width(self, df, first_df, merge_position):
 
         new_str_repr = tabulate(new_build_df, headers=h, tablefmt='psql', showindex=False)
 
-        table_width = len(str_repr.split("\n", 1)[0])
-        if table_width > terminal_width:
+        table_width = len(new_str_repr.split("\n", 1)[0])
+        # print("1", table_width, get_terminal_size())
+        if table_width >= terminal_width:
             break
-
-        str_repr = new_str_repr
-        build_df = new_build_df
+        else:
+            str_repr = new_str_repr
+            build_df = new_build_df
+            # print("2", table_width, get_terminal_size())
 
     hidden_cols = set(df.columns) - (set(columns).union(never_add))
     n_hidden_cols = len(hidden_cols)
-    str1 = "PyRanges object has {} sequences from {} chromosomes.".format(
-        n_intervals, n_chromosomes)
+    stranded = "Stranded" if self.stranded else "Unstranded"
+    str1 = "{} PyRanges object has {} rows and {} columns from {} chromosomes.".format(
+        stranded, n_intervals, len(self.columns), n_chromosomes)
 
     if n_hidden_cols:
-        str2 = "Hidden columns: {}".format(", ".join(hidden_cols))
+        str2 = "Hidden columns: {}".format(", ".join(list(hidden_cols)[:10]))
         if (n_hidden_cols - 10) > 0:
-            str3 = "(+ {} more.)".format(n_hidden_cols - 10)
-            str_repr = "\n".join([str_repr, str1, str2, str3])
+            str2 += "... (+ {} more.)".format(n_hidden_cols - 9)
+            str_repr = "\n".join([str_repr, str1, str2])
         else:
             str_repr = "\n".join([str_repr, str1, str2])
     else:
@@ -110,12 +113,13 @@ def tostring(self, n=8, merge_position=False):
     half_entries = int(entries / 2)
 
     # TODO: test this f
-    # print("in str")
     if len(self) == 0:
         return "Empty PyRanges"
 
     # keys = natsorted(list(self.dfs.keys()))
+
     if len(self.keys()) == 1:
+
 
         first_key = self.keys()[0]
         # last_key = list(self.dfs.keys())[-1]
@@ -131,8 +135,12 @@ def tostring(self, n=8, merge_position=False):
             s = pd.concat([h, m, t])
         elif len(self) == entries:
             s = pd.concat([h, t])
-        else:
-            s = h
+        else: # < entries
+            s = first_df.copy()
+    elif len(self) <= entries:
+        s = self.df.copy()
+        s = s.astype(object)
+        first_df = s.copy()
     else:
         keys = self.keys()
         first_key = keys[0]
@@ -141,6 +149,7 @@ def tostring(self, n=8, merge_position=False):
         # last_key = self.keys[-1]
         first_df = self.dfs[first_key].head(half_entries)
         last_df = self.dfs[last_key].tail(half_entries)
+
         # last_df = self.dfs[list(self.dfs.keys())[-1]].tail(half_entries)
 
         h = first_df.head(half_entries).astype(object)

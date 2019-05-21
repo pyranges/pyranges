@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -151,39 +151,40 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 gr1 <span class="op">=</span> pr.data.f1()
 gr2 <span class="op">=</span> pr.data.f2()
 <span class="bu">print</span>(gr1)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr1         |          3 |          6 | interval1  |          0 | +          |
+## | chr1         |          8 |          9 | interval3  |          0 | +          |
+## | chr1         |          5 |          7 | interval2  |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr2)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         1 |         2 | a          |         0 | +            |
-## | chr1         |         6 |         7 | b          |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 2 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr1         |          1 |          2 | a          |          0 | +          |
+## | chr1         |          6 |          7 | b          |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">concatted <span class="op">=</span> pr.concat([gr1, gr2, gr1])
 <span class="bu">print</span>(concatted)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |
-## | chr1         |         1 |         2 | a          |         0 | +            |
-## | chr1         |         3 |         6 | interval1  |         0 | +            |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |
-## | chr1         |         6 |         7 | b          |         0 | -            |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 8 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr1         |          3 |          6 | interval1  |          0 | +          |
+## | chr1         |          8 |          9 | interval3  |          0 | +          |
+## | chr1         |          1 |          2 | a          |          0 | +          |
+## | chr1         |          3 |          6 | interval1  |          0 | +          |
+## | chr1         |          8 |          9 | interval3  |          0 | +          |
+## | chr1         |          5 |          7 | interval2  |          0 | -          |
+## | chr1         |          6 |          7 | b          |          0 | -          |
+## | chr1         |          5 |          7 | interval2  |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.</code></pre>
 
 </div>
             </section>

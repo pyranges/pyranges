@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -165,7 +165,7 @@ exons, cpg <span class="op">=</span> pr.data.exons(), pr.data.cpg()
 ## | chrY         | 59213794  | 59214183  | 36        |
 ## | chrY         | 59349266  | 59349574  | 29        |
 ## +--------------+-----------+-----------+-----------+
-## PyRanges object has 1077 sequences from 2 chromosomes.</code></pre>
+## Unstranded PyRanges object has 1077 rows and 4 columns from 2 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.insert(cpg, <span class="st">&quot;CpG&quot;</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+---------------------------------------+-----------+--------------+-------------+
 ## | Chromosome   | Start     | End       | Name                                  | Score     | Strand       | CpG         |
@@ -181,7 +181,7 @@ exons, cpg <span class="op">=</span> pr.data.exons(), pr.data.cpg()
 ## | chrY         | 27197822  | 27197945  | NM_004678_exon_7_0_chrY_27197823_r    | 0         | -            | nan         |
 ## | chrY         | 27197822  | 27197945  | NM_001002760_exon_7_0_chrY_27197823_r | 0         | -            | nan         |
 ## +--------------+-----------+-----------+---------------------------------------+-----------+--------------+-------------+
-## PyRanges object has 1051 sequences from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 1051 rows and 7 columns from 2 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(exons.insert(cpg, <span class="st">&quot;CpG&quot;</span>, overlap_only<span class="op">=</span><span class="va">True</span>))</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+-----------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       | CpG       |
@@ -197,7 +197,7 @@ exons, cpg <span class="op">=</span> pr.data.exons(), pr.data.cpg()
 ## | chrY         | 15591393  | 15592550  | NM_001258269_exon_29_0_chrY_15591394_r | 0         | -            | 33        |
 ## | chrY         | 15591393  | 15592550  | NR_047599_exon_28_0_chrY_15591394_r    | 0         | -            | 33        |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+-----------+
-## PyRanges object has 79 sequences from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 79 rows and 7 columns from 2 chromosomes.</code></pre>
 <p>Read more about the strandedness and how flags under joining PyRanges.</p>
 
 </div>

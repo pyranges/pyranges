@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -174,15 +174,15 @@ c <span class="op">=</span> gr.coverage()
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 f1 <span class="op">=</span> pr.data.f1()
 <span class="bu">print</span>(f1)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 3 sequences from 1 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr1         |          3 |          6 | interval1  |          0 | +          |
+## | chr1         |          8 |          9 | interval3  |          0 | +          |
+## | chr1         |          5 |          7 | interval2  |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f1_c <span class="op">=</span> f1.coverage()
 <span class="bu">print</span>(f1_c)</code></pre></div>
 <pre><code>## chr1

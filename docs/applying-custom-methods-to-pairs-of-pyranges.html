@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -216,7 +216,7 @@ result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_st
 ## | chrY         | 21910706  | 21910731  | U0         | 0         | -            |
 ## | chrY         | 22054002  | 22054027  | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 240 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 240 rows and 6 columns from 24 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> set_start_to_zero(df):
     df.Start <span class="op">=</span> <span class="dv">0</span>
     <span class="cf">return</span> df
@@ -235,7 +235,7 @@ result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_st
 ## | chrY         | 0         | 8010976   | U0         | 0         | -            |
 ## | chrY         | 0         | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
 <p>Keyword arguments can be sent to the function:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> _print(df, kwargs):
     <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))

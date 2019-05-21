@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-15">
+<meta name="date" content="2019-05-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -166,7 +166,7 @@ cs <span class="op">=</span> pr.data.chipseq()
 ## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">cs_sorted <span class="op">=</span> cs.sort()
 <span class="bu">print</span>(cs)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
@@ -183,7 +183,7 @@ cs <span class="op">=</span> pr.data.chipseq()
 ## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## PyRanges object has 10000 sequences from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
 <p>This will sort them on Chromosome, Strand, Start and then End.</p>
 <p>Custom sorting can be done after you are done with the PyRanges-related functionality. Then you can extract the underlying dataframes with df and sort it:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">df <span class="op">=</span> cs_sorted.df
