@@ -2,7 +2,7 @@
 Fixes:
   - fix bug in tostring
   - add number of columns and stranded/unstranded to tostring
-
+  - add ... as last column, when there are more columns than possible to show
 
 
 # 0.0.42 (16.05.19)

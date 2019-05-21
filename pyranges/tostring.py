@@ -82,6 +82,9 @@ def increase_string_width(self, df, first_df, merge_position):
         table_width = len(new_str_repr.split("\n", 1)[0])
         # print("1", table_width, get_terminal_size())
         if table_width >= terminal_width:
+            first_hidden = columns[-1]
+            columns = columns[:-1]
+            dtypes = dtypes[:-1]
             break
         else:
             str_repr = new_str_repr
@@ -95,9 +98,35 @@ def increase_string_width(self, df, first_df, merge_position):
         stranded, n_intervals, len(self.columns), n_chromosomes)
 
     if n_hidden_cols:
-        str2 = "Hidden columns: {}".format(", ".join(list(hidden_cols)[:10]))
+
+        # try to add ... as last col
+        ddd = pd.Series("...", index=build_df.index)
+        ddd.name = "...\n..."
+        h[-1] = ddd.name
+
+        new_build_df =  pd.concat([build_df, ddd], axis=1)
+        new_str_repr = tabulate(new_build_df, headers=h, tablefmt='psql', showindex=False)
+        table_width = len(new_str_repr.split("\n", 1)[0])
+
+        if table_width <= terminal_width:
+            str_repr = new_str_repr
+        else:
+            # need to remove last columns, because adding ... made it too wide
+            columns = list(build_df.columns)
+            first_hidden = columns[-1]
+            build_df = build_df.drop(columns[-1], axis=1)
+            ddd = pd.Series("...", index=build_df.index)
+            ddd.name = "..."
+            h[-2] = ddd.name
+            new_build_df =  pd.concat([build_df, ddd], axis=1)
+            str_repr = tabulate(new_build_df, headers=h, tablefmt='psql', showindex=False)
+
+        # add hidden col info
+        columns = list(df.columns)
+        first_hidden_idx = columns.index(first_hidden)
+        str2 = "Hidden columns: {}".format(", ".join(columns[first_hidden_idx:first_hidden_idx+10]))
         if (n_hidden_cols - 10) > 0:
-            str2 += "... (+ {} more.)".format(n_hidden_cols - 9)
+            str2 += "... (+ {} more.)".format(n_hidden_cols - 10)
             str_repr = "\n".join([str_repr, str1, str2])
         else:
             str_repr = "\n".join([str_repr, str1, str2])

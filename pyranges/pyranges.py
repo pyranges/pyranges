@@ -94,10 +94,6 @@ class PyRanges():
 
         _setattr(self, column_name, column)
 
-    # def __eq__(self, other):
-
-    #     return self.df.equals(other.df)
-
     def __getitem__(self, val):
 
         from pyranges.methods.getitem import _getitem
