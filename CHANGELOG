@@ -1,8 +1,11 @@
 # 0.0.43 (unreleased)
 Fixes:
   - fix bug in tostring
+
+Changes:
   - add number of columns and stranded/unstranded to tostring
   - add ... as last column, when there are more columns than possible to show
+  - use , as thousands separator in tostring for number rows/cols
 
 
 # 0.0.42 (16.05.19)

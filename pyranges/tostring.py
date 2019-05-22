@@ -94,7 +94,7 @@ def increase_string_width(self, df, first_df, merge_position):
     hidden_cols = set(df.columns) - (set(columns).union(never_add))
     n_hidden_cols = len(hidden_cols)
     stranded = "Stranded" if self.stranded else "Unstranded"
-    str1 = "{} PyRanges object has {} rows and {} columns from {} chromosomes.".format(
+    str1 = "{} PyRanges object has {:,} rows and {:,} columns from {} chromosomes.".format(
         stranded, n_intervals, len(self.columns), n_chromosomes)
 
     if n_hidden_cols:
