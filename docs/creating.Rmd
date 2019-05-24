@@ -56,4 +56,9 @@ gr = pr.read_gtf(ensembl_path)
 print(gr)
 ```
 
+`read_bam` takes the arguments `mapq`, `required_flag`, `filter_flag`, which
+have the default values 0, 0 and 1540, respectively.
+
+All the reader functions also take the flag `as_df`
+
 [^]: PyRanges uses the pysam library which requires that the bam file must have an index.
