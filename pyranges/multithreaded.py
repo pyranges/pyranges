@@ -1,3 +1,65 @@
+import numpy as np
+
+import pandas as pd
+
+import pyranges as pr
+
+from natsort import natsorted
+
+import sys
+import os
+
+
+def get_n_args(f):
+
+    import inspect
+    nparams = len(inspect.signature(f).parameters)
+    return nparams
+
+def call_f(f, nparams, df, odf, kwargs):
+
+    if nparams == 3:
+        return f.remote(df, odf, kwargs)
+    else:
+        return f.remote(df, odf)
+
+
+def call_f_single(f, nparams, df, kwargs):
+
+    if nparams == 2:
+        return f.remote(df, kwargs)
+    else:
+        return f.remote(df)
+
+
+class suppress_stdout_stderr(object):
+    '''
+    A context manager for doing a "deep suppression" of stdout and stderr in
+    Python, i.e. will suppress all print, even if the print originates in a
+    compiled C/Fortran sub-function.
+       This will not suppress raised exceptions, since exceptions are printed
+    to stderr just before a script exits, and after the context manager has
+    exited (at least, I think that is why it lets exceptions through).
+
+    '''
+    def __init__(self):
+        # Open a pair of null files
+        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+        # Save the actual stdout (1) and stderr (2) file descriptors.
+        self.save_fds = (os.dup(1), os.dup(2))
+
+    def __enter__(self):
+        # Assign the null pointers to stdout and stderr.
+        os.dup2(self.null_fds[0], 1)
+        os.dup2(self.null_fds[1], 2)
+
+    def __exit__(self, *_):
+        # Re-assign the real stdout/stderr back to (1) and (2)
+        os.dup2(self.save_fds[0], 1)
+        os.dup2(self.save_fds[1], 2)
+        # Close the null files
+        os.close(self.null_fds[0])
+        os.close(self.null_fds[1])
 import pandas as pd
 
 import pyranges as pr
@@ -50,16 +112,6 @@ def process_results(results, keys):
 
     return results_dict
 
-
-def call_f(f, df, odf, kwargs):
-
-    import inspect
-    nparams = len(inspect.signature(f).parameters)
-
-    if nparams == 3:
-        return f.remote(df, odf, kwargs)
-    else:
-        return f.remote(df, odf)
 
 
 def make_sparse(df):
@@ -121,9 +173,10 @@ def ray_initialized():
             raise e
 
 
-def get_multithreaded_funcs(function):
+def get_multithreaded_funcs(function, nb_cpu):
 
-    if ray_initialized():
+    if nb_cpu > 1:
+        import ray
         _merge_dfs = ray.remote(merge_dfs)
         get = ray.get
         function = ray.remote(function)
@@ -138,7 +191,16 @@ def get_multithreaded_funcs(function):
 
 def pyrange_apply(function, self, other, **kwargs):
 
-    function, get, _merge_dfs = get_multithreaded_funcs(function)
+    nparams = get_n_args(function)
+    nb_cpu = kwargs.get("nb_cpu", 1)
+
+    if nb_cpu > 1:
+        import ray
+        with suppress_stdout_stderr():
+            ray.init(num_cpus=nb_cpu)
+
+    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
+
 
     strandedness = kwargs["strandedness"]
 
@@ -173,8 +235,8 @@ def pyrange_apply(function, self, other, **kwargs):
                 odf = other[c, os].values()[0]
 
             df, odf = make_binary_sparse(kwargs, df, odf)
+            result = call_f(function, nparams, df, odf, kwargs)
 
-            result = call_f(function, df, odf, kwargs)
             results.append(result)
 
     else:
@@ -189,7 +251,7 @@ def pyrange_apply(function, self, other, **kwargs):
                     odf = other.dfs[c]
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
-                result = call_f(function, df, odf, kwargs)
+                result = call_f(function, nparams, df, odf, kwargs)
                 results.append(result)
 
         elif not self.stranded and other.stranded:
@@ -206,7 +268,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
-                result = call_f(function, df, odf, kwargs)
+                result = call_f(function, nparams, df, odf, kwargs)
                 results.append(result)
 
         elif self.stranded and other.stranded:
@@ -234,7 +296,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 # dbg(df)
                 # dbg(odf)
 
-                result = call_f(function, df, odf, kwargs)
+                result = call_f(function, nparams, df, odf, kwargs)
                 results.append(result)
 
         else:
@@ -247,30 +309,31 @@ def pyrange_apply(function, self, other, **kwargs):
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
-                result = call_f(function, df, odf, kwargs)
+                result = call_f(function, nparams, df, odf, kwargs)
                 results.append(result)
 
     results = get(results)
 
     results = process_results(results, keys)
 
+    if nb_cpu > 1:
+        ray.shutdown()
+
     return results
 
-
-def call_f_single(f, df, kwargs):
-
-    import inspect
-    nparams = len(inspect.signature(f).parameters)
-
-    if nparams == 2:
-        return f.remote(df, kwargs)
-    else:
-        return f.remote(df)
 
 
 def pyrange_apply_single(function, self, strand, kwargs):
 
-    function, get, _merge_dfs = get_multithreaded_funcs(function)
+    nparams = get_n_args(function)
+    nb_cpu = kwargs.get("nb_cpu", 1)
+
+    if nb_cpu > 1:
+        import ray
+        with suppress_stdout_stderr():
+            ray.init(num_cpus=nb_cpu)
+
+    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
 
     if strand:
         assert self.stranded, \
@@ -287,7 +350,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["strand"] = _strand
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, df, kwargs)
+            result = call_f_single(function, nparams, df, kwargs)
             results.append(result)
 
         keys = self.keys()
@@ -300,7 +363,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["chromosome"] = c
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, df, kwargs)
+            result = call_f_single(function, nparams, df, kwargs)
             results.append(result)
             keys.append(c)
 
@@ -314,18 +377,22 @@ def pyrange_apply_single(function, self, strand, kwargs):
             dfs = self[c]
 
             if len(dfs.keys()) == 2:
-                df1, df2 = dfs.values()
+                df, df2 = dfs.values()
                 # merge strands
-                df1 = _merge_dfs.remote(df1, df2)
+                df = _merge_dfs.remote(df, df2)
             else:
-                df1 = dfs.values()[0]
+                df = dfs.values()[0]
 
-            df1 = make_unary_sparse(kwargs, df1)
-            result = call_f_single(function, df1, kwargs)
+            df = make_unary_sparse(kwargs, df)
+            result = call_f_single(function, nparams, df, kwargs)
             results.append(result)
             keys.append(c)
 
+
     results = get(results)
+
+    if nb_cpu > 1:
+        ray.shutdown()
 
     results = process_results(results, keys)
 
@@ -396,3 +463,48 @@ def _slack(df, kwargs):
     # df[cs] = df[cs].astype(dtype)
 
     return df
+
+
+
+def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
+
+    nparams = get_n_args(function)
+    nb_cpu = kwargs.get("nb_cpu", 1)
+    if nb_cpu > 1:
+        import ray
+        with suppress_stdout_stderr():
+            ray.init(num_cpus=nb_cpu)
+
+    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
+
+    keys = []
+    lengths = []
+    results = []
+    for k, v in self.items():
+        dfs = np.array_split(v, nb_cpu)
+        lengths.append(len(dfs))
+        results.extend([call_f_single(function, nparams, df, kwargs) for df in dfs])
+        keys.append(k)
+
+    results = get(results)
+
+    _results = []
+    start = 0
+    for key, length in zip(keys, lengths):
+        end = start + length
+        _r = results[start:end]
+
+        if as_pyranges:
+            _results.append(pd.concat(_r))
+        else:
+            _results.append(_r)
+
+        start = end
+
+    results = _results
+    if nb_cpu > 1:
+        ray.shutdown()
+
+    results = process_results(results, keys)
+
+    return results

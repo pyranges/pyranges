@@ -1,6 +1,11 @@
 # 0.0.43 (unreleased)
 Fixes:
   - fix bug in tostring
+  - fix bug in multithreading
+
+Additions:
+  - add apply_chunks, which operates on chunks, instead of chromosome-dfs.
+
 
 Changes:
   - add number of columns and stranded/unstranded to tostring

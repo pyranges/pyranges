@@ -6,7 +6,7 @@ import pyranges as pr
 from pyranges.tostring import tostring, sort_tostring
 
 from pyranges.methods.intersection import _intersection, _overlap
-from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, _slack, _tes, _tss
+from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, pyrange_apply_chunks, _slack, _tes, _tss
 
 
 def fill_kwargs(kwargs):
@@ -245,7 +245,7 @@ class PyRanges():
 
         # TODO: implement in Cython. Will lead to 2X speedup.
 
-        mr = self.merge(strand=strand, slack=kwargs.get("slack", 0))
+        mr = self.merge(strand=strand, slack=kwargs.get("slack", 0), nb_cpu=kwargs.get("nb_cpu", 1))
         # from pydbg import dbg
         # dbg(mr)
 
@@ -253,7 +253,7 @@ class PyRanges():
         # dbg(clusters)
         mr.Cluster = clusters
         # dbg(mr)
-        j = self.join(mr, how="first", strandedness="same" if strand else None)
+        j = self.join(mr, how="first", strandedness="same" if strand else None, nb_cpu=kwargs.get("nb_cpu", 1))
         # dbg(j.df)
         j = j.drop(drop="(Start|End|Strand)_b")
         # dbg(j.df)
@@ -337,11 +337,11 @@ class PyRanges():
 
     # df2 = df.assign(Group=df.groupby("CpG").ngroup()).sort_values("Group")
 
-    def coverage(self, value_col=None, strand=False, rpm=False):
+    def coverage(self, value_col=None, strand=False, rpm=False, nb_cpu=1):
 
         from pyranges.methods.coverage import _coverage
 
-        return _coverage(self, value_col, strand=strand, rpm=rpm)
+        return _coverage(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
     def apply(self, f, strand=False, as_pyranges=True, **kwargs):
 
@@ -349,6 +349,17 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply_single(f, self, strand, kwargs)
+
+        if not as_pyranges:
+            return result
+        else:
+            return PyRanges(result)
+
+    def apply_chunks(self, f, as_pyranges=True, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+
+        result = pyrange_apply_chunks(f, self, as_pyranges, kwargs)
 
         if not as_pyranges:
             return result
