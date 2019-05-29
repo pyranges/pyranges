@@ -45,6 +45,7 @@ exons["chrY", "-",  15591259:27197945]
   .subset(lambda df: df.CpG > 30) # keep only rows with a CpG score over 30
   .sort(nb_cpu=2) # sort on Chromosome, Start and End
                   # note that virtually all pyranges-methods take a nb_cpu argument
+                  # to use multiple cores, you need to install ray with pip install ray
   .p() # print, while keeping the chain going
   ["chrX"] # keep only chromosome X
   .assign("CpGDecile", lambda df: df.CpG / 10) # Insert new column
@@ -83,7 +84,7 @@ exons["chrY", "-",  15591259:27197945]
 
 ## Features
 
-- faster than R GenomicRanges, even in single-core
+- fast (also in single-core mode)
 - supports multiple cores
 - memory-efficient
 - featureful
