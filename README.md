@@ -1,6 +1,7 @@
 # pyranges
 
-[![Coverage Status](https://img.shields.io/coveralls/github/biocore-ntnu/pyranges.svg)](https://coveralls.io/github/biocore-ntnu/pyranges?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b61a53346d764a8d8f0ab2a6afd7b100)](https://www.codacy.com/app/endrebak/pyranges?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=biocore-ntnu/pyranges&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/biocore-ntnu/pyranges.svg?branch=master)](https://travis-ci.org/biocore-ntnu/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges) [![MIT](https://img.shields.io/pypi/l/pyranges.svg?color=green)](https://opensource.org/licenses/MIT) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyranges.svg)
+[![Coverage Status](https://img.shields.io/coveralls/github/biocore-ntnu/pyranges.svg)](https://coveralls.io/github/biocore-ntnu/pyranges?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b61a53346d764a8d8f0ab2a6afd7b100)](https://www.codacy.com/app/endrebak/pyranges?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=biocore-ntnu/pyranges&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/biocore-ntnu/pyranges.svg?branch=master)](https://travis-ci.org/biocore-ntnu/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges) [![MIT](https://img.shields.io/pypi/l/pyranges.svg?color=green)](https://opensource.org/licenses/MIT) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyranges.svg) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/pyranges/README.html)
+
 
 ## Introduction
 
@@ -42,8 +43,9 @@ exons["chrY", "-",  15591259:27197945]
 (cpg # use the cpg dataset
   .join(exons, suffix="_xn") # join with exons, use suffix _xn for duplicate cols
   .subset(lambda df: df.CpG > 30) # keep only rows with a CpG score over 30
-  .sort() # sort on Chromosome, Start and End
-  .p() # print, while keeping the chain going!
+  .sort(nb_cpu=2) # sort on Chromosome, Start and End
+                  # note that virtually all pyranges-methods take a nb_cpu argument
+  .p() # print, while keeping the chain going
   ["chrX"] # keep only chromosome X
   .assign("CpGDecile", lambda df: df.CpG / 10) # Insert new column
   .unstrand()) # remove the strand info
@@ -81,7 +83,8 @@ exons["chrY", "-",  15591259:27197945]
 
 ## Features
 
-- fast
+- faster than R GenomicRanges, even in single-core
+- supports multiple cores
 - memory-efficient
 - featureful
 - pythonic/pandastic

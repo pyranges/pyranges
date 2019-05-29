@@ -1,8 +1,8 @@
 # Applying custom methods to pairs of PyRanges
 
-By using the apply or apply_pair you can run custom methods on the dataframes in
-your PyRanges. The apply function takes a single dataframe, while the apply_pair
-takes a pair of dataframes.
+By using the `apply`, `apply_pair` or `apply_chunks` methods, you can run custom
+methods on the dataframes in your PyRanges. The `apply` and `apply_chunks` methods
+takes a single dataframe, while `apply_pair` takes a pair of dataframes.
 
 ```{python tidy=FALSE}
 import pyranges as pr
@@ -37,3 +37,7 @@ chipseq.apply(_print, value=123, whatever="hi there!")
 ```
 
 They were printed 24 times since the function was applied once per chromosome.
+
+apply_chunks splits each chromosome into `nb_cpu` chunks and runs each chunk in
+parallel, which is useful for slow row-based operations (like fisher exact, for
+example).

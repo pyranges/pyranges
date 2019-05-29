@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <title>14 Applying custom methods to pairs of PyRanges | PyRanges documentation</title>
+  <meta name="description" content="14 Applying custom methods to pairs of PyRanges | PyRanges documentation">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:title" content="14 Applying custom methods to pairs of PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PyRanges documentation" />
+  <meta name="twitter:title" content="14 Applying custom methods to pairs of PyRanges | PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-21">
+<meta name="date" content="2019-05-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="intersecting-ranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -145,7 +146,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="applying-custom-methods-to-pairs-of-pyranges" class="section level1">
 <h1><span class="header-section-number">14</span> Applying custom methods to pairs of PyRanges</h1>
-<p>By using the apply or apply_pair you can run custom methods on the dataframes in your PyRanges. The apply function takes a single dataframe, while the apply_pair takes a pair of dataframes.</p>
+<p>By using the <code>apply</code>, <code>apply_pair</code> or <code>apply_chunks</code> methods, you can run custom methods on the dataframes in your PyRanges. The <code>apply</code> and <code>apply_chunks</code> methods takes a single dataframe, while <code>apply_pair</code> takes a pair of dataframes.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 chipseq <span class="op">=</span> pr.data.chipseq()
 chipseq_background <span class="op">=</span> pr.data.chipseq_background()
@@ -235,7 +236,7 @@ result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_st
 ## | chrY         | 0         | 8010976   | U0         | 0         | -            |
 ## | chrY         | 0         | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 10000 rows and 6 columns from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
 <p>Keyword arguments can be sent to the function:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> _print(df, kwargs):
     <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))
@@ -266,6 +267,7 @@ chipseq.<span class="bu">apply</span>(_print, value<span class="op">=</span><spa
 ## My keyword arguments were: 123 and hi there!
 ## My keyword arguments were: 123 and hi there!</code></pre>
 <p>They were printed 24 times since the function was applied once per chromosome.</p>
+<p>apply_chunks splits each chromosome into <code>nb_cpu</code> chunks and runs each chunk in parallel, which is useful for slow row-based operations (like fisher exact, for example).</p>
 
 </div>
             </section>
@@ -292,10 +294,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -303,6 +306,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

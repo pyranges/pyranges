@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <title>26 Using multiple cores | PyRanges documentation</title>
+  <meta name="description" content="26 Using multiple cores | PyRanges documentation">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:title" content="26 Using multiple cores | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PyRanges documentation" />
+  <meta name="twitter:title" content="26 Using multiple cores | PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-21">
+<meta name="date" content="2019-05-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="fetching-gene-tracks-as-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -145,14 +146,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="using-multiple-cores" class="section level1">
 <h1><span class="header-section-number">26</span> Using multiple cores</h1>
-<p>Most PyRanges and PyRle-operations can be run in parallel. Even user-made functions can be run in parallel using the apply or apply_pair functions.</p>
-<p>PyRanges uses Ray, a “flexible, high-performance distributed execution framework” to run in parallel-mode. To start Ray in parallel-mode you need to import and initialize Ray before importing PyRanges or PyRles.</p>
-<pre><code>import ray
-ray.init()
-# then
-import pyranges as pr</code></pre>
-<p>Now PyRanges and PyRles is running in multi-core mode.</p>
-<p>Note: By default PyRanges uses no extra cores. Unless the data are reasonably big (at least 10^7) number of intervals or the functions are very long-running, running in parallel-mode is actually more time-consuming than single-core mode. Also, if the PyRanges contains a lot of text data, there is less to be gained by using multithreading. This is due to how strings are represented in memory in Python and Pandas. However, this is something that will be fixed in pandas2 and then the multithreading capabilities of PyRanges will be more useful for these kinds of data.</p>
+<p>Most PyRanges and PyRle-operations can be run in parallel. Even user-made functions can be run in parallel using the apply, apply_pair or apply_chunks methods.</p>
+<pre><code>import pyranges as pr
+gr = pr.data.chipseq()
+gr2 = pr.data.chipseq_background()
+gr.intersect(gr3, nb_cpu=5)</code></pre>
+<p>PyRanges uses Ray, a “flexible, high-performance distributed execution framework” to run in parallel-mode. As Ray is a rather heavy dependency, it is not automatically installed with pyranges, but can easily be installed using conda or pip.</p>
+<p>All pyranges-methods take a flag <code>nb_cpu</code>. It lets you run the method with nb_cpu cores. As it uses Ray behind the scenes, it will fail if Ray is already initialized. To use <code>nb_cpu</code> with pyrle methods, you need to use r.add(r2, nb_cpu=48), not r + r2.</p>
+<p>Note: By default PyRanges uses no extra cores. Unless the data are reasonably big or the functions are very long-running, running in parallel-mode is actually more time-consuming than single-core mode. Also, if the PyRanges contains a lot of text data, there might be less to be gained by using multithreading. This is due to how strings are represented in memory in Python and Pandas.</p>
 
 </div>
             </section>
@@ -179,10 +180,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -190,6 +192,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

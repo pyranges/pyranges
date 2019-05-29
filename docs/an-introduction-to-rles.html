@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <title>22 An introduction to RLEs | PyRanges documentation</title>
+  <meta name="description" content="22 An introduction to RLEs | PyRanges documentation">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:title" content="22 An introduction to RLEs | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PyRanges documentation" />
+  <meta name="twitter:title" content="22 An introduction to RLEs | PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-21">
+<meta name="date" content="2019-05-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="run-length-encoding-dicts.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -146,7 +147,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="an-introduction-to-rles" class="section level1">
 <h1><span class="header-section-number">22</span> An introduction to RLEs</h1>
 <p>Rles are runlengths - a datastructure that can compactly describe the coverage of a genome (or some other score that is associated with each nucleotide). It is used for efficient genomewide arithmetic operations on these scores.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> pyrle <span class="im">import</span> Rle <span class="co"># or: from pyranges import Rle</span>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> pyrle <span class="im">import</span> Rle
 runs <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>]
 values <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>]
 r1 <span class="op">=</span> Rle(runs, values)
@@ -200,6 +201,27 @@ r2 <span class="op">=</span> Rle(runs2, values2)
 ## | Values | 20.0 | 16.666666666666668 | 0.0 | 20.0 |
 ## +--------+------+--------------------+-----+------+
 ## Rle of length 40 containing 4 elements</code></pre>
+<p>Rles have two helper-methods, <code>numbers_only</code> and <code>defragment</code>. The former replaces NaN with zero and infinity with large finite numbers, while the latter merges duplicate values in the Rle (which might occur when manually manipulating the values vector).</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">from</span> pyrle <span class="im">import</span> Rle
+runs2 <span class="op">=</span> [<span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">20</span>]
+values2 <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">100</span>]
+r2 <span class="op">=</span> Rle(runs2, values2)
+r2.values <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>], dtype<span class="op">=</span>np.double)
+<span class="bu">print</span>(r2)</code></pre></div>
+<pre><code>## +--------+------+-----+------+
+## | Runs   | 11   | 9   | 20   |
+## |--------+------+-----+------|
+## | Values | 1.0  | 1.0 | 1.0  |
+## +--------+------+-----+------+
+## Rle of length 40 containing 3 elements</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(r2.defragment())</code></pre></div>
+<pre><code>## +--------+------+
+## | Runs   | 40   |
+## |--------+------|
+## | Values | 1.0  |
+## +--------+------+
+## Rle of length 40 containing 1 elements</code></pre>
 
 </div>
             </section>
@@ -226,10 +248,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -237,6 +260,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

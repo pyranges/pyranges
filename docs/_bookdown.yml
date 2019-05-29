@@ -8,8 +8,8 @@ rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
 "runlength_dict.Rmd", "subsetting_rles.Rmd", "subsetting_pyrles.Rmd",
 "multithreading.Rmd", "databases.Rmd"]
 
-# rmd_files: ["iterate.Rmd"]
-# rmd_files: ["concat.Rmd"]
+ # rmd_files: ["runlengths.Rmd"]
+# rmd_files: ["multithreading.Rmd"]
 
 output_dir: "."
 

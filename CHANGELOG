@@ -1,4 +1,4 @@
-# 0.0.43 (unreleased)
+# 0.0.43 (29.05.19)
 Fixes:
   - fix bug in tostring
   - fix bug in multithreading
@@ -6,8 +6,8 @@ Fixes:
 Additions:
   - add apply_chunks, which operates on chunks, instead of chromosome-dfs.
 
-
 Changes:
+  - add nb_cpu argument to all functions
   - add number of columns and stranded/unstranded to tostring
   - add ... as last column, when there are more columns than possible to show
   - use , as thousands separator in tostring for number rows/cols
