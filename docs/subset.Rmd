@@ -6,14 +6,18 @@ title: "Subsetting PyRanges"
 
 There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.
 
+By subsetting with a list you can select one or more columns:
+
 ```{python}
 
 import pyranges as pr
 
 gr = pr.data.chipseq()
 print(gr)
+print(gr[["Name"]])
 ```
 
+By using strings, tuples and ranges, you can subset the PyRanges based on position:
 
 Chromosome only
 

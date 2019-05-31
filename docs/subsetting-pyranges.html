@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>4 Subsetting PyRanges | PyRanges documentation</title>
-  <meta name="description" content="4 Subsetting PyRanges | PyRanges documentation">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
 
-  <meta property="og:title" content="4 Subsetting PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="4 Subsetting PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-29">
+<meta name="date" content="2019-05-31">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,7 +36,6 @@
 <link rel="next" href="manipulating-the-data-in-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -147,6 +146,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="subsetting-pyranges" class="section level1">
 <h1><span class="header-section-number">4</span> Subsetting PyRanges</h1>
 <p>There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.</p>
+<p>By subsetting with a list you can select one or more columns:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 gr <span class="op">=</span> pr.data.chipseq()
 <span class="bu">print</span>(gr)</code></pre></div>
@@ -165,6 +165,23 @@ gr <span class="op">=</span> pr.data.chipseq()
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[[<span class="st">&quot;Name&quot;</span>]])</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+--------------+
+## | Chromosome   | Start     | End       | Name       | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (category)   |
+## |--------------+-----------+-----------+------------+--------------|
+## | chr1         | 212609534 | 212609559 | U0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | +            |
+## | ...          | ...       | ...       | ...        | ...          |
+## | chrY         | 15224235  | 15224260  | U0         | -            |
+## | chrY         | 13517892  | 13517917  | U0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | -            |
+## +--------------+-----------+-----------+------------+--------------+
+## Stranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.</code></pre>
+<p>By using strings, tuples and ranges, you can subset the PyRanges based on position:</p>
 <p>Chromosome only</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
@@ -294,11 +311,10 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
-"linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -306,10 +322,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

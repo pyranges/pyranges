@@ -1,11 +1,12 @@
+import pyranges as pr
 import numpy as np
 import pandas as pd
 
 
 def _setattr(self, column_name, column):
 
-    if column_name in "Chromosome Strand".split():
-        raise Exception("The columns Chromosome and Strand can not be reset.")
+    # if column_name in "Chromosome Strand".split():
+    #     raise Exception("The columns Chromosome and Strand can not be reset.")
 
     isiterable = isinstance(column, list) or isinstance(
         column, pd.Series) or isinstance(column, np.ndarray)
@@ -43,7 +44,11 @@ def _setattr(self, column_name, column):
 
         dfs[k] = df
 
-    self.__dict__["dfs"] = dfs
+    if column_name not in ["Chromosome", "Strand"]:
+        self.__dict__["dfs"] = dfs
+    else:
+        self.__dict__["dfs"] = pr.PyRanges(dfs).dfs
+
 
 
 def _getattr(self, name):

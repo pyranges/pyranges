@@ -12,7 +12,7 @@ def get_terminal_size():
 
 def show_pos_merge_position(self, df, first_df):
 
-    if self.stranded:
+    if "Strand" in df:
         pos = df.Chromosome.astype(str) + " " + df.Start.astype(
             str) + "-" + df.End.astype(str) + " " + df.Strand.astype(str)
     else:
@@ -37,7 +37,7 @@ def increase_string_width(self, df, first_df, merge_position):
     columns = []
     all_dtypes = first_df.dtypes
     if not merge_position:
-        if stranded:
+        if "Strand" in df:
             # if the df is stranded, always include enough cols to show strand
             for c in df.columns:
                 columns.append(c)

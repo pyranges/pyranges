@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import pandas as pd
+from natsort import natsorted
 
 from pyranges.statistics import StatisticsMethods
 from pyranges.genomicfeatures import GenomicFeaturesMethods
@@ -184,16 +185,34 @@ def _init(self,
             first_key, first_df = list(empty_removed.items())[0]
             # from pydbg import dbg;
             # dbg(first_df)
+            stranded = "Strand" in first_df
+
+            all_strands_valid = True
+            if stranded:
+                all_strands_valid = all([len(set(df.Strand.drop_duplicates()) - set(["+", "-"])) == 0 for df in empty_removed.values()])
 
             assert all(c in first_df for c in "Chromosome Start End".split(
             )), "Columns Chromosome, Start and End must be in the dataframe!"
 
-            if not isinstance(first_key, tuple) and "Strand" in first_df:
+            # if not has strand key, but is stranded, need to add strand key
+            has_strand_key = isinstance(first_key, tuple)
+            if not has_strand_key and stranded:
                 new_dfs = {}
                 for k, v in empty_removed.items():
                     for s, sdf in v.groupby("Strand"):
                         new_dfs[k, s] = sdf
                 empty_removed = new_dfs
+
+            # need to merge strand keys if not strands valid anymore
+            elif has_strand_key and not all_strands_valid:
+                new_dfs = {}
+                cs = set([k[0] for k in empty_removed.keys()])
+                for c in natsorted(cs):
+                    dfs = [empty_removed.get((c, s)) for s in "+-"]
+                    new_dfs[c] = pd.concat([df for df in dfs if not df is None])
+                empty_removed = new_dfs
+
+
         self.__dict__["dfs"] = empty_removed
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)

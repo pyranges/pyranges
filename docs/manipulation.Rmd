@@ -30,14 +30,20 @@ And as you can see, you can drop columns from the PyRanges using drop. Using
 drop by itself removes all metadata-columns. If you also want to remove the
 strand you need to use the drop_strand flag.
 
-All columns except Chromosome, Start, End and Strand can be changed in any way
-you please and more metadata-columns can be added by setting it on the PyRanges
-object. If you wish to change the Chromosome, Start, End and Strand columns you
-should make a copy of the data from the PyRanges object and use it to
-instantiate a new PyRanges object.
+If you want to remove duplicates based on position, you can use drop_duplicate_positions:
+
+```{python tidy=FALSE}
+print(gr.drop_duplicate_positions(strand=False)) # defaults to True
+```
+
+All columns, including Chromosome, Start, End and Strand can be changed in any
+way you please and more metadata-columns can be added by setting it on the
+PyRanges object.
 
 ```{python tidy=FALSE}
 import pandas as pd
 gr.Name = gr.Chromosome.astype(str) + "_" + pd.Series(range(len(gr)), index=gr.Chromosome.index).astype(str)
+print(gr)
+gr.Strand = "."
 print(gr)
 ```

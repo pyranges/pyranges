@@ -409,6 +409,17 @@ class PyRanges():
             pyrange_apply_single(_sort, self, self.stranded, kwargs))
 
 
+    def drop_duplicate_positions(self, strand=None, **kwargs):
+
+        from pyranges.methods.drop_duplicates import _drop_duplicate_positions
+        if strand is None:
+            strand = self.stranded
+
+        kwargs["sparse"] = {"self": False}
+        kwargs = fill_kwargs(kwargs)
+        return PyRanges(
+            pyrange_apply_single(_drop_duplicate_positions, self, strand, kwargs))
+
     def keys(self):
         return natsorted(self.dfs.keys())
 
