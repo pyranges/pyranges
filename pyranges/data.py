@@ -89,3 +89,10 @@ def exons():
     full_path = get_example_path("exons.bed")
 
     return pr.read_bed(full_path)
+
+
+def chromsizes():
+
+    full_path = get_example_path("chromsizes.bed")
+
+    return pr.read_bed(full_path)

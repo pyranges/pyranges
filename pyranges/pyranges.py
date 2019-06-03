@@ -333,9 +333,6 @@ class PyRanges():
 
         return new_self
 
-    # def groupby():
-
-    # df2 = df.assign(Group=df.groupby("CpG").ngroup()).sort_values("Group")
 
     def coverage(self, value_col=None, strand=False, rpm=False, nb_cpu=1):
 
@@ -417,6 +414,7 @@ class PyRanges():
 
         kwargs["sparse"] = {"self": False}
         kwargs = fill_kwargs(kwargs)
+        kwargs["strand"] = strand
         return PyRanges(
             pyrange_apply_single(_drop_duplicate_positions, self, strand, kwargs))
 

@@ -4,30 +4,30 @@ import pandas as pd
 import pyranges as pr
 
 
-def pyrange_or_df(func):
-    def extension(self, other, *args, **kwargs):
-        df = func(self, other, *args, **kwargs)
+def _last_tile(df, kwargs):
+    # do not need copy, since it is only used internally by
+    # tile_genome
+    # df = df.copy()
+    sizes = kwargs.get("sizes")
+    size = sizes[df.Chromosome.iloc[0]].End.iloc[0]
+    df.loc[df.tail(1).index, "End"] = size
 
-        if kwargs.get("df"):
-            return df
-
-        return pr.PyRanges(df)
-
-    return extension
+    return df
 
 
-def pyrange_or_df_single(func):
+def tile_genome(genome, tile_size, tile_last=False):
 
-    # from pyranges import PyRanges
-    def extension(self, *args, **kwargs):
-        df = func(self, *args, **kwargs)
+    if isinstance(genome, dict):
+        chromosomes, ends = list(genome.keys()), list(genome.values())
+        df = pd.DataFrame({"Chromosome": chromosomes, "Start": 0, "End": ends})
+        genome = pr.PyRanges(df)
 
-        if kwargs.get("df"):
-            return df
+    gr = genome.tile(tile_size)
 
-        return pr.PyRanges(df)
+    if not tile_last:
+        gr = gr.apply(_last_tile, sizes=genome)
 
-    return extension
+    return gr
 
 
 def _keep_transcript_with_most_exons(df):
@@ -69,11 +69,6 @@ def filter_transcripts(df, keep="most_exons"):
 
 
 def _tss(df, slack=0, drop_duplicates=True):
-
-    # try:
-    #     df = self.df
-    # except:
-    #     df = self
 
     tss_pos = df.loc[df.Strand == "+"]
 
@@ -131,17 +126,11 @@ class GenomicFeaturesMethods():
 
         self.pr = pr
 
-    @pyrange_or_df_single
-    def tss(self, transcripts="all", drop_duplicate_tss=True, slack=0):
+    def tss(self, slack=0):
 
         pr = self.pr
 
         df = pr.df
-
-        if transcripts == "all":
-            pass
-        elif transcripts == "most_exons":
-            df = _keep_transcript_with_most_exons(df)
 
         if not pr.stranded:
             raise Exception(
@@ -156,18 +145,13 @@ class GenomicFeaturesMethods():
 
         return df
 
-    @pyrange_or_df_single
-    def tes(self, transcripts="all", drop_duplicate_tss=True, slack=0):
+
+    def tes(self, drop_duplicate_tss=True, slack=0):
 
         pr = self.pr
 
         df = pr.df
         df = df.drop("ExonNumber", 1)
-
-        if transcripts == "all":
-            pass
-        elif transcripts == "most_exons":
-            df = _keep_transcript_with_most_exons(df)
 
         if not pr.stranded:
             raise Exception(

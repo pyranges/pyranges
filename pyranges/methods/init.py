@@ -4,7 +4,7 @@ import pandas as pd
 from natsort import natsorted
 
 from pyranges.statistics import StatisticsMethods
-from pyranges.genomicfeatures import GenomicFeaturesMethods
+from pyranges.genomicfeatures.genomicfeatures import GenomicFeaturesMethods
 from pyranges import PyRanges
 
 
@@ -110,17 +110,6 @@ def create_pyranges_df(chromosomes, starts, ends, strands=None):
 
 def check_strandedness(df):
     """Check whether strand contains '.'"""
-
-
-    # if "Strand" in df:
-    #     strand_vals = set(df.Strand.drop_duplicates())
-    #     if strand_vals - set(["+", "-", "."]):
-    #         print(
-    #             "Strand column in bed file contains the following values: {}. It is therefore considered unstranded.".format(", ".join(strand_vals)),
-    #             file=sys.stderr)
-    #         df = df.drop("Strand", axis=1)
-    #     if "." in strand_vals:
-    #         df = df.drop("Strand", axis=1)
 
     if "Strand" not in df:
         return False
