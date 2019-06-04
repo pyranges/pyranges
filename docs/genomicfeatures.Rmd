@@ -17,3 +17,19 @@ tile_size = int(1e6)
 print(pr.gf.tile_genome(gr, tile_size, tile_last=False))
 print(pr.gf.tile_genome(gr, tile_size, tile_last=True))
 ```
+
+`genome_bounds` removes all intervals in the PyRanges which are outside the
+genome bounds. If the flag clip is used, the parts of the intervals which are
+inside the boundaries are kept.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.chromsizes()
+print(gr)
+# can also do
+# pip install pyranges_db as db
+# gr =  db.ucsc.chromsizes("hg19")
+tile_size = int(1e6)
+print(pr.gf.tile_genome(gr, tile_size, tile_last=False))
+print(pr.gf.tile_genome(gr, tile_size, tile_last=True))
+```

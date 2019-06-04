@@ -6,7 +6,7 @@ rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
 "custom_methods.Rmd", "intersection.Rmd", "overlap.Rmd", "join.Rmd",
 "nearest.Rmd", "jaccard.Rmd", "reldist.Rmd", "coverage.Rmd", "runlengths.Rmd",
 "runlength_dict.Rmd", "subsetting_rles.Rmd", "subsetting_pyrles.Rmd",
-"multithreading.Rmd", "databases.Rmd"]
+"multithreading.Rmd", "genomicfeatures.Rmd", "databases.Rmd"]
 
  # rmd_files: ["runlengths.Rmd"]
 # rmd_files: ["multithreading.Rmd"]

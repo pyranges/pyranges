@@ -1,3 +1,5 @@
+import numpy as np
+
 import pandas as pd
 import csv
 
@@ -142,9 +144,21 @@ def _to_bed(self, path=None, sep="\t", keep=True):
         return res
 
 
-def _to_bigwig(self, path, chromosome_sizes, rpm=True):
+def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
 
-    gr = self.coverage(rpm=rpm, strand=False).to_ranges()
+    if not divide_by:
+        gr = self.coverage(rpm=rpm, strand=False).to_ranges()
+    else:
+        gr = self.coverage(rpm=rpm, strand=False)
+        divide_by = self.coverage(rpm=rpm, strand=False)
+        c = (gr / divide_by)
+        new_pyrles = {}
+        for k, v in c.items():
+            v.values = np.log2(v.values)
+            v.defragment()
+            new_pyrles[k] = v
+
+        gr = c.defragment().to_ranges()
 
     unique_chromosomes = gr.chromosomes
 
@@ -155,8 +169,9 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True):
 
     import pyBigWig
 
-    size_df = chromosome_sizes.df
-    chromosome_sizes = {k: v for k, v in zip(size_df.Chromosome, size_df.End)}
+    if not isinstance(chromosome_sizes, dict):
+        size_df = chromosome_sizes.df
+        chromosome_sizes = {k: v for k, v in zip(size_df.Chromosome, size_df.End)}
 
     header = [(c, int(chromosome_sizes[c])) for c in unique_chromosomes]
 

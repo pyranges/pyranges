@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-31">
+<meta name="date" content="2019-06-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -125,7 +125,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="24" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>24</b> Subsetting Rles</a></li>
 <li class="chapter" data-level="25" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>25</b> Subsetting PyRles</a></li>
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
-<li class="chapter" data-level="27" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>27</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -161,6 +162,7 @@ gr.to_bigwig(<span class="st">&quot;chipseq.bw&quot;</span>, chromsizes)</code><
 <p>If you want to write one bigwig for each strand, you need to do it manually.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_plus.bw&quot;</span>, chromsizes)
 gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_minus.bw&quot;</span>, chromsizes)</code></pre></div>
+<p>to_bigwig also takes a flag <code>divide_by</code> which takes another PyRanges. Using <code>divide_by</code> creates a log2-normalized bigwig.</p>
 
 </div>
             </section>

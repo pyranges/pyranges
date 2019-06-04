@@ -25,14 +25,14 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-05-31">
+<meta name="date" content="2019-06-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="using-multiple-cores.html">
+<link rel="prev" href="genomicfeatures-methods-using-genomic-context.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -125,7 +125,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="24" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>24</b> Subsetting Rles</a></li>
 <li class="chapter" data-level="25" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>25</b> Subsetting PyRles</a></li>
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
-<li class="chapter" data-level="27" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>27</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -144,7 +145,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="fetching-gene-tracks-as-pyranges" class="section level1">
-<h1><span class="header-section-number">27</span> Fetching gene tracks as PyRanges</h1>
+<h1><span class="header-section-number">28</span> Fetching gene tracks as PyRanges</h1>
 <p>PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges_db add-on package. Do <code>pip install pyranges_db</code>.</p>
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and Ensembl also has the method chromosome_sizes.</p>
 <p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few hundred rows of data.</p>
@@ -205,7 +206,7 @@ genomes <span class="op">=</span> pr_db.ucsc.genomes()
           </div>
         </div>
       </div>
-<a href="using-multiple-cores.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="genomicfeatures-methods-using-genomic-context.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
     </div>
   </div>

@@ -39,3 +39,6 @@ If you want to write one bigwig for each strand, you need to do it manually.
 gr["+"].to_bigwig("chipseq_plus.bw", chromsizes)
 gr["-"].to_bigwig("chipseq_minus.bw", chromsizes)
 ```
+
+to_bigwig also takes a flag `divide_by` which takes another PyRanges. Using
+`divide_by` creates a log2-normalized bigwig.

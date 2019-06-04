@@ -558,12 +558,13 @@ class PyRanges():
             return result
 
 
-    def to_bigwig(self, path, chromosome_sizes, rpm=True):
+    def to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
         from pyranges.out import _to_bigwig
 
-        result = _to_bigwig(self, path, chromosome_sizes, rpm)
+        _to_bigwig(self, path, chromosome_sizes, rpm, divide_by)
 
         return self
+
 
     def p(self, n=8):
 

@@ -4,6 +4,33 @@ import pandas as pd
 import pyranges as pr
 
 
+def _outside_bounds(df, kwargs):
+
+    chromsizes = kwargs.get("chromsizes")
+    size = chromsizes[df.Chromosome.iloc[0]]
+    clip = kwargs.get("clip", False)
+
+    ends_outside = df.End > size
+    if not clip: # i.e. remove
+        df = df[~ends_outside]
+    else:
+        starts_inside = df.Start <= size
+        df.loc[ends_outside & starts_inside, "End"] = size
+
+    return df
+
+
+
+
+def genome_bounds(gr, chromsizes, clip=False):
+
+    if not isinstance(chromsizes, dict):
+        chromsizes = {k: v for k, v in zip(chromsizes.Chromosome, chromsizes.End)}
+
+    # kwargs = {"chromsizes": chromsizes, "clip": clip}
+    return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip)
+
+
 def _last_tile(df, kwargs):
     # do not need copy, since it is only used internally by
     # tile_genome
