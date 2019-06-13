@@ -292,7 +292,7 @@ class PyRanges():
 
         return PyRanges(df)
 
-    def subset(self, function, strand=False, **kwargs):
+    def subset(self, function, strand=None, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
 

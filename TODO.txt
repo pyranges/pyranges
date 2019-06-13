@@ -1,0 +1,27 @@
+Todo:
+- divide docs into parts: Rle/GenomicFeatures/stats
+- docs: write about pyranges-internals
+- if pyranges has Strand column, but is unstranded, explain which symbol is not "+/-"
+
+Test:
+- (hypothesis): gr.coverage() == gr.coverage().to_ranges().coverage()
+
+General:
+- add missing info to pyranges_db.ucsc.genes()
+
+Multicore:
+- test multicpu functionality locally
+- make pyranges work in multicpu even if ray is started
+
+GenomicFeatures:
+- (FIX): avoid .df call in tes/tss, genomicfeatures
+- create pyranges random (like bedtools random)
+- compute introns per transcript (also add: exclusive-flag)
+  (Need to do in Cython)
+
+Possibly:
+- test http://code.databio.org/AIList, see if it is faster than my NCLS-implementation
+
+Think:
+- what should subset ["chr1", "."] in an unstranded PyRanges with a strand-column return? What about ["."]?
+- have .strand accessor like .chromosomes? What if it has a Strand-column, but is not stranded?

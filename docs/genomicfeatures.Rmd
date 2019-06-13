@@ -29,7 +29,6 @@ print(gr)
 # can also do
 # pip install pyranges_db as db
 # gr =  db.ucsc.chromsizes("hg19")
-tile_size = int(1e6)
-print(pr.gf.tile_genome(gr, tile_size, tile_last=False))
-print(pr.gf.tile_genome(gr, tile_size, tile_last=True))
+print(pr.gf.genome_bounds(gr, tile_size, clip=True))
+print(pr.gf.genome_bounds(gr, tile_size))
 ```

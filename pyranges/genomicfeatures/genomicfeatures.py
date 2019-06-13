@@ -144,16 +144,32 @@ def _tes(df, slack=0, drop_duplicates=True):
 
     return tes
 
+def _introns(df):
+
+    transcripts = df[df.Feature == "transcript"][["Start", "End"]]
+    exons = df[df.Exon == "exon"]
+
+
+
+
+def introns(self):
+
+    pr = self.pr
+
+
+    # only want to subtract same transcript
+
 
 class GenomicFeaturesMethods():
 
     pr = None
 
+
     def __init__(self, pr):
 
         self.pr = pr
 
-    def tss(self, slack=0):
+    def tss(self, drop_duplicate_tss=True, slack=0):
 
         pr = self.pr
 

@@ -21,6 +21,7 @@ setup(
             'example_data/*.bam.bai'
         ]
     },
+    # data_files = ["LICENSE"],
     include_dirs=["."],
     version=__version__,
     description="GenomicRanges for Python.",
