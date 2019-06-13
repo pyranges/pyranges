@@ -2,9 +2,11 @@ Todo:
 - divide docs into parts: Rle/GenomicFeatures/stats
 - docs: write about pyranges-internals
 - if pyranges has Strand column, but is unstranded, explain which symbol is not "+/-"
+- create by argument to cluster-method
 
 Test:
 - (hypothesis): gr.coverage() == gr.coverage().to_ranges().coverage()
+- test cluster_by_id by splitting and ensuring the result is the same
 
 General:
 - add missing info to pyranges_db.ucsc.genes()
@@ -13,15 +15,20 @@ Multicore:
 - test multicpu functionality locally
 - make pyranges work in multicpu even if ray is started
 
+PyRanges-db:
+- fetch GWAS-catalogue
+
 GenomicFeatures:
 - (FIX): avoid .df call in tes/tss, genomicfeatures
 - create pyranges random (like bedtools random)
-- compute introns per transcript (also add: exclusive-flag)
-  (Need to do in Cython)
+- compute introns per transcript or per gene (Need to do in Cython - have genomicfeatures package?)
+  - 1: need merge(by=id) to ensure that all exons per transcript are merged
+  - 2: then need exon computation code
 
 Possibly:
 - test http://code.databio.org/AIList, see if it is faster than my NCLS-implementation
 
 Think:
+- have pyranges-compiled package? No point in sorted-nearest
 - what should subset ["chr1", "."] in an unstranded PyRanges with a strand-column return? What about ["."]?
 - have .strand accessor like .chromosomes? What if it has a Strand-column, but is not stranded?
