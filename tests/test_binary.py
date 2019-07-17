@@ -431,3 +431,29 @@ def test_join_new_pos(gr, gr2, strandedness, new_pos):
             new_ends = np.minimum(result2.End, result2.End_b)
         assert list(result.Start.values) == list(new_starts)
         assert list(result.End.values) == list(new_ends)
+
+
+
+# @pytest.mark.parametrize("strand", [True, False])
+# @settings(
+#     max_examples=max_examples,
+#     deadline=deadline,
+#     suppress_health_check=HealthCheck.all())
+# @given(gr=dfs_min_with_gene_id())  # pylint: disable=no-value-for-parameter
+# def test_introns(gr, strand):
+
+#     result = gr.features.introns()
+#     print(result)
+
+#     df = gr.df
+
+#     grs = []
+#     for g, gdf in df.groupby("ID"):
+#         grs.append(pr.PyRanges(gdf))
+
+#     expected = pr.concat([gr.merge() for gr in grs]).df
+
+#     print(expected)
+#     print(result)
+
+#     assert_df_equal(result, expected)

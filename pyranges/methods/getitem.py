@@ -1,3 +1,6 @@
+import pandas as pd
+import numpy as np
+
 from pyranges.subset import (get_string, get_tuple, get_slice, get_booldict)
 from pyranges.methods.drop import _drop, _keep
 
@@ -16,6 +19,12 @@ def _getitem(self, val):
         dfs = get_slice(self, val)
     elif isinstance(val, dict):
         dfs = get_booldict(self, val)
+    elif (isinstance(val, (pd.Series, np.ndarray))) and val.dtype == "bool":
+        assert len(val) == len(self), "Boolean indexer must be same length as pyrange!"
+        grpby = "Chromosome" if not self.stranded else ["Chromosome", "Strand"]
+        to_grpby = ["Chromosome"] if not self.stranded else [self.Chromosome, self.Strand]
+        d = {k: v.iloc[:, -1] for k, v in pd.concat(to_grpby + [val], axis=1).groupby(grpby)}
+        dfs = get_booldict(self, d)
     else:
         raise Exception("Not valid subsetter: {}".format(str(val)))
 

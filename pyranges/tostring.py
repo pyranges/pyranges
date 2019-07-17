@@ -133,6 +133,15 @@ def increase_string_width(self, df, first_df, merge_position):
     else:
         str_repr = "\n".join([str_repr, str1])
 
+    if "Strand" in self.columns and not self.stranded:
+        strands = []
+        for _, df in self:
+            strands.extend(list(df.Strand.drop_duplicates()))
+
+        untraditional_strands = set(strands) - set("+-")
+        str_repr += "\n(Considered unstranded due to the values {} being present in the Strand column.)".format(
+            ", ".join(untraditional_strands))
+
     return str_repr
 
 

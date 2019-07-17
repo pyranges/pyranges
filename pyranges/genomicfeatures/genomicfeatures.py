@@ -2,6 +2,11 @@
 import pandas as pd
 
 import pyranges as pr
+import numpy as np
+
+
+from pyranges.multithreaded import pyrange_apply
+from sorted_nearest.src.introns import find_introns
 
 
 def _outside_bounds(df, kwargs):
@@ -27,7 +32,6 @@ def genome_bounds(gr, chromsizes, clip=False):
     if not isinstance(chromsizes, dict):
         chromsizes = {k: v for k, v in zip(chromsizes.Chromosome, chromsizes.End)}
 
-    # kwargs = {"chromsizes": chromsizes, "clip": clip}
     return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip)
 
 
@@ -144,20 +148,61 @@ def _tes(df, slack=0, drop_duplicates=True):
 
     return tes
 
-def _introns(df):
 
-    transcripts = df[df.Feature == "transcript"][["Start", "End"]]
-    exons = df[df.Exon == "exon"]
+by_to_id = {"gene": "gene_id", "transcript": "transcript_id"}
 
+def _introns2(df, exons, kwargs):
 
+    original_order = df.columns
+    by = kwargs["by"]
+    id_column = by_to_id[by]
 
+    exons = exons[["Start", "End", id_column]].sort_values(id_column)
+    genes = df[["Start", "End", id_column]].sort_values(id_column)
+    exons.columns = ["Start", "End", "gene_id"]
+    genes.columns = ["Start", "End", "gene_id"]
 
-def introns(self):
+    intersection = pd.Series(np.intersect1d(exons["gene_id"], genes["gene_id"]))
+    exons = exons[exons["gene_id"].isin(intersection)].reset_index(drop=True)
+    genes = genes[genes["gene_id"].isin(intersection)].reset_index(drop=True)
+    df = df[df[id_column].isin(intersection)].reset_index(drop=True)
 
-    pr = self.pr
+    assert len(genes) == len(genes.drop_duplicates("gene_id")), "The {id_column}s need to be unique to compute the introns.".format(id_column=id_column)
 
+    exon_ids = (exons["gene_id"].shift() != exons["gene_id"])
+    gene_ids = pd.Series(range(1, len(genes) + 1))
+    df.insert(0, "__temp__", gene_ids)
 
-    # only want to subtract same transcript
+    if len(exons) > 1 and exons["gene_id"].iloc[0] == exons["gene_id"].iloc[1]:
+        exon_ids.iloc[0] = False
+        exon_ids = exon_ids.cumsum() + 1
+    else:
+        exon_ids = exon_ids.cumsum()
+
+    starts, ends, ids = find_introns(genes.Start.values, genes.End.values, gene_ids.values,
+                                     exons.Start.values, exons.End.values, exon_ids.values)
+
+    introns = pd.DataFrame(data={"Chromosome": df.Chromosome.iloc[0], "Start": starts, "End": ends, "gene_id": ids})
+
+    vc = introns["gene_id"].value_counts(sort=False).to_frame().reset_index()
+    vc.columns = ["gene_id", "counts"]
+
+    genes_without_introns = pd.DataFrame(data={"gene_id": np.setdiff1d(gene_ids.values, vc.gene_id.values), "counts": 0})
+
+    vc = pd.concat([vc, genes_without_introns]).sort_values("gene_id")
+
+    original_ids = np.repeat(vc.gene_id, vc.counts)
+
+    original_ids = original_ids.to_frame().merge(df[["__temp__", id_column]], right_on="__temp__", left_on="gene_id", suffixes=("_drop", ""))
+    original_ids = original_ids.drop(["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1).sort_values("gene_id")
+    introns.loc[:, "gene_id"] = original_ids[id_column].values
+    introns = introns.merge(df, left_on="gene_id", right_on=id_column, suffixes=("", "_dropme"))
+    introns = introns.drop([c for c in introns.columns if c.endswith("_dropme")], axis=1)
+    introns.loc[:, "Feature"] = "intron"
+
+    introns = introns[original_order]
+
+    return introns
 
 
 class GenomicFeaturesMethods():
@@ -208,3 +253,22 @@ class GenomicFeaturesMethods():
         df = df.drop(["ExonNumber", "ExonID"], 1)
 
         return df
+
+
+    def introns(self, by="gene"):
+        kwargs = {"by": by}
+        kwargs = pr.pyranges.fill_kwargs(kwargs)
+
+        assert by in ["gene", "transcript"]
+
+        id_column = by_to_id[by]
+        gr = self.pr
+
+        exons = gr.subset(lambda df: df.Feature == "exon")
+        exons = exons.merge(by=id_column)
+
+        by_gr = gr.subset(lambda df: df.Feature == by)
+
+        result = pyrange_apply(_introns2, by_gr, exons, **kwargs)
+
+        return pr.PyRanges(result)

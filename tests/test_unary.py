@@ -1,4 +1,5 @@
 import pytest
+from natsort import natsorted
 
 from hypothesis import given, settings, HealthCheck  #, assume
 from hypothesis import reproduce_failure  # pylint: disable=unused-import
@@ -7,10 +8,12 @@ import tempfile
 import subprocess  # nosec
 from io import StringIO
 
+import numpy as np
+
 import pandas as pd
 
 from tests.helpers import assert_df_equal
-from tests.hypothesis_helper import dfs_min, df_data, selector
+from tests.hypothesis_helper import dfs_min, df_data, selector, dfs_min_with_id
 
 import pyranges as pr
 
@@ -89,6 +92,7 @@ def test_merge(gr, strand):
 cluster_command = "bedtools cluster {} -i <(sort -k1,1 -k2,2n {})"
 
 
+
 @pytest.mark.bedtools
 @pytest.mark.parametrize("strand", [True, False])
 @settings(
@@ -96,7 +100,6 @@ cluster_command = "bedtools cluster {} -i <(sort -k1,1 -k2,2n {})"
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
-# @reproduce_failure('4.15.0', b'AXicY2RgYGAEISDBCWZCAQAA6AAP')
 def test_cluster(gr, strand):
 
     bedtools_strand = {True: "-s", False: ""}[strand]
@@ -127,7 +130,9 @@ def test_cluster(gr, strand):
     # from pydbg import dbg
     # dbg(gr.cluster(strand=strand))
 
+    print("gr\n", gr)
     result = gr.cluster(strand=strand)
+    print("result\n", result[["Cluster"]])
     print("result\n", result.df)
 
     if not bedtools_df.empty:
@@ -151,6 +156,75 @@ def test_cluster(gr, strand):
         assert_df_equal(result_df, bedtools_df)
     else:
         assert bedtools_df.empty == result.df.empty
+
+
+@pytest.mark.parametrize("strand", [True, False])
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min_with_id())  # pylint: disable=no-value-for-parameter
+def test_cluster_by(gr, strand):
+
+    result = gr.cluster(by="ID", strand=strand).df
+    print(result)
+    df = gr.df
+
+    if strand:
+        groupby = ["Chromosome", "Strand", "ID"]
+    else:
+        groupby = ["Chromosome", "ID"]
+
+
+    grs = []
+
+    for g, gdf in natsorted(df.groupby(groupby)):
+        grs.append(pr.PyRanges(gdf))
+
+
+    clusters = [gr.cluster() for gr in grs]
+    i = 1
+    new_clusters = []
+    for c in clusters:
+        c.Cluster = i
+        i += 1
+        new_clusters.append(c)
+
+    expected = pr.concat(new_clusters).df
+    expected.loc[:, "Cluster"] = expected.Cluster.astype(np.int32)
+    # expected = expected.drop_duplicates()
+
+    print(expected)
+    print(result)
+
+    assert_df_equal(result, expected)
+
+
+@pytest.mark.parametrize("strand", [True, False])
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min_with_id())  # pylint: disable=no-value-for-parameter
+def test_merge_by(gr, strand):
+
+    print(gr)
+    result = gr.merge(by="ID").df.drop("ID", axis=1)
+
+    df = gr.df
+
+    grs = []
+    for g, gdf in df.groupby("ID"):
+        grs.append(pr.PyRanges(gdf))
+
+    expected = pr.concat([gr.merge() for gr in grs]).df
+
+    print(expected)
+    print(result)
+
+    assert_df_equal(result, expected)
+
+
 
 
 makewindows_command = "bedtools makewindows -w 10 -b <(sort -k1,1 -k2,2n {})"

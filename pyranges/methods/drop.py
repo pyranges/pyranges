@@ -2,46 +2,61 @@ import re
 from collections.abc import Iterable
 
 
-def _drop(self, drop=None, drop_strand=False):
+def _drop(self, drop=None):
     columns = self.columns
-    if drop_strand:
-        always_keep = "Chromosome Start End".split()
-    else:
+    if "Strand" in columns:
+        self = self.unstrand()
+        columns = [c for c in columns if c != "Strand"]
+
+    if self.stranded:
         always_keep = "Chromosome Start End Strand".split()
+    else:
+        always_keep = "Chromosome Start End".split()
 
     _to_drop = []
 
     if not drop:
         _to_drop = set(columns) - set(always_keep)
     elif isinstance(drop, str):
-        r = re.compile(drop)
-        _to_drop = [c for c in columns if not r.search(c) == None]
+        _to_drop = [drop]
     elif isinstance(drop, Iterable) or isinstance(drop, list):
         _to_drop = drop
     else:
         raise Exception("Not valid subsetters!")
 
-    if not drop_strand:
-        assert not set(always_keep).intersection(_to_drop), \
-            "Can never drop Chromosome, Start or End. Cannot drop Strand unless drop_strand is True"
     _to_drop = set(_to_drop) - set(always_keep)
 
     return self.apply(lambda df: df.drop(_to_drop, axis=1))
 
 
-def _keep(self, keep, drop_strand=False):
+def _keep(self, keep):
 
     columns = self.columns
-    if drop_strand:
+    if not self.stranded:
         always_keep = "Chromosome Start End".split()
     else:
         always_keep = "Chromosome Start End Strand".split()
 
     _to_drop = []
-    if isinstance(keep, str):
-        r = re.compile(keep)
-        _to_drop = [c for c in columns if r.search(c) is None]
-    elif isinstance(keep, Iterable) or isinstance(keep, list):
+    if isinstance(keep, Iterable) or isinstance(keep, list):
         _to_drop = set(columns) - set(keep) - set(always_keep)
+    else:
+        raise Exception("Column(s) to drop must be in list.")
 
-    return self.apply(lambda df: df.drop(_to_drop, axis=1))
+    self = self.apply(lambda df: df.drop(_to_drop, axis=1))
+
+    columns = self.columns
+
+    keep = [c for c in keep if not c in always_keep]
+    new_order = []
+    i = 0
+    for c in columns:
+        if c in always_keep:
+            new_order.append(c)
+        else:
+            new_order.append(keep[i])
+            i += 1
+
+    self = self.apply(lambda df: df[new_order])
+
+    return self

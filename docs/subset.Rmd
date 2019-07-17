@@ -1,5 +1,5 @@
 ---
-title: "Subsetting PyRanges"
+title: "Subsetting PyRanges on Chromosome, Strand and Position"
 ---
 
 # Subsetting PyRanges

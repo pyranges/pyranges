@@ -60,9 +60,26 @@ def aorta2():
 
 def ensembl_gtf():
 
-    full_path = get_example_path("ensembl.gtf")
+    full_path = get_example_path("ensembl_human.gtf.gz")
 
     return pr.read_gtf(full_path)
+
+
+def gencode_gtf():
+
+    full_path = get_example_path("gencode_human.gtf.gz")
+
+    return pr.read_gtf(full_path)
+
+
+def ucsc_bed():
+
+    full_path = get_example_path("ucsc_human.bed.gz")
+
+    names = "Chromosome Start End Feature gene_id transcript_id Strand ExonNumber transcript_name".split()
+    df = pd.read_csv(full_path, sep="\t", names=names)
+
+    return pr.PyRanges(df)
 
 
 def control_bam():

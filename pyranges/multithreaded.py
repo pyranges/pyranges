@@ -341,6 +341,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
 
     results = []
 
+
     if strand:
 
         for (c, s), df in self.items():

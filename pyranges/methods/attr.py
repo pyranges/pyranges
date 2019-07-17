@@ -8,6 +8,7 @@ def _setattr(self, column_name, column):
     # if column_name in "Chromosome Strand".split():
     #     raise Exception("The columns Chromosome and Strand can not be reset.")
 
+
     isiterable = isinstance(column, list) or isinstance(
         column, pd.Series) or isinstance(column, np.ndarray)
     isdict = isinstance(column, dict)
@@ -45,10 +46,12 @@ def _setattr(self, column_name, column):
         dfs[k] = df
 
     if column_name not in ["Chromosome", "Strand"]:
-        self.__dict__["dfs"] = dfs
-    else:
-        self.__dict__["dfs"] = pr.PyRanges(dfs).dfs
 
+        self.__dict__["dfs"] = dfs
+        # print(self)
+        # raise
+    else:
+        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df).dfs
 
 
 def _getattr(self, name):

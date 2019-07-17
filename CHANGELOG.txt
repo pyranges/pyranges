@@ -1,0 +1,230 @@
+# 0.0.46 (unreleased)
+Additions:
+  - cluster and merge takes argument by to only merge cluster within specific features
+  - gr.features.introns added. Can use by="gene" or by="transcript"
+  - new data: pr.data.gencode_gtf and pr.data.ucsc_bed
+  - can subset pyrange with boolean vector
+
+
+# 0.0.45 (14.06.2019)
+Fixes:
+  - bug in subset which removed strand
+  - bug when setting Strand with setattr
+  - bug when setting Chromosome with setattr
+
+Changes:
+  - new method to compute cluster (3x as fast)
+  - string-arg to drop not interpreted as regex
+  - drop or keep do not take drop_strand. Only unstrand can drop strand.
+
+Additions:
+  - subsetting with new col order rearranges columns
+
+# 0.0.44 (04.06.19)
+Changes:
+  - Now possible to reset Strand/Chromosome
+
+Additions:
+  - gr.drop_duplicate_positions(strand=None) # None means auto => true if stranded otherwise False
+  - add test data pr.data.chromsizes()
+  - pr.gf.tile_genome(genome_pyrange, tile_size, tile_last=False) (like GenomicRanges tileGenome)
+  - pr.gf.genome_bounds(pyrange, genome_pyrange, clip=False) (like UCSC bedclip)
+
+# 0.0.43 (29.05.19)
+Fixes:
+  - fix bug in tostring
+  - fix bug in multithreading
+
+Additions:
+  - add apply_chunks, which operates on chunks, instead of chromosome-dfs.
+
+Changes:
+  - add nb_cpu argument to all functions
+  - add number of columns and stranded/unstranded to tostring
+  - add ... as last column, when there are more columns than possible to show
+  - use , as thousands separator in tostring for number rows/cols
+
+
+# 0.0.42 (16.05.19)
+Additions:
+ - allow keyword-arguments to apply, apply_pair (see example in the docs)
+
+Changes:
+  - to_csv etc. returns the objects themselves, so they can be used in method chains
+  - methods called tile/window instead of tiles/windows
+
+
+Fixes:
+  - fix print when len(pr) < entries to print
+  - tile
+
+
+
+# 0.0.41 (14.05.19)
+Additions:
+ - add slack-flag to cluster/merge
+ - print joined positions possible
+ - add simple methods for printing without breaking the chain (p, mp, sp, tmp, rp)
+
+Removals:
+ - settings in pyranges. Added print methods instead.
+
+Improvement:
+ - print methods faster, especially for pyranges with many cols
+
+
+# 0.0.40 (13.05.19)
+Additions:
+  - pyranges_db now out on PyPI
+
+Changes:
+  - PyRanges can now have Strand column with other data than "+" or "-", but it is considered unstranded.
+  - Ensure that slack parameter is always integer.
+  - no keep_metadata-flag in windows. Metadata is always kept. Can call drop() beforehand if metadata should not be kept.
+
+Remove:
+  - remove confusing keep flag from drop method (use gr[cols_to_keep] instead)
+
+Fixes:
+  - add missing ... in pyranges tostring
+
+# 0.0.39 (09.05.19)
+Removal:
+  - remove sandbox module
+
+# 0.0.37-38 (09.05.19)
+Changes:
+  - pyranges constructor is copy-by-default
+
+# 0.0.36 (09.05.19)
+Additions:
+  - add insert method which uses overlap
+
+Changes:
+  - read_bed does not fail when strand is "."
+  - read_bed considers bed unstranded if Strand has other values than +/-
+
+
+# 0.0.35 (26.04.19)
+Changes:
+  - tssify/tesify renamed five_end/three_end
+  - five_end/three end fails when data does not contain strand
+
+Fixes:
+  - slack changed pyrange in-place
+
+
+# 0.0.34 (25.04.19)
+Fixes:
+  - assign changed pyrange in-place
+
+
+# 0.0.33 (25.04.19)
+Changes:
+  - minor bugfix
+
+
+# 0.0.32 (25.04.19)
+Changes:
+  - Use gr.to_bed for output_methods, not gr.out.bed
+  - Remove copy_df flag in constructor; using df.copy() is terser
+  - change flag extended in constructor to int64 (default False)
+
+
+# 0.0.31 (24.04.19)
+Changes:
+  - Make int32 default for Start/End
+
+Additions:
+  - PyRanges now has window-function, like bedtools makewindows
+
+Fixes:
+  - getitem sometimes returned int32-pyrange despite being given int64-pyrange
+  - doing nearest two times in a row sometimes failed due to minor suffix-bug
+
+
+# 0.0.30 (23.04.19)
+Changes:
+  - Make col first argument of assign
+
+
+# 0.0.29 (23.04.19)
+Changes:
+  - Move pyranges db to own module to remove mysql-requirement (made wheelmaking hard)
+
+Additions:
+  - add assign and subset methods on pyrange
+
+
+
+# 0.0.28 (22.04.19)
+- Only refer to and use ray in dispatcher
+
+# 0.0.27 (22.04.19)
+Fixes:
+  - raise Exception when encountering non-"+-" Strand values
+
+
+# 0.0.26 (15.04.19)
+
+Additions:
+  - pr.sandbox.Debug context manager for pipes
+
+Fixes:
+  - coverage errored with value_col
+
+# 0.0.25 (15.04.19)
+Additions:
+  - Can set columns on a PyRanges using a dict of iterables
+  - gr() takes subset and col argument, like dplyr mutate and select
+
+Removed:
+  - disallow eval string, must use lambdas, e.g.: gr(lambda df: df.Score > 0)
+
+Fixes:
+  - drop (and getitem) small fix
+  - sometimes had empty dfs in dict because of unused categoricals
+
+
+
+# 0.0.24 (15.04.19)
+Hotfix:
+  - left in dbg statements
+
+# 0.0.23 (15.04.19)
+Hotfix:
+  - unstrand() did not always remove strand info
+
+# 0.0.22 (14.04.19)
+Additions:
+  - pr.PyRanges() returns empty PyRange # before you needed pr.PyRanges({})
+  - pyranges are now callable. Examples: gr("df.Score > 0") and gr("df.A.astype(str) + mysuffix")
+  - can subset PyRanges with a dict of boolean vectors
+  - pr.data.exons(), pr.data.cpg()
+  - gr.unstrand() removes strand information from a PyRanges
+  - throw exception if trying to drop Strand from df without setting drop_strand=True
+  - adding a Strand column to the PyRanges makes it stranded
+
+Changes:
+  - write dtype as category, not int8/int16/...
+
+Fixes:
+  - remove empty dfs in the dict given to the PyRanges constructor
+
+Removed:
+  - gr.data.epigenome_roadmap()
+
+
+# 0.0.21 (14.04.19)
+Additions:
+  - gr.cluster(): assign ID to each cluster found by merge
+  - gr.columns: return the columns in the pyranges
+  - gr.drop: drop columns based on regex or list
+  - gr[["Score", "Name"]]: select subset of columns
+Fixes:
+  - gr.stranded errored if chromosomes were ints
+  - gr.join errored if other had duplicate indexes
+
+# 0.0.20 (14.04.19)
+- changelog introduced
+- plenty of fixes for tiny bugs

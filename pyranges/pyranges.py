@@ -239,39 +239,77 @@ class PyRanges():
 
         return PyRanges(dfs)
 
-    def cluster(self, strand=False, **kwargs):
+    def cluster(self, strand=None, by=None, **kwargs):
+
+        if strand is None:
+            strand = self.stranded
 
         kwargs = fill_kwargs(kwargs)
 
-        # TODO: implement in Cython. Will lead to 2X speedup.
 
-        mr = self.merge(strand=strand, slack=kwargs.get("slack", 0), nb_cpu=kwargs.get("nb_cpu", 1))
-        # from pydbg import dbg
-        # dbg(mr)
+        kwargs["sparse"] = {"self": False}
 
-        clusters = list(range(1, len(mr) + 1))
-        # dbg(clusters)
-        mr.Cluster = clusters
-        # dbg(mr)
-        j = self.join(mr, how="first", strandedness="same" if strand else None, nb_cpu=kwargs.get("nb_cpu", 1))
-        # dbg(j.df)
-        j = j.drop(drop="(Start|End|Strand)_b")
-        # dbg(j.df)
+        _stranded = not strand and self.stranded
+        if _stranded:
+            self.Strand2 = self.Strand
+            self = self.unstrand()
 
-        return j
+        if not by:
+            from pyranges.methods.cluster import _cluster
+            df = pyrange_apply_single(_cluster, self, strand, kwargs)
+        else:
+            from pyranges.methods.cluster import _cluster_by
+            kwargs["by"] = by
+            df = pyrange_apply_single(_cluster_by, self, strand, kwargs)
+
+
+        gr = PyRanges(df)
+
+        # each cluster got same ids (0 to len). Need to make unique!
+        new_dfs = {}
+        first = True
+        max_id = 0
+        for k, v in gr.items():
+            if first:
+                max_id = v.Cluster.max()
+                new_dfs[k] = v
+                first = False
+                continue
+
+            v.loc[:, "Cluster"] += max_id
+            max_id = v.Cluster.max()
+            new_dfs[k] = v
+
+        if _stranded:
+            new_dfs = {k: d.rename(columns={"Strand2": "Strand"}) for k, d in new_dfs.items()}
+
+        self = PyRanges(new_dfs)
+
+        return self
+
 
     def merge(self, strand=None, **kwargs):
 
-        from pyranges.methods.merge import _merge
+        if strand is None:
+            strand = self.stranded
 
-        kwargs["sparse"] = {"self": True}
-        df = pyrange_apply_single(_merge, self, strand, kwargs)
+        if not ("by" in kwargs):
+            kwargs["sparse"] = {"self": True}
+            from pyranges.methods.merge import _merge
+            df = pyrange_apply_single(_merge, self, strand, kwargs)
+        else:
+            kwargs["sparse"] = {"self": False}
+            from pyranges.methods.merge import _merge_by
+            df = pyrange_apply_single(_merge_by, self, strand, kwargs)
 
         return PyRanges(df)
 
     def window(self, window_size, strand=None, **kwargs):
 
         from pyranges.methods.windows import _windows
+
+        if strand is None:
+            strand = self.stranded
 
         kwargs["sparse"] = {"self": False}
         kwargs["window_size"] = window_size
@@ -284,6 +322,9 @@ class PyRanges():
     def tile(self, tile_size, strand=None, **kwargs):
 
         from pyranges.methods.windows import _tiles
+
+        if strand is None:
+            strand = self.stranded
 
         kwargs["sparse"] = {"self": False}
         kwargs["tile_size"] = tile_size
@@ -437,16 +478,10 @@ class PyRanges():
 
         If no arguments are given, all the columns except Chromosome, Start, End and Strand are
         dropped. To drop Strand, the drop_strand argument needs to be given.
-
-        Args:
-            drop (None, iterable or str): An iterable of columns to drop or a string containing a
-            substring/regex of the columns to drop.
-            keep (None, iterable or str): An iterable of columns to drop or a string containing a
-            substring/regex of the columns not to drop.
-            drop_strand (bool): Whether or not to drop the Strand column
         """
+
         from pyranges.methods.drop import _drop
-        return _drop(self, drop, drop_strand)
+        return _drop(self, drop)
 
     @property
     def stranded(self):
@@ -492,7 +527,7 @@ class PyRanges():
 
         gr = pr.concat([self["+"], self["-"]])
 
-        gr = gr.drop("Strand", drop_strand=True)
+        gr = gr.apply(lambda df: df.drop("Strand", axis=1))
 
         return gr
 

@@ -136,7 +136,6 @@ def get_triple(self, val):
 
 
 def get_booldict(self, df):
-
     _overlapping = set(self.dfs.keys()).intersection(set(df.keys()))
 
     new_dfs = {}

@@ -3,10 +3,17 @@ Todo:
 - docs: write about pyranges-internals
 - if pyranges has Strand column, but is unstranded, explain which symbol is not "+/-"
 - create by argument to cluster-method
+- create pyranges-compiled package. sorted_nearest is too narrow a name
+- add chain-flag to print/to_-methods, so that they do not return the object by default
+- to_gtf is slow (which is not strange; gtf is untidy data). Find bottlenecks and improve speed
+- implement check after apply to see that strand/chromosome are correct per df
+- test to_gtf with apply_chunks
+
+Bugs:
+- pr.data.ensembl_gtf().cluster(by="exon_id") not displaying correctly
 
 Test:
 - (hypothesis): gr.coverage() == gr.coverage().to_ranges().coverage()
-- test cluster_by_id by splitting and ensuring the result is the same
 
 General:
 - add missing info to pyranges_db.ucsc.genes()
@@ -17,6 +24,7 @@ Multicore:
 
 PyRanges-db:
 - fetch GWAS-catalogue
+  (https://www.ebi.ac.uk/gwas/api/search/downloads/full and https://www.ebi.ac.uk/gwas/api/search/downloads/alternative)
 
 GenomicFeatures:
 - (FIX): avoid .df call in tes/tss, genomicfeatures
