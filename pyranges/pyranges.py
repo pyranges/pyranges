@@ -439,9 +439,11 @@ class PyRanges():
         return PyRanges(
             pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
-    def sort(self, columns=("Start", "End"), **kwargs):
+    def sort(self, by=None, **kwargs):
         from pyranges.methods.sort import _sort
         kwargs["sparse"] = {"self": False}
+        if by:
+            kwargs["by"] = by
         kwargs = fill_kwargs(kwargs)
         return PyRanges(
             pyrange_apply_single(_sort, self, self.stranded, kwargs))

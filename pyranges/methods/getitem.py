@@ -23,7 +23,7 @@ def _getitem(self, val):
         assert len(val) == len(self), "Boolean indexer must be same length as pyrange!"
         grpby = "Chromosome" if not self.stranded else ["Chromosome", "Strand"]
         to_grpby = ["Chromosome"] if not self.stranded else [self.Chromosome, self.Strand]
-        d = {k: v.iloc[:, -1] for k, v in pd.concat(to_grpby + [val], axis=1).groupby(grpby)}
+        d = {k: v.iloc[:, -1] for k, v in pd.concat(to_grpby + [pd.Series(val)], axis=1).groupby(grpby)}
         dfs = get_booldict(self, d)
     else:
         raise Exception("Not valid subsetter: {}".format(str(val)))

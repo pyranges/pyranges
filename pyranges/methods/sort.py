@@ -1,6 +1,10 @@
 def _sort(df, kwargs):
 
-    return sort_one_by_one(df, "Start", "End")
+    if "by" in kwargs:
+        by = kwargs["by"]
+        return df.sort_values(by)
+    else:
+        return sort_one_by_one(df, "Start", "End")
 
 
 def sort_one_by_one(d, col1, col2):

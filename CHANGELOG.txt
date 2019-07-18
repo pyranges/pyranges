@@ -4,6 +4,7 @@ Additions:
   - gr.features.introns added. Can use by="gene" or by="transcript"
   - new data: pr.data.gencode_gtf and pr.data.ucsc_bed
   - can subset pyrange with boolean vector
+  - sort also takes argument by (sort without arg sorts on start/end)
 
 
 # 0.0.45 (14.06.2019)
