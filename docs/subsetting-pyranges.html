@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-06-04">
+<meta name="date" content="2019-07-19">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,6 +127,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -182,7 +183,26 @@ gr <span class="op">=</span> pr.data.chipseq()
 ## | chrY         | 7405376   | 7405401   | U0         | -            |
 ## +--------------+-----------+-----------+------------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.</code></pre>
-<p>By using strings, tuples and ranges, you can subset the PyRanges based on position:</p>
+<p>By subsetting using a boolean vector, you can get specific rows:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
+cpg <span class="op">=</span> pr.data.cpg()
+<span class="bu">print</span>(cpg[cpg.CpG <span class="op">&gt;</span> <span class="dv">50</span>])</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+
+## | Chromosome   | Start     | End       | CpG       |
+## | (category)   | (int32)   | (int32)   | (int64)   |
+## |--------------+-----------+-----------+-----------|
+## | chrX         | 64181     | 64793     | 62        |
+## | chrX         | 69133     | 70029     | 100       |
+## | chrX         | 148685    | 149461    | 85        |
+## | chrX         | 166504    | 167721    | 96        |
+## | ...          | ...       | ...       | ...       |
+## | chrY         | 21154603  | 21155040  | 61        |
+## | chrY         | 21238448  | 21240005  | 133       |
+## | chrY         | 26351343  | 26352316  | 76        |
+## | chrY         | 27610115  | 27611088  | 76        |
+## +--------------+-----------+-----------+-----------+
+## Unstranded PyRanges object has 530 rows and 4 columns from 2 chromosomes.</code></pre>
+<p>By using strings, tuples and slices, you can subset the PyRanges based on position:</p>
 <p>Chromosome only</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+

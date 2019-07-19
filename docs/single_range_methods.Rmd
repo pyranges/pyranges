@@ -10,7 +10,7 @@ f1 = pr.data.f1()
 print(f1.merge())
 ```
 
-Cluster finds which intervals overlap, but give each interval a cluster ID instead of merging them:
+Cluster finds which intervals overlap, but gives each interval a cluster ID instead of merging them:
 
 ```{python tidy=FALSE}
 import pyranges as pr
@@ -21,6 +21,16 @@ print(f1.cluster(slack=2, strand=True))
 ```
 
 Both cluster and merge take the argument slack, so that you can merge features which are not directly overlapping.
+
+To cluster or merge only those rows which have the same values for a certain column, you can use the argument by to cluster and merge.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.ensembl_gtf()
+print(gr)
+print(gr.cluster(by="gene_id"))
+```
+
 
 `five_end` finds the starts of the regions (taking direction of transcription
 into account).

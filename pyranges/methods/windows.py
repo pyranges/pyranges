@@ -31,3 +31,5 @@ def _tiles(df, kwargs):
     df = df.reindex(idxs)
     df.loc[:, "Start"] = starts
     df.loc[:, "End"] = ends
+
+    return df

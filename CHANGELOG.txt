@@ -1,4 +1,7 @@
-# 0.0.46 (unreleased)
+# 0.0.47 (19.07.2019)
+hotfixes
+
+# 0.0.46 (19.07.2019)
 Additions:
   - cluster and merge takes argument by to only merge cluster within specific features
   - gr.features.introns added. Can use by="gene" or by="transcript"

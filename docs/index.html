@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-06-04">
+<meta name="date" content="2019-07-19">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,6 +127,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -147,7 +148,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">PyRanges documentation</h1>
 <h4 class="author"><em>Endre Bakken Stovner</em></h4>
-<h4 class="date"><em>2019-06-04</em></h4>
+<h4 class="date"><em>2019-07-19</em></h4>
 </div>
 <div id="introduction-to-pyranges" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction to PyRanges</h1>
@@ -232,14 +233,15 @@ gr2 <span class="op">=</span> PyRanges(df2)
 ## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</code></pre>
 <p>There are also convenience methods for single PyRanges:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.merge())</code></pre></div>
-<pre><code>## +--------------+------------+------------+
-## | Chromosome   |      Start |        End |
-## | (object)     |   (object) |   (object) |
-## |--------------+------------+------------|
-## | chr1         |          4 |         11 |
-## | chr2         |          0 |         14 |
-## +--------------+------------+------------+
-## Unstranded PyRanges object has 2 rows and 3 columns from 2 chromosomes.</code></pre>
+<pre><code>## +--------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |
+## |--------------+------------+------------+------------|
+## | chr1         |          4 |          7 | +          |
+## | chr1         |          6 |         11 | -          |
+## | chr2         |          0 |         14 | +          |
+## +--------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.</code></pre>
 <p>The underlying dataframe can always be accessed:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.df)</code></pre></div>
 <pre><code>##   Chromosome  Start  End  Score Strand

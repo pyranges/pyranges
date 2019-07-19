@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-06-04">
+<meta name="date" content="2019-07-19">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +33,7 @@
   
   
 <link rel="prev" href="genomicfeatures-methods-using-genomic-context.html">
-
+<link rel="next" href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -127,6 +127,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -146,7 +147,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="fetching-gene-tracks-as-pyranges" class="section level1">
 <h1><span class="header-section-number">28</span> Fetching gene tracks as PyRanges</h1>
-<p>PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges_db add-on package. Do <code>pip install pyranges_db</code>.</p>
+<p>PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges_db add-on package. It can be installed with <code>pip install pyranges_db</code>.</p>
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and Ensembl also has the method chromosome_sizes.</p>
 <p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few hundred rows of data.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db
@@ -177,37 +178,29 @@ genomes <span class="op">=</span> pr_db.ucsc.genomes()
 ## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)
 <span class="bu">print</span>(genes)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+------------+----------------+--------------+
-## | Chromosome   | Start     | End       | Strand       | Feature    | TranscriptID   | ExonNumber   |
-## | (category)   | (int32)   | (int32)   | (category)   | (object)   | (category)     | (object)     |
-## |--------------+-----------+-----------+--------------+------------+----------------+--------------|
-## | chr1         | 11873     | 12227     | +            | exon       | NR_046018      | 1            |
-## | chr1         | 11873     | 12227     | +            | exon       | NR_046018      | 2            |
-## | chr1         | 11873     | 12227     | +            | exon       | NR_046018      | 3            |
-## | chr1         | 11873     | 14409     | +            | transcript | NR_046018      | nan          |
-## | ...          | ...       | ...       | ...          | ...        | ...            | ...          |
-## | chrY         | 964348    | 964530    | +            | exon       | NM_006140      | 11           |
-## | chrY         | 964348    | 964530    | +            | exon       | NM_006140      | 12           |
-## | chrY         | 964348    | 964530    | +            | exon       | NM_006140      | 13           |
-## | chrY         | 1268799   | 1309935   | +            | transcript | NM_006140      | nan          |
-## +--------------+-----------+-----------+--------------+------------+----------------+--------------+
-## Stranded PyRanges object has 5,105 rows and 7 columns from 46 chromosomes.</code></pre>
-
+<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+--------------+-------------------+
+## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | ExonNumber   | transcript_name   |
+## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)    | (category)        |
+## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+--------------+-------------------|
+## | chr1         | 12716114  | 12728759  | gene         | AADACL3      | nan             | +            | nan          | nan               |
+## | chr1         | 6785323   | 7769706   | gene         | CAMTA1       | nan             | +            | nan          | nan               |
+## | chr1         | 158179946 | 158184896 | gene         | CD1D         | nan             | +            | nan          | nan               |
+## | chr1         | 10430746  | 10442815  | gene         | CENPS        | nan             | +            | nan          | nan               |
+## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...          | ...               |
+## | chrX         | 136875470 | 136875585 | exon         | RBMX         | 307.0           | -            | 4.0          | NM_001164803      |
+## | chrX         | 136879016 | 136879123 | exon         | RBMX         | 307.0           | -            | 5.0          | NM_001164803      |
+## | chrX         | 136879318 | 136879453 | exon         | RBMX         | 307.0           | -            | 6.0          | NM_001164803      |
+## | chrX         | 136880596 | 136880725 | exon         | RBMX         | 307.0           | -            | 7.0          | NM_001164803      |
+## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+--------------+-------------------+
+## Stranded PyRanges object has 6,072 rows and 9 columns from 51 chromosomes.</code></pre>
 </div>
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="genomicfeatures-methods-using-genomic-context.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="genomicfeatures-methods-using-genomic-context.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

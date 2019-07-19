@@ -1,5 +1,5 @@
 ---
-title: "Subsetting PyRanges on Chromosome, Strand and Position"
+title: "Subsetting PyRanges"
 ---
 
 # Subsetting PyRanges
@@ -17,7 +17,18 @@ print(gr)
 print(gr[["Name"]])
 ```
 
-By using strings, tuples and ranges, you can subset the PyRanges based on position:
+By subsetting using a boolean vector, you can get specific rows:
+
+```{python}
+
+import pyranges as pr
+
+cpg = pr.data.cpg()
+print(cpg[cpg.CpG > 50])
+```
+
+
+By using strings, tuples and slices, you can subset the PyRanges based on position:
 
 Chromosome only
 
