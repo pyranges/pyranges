@@ -16,9 +16,6 @@ def _windows(df, kwargs):
     df.loc[:, "Start"] = starts
     df.loc[:, "End"] = ends
 
-    if strand:
-        df.insert(3, "Strand", strand)
-
     return df
 
 
@@ -34,8 +31,3 @@ def _tiles(df, kwargs):
     df = df.reindex(idxs)
     df.loc[:, "Start"] = starts
     df.loc[:, "End"] = ends
-
-    if strand:
-        df.insert(3, "Strand", strand)
-
-    return df

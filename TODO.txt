@@ -14,9 +14,9 @@ Bugs:
 
 Test:
 - (hypothesis): gr.coverage() == gr.coverage().to_ranges().coverage()
+- test subsetting with bool vectors
+- test concatting grs with different categories
 
-General:
-- add missing info to pyranges_db.ucsc.genes()
 
 Multicore:
 - test multicpu functionality locally

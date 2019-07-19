@@ -13,18 +13,18 @@ import numpy as np
 import pandas as pd
 
 from tests.helpers import assert_df_equal
-from tests.hypothesis_helper import dfs_min, df_data, selector, dfs_min_with_id
+from tests.hypothesis_helper import dfs_min, df_data, selector, dfs_min_with_id, max_examples, deadline
 
 import pyranges as pr
 
 from os import environ
 
-if environ.get("TRAVIS"):
-    max_examples = 100
-    deadline = None
-else:
-    max_examples = 1000
-    deadline = None
+# if environ.get("TRAVIS"):
+#     max_examples = 100
+#     deadline = None
+# else:
+#     max_examples = 1000
+#     deadline = None
 
 merge_command = "bedtools merge -o first -c 6 {} -i <(sort -k1,1 -k2,2n {})"
 
@@ -182,10 +182,12 @@ def test_cluster_by(gr, strand):
         grs.append(pr.PyRanges(gdf))
 
 
-    clusters = [gr.cluster() for gr in grs]
+    clusters = [gr.cluster(strand=strand) for gr in grs]
     i = 1
     new_clusters = []
     for c in clusters:
+        print("c")
+        print(c)
         c.Cluster = i
         i += 1
         new_clusters.append(c)

@@ -246,11 +246,11 @@ class PyRanges():
 
         kwargs = fill_kwargs(kwargs)
 
-
         kwargs["sparse"] = {"self": False}
 
-        _stranded = not strand and self.stranded
-        if _stranded:
+        _stranded = self.stranded
+        if not strand and _stranded:
+            # print(" WOOO " * 100)
             self.Strand2 = self.Strand
             self = self.unstrand()
 
@@ -261,7 +261,6 @@ class PyRanges():
             from pyranges.methods.cluster import _cluster_by
             kwargs["by"] = by
             df = pyrange_apply_single(_cluster_by, self, strand, kwargs)
-
 
         gr = PyRanges(df)
 
@@ -280,8 +279,11 @@ class PyRanges():
             max_id = v.Cluster.max()
             new_dfs[k] = v
 
-        if _stranded:
+        if not strand and _stranded:
+            # print(" wooo " * 100)
+            # print(new_dfs)
             new_dfs = {k: d.rename(columns={"Strand2": "Strand"}) for k, d in new_dfs.items()}
+            # print(new_dfs)
 
         self = PyRanges(new_dfs)
 

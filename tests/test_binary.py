@@ -13,15 +13,8 @@ import numpy as np
 
 from tests.helpers import assert_df_equal
 from tests.hypothesis_helper import dfs_min2, dfs_min
+from tests.hypothesis_helper import max_examples, deadline
 
-from os import environ
-
-if environ.get("TRAVIS"):
-    max_examples = 100
-    deadline = None
-else:
-    max_examples = 100
-    deadline = None
 
 strandedness = [False, "same", "opposite"]
 no_opposite = [False, "same"]

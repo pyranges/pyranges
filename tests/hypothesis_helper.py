@@ -1,10 +1,23 @@
 from hypothesis.extra.pandas import data_frames, column, indexes
+from hypothesis.extra.numpy import arrays
 import hypothesis.strategies as st
 
+import pyranges as pr
 from pyranges import PyRanges
 
 import pandas as pd
 import numpy as np
+
+from os import environ
+
+if environ.get("TRAVIS"):
+    max_examples = 100
+    slow_max_examples = 10
+    deadline = None
+else:
+    max_examples = 1000
+    slow_max_examples = 100
+    deadline = None
 
 lengths = st.integers(min_value=1, max_value=int(1e7))
 small_lengths = st.integers(min_value=1, max_value=int(1e4))
@@ -15,6 +28,8 @@ names = st.text("abcdefghijklmnopqrstuvxyz", min_size=1)
 scores = st.integers(min_value=0, max_value=256)
 
 datatype = st.sampled_from([pd.Series, np.array, list])
+
+feature_data = st.sampled_from(["ensembl_gtf", "gencode_gtf", "ucsc_bed"])
 
 chromosomes = st.sampled_from(
     ["chr{}".format(str(e)) for e in list(range(1, 23)) + "X Y M".split()])
@@ -244,6 +259,26 @@ def dfs_min_single_chromosome(draw):
     df.insert(4, "Score", 0)
 
     return df
+
+
+@st.composite
+def genomicfeature(draw):
+
+    dataset_name = draw(feature_data)
+    print("dataset name " * 5, dataset_name)
+    dataset = getattr(pr.data, dataset_name)()
+    dataset = dataset[dataset.Feature.isin(["gene", "transcript", "exon"])]
+
+    # subsetter = draw(arrays(np.bool, shape=len(dataset)))
+    length = draw(st.integers())
+    gene_ids = list(set(dataset.gene_id))
+    genes = draw(st.lists(st.sampled_from(gene_ids), unique="True", min_size=1))
+    dataset = dataset[dataset.gene_id.isin(genes)]
+
+    return dataset
+
+
+
 
 
 @st.composite

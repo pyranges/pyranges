@@ -163,11 +163,9 @@ def _introns2(df, exons, kwargs):
     genes.columns = ["Start", "End", "gene_id"]
 
     intersection = pd.Series(np.intersect1d(exons["gene_id"], genes["gene_id"]))
-    exons = exons[exons["gene_id"].isin(intersection)].reset_index(drop=True)
-    genes = genes[genes["gene_id"].isin(intersection)].reset_index(drop=True)
+    exons = exons[exons["gene_id"].isin(intersection)].reset_index(drop=True).sort_values(["gene_id", "Start"])
+    genes = genes[genes["gene_id"].isin(intersection)].reset_index(drop=True).sort_values(["gene_id", "Start"])
     df = df[df[id_column].isin(intersection)].reset_index(drop=True)#.sort_values(id_column)
-    #exons = exons.sort_values([id_column, "Start"])
-    #  genes = genes.sort_values([id_column, "Start"])
 
     assert len(genes) == len(genes.drop_duplicates("gene_id")), "The {id_column}s need to be unique to compute the introns.".format(id_column=id_column)
 
@@ -181,6 +179,8 @@ def _introns2(df, exons, kwargs):
     else:
         exon_ids = exon_ids.cumsum()
 
+    # print(gene_ids)
+    # print(exon_ids.drop_duplicates())
     assert (gene_ids == exon_ids.drop_duplicates().values).all()
     starts, ends, ids = find_introns(genes.Start.values, genes.End.values, gene_ids.values,
                                      exons.Start.values, exons.End.values, exon_ids.values)
@@ -196,18 +196,15 @@ def _introns2(df, exons, kwargs):
     vc = pd.concat([vc, genes_without_introns]).sort_values("gene_id")
 
     original_ids = np.repeat(vc.gene_id, vc.counts).to_frame()
-    # print(original_ids) #[original_ids.gene_id == "ENSG00000127054.20"])
-    # print(df)
-    # print(df.columns)
     original_ids = original_ids.merge(df[["__temp__", id_column]], right_on="__temp__", left_on="gene_id", suffixes=("_drop", ""))
     original_ids = original_ids.drop(["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1).sort_values("gene_id")
-    # print(original_ids) #[original_ids.gene_id == "ENSG00000127054.20"])
     introns.loc[:, "gene_id"] = original_ids[id_column].values
-    # print(introns)
-    # print(df)
     introns = introns.merge(df, left_on="gene_id", right_on=id_column, suffixes=("", "_dropme"))
     introns = introns.drop([c for c in introns.columns if c.endswith("_dropme")], axis=1)
-    # introns.loc[:, "Feature"] = "intron"
+
+    if introns.Feature.dtype.name == "category" and not "intron" in introns.Feature.cat.categories:
+        introns.Feature.cat.add_categories(["intron"], inplace=True)
+    introns.loc[:, "Feature"] = "intron"
 
     introns = introns[original_order]
 
@@ -217,7 +214,6 @@ def _introns2(df, exons, kwargs):
 class GenomicFeaturesMethods():
 
     pr = None
-
 
     def __init__(self, pr):
 
@@ -265,6 +261,7 @@ class GenomicFeaturesMethods():
 
 
     def introns(self, by="gene"):
+
         kwargs = {"by": by}
         kwargs = pr.pyranges.fill_kwargs(kwargs)
 
@@ -272,6 +269,9 @@ class GenomicFeaturesMethods():
 
         id_column = by_to_id[by]
         gr = self.pr.sort(id_column)
+
+        if not len(gr):
+            return pr.PyRanges()
 
         exons = gr.subset(lambda df: df.Feature == "exon")
         exons = exons.merge(by=id_column)
