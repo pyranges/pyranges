@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-07-19">
+<meta name="date" content="2019-07-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,7 +127,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -148,6 +147,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="subsetting-pyranges" class="section level1">
 <h1><span class="header-section-number">4</span> Subsetting PyRanges</h1>
 <p>There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.</p>
+<p>For data exploration, the functions head, tail and sample (random choice without replacment) are convenient. They take an argument n to denote how many entries you want.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
+gr <span class="op">=</span> pr.data.chipseq()
+<span class="bu">print</span>(gr.sample())</code></pre></div>
+<pre><code>## +--------------+------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
+## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
+## |--------------+------------+------------+------------+------------+------------|
+## | chr2         |  206305272 |  206305297 | U0         |          0 | -          |
+## | chr3         |  134708119 |  134708144 | U0         |          0 | +          |
+## | chr4         |   78968024 |   78968049 | U0         |          0 | +          |
+## | chr4         |  184993181 |  184993206 | U0         |          0 | -          |
+## | chr6         |  124621115 |  124621140 | U0         |          0 | +          |
+## | chr12        |  106672880 |  106672905 | U0         |          0 | +          |
+## | chr13        |   25243746 |   25243771 | U0         |          0 | +          |
+## | chr13        |   44290861 |   44290886 | U0         |          0 | -          |
+## +--------------+------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 8 rows and 6 columns from 6 chromosomes.</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.tail(<span class="dv">4</span>))</code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrY         |  15224235 |  15224260 | U0         |         0 | -            |
+## | chrY         |  13517892 |  13517917 | U0         |         0 | -            |
+## | chrY         |   8010951 |   8010976 | U0         |         0 | -            |
+## | chrY         |   7405376 |   7405401 | U0         |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.</code></pre>
 <p>By subsetting with a list you can select one or more columns:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 gr <span class="op">=</span> pr.data.chipseq()
@@ -279,6 +307,7 @@ cpg <span class="op">=</span> pr.data.cpg()
 ## | chr4         |      45413 |      45438 | U0         |          0 | -          |
 ## +--------------+------------+------------+------------+------------+------------+
 ## Stranded PyRanges object has 5 rows and 6 columns from 3 chromosomes.</code></pre>
+<p>Note that while the slice-operator is fast and returns seemingly immediately, it is inefficient; it builds the interval overlap datastructure anew every query. So if you have multiple queries you should build another PyRanges and do an intersect-operation.</p>
 <p>Strand</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>])</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+

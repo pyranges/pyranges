@@ -2,20 +2,22 @@ import re
 from collections.abc import Iterable
 
 
-def _drop(self, drop=None):
+def _drop(self, drop=None, like=None):
     columns = self.columns
-    if "Strand" in columns:
-        self = self.unstrand()
-        columns = [c for c in columns if c != "Strand"]
 
-    if self.stranded:
-        always_keep = "Chromosome Start End Strand".split()
-    else:
+    want_to_drop_strand = (isinstance(drop, str) and drop == "Strand" or (isinstance(drop, list) and "Strand" in drop))
+    if not self.stranded or want_to_drop_strand:
         always_keep = "Chromosome Start End".split()
+    else:
+        always_keep = "Chromosome Start End Strand".split()
 
     _to_drop = []
 
-    if not drop:
+    if like:
+        import re
+        r = re.compile(like)
+        _to_drop = [c for c in self.columns if r.search(c) is not None]
+    elif not drop:
         _to_drop = set(columns) - set(always_keep)
     elif isinstance(drop, str):
         _to_drop = [drop]

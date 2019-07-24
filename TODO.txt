@@ -1,11 +1,10 @@
 Todo:
+- write docs for coverage
+- rename coverage to_rle; much more descriptive
 - divide docs into parts: Rle/GenomicFeatures/stats
 - docs: write about pyranges-internals
-- if pyranges has Strand column, but is unstranded, explain which symbol is not "+/-"
-- create by argument to cluster-method
 - create pyranges-compiled package. sorted_nearest is too narrow a name
 - add chain-flag to print/to_-methods, so that they do not return the object by default
-- to_gtf is slow (which is not strange; gtf is untidy data). Find bottlenecks and improve speed
 - implement check after apply to see that strand/chromosome are correct per df
 - test to_gtf with apply_chunks
 
@@ -37,6 +36,5 @@ Possibly:
 - test http://code.databio.org/AIList, see if it is faster than my NCLS-implementation
 
 Think:
-- have pyranges-compiled package? No point in sorted-nearest
-- what should subset ["chr1", "."] in an unstranded PyRanges with a strand-column return? What about ["."]?
+- what should subset ["chr1", "."] in an unstranded PyRanges with a strand-column containing "." return? What about ["."]?
 - have .strand accessor like .chromosomes? What if it has a Strand-column, but is not stranded?

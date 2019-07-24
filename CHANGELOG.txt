@@ -1,3 +1,20 @@
+# 0.0.48 (unreleased)
+Additions:
+  - head(n=8)
+  - tail(n=8)
+  - sample(n=8)
+  - set_columns(new_names) to set new column names
+  - argument like to drop, which takes string describing regex (gr.drop(like="_left|_right"))
+  - add count (number of intervals) to merge and merge_by
+
+Fixes:
+  - 5X faster boolean indexing
+  - fix some bugs in features.introns when data was missing
+
+Changes:
+  - coverage renamed to_rle
+  - if drop used without argument, not dropping Strand by default
+
 # 0.0.47 (19.07.2019)
 hotfixes
 
@@ -8,7 +25,6 @@ Additions:
   - new data: pr.data.gencode_gtf and pr.data.ucsc_bed
   - can subset pyrange with boolean vector
   - sort also takes argument by (sort without arg sorts on start/end)
-
 
 # 0.0.45 (14.06.2019)
 Fixes:

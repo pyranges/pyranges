@@ -26,7 +26,7 @@ from os import environ
 #     max_examples = 1000
 #     deadline = None
 
-merge_command = "bedtools merge -o first -c 6 {} -i <(sort -k1,1 -k2,2n {})"
+merge_command = "bedtools merge -o first,count -c 6,1 {} -i <(sort -k1,1 -k2,2n {})"
 
 
 @pytest.mark.bedtools
@@ -53,26 +53,28 @@ def test_merge(gr, strand):
         result = subprocess.check_output(  # nosec
             cmd, shell=True, executable="/bin/bash").decode()  # nosec
 
+        print("result" * 10)
+        print(result)
+
         if not strand:
+            print("if not "  * 10)
             bedtools_df = pd.read_csv(
                 StringIO(result),
                 sep="\t",
                 header=None,
-                squeeze=True,
-                usecols=[0, 1, 2],
-                names="Chromosome Start End".split(),
+                usecols=[0, 1, 2, 4],
+                names="Chromosome Start End Count".split(),
                 dtype={"Chromosome": "category"})
         else:
             bedtools_df = pd.read_csv(
                 StringIO(result),
                 sep="\t",
                 header=None,
-                squeeze=True,
-                names="Chromosome Start End Strand".split(),
+                names="Chromosome Start End Strand Count".split(),
                 dtype={"Chromosome": "category"})
 
     print("bedtools_df\n", bedtools_df)
-    result = gr.merge(strand=strand)
+    result = gr.merge(strand=strand, count=True)
     print("result\n", result.df)
 
     if not bedtools_df.empty:

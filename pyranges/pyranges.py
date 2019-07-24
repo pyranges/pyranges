@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+
 from natsort import natsorted
 
 import pyranges as pr
@@ -229,6 +231,39 @@ class PyRanges():
 
         return PyRanges(dfs)
 
+    def count_overlaps(self, other, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+
+        from pyranges.methods.coverage import _number_overlapping
+        counts = pyrange_apply(_number_overlapping, self, other, **kwargs)
+
+        return pr.PyRanges(counts)
+
+    def coverage(self, other, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+
+        counts = self.count_overlaps(other, keep_nonoverlapping=True, **kwargs)
+
+        strand = True if kwargs["strandedness"] else False
+        other = other.merge(count=True, strand=strand)
+
+        from pyranges.methods.coverage import _coverage
+
+        # print(counts)
+        counts = pr.PyRanges(pyrange_apply(_coverage, counts, other, **kwargs))
+        # print("counts" * 100)
+        # print(counts)
+
+        return counts
+
+
+
+
+
+
+
     def insert(self, other, col, **kwargs):
 
         from pyranges.methods.insert import _insert
@@ -290,7 +325,7 @@ class PyRanges():
         return self
 
 
-    def merge(self, strand=None, **kwargs):
+    def merge(self, strand=None, count=False, **kwargs):
 
         if strand is None:
             strand = self.stranded
@@ -303,6 +338,9 @@ class PyRanges():
             kwargs["sparse"] = {"self": False}
             from pyranges.methods.merge import _merge_by
             df = pyrange_apply_single(_merge_by, self, strand, kwargs)
+
+        if not count:
+            df = {k: v.drop("Count", axis=1) for k, v in df.items()}
 
         return PyRanges(df)
 
@@ -377,11 +415,11 @@ class PyRanges():
         return new_self
 
 
-    def coverage(self, value_col=None, strand=False, rpm=False, nb_cpu=1):
+    def to_rle(self, value_col=None, strand=False, rpm=False, nb_cpu=1):
 
-        from pyranges.methods.coverage import _coverage
+        from pyranges.methods.to_rle import _to_rle
 
-        return _coverage(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
+        return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
     def apply(self, f, strand=False, as_pyranges=True, **kwargs):
 
@@ -477,7 +515,19 @@ class PyRanges():
         else:
             return []
 
-    def drop(self, drop=None, keep=None, drop_strand=False):
+    def set_columns(self, value):
+        assert len(value) == len(self.columns), "New and old columns must be same length"
+
+        def _columns(df):
+            df.columns = value
+            return df
+
+        return pr.PyRanges(pyrange_apply_single(_columns, self, strand=None, kwargs={"sparse": {"self": False}}))
+
+
+
+
+    def drop(self, drop=None, like=None):
         """Drop column(s) from the PyRanges object.
 
         If no arguments are given, all the columns except Chromosome, Start, End and Strand are
@@ -485,7 +535,7 @@ class PyRanges():
         """
 
         from pyranges.methods.drop import _drop
-        return _drop(self, drop)
+        return _drop(self, drop, like)
 
     @property
     def stranded(self):
@@ -604,32 +654,67 @@ class PyRanges():
 
         return self
 
+    def head(self, n=8):
+        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter[:n] = True
+        return self[subsetter]
+
+    def tail(self, n=8):
+        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter[(len(self) -  n):] = True
+        return self[subsetter]
+
+    def sample(self, n=8):
+        sample = np.random.choice(len(self), size=n, replace=False)
+        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter[sample] = True
+        return self[subsetter]
 
     def p(self, n=8):
 
         print(tostring(self, n=n))
 
-        return self
-
     def mp(self, n=8):
 
         print(tostring(self, n=n, merge_position=True))
-
-        return self
 
     def sp(self, n=30):
 
         print(sort_tostring(self, n=n))
 
+    def msp(self, n=30):
+
+        print(sort_tostring(self, n=n, merge_position=True))
+
+    def rp(self):
+
+        print(self.dfs)
+
+    def pc(self, n=8):
+
+        print(tostring(self, n=n))
+
         return self
 
-    def msp(self, n=30):
+    def mpc(self, n=8):
+
+        print(tostring(self, n=n, merge_position=True))
+
+        return self
+
+    def spc(self, n=30):
+
+        print(sort_tostring(self, n=n))
+
+        return self
+
+    def mspc(self, n=30):
 
         print(sort_tostring(self, n=n, merge_position=True))
 
         return self
 
-    def rp(self):
+    def rpc(self):
 
         print(self.dfs)
 

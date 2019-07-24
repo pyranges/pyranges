@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-07-19">
+<meta name="date" content="2019-07-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,7 +127,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -147,14 +146,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="printing-pyranges" class="section level1">
 <h1><span class="header-section-number">9</span> Printing PyRanges</h1>
-<p>There are 5 helper methods for printing PyRanges. These are p (regular print), mp (merged position print), sp (sorted print), msp (merged position sorted print) and rp (raw print).</p>
+<p>There are 10 helper methods for printing PyRanges. These are p (regular print), mp (merged position print), sp (sorted print), msp (merged position sorted print) and rp (raw print).</p>
 <p>Merged means that the information about Chromosome, Start, End and Strand (if applicable) are merged into one column for printing. Sorted means that the output is sorted on position and Strand. Regular print shows the + strand first and - strand second, so if you want to display interleaved intervals from both strands, sorted print is the way to do it.</p>
 <p>Raw print (rp) just prints the underlying dict of dataframes.</p>
 <p>All print methods except rp take an n-argument to control how many entries should be displayed.</p>
-<p>The print methods return the PyRanges object itself so that print methods can be used in pipes.</p>
+<p>The pc, mpc, spc, mspc and rpc also return the pyranges so that print methods can be used to display intermediate results in pipes.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 exons <span class="op">=</span> pr.data.exons()
-exons.p(n<span class="op">=</span><span class="dv">2</span>).mp(n<span class="op">=</span><span class="dv">8</span>).sp()</code></pre></div>
+exons.pc(n<span class="op">=</span><span class="dv">2</span>).mpc(n<span class="op">=</span><span class="dv">8</span>).sp()</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |

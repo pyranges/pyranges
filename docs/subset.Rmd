@@ -6,6 +6,19 @@ title: "Subsetting PyRanges"
 
 There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.
 
+For data exploration, the functions head, tail and sample (random choice without
+replacment) are convenient. They take an argument n to denote how many entries
+you want.
+
+```{python}
+
+import pyranges as pr
+
+gr = pr.data.chipseq()
+print(gr.sample())
+print(gr.tail(4))
+```
+
 By subsetting with a list you can select one or more columns:
 
 ```{python}
@@ -70,6 +83,11 @@ Only using slices returns all ranges from all chromosomes and strands within tho
 
 print(gr[0:100000])
 ```
+
+Note that while the slice-operator is fast and returns seemingly immediately, it
+is inefficient; it builds the interval overlap datastructure anew every query.
+So if you have multiple queries you should build another PyRanges and do an
+intersect-operation.
 
 Strand
 

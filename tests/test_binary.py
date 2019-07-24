@@ -176,7 +176,6 @@ def test_overlap(gr, gr2, strandedness):
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
-# @reproduce_failure('4.5.7', b'AXicY2RAA4zoAgAAVQAD')
 def test_intersect(gr, gr2, strandedness):
 
     intersect_command = "bedtools intersect {strand} -a {f1} -b {f2}"
@@ -189,13 +188,49 @@ def test_intersect(gr, gr2, strandedness):
         names="Chromosome Start End Name Score Strand".split(),
         sep="\t")
 
-    # from pydbg import dbg
-    # dbg(gr)
-    # dbg(gr2)
-
     result = gr.intersect(gr2, strandedness=strandedness)
 
     compare_results(bedtools_df, result)
+
+
+
+@pytest.mark.bedtools
+@pytest.mark.parametrize("strandedness", strandedness)
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+# @reproduce_failure('4.15.0', b'AXicY2RABoxghAoAAGkABA==')
+# @reproduce_failure('4.15.0', b'AXicY2RABoxgxAAjQQAAAG8ABQ==')
+# @reproduce_failure('4.15.0', b'AXicY2RABqwMDIwMaAAAALkACA==')
+# @reproduce_failure('4.15.0', b'AXicY2RAA4xIJAgAAABcAAQ=')
+# reproduce_failure('4.15.0', b'AXicY2RAAEYGhv9AkhHGgQIAFHQBBQ==')
+# @reproduce_failure('4.15.0', b'AXicY2QAAUYGGGCEYIQAVAgAALUACA==')
+def test_coverage(gr, gr2, strandedness):
+
+    print(gr.df)
+    print(gr2.df)
+    coverage_command = "bedtools coverage {strand} -a {f1} -b {f2}"
+
+    bedtools_result = run_bedtools(coverage_command, gr, gr2, strandedness)
+    print(bedtools_result)
+
+    bedtools_df = pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        usecols=[0, 1, 2, 3, 4, 5, 6, 9],
+        names="Chromosome Start End Name Score Strand NumberOverlaps FractionOverlaps".split(),
+        dtype={"FractionOverlap": np.float},
+        sep="\t")
+
+    result = gr.coverage(gr2, strandedness=strandedness)
+    print(result)
+
+    # assert len(result) > 0
+    assert np.all(bedtools_df.NumberOverlaps.values == result.NumberOverlaps.values)
+    np.testing.assert_allclose(bedtools_df.FractionOverlaps, result.FractionOverlaps, atol=1e-5)
+    # compare_results(bedtools_df, result)
 
 
 # @pytest.mark.bedtools

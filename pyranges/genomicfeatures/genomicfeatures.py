@@ -153,6 +153,9 @@ by_to_id = {"gene": "gene_id", "transcript": "transcript_id"}
 
 def _introns2(df, exons, kwargs):
 
+    if df.empty or exons.empty:
+        return None
+
     original_order = df.columns
     by = kwargs["by"]
     id_column = by_to_id[by]
@@ -163,6 +166,9 @@ def _introns2(df, exons, kwargs):
     genes.columns = ["Start", "End", "gene_id"]
 
     intersection = pd.Series(np.intersect1d(exons["gene_id"], genes["gene_id"]))
+    if len(intersection) == 0:
+        return None
+
     exons = exons[exons["gene_id"].isin(intersection)].reset_index(drop=True).sort_values(["gene_id", "Start"])
     genes = genes[genes["gene_id"].isin(intersection)].reset_index(drop=True).sort_values(["gene_id", "Start"])
     df = df[df[id_column].isin(intersection)].reset_index(drop=True)#.sort_values(id_column)
@@ -179,12 +185,14 @@ def _introns2(df, exons, kwargs):
     else:
         exon_ids = exon_ids.cumsum()
 
-    # print(gene_ids)
-    # print(exon_ids.drop_duplicates())
     assert (gene_ids == exon_ids.drop_duplicates().values).all()
     starts, ends, ids = find_introns(genes.Start.values, genes.End.values, gene_ids.values,
                                      exons.Start.values, exons.End.values, exon_ids.values)
 
+    print(len(starts))
+    print(starts)
+    print(ends)
+    print(ids)
 
     introns = pd.DataFrame(data={"Chromosome": df.Chromosome.iloc[0], "Start": starts, "End": ends, "gene_id": ids})
 

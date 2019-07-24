@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-07-19">
+<meta name="date" content="2019-07-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,7 +127,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -147,7 +146,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="turning-ranges-into-rles" class="section level1">
 <h1><span class="header-section-number">21</span> Turning Ranges into RLEs</h1>
-<p>Ranges can be turned into dicts of run length encodings with the coverage function:</p>
+<p>Ranges can be turned into dicts of run length encodings with the to_rle function:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 gr <span class="op">=</span> pr.data.aorta()
 <span class="bu">print</span>(gr)</code></pre></div>
@@ -166,7 +165,7 @@ gr <span class="op">=</span> pr.data.aorta()
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage())</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.to_rle())</code></pre></div>
 <pre><code>## chr1
 ## +--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------+
 ## | Runs   | 9916   | 23   | 12   | 2   | 25   |  ...    | 80   | 114   | 5   | 99801   | 199   |
@@ -175,7 +174,7 @@ gr <span class="op">=</span> pr.data.aorta()
 ## +--------+--------+------+------+-----+------+---------+------+-------+-----+---------+-------+
 ## Rle of length 110445 containing 22 elements
 ## Unstranded PyRles object with 1 chromosome.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage(strand<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>))</code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
@@ -194,7 +193,7 @@ gr <span class="op">=</span> pr.data.aorta()
 ## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+-------------------+--------------------+-------------------+--------------------+-------------------+------+-------------------+---------+-------------------+
@@ -215,7 +214,7 @@ gr <span class="op">=</span> pr.data.aorta()
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
 <p>To get the RPM-normalized coverage, use the rpm argument.</p>
 <p>You can also create coverage for an any numeric value in your PyRanges:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.coverage(<span class="st">&quot;Score&quot;</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.to_rle(<span class="st">&quot;Score&quot;</span>))</code></pre></div>
 <pre><code>## chr1
 ## +--------+--------+------+------+------+------+---------+------+-------+-----+---------+-------+
 ## | Runs   | 9916   | 23   | 12   | 2    | 25   |  ...    | 80   | 114   | 5   | 99801   | 199   |

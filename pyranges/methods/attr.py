@@ -5,9 +5,6 @@ import pandas as pd
 
 def _setattr(self, column_name, column):
 
-    # if column_name in "Chromosome Strand".split():
-    #     raise Exception("The columns Chromosome and Strand can not be reset.")
-
 
     isiterable = isinstance(column, list) or isinstance(
         column, pd.Series) or isinstance(column, np.ndarray)

@@ -31,7 +31,7 @@ binary_methods = [
     "subtract", "join"
 ]
 
-unary_methods = ["merge", "sort"]
+unary_methods = ["merge", "sort", "cluster", "pc", "mpc", "spc", "drop_duplicate_positions", "drop"]
 
 method_chain = product(binary_methods, binary_methods)
 # cannot start with an operation that makes pyrange unstranded and then try a stranded op

@@ -34,8 +34,8 @@ print(r2 / r1)
 
 Rles have two helper-methods, `numbers_only` and `defragment`. The former
 replaces NaN with zero and infinity with large finite numbers, while the latter
-merges duplicate values in the Rle (which might occur when manually manipulating
-the values vector).
+merges consecutive runs of duplicate values in the Rle (which might occur when
+manually manipulating the values vector).
 
 ```{python tidy=FALSE}
 import numpy as np

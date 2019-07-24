@@ -27,8 +27,9 @@ print(gr)
 ```
 
 And as you can see, you can drop columns from the PyRanges using drop. Using
-drop by itself removes all metadata-columns. If you also want to remove the
-strand you need to use the drop_strand flag.
+drop by itself removes all metadata-columns.
+
+To rename the columns you can use the set_columns() method.
 
 If you want to remove duplicates based on position, you can use drop_duplicate_positions:
 

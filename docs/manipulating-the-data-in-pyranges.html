@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-07-19">
+<meta name="date" content="2019-07-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,7 +127,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -201,58 +200,59 @@ gr <span class="op">=</span> pr.data.chipseq()
 ## Stranded PyRanges object has 10,000 rows and 7 columns from 24 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> gr.drop(<span class="st">&quot;stupid_example&quot;</span>)
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+
-## | Chromosome   | Start     | End       | Name       | Score     |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   |
-## |--------------+-----------+-----------+------------+-----------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         |
-## | chr1         | 169887529 | 169887554 | U0         | 0         |
-## | chr1         | 216711011 | 216711036 | U0         | 0         |
-## | chr1         | 144227079 | 144227104 | U0         | 0         |
-## | ...          | ...       | ...       | ...        | ...       |
-## | chrY         | 15224235  | 15224260  | U0         | 0         |
-## | chrY         | 13517892  | 13517917  | U0         | 0         |
-## | chrY         | 8010951   | 8010976   | U0         | 0         |
-## | chrY         | 7405376   | 7405401   | U0         | 0         |
-## +--------------+-----------+-----------+------------+-----------+
-## Unstranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.</code></pre>
-<p>And as you can see, you can drop columns from the PyRanges using drop. Using drop by itself removes all metadata-columns. If you also want to remove the strand you need to use the drop_strand flag.</p>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
+<p>And as you can see, you can drop columns from the PyRanges using drop. Using drop by itself removes all metadata-columns.</p>
+<p>To rename the columns you can use the set_columns() method.</p>
 <p>If you want to remove duplicates based on position, you can use drop_duplicate_positions:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr.drop_duplicate_positions(strand<span class="op">=</span><span class="va">False</span>)) <span class="co"># defaults to True</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+
-## | Chromosome   | Start     | End       | Name       | Score     |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   |
-## |--------------+-----------+-----------+------------+-----------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         |
-## | chr1         | 169887529 | 169887554 | U0         | 0         |
-## | chr1         | 216711011 | 216711036 | U0         | 0         |
-## | chr1         | 144227079 | 144227104 | U0         | 0         |
-## | ...          | ...       | ...       | ...        | ...       |
-## | chrY         | 15224235  | 15224260  | U0         | 0         |
-## | chrY         | 13517892  | 13517917  | U0         | 0         |
-## | chrY         | 8010951   | 8010976   | U0         | 0         |
-## | chrY         | 7405376   | 7405401   | U0         | 0         |
-## +--------------+-----------+-----------+------------+-----------+
-## Unstranded PyRanges object has 9,924 rows and 5 columns from 24 chromosomes.</code></pre>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 9,924 rows and 6 columns from 24 chromosomes.</code></pre>
 <p>All columns, including Chromosome, Start, End and Strand can be changed in any way you please and more metadata-columns can be added by setting it on the PyRanges object.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd
 gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)
 <span class="bu">print</span>(gr)</code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+
-## | Chromosome   | Start     | End       | Name       | Score     |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   |
-## |--------------+-----------+-----------+------------+-----------|
-## | chr1         | 212609534 | 212609559 | chr1_0     | 0         |
-## | chr1         | 169887529 | 169887554 | chr1_1     | 0         |
-## | chr1         | 216711011 | 216711036 | chr1_2     | 0         |
-## | chr1         | 144227079 | 144227104 | chr1_3     | 0         |
-## | ...          | ...       | ...       | ...        | ...       |
-## | chrY         | 15224235  | 15224260  | chrY_9996  | 0         |
-## | chrY         | 13517892  | 13517917  | chrY_9997  | 0         |
-## | chrY         | 8010951   | 8010976   | chrY_9998  | 0         |
-## | chrY         | 7405376   | 7405401   | chrY_9999  | 0         |
-## +--------------+-----------+-----------+------------+-----------+
-## Unstranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.</code></pre>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 212609534 | 212609559 | chr1_0     | 0         | +            |
+## | chr1         | 169887529 | 169887554 | chr1_1     | 0         | +            |
+## | chr1         | 216711011 | 216711036 | chr1_2     | 0         | +            |
+## | chr1         | 144227079 | 144227104 | chr1_3     | 0         | +            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrY         | 15224235  | 15224260  | chrY_9996  | 0         | -            |
+## | chrY         | 13517892  | 13517917  | chrY_9997  | 0         | -            |
+## | chrY         | 8010951   | 8010976   | chrY_9998  | 0         | -            |
+## | chrY         | 7405376   | 7405401   | chrY_9999  | 0         | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr.Strand <span class="op">=</span> <span class="st">&quot;.&quot;</span>
 <span class="bu">print</span>(gr)</code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+

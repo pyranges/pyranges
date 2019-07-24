@@ -147,10 +147,10 @@ def _to_bed(self, path=None, sep="\t", keep=True):
 def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
 
     if not divide_by:
-        gr = self.coverage(rpm=rpm, strand=False).to_ranges()
+        gr = self.to_rle(rpm=rpm, strand=False).to_ranges()
     else:
-        gr = self.coverage(rpm=rpm, strand=False)
-        divide_by = self.coverage(rpm=rpm, strand=False)
+        gr = self.to_rle(rpm=rpm, strand=False)
+        divide_by = self.to_rle(rpm=rpm, strand=False)
         c = (gr / divide_by)
         new_pyrles = {}
         for k, v in c.items():

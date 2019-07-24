@@ -40,6 +40,7 @@ def _write_both(scdf, ocdf, kwargs):
     suffix = kwargs.get("suffix", "_b")
     how = kwargs["how"]
     new_pos = kwargs["new_pos"]
+    in_dtype = ocdf.Start.dtype
 
     scdf, ocdf = _both_dfs(scdf, ocdf, how=how)
     nix = pd.Index(range(len(scdf)))
@@ -57,12 +58,12 @@ def _write_both(scdf, ocdf, kwargs):
             np.where(scdf.Start.values > ocdf.Start.values, scdf.Start,
                      ocdf.Start),
             index=scdf.index,
-            dtype=np.long)
+            dtype=in_dtype)
 
         new_ends = pd.Series(
             np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
             index=scdf.index,
-            dtype=np.long)
+            dtype=in_dtype)
         df = scdf.join(ocdf, lsuffix=suffixes[0], rsuffix=suffixes[1])
         df.insert(1, "Start", new_starts)
         df.insert(2, "End", new_ends)
@@ -80,12 +81,12 @@ def _write_both(scdf, ocdf, kwargs):
             np.where(scdf.Start.values < ocdf.Start.values, scdf.Start,
                      ocdf.Start),
             index=scdf.index,
-            dtype=np.long)
+            dtype=in_dtype)
 
         new_ends = pd.Series(
             np.where(scdf.End.values > ocdf.End.values, scdf.End, ocdf.End),
             index=scdf.index,
-            dtype=np.long)
+            dtype=in_dtype)
         df = scdf.join(ocdf, lsuffix=suffixes[0], rsuffix=suffixes[1])
         df.insert(1, "Start", new_starts)
         df.insert(2, "End", new_ends)

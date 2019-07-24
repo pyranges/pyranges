@@ -13,7 +13,7 @@ def _merge(df, kwargs):
 
     cdf = df.sort_values("Start")
 
-    starts, ends = find_clusters(cdf.Start.values, cdf.End.values, slack)
+    starts, ends, number = find_clusters(cdf.Start.values, cdf.End.values, slack)
 
     nidx = pd.Index(range(len(starts)))
     if strand:
@@ -25,7 +25,8 @@ def _merge(df, kwargs):
             "End":
             ends,
             "Strand":
-            pd.Series(strand, dtype="category", index=nidx)
+            pd.Series(strand, dtype="category", index=nidx),
+            "Count": number
         })
     else:
         cluster_df = pd.DataFrame({
@@ -34,7 +35,8 @@ def _merge(df, kwargs):
             "Start":
             starts,
             "End":
-            ends
+            ends,
+            "Count": number
         })
 
     return cluster_df
@@ -57,7 +59,7 @@ def _merge_by(df, kwargs):
 
     cdf.insert(cdf.shape[1], "ClusterBy", new_ids)
 
-    ids, starts, ends = merge_by(cdf.Start.values, cdf.End.values, cdf.ClusterBy.values, slack)
+    ids, starts, ends, number = merge_by(cdf.Start.values, cdf.End.values, cdf.ClusterBy.values, slack)
 
     nidx = pd.Index(range(len(starts)))
     if strand:
@@ -88,5 +90,6 @@ def _merge_by(df, kwargs):
     cluster_df = cluster_df.merge(new_to_old, left_on=by, right_on="new")
     cluster_df = cluster_df.drop([by, "new"], axis=1)
     cluster_df = cluster_df.rename(columns={"old": by})
+    cluster_df.insert(cluster_df.shape[1], "Count", number)
 
     return cluster_df

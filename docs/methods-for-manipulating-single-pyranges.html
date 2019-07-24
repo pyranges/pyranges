@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-07-19">
+<meta name="date" content="2019-07-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,7 +127,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
 <li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
 <li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
-<li class="chapter" data-level="29" data-path="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><a href="uncomment-the-gwas-catalogue-data-can-also-be-downloaded-with-db-gwas-catalogue-gwas-catalogue.html"><i class="fa fa-check"></i><b>29</b> Uncomment: The GWAS catalogue data can also be downloaded with db.gwas_catalogue.gwas_catalogue()</a></li>
 </ul>
 
       </nav>
@@ -149,18 +148,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">13</span> Methods for manipulating single PyRanges</h1>
 <p>There are several methods for manipulating the contents of a PyRanges.</p>
 <p><code>merge</code> creates a union of all the intervals in the ranges:</p>
+<p>The merge-method also takes the flag count to let you know the number of intervals that were merged.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 f1 <span class="op">=</span> pr.data.f1()
-<span class="bu">print</span>(f1.merge())</code></pre></div>
-<pre><code>## +--------------+------------+------------+------------+
-## | Chromosome   |      Start |        End | Strand     |
-## | (object)     |   (object) |   (object) | (object)   |
-## |--------------+------------+------------+------------|
-## | chr1         |          3 |          6 | +          |
-## | chr1         |          8 |          9 | +          |
-## | chr1         |          5 |          7 | -          |
-## +--------------+------------+------------+------------+
-## Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.</code></pre>
+<span class="bu">print</span>(f1.merge(count<span class="op">=</span><span class="va">True</span>))</code></pre></div>
+<pre><code>## +--------------+------------+------------+------------+------------+
+## | Chromosome   |      Start |        End | Strand     |      Count |
+## | (object)     |   (object) |   (object) | (object)   |   (object) |
+## |--------------+------------+------------+------------+------------|
+## | chr1         |          3 |          6 | +          |          1 |
+## | chr1         |          8 |          9 | +          |          1 |
+## | chr1         |          5 |          7 | -          |          1 |
+## +--------------+------------+------------+------------+------------+
+## Stranded PyRanges object has 3 rows and 5 columns from 1 chromosomes.</code></pre>
 <p>Cluster finds which intervals overlap, but gives each interval a cluster ID instead of merging them:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
 f1 <span class="op">=</span> pr.data.f1()

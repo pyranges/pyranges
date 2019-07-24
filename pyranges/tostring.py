@@ -257,7 +257,7 @@ def sort_tostring(self, n=30, merge_position=False):
     first_df = self.values()[0]
 
     if len(self) <= n:
-        df = self.df.sort(sort_cols)
+        df = self.df.sort_values(sort_cols)
     else:
         dfs = []
         half_n = int(n/2)

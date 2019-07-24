@@ -6,7 +6,7 @@ Rles can be subsetted on Chromosome, Strand or Chromosome/Strand pairs
 import pyranges as pr
 
 gr = pr.data.chipseq()
-c = gr.coverage()
+c = gr.to_rle()
 print(c["chr1"])
 print(c["chr1", "+"])
 print(c["-"])
@@ -18,7 +18,7 @@ To get the coverage of one or more intervals, you can use a PyRanges-object to s
 import pyranges as pr
 f1 = pr.data.f1()
 print(f1)
-f1_c = f1.coverage()
+f1_c = f1.to_rle()
 print(f1_c)
 
 print(f1_c[f1])
