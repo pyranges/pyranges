@@ -16,7 +16,7 @@ have problems or come across unexpected behavior, please create an issue.
 
 ## Asking for help
 
-Feel free to ask questions of the type "how do I do X? with pyranges"? on public forums like Stack Overflow, Bioinformatics Stack Exchange or Biostars. You can use endrebak85#gmail.com to point me to the question(s).
+Feel free to ask questions of the type "how do I do X with pyranges?" on public forums like Stack Overflow, Bioinformatics Stack Exchange or Biostars. You can use endrebak85#gmail.com to point me to the question(s).
 
 ## Quick example
 
