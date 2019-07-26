@@ -395,7 +395,10 @@ class PyRanges():
 
         return self[result]
 
-    def assign(self, col, function, strand=False, **kwargs):
+    def assign(self, col, function, strand=None, **kwargs):
+
+        if strand is None:
+            strand = self.stranded
 
         kwargs = fill_kwargs(kwargs)
 

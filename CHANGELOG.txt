@@ -1,4 +1,8 @@
-# 0.0.48 (unreleased)
+# 0.0.49 (26.07.19)
+Hotfix:
+  - bug in assign (strand=False, by default, not None)
+
+# 0.0.48 (25.07.19)
 Additions:
   - head(n=8)
   - tail(n=8)

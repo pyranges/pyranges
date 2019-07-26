@@ -46,7 +46,7 @@ exons["chrY", "-",  15591259:27197945]
   .sort(nb_cpu=2) # sort on Chromosome, Start and End
                   # note that virtually all pyranges-methods take a nb_cpu argument
                   # to use multiple cores, you need to install ray with pip install ray
-  .p() # print, while keeping the chain going
+  .pc() # print, while keeping the chain (c) going. Try .sp(), msp(), rp(), spc(), mspc() also :)
   ["chrX"] # keep only chromosome X
   .assign("CpGDecile", lambda df: df.CpG / 10) # Insert new column
   .unstrand()) # remove the strand info
