@@ -18,7 +18,7 @@ have problems or come across unexpected behavior, please create an issue.
 
 Feel free to ask questions of the type "how do I do X with pyranges?" on public forums like Stack Overflow, Bioinformatics Stack Exchange or Biostars. You can use endrebak85#gmail.com to point me to the question(s).
 
-## Quick example
+## Quick examples
 
 ```python
 import pyranges as pr
