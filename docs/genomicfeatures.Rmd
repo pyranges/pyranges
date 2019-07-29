@@ -42,3 +42,11 @@ print(cs)
 print(pr.gf.genome_bounds(gr, cs, clip=True))
 print(pr.gf.genome_bounds(gr, cs))
 ```
+
+`random` creates a random PyRanges from the PyRanges of chromosome sizes given:
+
+```{python tidy=FALSE}
+pr.random(n=1000, length=100, chromsizes=None, strand=True)
+```
+
+if no chromsize is given, hg19 is used (from pr.data.chromsizes).

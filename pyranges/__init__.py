@@ -21,3 +21,5 @@ get_example_path = data.get_example_path
 read_gff = read_gtf
 
 import pyranges.genomicfeatures.genomicfeatures as gf
+
+random = gf.random

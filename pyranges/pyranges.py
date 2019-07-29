@@ -112,7 +112,7 @@ class PyRanges():
 
     def __iter__(self):
 
-        return iter(self.dfs.items())
+        return iter(self.items())
 
     def eval(self, eval_cmd, strand=True, as_pyranges=True, **kwargs):
 
@@ -264,15 +264,17 @@ class PyRanges():
 
 
 
-    def insert(self, other, col, **kwargs):
 
-        from pyranges.methods.insert import _insert
 
-        kwargs["columns"] = col
-        kwargs = fill_kwargs(kwargs)
-        dfs = pyrange_apply(_insert, self, other, **kwargs)
+    # def insert(self, other, col, **kwargs):
 
-        return PyRanges(dfs)
+    #     from pyranges.methods.insert import _insert
+
+    #     kwargs["columns"] = col
+    #     kwargs = fill_kwargs(kwargs)
+    #     dfs = pyrange_apply(_insert, self, other, **kwargs)
+
+    #     return PyRanges(dfs)
 
     def cluster(self, strand=None, by=None, **kwargs):
 

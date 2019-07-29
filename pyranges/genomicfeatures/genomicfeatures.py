@@ -35,6 +35,33 @@ def genome_bounds(gr, chromsizes, clip=False):
     return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip)
 
 
+def random(n=1000, length=100, chromsizes=None, strand=True):
+
+    if chromsizes is None:
+        chromsizes = pr.data.chromsizes()
+
+    df = chromsizes.df
+
+    p = df.End / df.End.sum()
+
+    n_per_chrom = pd.Series(np.random.choice(df.index, size=n, p=p)).value_counts(sort=False).to_frame()
+    n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
+    n_per_chrom.columns = "Count Chromosome".split()
+
+    random_dfs = []
+    for _, (count, chrom) in n_per_chrom.iterrows():
+        r = np.random.randint(0, df[df.Chromosome == chrom].End - length, size=count)
+        _df = pd.DataFrame({"Chromosome": chrom, "Start": r, "End": r + length})
+        random_dfs.append(_df)
+
+    random_df = pd.concat(random_dfs)
+    if strand:
+        s = np.random.choice("+ -".split(), size=n)
+        random_df.insert(3, "Strand", s)
+
+    return pr.PyRanges(random_df)
+
+
 def _last_tile(df, kwargs):
     # do not need copy, since it is only used internally by
     # tile_genome

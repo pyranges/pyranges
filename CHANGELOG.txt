@@ -1,3 +1,16 @@
+# 0.0.50 (unreleased)
+Additions:
+  - pr.random(n=1000, length=100, chromsizes=None, strand=True) creates a random PyRanges from a PyRanges of chromosome sizes.
+
+Changes:
+  - make __iter__ return natsorted items
+
+Removals:
+  - insert. use join instead
+
+Fixes:
+  - bug in boolean indexing due to __iter__ returning wrong sort order
+
 # 0.0.49 (26.07.19)
 Hotfix:
   - bug in assign (strand=False, by default, not None)
