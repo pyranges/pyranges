@@ -120,7 +120,7 @@ cpg
 # +--------------|-----------|-----------|-----------+
 # Unstranded PyRanges object has 1,077 rows and 4 columns from 2 chromosomes.
 
-cpg_rle = cpg.to_rle(value_col="CpG") # ignore value_col empty for regular coverage
+cpg_rle = cpg.to_rle(value_col="CpG") # ignore value_col for regular coverage
 cpg_rle
 # chrX
 # ----
