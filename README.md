@@ -220,6 +220,10 @@ bamread: read bam files # pip install bamread or conda install -c bioconda bamre
 
 ## Paper/Cite
 
+Coming soon to
+http://dx.doi.org/10.1093/bioinformatics/btz615
+
+Meanwhile, please see the preprint:
 https://www.biorxiv.org/content/10.1101/609396v1
 
 ## TODO
