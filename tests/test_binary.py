@@ -340,6 +340,7 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+# @reproduce_failure('4.15.0', b'AXicY2RAA4wQzAjETDA+C4gHAmARBgABhwAR')
 def test_jaccard(gr, gr2, strandedness):
 
     # jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"

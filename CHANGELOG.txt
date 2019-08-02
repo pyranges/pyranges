@@ -1,4 +1,12 @@
-# 0.0.50 (unreleased)
+# 0.0.51 (01.08.19)
+Additions:
+  - pr.itergrs added to iterate over the dfs from multiple pyranges at the same time
+
+Changes:
+  - pybigwig and bamread are optional dependencies that need to be manually installed (like ray)
+
+
+# 0.0.50 (29.07.19)
 Additions:
   - pr.random(n=1000, length=100, chromsizes=None, strand=True) creates a random PyRanges from a PyRanges of chromosome sizes.
 

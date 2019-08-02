@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>22 Run Length Encoding dicts | PyRanges documentation</title>
+  <meta name="description" content="22 Run Length Encoding dicts | PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:title" content="22 Run Length Encoding dicts | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,25 +16,26 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PyRanges documentation" />
+  <meta name="twitter:title" content="22 Run Length Encoding dicts | PyRanges documentation" />
   
   
   
 
-<meta name="author" content="Endre Bakken Stovner">
+<meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-07-29">
+<meta name="date" content="2019-08-02" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 <link rel="prev" href="an-introduction-to-rles.html">
 <link rel="next" href="subsetting-rles.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -50,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 </head>
@@ -145,13 +170,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="run-length-encoding-dicts" class="section level1">
 <h1><span class="header-section-number">22</span> Run Length Encoding dicts</h1>
-<p>Since you need more than one run length to describe a genome with multiple chromosomes, pyranges has a datastructure called PyRles for collections of Rles. It can be created from a PyRanges object by invoking the to_rle function.</p>
+<p>Since you need more than one run length to describe a genome with multiple
+chromosomes, pyranges has a datastructure called PyRles for collections of Rles.
+It can be created from a PyRanges object by invoking the to_rle function.</p>
 <p>Rledicts support the arithmetic operations +, -, /, and *.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
-gr <span class="op">=</span> pr.data.chipseq()
-gr_bg <span class="op">=</span> pr.data.chipseq_background()
-cs <span class="op">=</span> gr.to_rle()
-<span class="bu">print</span>(cs)</code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb230-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb230-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb230-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb230-4" data-line-number="4">gr_bg <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb230-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb230-6" data-line-number="6">cs <span class="op">=</span> gr.to_rle()</a>
+<a class="sourceLine" id="cb230-7" data-line-number="7"><span class="bu">print</span>(cs)</a></code></pre></div>
 <pre><code>## chr1
 ## +--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------+
 ## | Runs   | 1325303   | 25   | 216270   | 25   | 57498   |  ...    | 25   | 167465   | 25   | 989343   | 25   |
@@ -168,8 +197,8 @@ cs <span class="op">=</span> gr.to_rle()
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
 ## Rle of length 22210662 containing 46 elements
 ## Unstranded PyRles object with 24 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">bg <span class="op">=</span> gr_bg.to_rle()
-<span class="bu">print</span>(bg)</code></pre></div>
+<div class="sourceCode" id="cb232"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb232-1" data-line-number="1">bg <span class="op">=</span> gr_bg.to_rle()</a>
+<a class="sourceLine" id="cb232-2" data-line-number="2"><span class="bu">print</span>(bg)</a></code></pre></div>
 <pre><code>## chr1
 ## +--------+----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
 ## | Runs   | 887771   | 25   | 106864   | 25   | 46417   |  ...    | 25   | 656076   | 25   | 1261276   | 25   |
@@ -186,7 +215,7 @@ cs <span class="op">=</span> gr.to_rle()
 ## +--------+------------+------+--------+------+---------+---------+------+-----------+------+------------+------+
 ## Rle of length 57402239 containing 16 elements
 ## Unstranded PyRles object with 25 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(cs <span class="op">+</span> bg)</code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb234-1" data-line-number="1"><span class="bu">print</span>(cs <span class="op">+</span> bg)</a></code></pre></div>
 <pre><code>## chr1
 ## +--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------+
 ## | Runs   | 887771   | 25   | 106864   | 25   | 46417   |  ...    | 25   | 730068   | 25   | 259250   | 25   |
@@ -203,9 +232,12 @@ cs <span class="op">=</span> gr.to_rle()
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+------------+------+
 ## Rle of length 57402239 containing 62 elements
 ## Unstranded PyRles object with 25 chromosomes.</code></pre>
-<p>When using arithmetic operations with a stranded and an unstranded PyRle, the stranded PyRle is automatically demoted to an unstranded PyRle.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">bg_stranded <span class="op">=</span> gr_bg.to_rle(strand<span class="op">=</span><span class="va">True</span>)
-<span class="bu">print</span>(bg_stranded)</code></pre></div>
+<p>When using arithmetic operations with a stranded and an unstranded PyRle, the
+stranded PyRle is automatically demoted to an unstranded PyRle.</p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb236-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb236-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb236-3" data-line-number="3">bg_stranded <span class="op">=</span> gr_bg.to_rle(strand<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb236-4" data-line-number="4"><span class="bu">print</span>(bg_stranded)</a></code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------+
 ## | Runs   | 1041102   | 25   | 1088232   | 25   | 109724   |  ...    | 25   | 719119   | 25   | 1774357   | 25   |
@@ -222,7 +254,7 @@ cs <span class="op">=</span> gr.to_rle()
 ## +--------+------------+------+--------+------+-----------+------+---------+------+------------+------+
 ## Rle of length 57402239 containing 10 elements
 ## PyRles object with 50 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(cs <span class="op">+</span> bg_stranded)</code></pre></div>
+<div class="sourceCode" id="cb238"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb238-1" data-line-number="1"><span class="bu">print</span>(cs <span class="op">+</span> bg_stranded)</a></code></pre></div>
 <pre><code>## chr1
 ## +--------+----------+------+----------+------+---------+---------+------+----------+------+----------+------+
 ## | Runs   | 887771   | 25   | 106864   | 25   | 46417   |  ...    | 25   | 730068   | 25   | 259250   | 25   |
@@ -240,7 +272,8 @@ cs <span class="op">=</span> gr.to_rle()
 ## Rle of length 57402239 containing 62 elements
 ## Unstranded PyRles object with 25 chromosomes.</code></pre>
 <p>Like Rles, PyGRles supports arithmetic operations with numbers.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>((<span class="fl">0.67</span> <span class="op">+</span> cs) <span class="op">*</span> <span class="dv">5</span>)</code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb240-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb240-2" data-line-number="2"><span class="bu">print</span>((<span class="fl">0.67</span> <span class="op">+</span> cs) <span class="op">*</span> <span class="dv">5</span>)</a></code></pre></div>
 <pre><code>## chr1
 ## +--------+-----------+------+----------+------+---------+---------+------+----------+------+----------+------+
 ## | Runs   | 1325303   | 25   | 216270   | 25   | 57498   |  ...    | 25   | 167465   | 25   | 989343   | 25   |
@@ -283,10 +316,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -294,6 +328,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

@@ -167,7 +167,11 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
     gr = gr[subset].unstrand()
     df = gr.sort(strand=False).df
 
-    import pyBigWig
+    try:
+        import pyBigWig
+    except ModuleNotFoundError:
+        print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
+        sys.exit(1)
 
     if not isinstance(chromosome_sizes, dict):
         size_df = chromosome_sizes.df

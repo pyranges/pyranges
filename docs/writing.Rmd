@@ -25,6 +25,10 @@ gr.to_csv("chipseq.csv", sep="\t", header=True)
 print(gr[:10000].to_csv(sep="|", header=True))
 ```
 
+The pyranges library can also create bigwigs, but it needs the library pybigwig
+which is not installed by default. Use `conda install -c bioconda pybigwig` or
+`pip install pybigwig` to install it.
+
 The bigwig writer needs to know the chromosome sizes. You can fetch these using
 the pyranges database functions.
 

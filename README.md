@@ -196,9 +196,27 @@ cpg_rle["chrX"][64100:100000]
 
 ## Install
 
+The preferred way to install pyranges is through the bioconda channel:
+
+```bash
+conda install -c bioconda pyranges
+```
+
+You can also try pip:
+
 ```bash
 pip install pyranges
 ```
+
+PyRanges has some dependencies that are optional. They need to be manually installed if
+you require their functionality:
+
+```
+ray: multicpu # pip install -U ray
+pybigwig: write bigwigs # pip install pybigwig or conda install -c bioconda pybigwig
+bamread: read bam files # pip install bamread or conda install -c bioconda bamread
+```
+
 
 ## Paper/Cite
 

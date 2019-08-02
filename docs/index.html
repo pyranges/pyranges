@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta name="description" content="PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -22,20 +21,21 @@
   
   
 
-<meta name="author" content="Endre Bakken Stovner">
+<meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-07-29">
+<meta name="date" content="2019-08-02" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 
 <link rel="next" href="loadingcreating-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -50,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 </head>
@@ -145,25 +170,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">PyRanges documentation</h1>
-<h4 class="author"><em>Endre Bakken Stovner</em></h4>
-<h4 class="date"><em>2019-07-29</em></h4>
+<p class="author"><em>Endre Bakken Stovner</em></p>
+<p class="date"><em>2019-08-02</em></p>
 </div>
 <div id="introduction-to-pyranges" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction to PyRanges</h1>
-<p>PyRanges are collections of intervals that support comparison operations (like overlap and intersect) and other methods that are useful for genomic analyses. The ranges can have an arbitrary number of meta-data fields, i.e. columns associated with them.</p>
-<p>The data in PyRanges objects are stored in a pandas dataframe. This means the vast Python ecosystem for high-performance scientific computing is available to manipulate the data in PyRanges-objects.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pyranges <span class="im">as</span> pr
-<span class="im">from</span> pyranges <span class="im">import</span> PyRanges
-<span class="im">import</span> pandas <span class="im">as</span> pd
-<span class="im">from</span> io <span class="im">import</span> StringIO
-f1 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span>
-<span class="st">chr1 4 7 23.8 +</span>
-<span class="st">chr1 6 11 0.13 -</span>
-<span class="st">chr2 0 14 42.42 +&quot;&quot;&quot;</span>
-df1 <span class="op">=</span> pd.read_csv(StringIO(f1), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)
-gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
+<p>PyRanges are collections of intervals that support comparison operations (like
+overlap and intersect) and other methods that are useful for genomic
+analyses. The ranges can have an arbitrary number of meta-data fields,
+i.e. columns associated with them.</p>
+<p>The data in PyRanges objects are stored in a pandas dataframe. This means the
+vast Python ecosystem for high-performance scientific computing is available to
+manipulate the data in PyRanges-objects.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="im">from</span> pyranges <span class="im">import</span> PyRanges</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="im">from</span> io <span class="im">import</span> StringIO</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">f1 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="st">chr1 4 7 23.8 +</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="st">chr1 6 11 0.13 -</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="st">chr2 0 14 42.42 +&quot;&quot;&quot;</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13">df1 <span class="op">=</span> pd.read_csv(StringIO(f1), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15">gr1 <span class="op">=</span> PyRanges(df1)</a></code></pre></div>
 <p>Now we can subset the PyRange in various ways:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="bu">print</span>(gr1)</a></code></pre></div>
 <pre><code>## +--------------+------------+------------+------------+------------+
 ## | Chromosome   |      Start |        End |      Score | Strand     |
 ## | (object)     |   (object) |   (object) |   (object) | (object)   |
@@ -173,7 +208,7 @@ gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
 ## | chr2         |          0 |         14 |      42.42 | +          |
 ## +--------------+------------+------------+------------+------------+
 ## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="dv">0</span>:<span class="dv">5</span>])</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="dv">0</span>:<span class="dv">5</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
 ## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
@@ -181,7 +216,7 @@ gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
 ## | chr1         |         4 |         7 |        23.8 | +            |
 ## +--------------+-----------+-----------+-------------+--------------+
 ## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">6</span>:<span class="dv">100</span>])</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">6</span>:<span class="dv">100</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
 ## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
@@ -189,19 +224,22 @@ gr1 <span class="op">=</span> PyRanges(df1)</code></pre></div>
 ## | chr1         |         6 |        11 |        0.13 | -            |
 ## +--------------+-----------+-----------+-------------+--------------+
 ## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.Score)</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="bu">print</span>(gr1.Score)</a></code></pre></div>
 <pre><code>## 0    23.80
 ## 1     0.13
 ## 2    42.42
 ## Name: Score, dtype: float64</code></pre>
 <p>And we can perform comparison operations with two PyRanges:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">f2 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span>
-<span class="st">chr1 5 6 -0.01 -</span>
-<span class="st">chr1 9 12 200 +</span>
-<span class="st">chr3 0 14 21.21 -&quot;&quot;&quot;</span>
-df2 <span class="op">=</span> pd.read_csv(StringIO(f2), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)
-gr2 <span class="op">=</span> PyRanges(df2)
-<span class="bu">print</span>(gr2)</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb10-1" data-line-number="1">f2 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">chr1 5 6 -0.01 -</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">chr1 9 12 200 +</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">chr3 0 14 21.21 -&quot;&quot;&quot;</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">df2 <span class="op">=</span> pd.read_csv(StringIO(f2), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">gr2 <span class="op">=</span> PyRanges(df2)</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="bu">print</span>(gr2)</a></code></pre></div>
 <pre><code>## +--------------+------------+------------+------------+------------+
 ## | Chromosome   |      Start |        End |      Score | Strand     |
 ## | (object)     |   (object) |   (object) |   (object) | (object)   |
@@ -211,7 +249,7 @@ gr2 <span class="op">=</span> PyRanges(df2)
 ## | chr3         |          0 |         14 |      21.21 | -          |
 ## +--------------+------------+------------+------------+------------+
 ## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+------------+------------+------------+------------+
 ## | Chromosome   |      Start |        End |      Score | Strand     |
 ## | (object)     |   (object) |   (object) |   (object) | (object)   |
@@ -220,7 +258,7 @@ gr2 <span class="op">=</span> PyRanges(df2)
 ## | chr1         |          9 |         11 |       0.13 | -          |
 ## +--------------+------------+------------+------------+------------+
 ## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="va">False</span>))</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="va">False</span>))</a></code></pre></div>
 <pre><code>## +--------------+------------+------------+------------+------------+
 ## | Chromosome   |      Start |        End |      Score | Strand     |
 ## | (object)     |   (object) |   (object) |   (object) | (object)   |
@@ -230,7 +268,7 @@ gr2 <span class="op">=</span> PyRanges(df2)
 ## +--------------+------------+------------+------------+------------+
 ## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</code></pre>
 <p>There are also convenience methods for single PyRanges:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.merge())</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="bu">print</span>(gr1.merge())</a></code></pre></div>
 <pre><code>## +--------------+------------+------------+------------+
 ## | Chromosome   |      Start |        End | Strand     |
 ## | (object)     |   (object) |   (object) | (object)   |
@@ -241,7 +279,7 @@ gr2 <span class="op">=</span> PyRanges(df2)
 ## +--------------+------------+------------+------------+
 ## Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.</code></pre>
 <p>The underlying dataframe can always be accessed:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(gr1.df)</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="bu">print</span>(gr1.df)</a></code></pre></div>
 <pre><code>##   Chromosome  Start  End  Score Strand
 ## 0       chr1      4    7  23.80      +
 ## 1       chr1      6   11   0.13      -
@@ -272,10 +310,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -283,6 +322,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

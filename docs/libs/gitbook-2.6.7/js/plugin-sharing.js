@@ -34,6 +34,14 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
                 window.open("https://plus.google.com/share?url="+encodeURIComponent(location.href));
             }
         },
+        'linkedin': {
+            'label': 'LinkedIn',
+            'icon': 'fa fa-linkedin',
+            'onClick': function(e) {
+                e.preventDefault();
+                window.open("https://www.linkedin.com/shareArticle?mini=true&url="+encodeURIComponent(location.href)+"&title="+encodeURIComponent(document.title));
+            }
+        },
         'weibo': {
             'label': 'Weibo',
             'icon': 'fa fa-weibo',
@@ -95,7 +103,8 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
 
             gitbook.toolbar.createButton({
                 icon: site.icon,
-                label: site.text,
+                label: site.label,
+                title: site.label,
                 position: 'right',
                 onClick: site.onClick
             });

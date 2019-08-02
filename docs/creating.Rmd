@@ -48,13 +48,16 @@ print(gr)
 
 #### Using `read_bed`, `read_gtf` or `read_bam` {-}
 
-The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam [^].
+The pyranges library can create PyRanges from three common file formats, namely gtf/gff, bed and bam [^].
 
 ```{python tidy=FALSE}
 ensembl_path = pr.get_example_path("ensembl.gtf")
 gr = pr.read_gtf(ensembl_path)
 print(gr)
 ```
+
+To read bam files the optional bamread-library must be installed. Use `conda
+install -c bioconda bamread` or `pip install bamread` to install it.
 
 `read_bam` takes the arguments `mapq`, `required_flag`, `filter_flag`, which
 have the default values 0, 0 and 1540, respectively.

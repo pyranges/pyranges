@@ -6,7 +6,6 @@ import pandas as pd
 
 from pyranges.pyranges import PyRanges
 
-import bamread
 
 from pyranges.version import __version__
 
@@ -44,6 +43,13 @@ def read_bed(f, output_df=False):
 
 
 def read_bam(f, output_df=False, mapq=0, required_flag=0, filter_flag=1540):
+
+    try:
+        import bamread
+    except ModuleNotFoundError:
+        print("bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it.")
+        sys.exit(1)
+
 
     df = bamread.read_bam(f, mapq, required_flag, filter_flag)
 

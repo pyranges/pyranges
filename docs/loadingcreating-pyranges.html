@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>2 Loading/Creating PyRanges | PyRanges documentation</title>
+  <meta name="description" content="2 Loading/Creating PyRanges | PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:title" content="2 Loading/Creating PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,25 +16,26 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PyRanges documentation" />
+  <meta name="twitter:title" content="2 Loading/Creating PyRanges | PyRanges documentation" />
   
   
   
 
-<meta name="author" content="Endre Bakken Stovner">
+<meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-07-29">
+<meta name="date" content="2019-08-02" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 <link rel="prev" href="index.html">
 <link rel="next" href="writing-pyranges-to-disk.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -50,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 </head>
@@ -153,20 +178,26 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 <div id="using-a-dataframe" class="section level4 unnumbered">
 <h4>Using a DataFrame</h4>
-<p>If you instantiate a PyRanges object from a dataframe, the dataframe should at least contain the columns Chromosome, Start and End. A column called Strand is optional. Any other columns in the dataframe are treated as metadata.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd
-<span class="im">import</span> pyranges <span class="im">as</span> pr
-chipseq <span class="op">=</span> pr.get_example_path(<span class="st">&quot;chipseq.bed&quot;</span>)
-df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span><span class="st">&quot;Chromosome Start End Name Score Strand&quot;</span>.split(), sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)
-<span class="bu">print</span>(df.head(<span class="dv">2</span>))</code></pre></div>
+<p>If you instantiate a PyRanges object from a dataframe, the dataframe should at
+least contain the columns Chromosome, Start and End. A column called Strand is
+optional. Any other columns in the dataframe are treated as metadata.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb20-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">chipseq <span class="op">=</span> pr.get_example_path(<span class="st">&quot;chipseq.bed&quot;</span>)</a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7">df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span><span class="st">&quot;Chromosome Start End Name Score Strand&quot;</span>.split(), sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="bu">print</span>(df.head(<span class="dv">2</span>))</a></code></pre></div>
 <pre><code>##   Chromosome      Start        End Name  Score Strand
 ## 0       chr8   28510032   28510057   U0      0      -
 ## 1       chr7  107153363  107153388   U0      0      -</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(df.tail(<span class="dv">2</span>))</code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="bu">print</span>(df.tail(<span class="dv">2</span>))</a></code></pre></div>
 <pre><code>##      Chromosome      Start        End Name  Score Strand
 ## 9998       chr1  194245558  194245583   U0      0      +
 ## 9999       chr8   57916061   57916086   U0      0      +</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>(pr.PyRanges(df))</code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="bu">print</span>(pr.PyRanges(df))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -186,8 +217,8 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 <div id="using-constructor-keywords" class="section level4 unnumbered">
 <h4>Using constructor keywords</h4>
 <p>The other way to instantiate a PyRanges object is to use the constructor with keywords:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span>df.Chromosome, starts<span class="op">=</span>df.Start, ends<span class="op">=</span>df.End)
-<span class="bu">print</span>(gr)</code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb26-1" data-line-number="1">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span>df.Chromosome, starts<span class="op">=</span>df.Start, ends<span class="op">=</span>df.End)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       |
 ## | (category)   | (int32)   | (int32)   |
@@ -204,8 +235,8 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 ## +--------------+-----------+-----------+
 ## Unstranded PyRanges object has 10,000 rows and 3 columns from 24 chromosomes.</code></pre>
 <p>It is possible to make PyRanges objects out of basic Python datatypes:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1&quot;</span>, strands<span class="op">=</span><span class="st">&quot;+&quot;</span>, starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
-<span class="bu">print</span>(gr)</code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb28-1" data-line-number="1">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1&quot;</span>, strands<span class="op">=</span><span class="st">&quot;+&quot;</span>, starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Strand       |
 ## | (category)   |   (int32) |   (int32) | (category)   |
@@ -215,8 +246,8 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 ## | chr1         |         2 |         5 | +            |
 ## +--------------+-----------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.</code></pre>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))
-<span class="bu">print</span>(gr)</code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb30-1" data-line-number="1">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb30-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+------------+------------+------------+
 ## | Chromosome   |      Start |        End | Strand     |
 ## | (object)     |   (object) |   (object) | (object)   |
@@ -229,10 +260,10 @@ df <span class="op">=</span> pd.read_csv(chipseq, header<span class="op">=</span
 </div>
 <div id="using-read_bed-read_gtf-or-read_bam" class="section level4 unnumbered">
 <h4>Using <code>read_bed</code>, <code>read_gtf</code> or <code>read_bam</code></h4>
-<p>The pyranges library can create PyRanges from three common file formats, namely gtf, bed and bam [^].</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)
-gr <span class="op">=</span> pr.read_gtf(ensembl_path)
-<span class="bu">print</span>(gr)</code></pre></div>
+<p>The pyranges library can create PyRanges from three common file formats, namely gtf/gff, bed and bam [^].</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb32-1" data-line-number="1">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)</a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">gr <span class="op">=</span> pr.read_gtf(ensembl_path)</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+-------+
 ## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | (assigned   | ccds_id    | exon_id         | exon_number   | exon_version   | gene_biotype                       | gene_id         | gene_name   | ...   |
 ## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)    | (object)   | (object)        | (object)      | (object)       | (object)                           | (object)        | (object)    | ...   |
@@ -249,7 +280,9 @@ gr <span class="op">=</span> pr.read_gtf(ensembl_path)
 ## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------+------------+-----------------+---------------+----------------+------------------------------------+-----------------+-------------+-------+
 ## Stranded PyRanges object has 95 rows and 28 columns from 1 chromosomes.
 ## Hidden columns: gene_source, gene_version, previous, protein_id, protein_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source... (+ 2 more.)</code></pre>
-<p><code>read_bam</code> takes the arguments <code>mapq</code>, <code>required_flag</code>, <code>filter_flag</code>, which have the default values 0, 0 and 1540, respectively.</p>
+<p>To read bam files the optional bamread-library must be installed. Use <code>conda install -c bioconda bamread</code> or <code>pip install bamread</code> to install it.</p>
+<p><code>read_bam</code> takes the arguments <code>mapq</code>, <code>required_flag</code>, <code>filter_flag</code>, which
+have the default values 0, 0 and 1540, respectively.</p>
 <p>All the reader functions also take the flag <code>as_df</code></p>
 <p>[^]: PyRanges uses the pysam library which requires that the bam file must have an index.</p>
 
@@ -279,10 +312,11 @@ gitbook.start({
 "facebook": true,
 "twitter": true,
 "google": false,
+"linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -290,6 +324,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },
