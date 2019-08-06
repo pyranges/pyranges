@@ -502,7 +502,7 @@ class PyRanges():
 
         kwargs["sparse"] = {"self": False}
         kwargs = fill_kwargs(kwargs)
-        kwargs["strand"] = strand
+        kwargs["strand"] = strand and self.stranded
         return PyRanges(
             pyrange_apply_single(_drop_duplicate_positions, self, strand, kwargs))
 
@@ -545,11 +545,14 @@ class PyRanges():
     @property
     def stranded(self):
         keys = self.keys()
+        # print(keys)
+        # print(not(len(keys)))
         if not len(keys):
             # so that stranded ops work with empty dataframes
             return True
 
         key = keys[0]
+        # print("isinstance " * 10, isinstance(key, tuple))
 
         return isinstance(key, tuple)
 
@@ -570,8 +573,6 @@ class PyRanges():
             return natsorted(set([k for k in self.keys()]))
 
     def items(self):
-        # from pydbg import dbg
-        # dbg(self.dfs.items())
 
         return natsorted([(k, df) for (k, df) in self.dfs.items()])
 

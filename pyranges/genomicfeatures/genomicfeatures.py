@@ -216,11 +216,6 @@ def _introns2(df, exons, kwargs):
     starts, ends, ids = find_introns(genes.Start.values, genes.End.values, gene_ids.values,
                                      exons.Start.values, exons.End.values, exon_ids.values)
 
-    print(len(starts))
-    print(starts)
-    print(ends)
-    print(ids)
-
     introns = pd.DataFrame(data={"Chromosome": df.Chromosome.iloc[0], "Start": starts, "End": ends, "gene_id": ids})
 
     vc = introns["gene_id"].value_counts(sort=False).to_frame().reset_index()

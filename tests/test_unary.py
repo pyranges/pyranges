@@ -237,6 +237,7 @@ makewindows_command = "bedtools makewindows -w 10 -b <(sort -k1,1 -k2,2n {})"
 @pytest.mark.bedtools
 @settings(
     max_examples=max_examples,
+    print_blob=True,
     deadline=deadline,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
@@ -263,7 +264,7 @@ def test_windows(gr):
 
     print("bedtools_df\n", bedtools_df)
 
-    result = gr.window(10)["Chromosome Start End".split()].unstrand()
+    result = gr.window(10).drop()
     print("result\n", result.df)
 
     if not bedtools_df.empty:

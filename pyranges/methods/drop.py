@@ -1,4 +1,3 @@
-import re
 from collections.abc import Iterable
 
 
@@ -34,10 +33,10 @@ def _drop(self, drop=None, like=None):
 def _keep(self, keep):
 
     columns = self.columns
-    if not self.stranded:
-        always_keep = "Chromosome Start End".split()
-    else:
-        always_keep = "Chromosome Start End Strand".split()
+    # if not self.stranded:
+    always_keep = "Chromosome Start End".split()
+    # else:
+    #     always_keep = "Chromosome Start End Strand".split()
 
     _to_drop = []
     if isinstance(keep, Iterable) or isinstance(keep, list):
@@ -60,5 +59,8 @@ def _keep(self, keep):
             i += 1
 
     self = self.apply(lambda df: df[new_order])
+
+    # if "Strand" in _to_drop:
+    #     pr.concat([self], strand=False)
 
     return self

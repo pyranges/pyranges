@@ -5,7 +5,6 @@ import pandas as pd
 
 def _setattr(self, column_name, column):
 
-
     isiterable = isinstance(column, list) or isinstance(
         column, pd.Series) or isinstance(column, np.ndarray)
     isdict = isinstance(column, dict)
@@ -43,12 +42,9 @@ def _setattr(self, column_name, column):
         dfs[k] = df
 
     if column_name not in ["Chromosome", "Strand"]:
-
         self.__dict__["dfs"] = dfs
-        # print(self)
-        # raise
     else:
-        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df).dfs
+        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df).dfs # will merge the dfs, then split on keys again to ensure they are correct
 
 
 def _getattr(self, name):

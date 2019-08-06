@@ -1,3 +1,7 @@
+# 0.0.52 (unreleased)
+Changes:
+  - Strand removed if not included when subsetting, i.e. gr[["Score", "Name"]] drops the strand, gr[["Score", "Name", "Strand"]] keeps it.
+
 # 0.0.51 (01.08.19)
 Additions:
   - pr.itergrs added to iterate over the dfs from multiple pyranges at the same time
