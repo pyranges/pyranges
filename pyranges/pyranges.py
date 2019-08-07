@@ -420,13 +420,20 @@ class PyRanges():
         return new_self
 
 
-    def to_rle(self, value_col=None, strand=False, rpm=False, nb_cpu=1):
+    def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
+
+        if strand is None:
+            strand = self.stranded
 
         from pyranges.methods.to_rle import _to_rle
 
         return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
-    def apply(self, f, strand=False, as_pyranges=True, **kwargs):
+    def apply(self, f, strand=None, as_pyranges=True, **kwargs):
+
+
+        if strand is None:
+            strand = self.stranded
 
         kwargs.update({"strand": strand})
         kwargs = fill_kwargs(kwargs)

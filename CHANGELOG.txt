@@ -1,6 +1,6 @@
 # 0.0.52 (unreleased)
-Changes:
-  - Strand removed if not included when subsetting, i.e. gr[["Score", "Name"]] drops the strand, gr[["Score", "Name", "Strand"]] keeps it.
+Fixes:
+  - default was strand=False for a few methods, should have been None (i.e. autodetect)
 
 # 0.0.51 (01.08.19)
 Additions:

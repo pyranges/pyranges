@@ -264,7 +264,7 @@ def test_windows(gr):
 
     print("bedtools_df\n", bedtools_df)
 
-    result = gr.window(10).drop()
+    result = gr.window(10)["Chromosome Start End".split()].unstrand()
     print("result\n", result.df)
 
     if not bedtools_df.empty:
