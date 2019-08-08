@@ -1,6 +1,13 @@
 # 0.0.52 (unreleased)
 Fixes:
   - default was strand=False for a few methods, should have been None (i.e. autodetect)
+  - read_bed now handles gzipped bed (if the file has the .gz extension)
+  - now able to print untraditional strands which are not strings
+  - fix drop when "Strand" is part of what is to be dropped
+
+Changes:
+  - only printing ten first untraditional strands in str repr
+  - to_bed, to_gtf, to_csv now take compression argument ("infer" by default)
 
 # 0.0.51 (01.08.19)
 Additions:

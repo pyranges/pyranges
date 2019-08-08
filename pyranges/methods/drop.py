@@ -28,7 +28,7 @@ def _drop(self, drop=None, like=None):
     _to_drop = set(_to_drop) - set(always_keep)
 
     # need to use unstrand to remove "+"/"-" from dict
-    if "Strand" in _to_drop and self.stranded():
+    if "Strand" in _to_drop and self.stranded:
         self = self.unstrand()
         _to_drop = [d for d in _to_drop if not d == "Strand"]
 

@@ -630,18 +630,18 @@ class PyRanges():
 
         return _summary(self)
 
-    def to_csv(self, path=None, sep=",", header=False):
+    def to_csv(self, path=None, sep=",", header=False, compression="infer"):
         from pyranges.out import _to_csv
-        result = _to_csv(self, path, sep=sep, header=header)
+        result = _to_csv(self, path, sep=sep, header=header, compression=compression)
         if path:
             return self
         else:
             return result
 
-    def to_bed(self, path=None, keep=True):
+    def to_bed(self, path=None, keep=True, compression="infer"):
         from pyranges.out import _to_bed
 
-        result = _to_bed(self, path, keep=keep)
+        result = _to_bed(self, path, keep=keep, compression=compression)
 
         if path:
             return self
@@ -649,10 +649,10 @@ class PyRanges():
             return result
 
 
-    def to_gtf(self, path=None):
+    def to_gtf(self, path=None, compression="infer"):
         from pyranges.out import _to_gtf
 
-        result = _to_gtf(self, path)
+        result = _to_gtf(self, path, compression=compression)
 
         if path:
             return self

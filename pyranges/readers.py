@@ -15,8 +15,11 @@ def read_bed(f, output_df=False):
     columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split(
     )
 
-
-    first_start = open(f).readline().split()[1]
+    if f.endswith(".gz"):
+        import gzip
+        first_start = gzip.open(f).readline().split()[1]
+    else:
+        first_start = open(f).readline().split()[1]
 
     header = None
 

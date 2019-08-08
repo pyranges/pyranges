@@ -66,7 +66,7 @@ def _gtf(df):
     return outdf
 
 
-def _to_gtf(self, path=None):
+def _to_gtf(self, path=None, compression="infer"):
 
     gr = self
 
@@ -79,6 +79,7 @@ def _to_gtf(self, path=None):
                 path,
                 index=False,
                 header=False,
+                compression=compression,
                 mode=mode,
                 sep="\t",
                 quoting=csv.QUOTE_NONE)
@@ -91,7 +92,7 @@ def _to_gtf(self, path=None):
         ])
 
 
-def _to_csv(self, path=None, sep=",", header=False):
+def _to_csv(self, path=None, sep=",", header=False, compression="infer"):
 
     gr = self
 
@@ -101,6 +102,7 @@ def _to_csv(self, path=None, sep=",", header=False):
             outdf.to_csv(
                 path,
                 index=False,
+                compression=compression,
                 header=header,
                 mode=mode,
                 sep=sep,
@@ -115,7 +117,7 @@ def _to_csv(self, path=None, sep=",", header=False):
         ])
 
 
-def _to_bed(self, path=None, sep="\t", keep=True):
+def _to_bed(self, path=None, sep="\t", keep=True, compression="infer"):
 
     gr = self
 
@@ -129,6 +131,7 @@ def _to_bed(self, path=None, sep="\t", keep=True):
                 path,
                 index=False,
                 header=False,
+                compression=compression,
                 mode=mode,
                 sep="\t",
                 quoting=csv.QUOTE_NONE)

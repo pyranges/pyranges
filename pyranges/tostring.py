@@ -139,8 +139,11 @@ def increase_string_width(self, df, first_df, merge_position):
             strands.extend(list(df.Strand.drop_duplicates()))
 
         untraditional_strands = set(strands) - set("+-")
-        str_repr += "\n(Considered unstranded due to the values {} being present in the Strand column.)".format(
-            ", ".join(untraditional_strands))
+        more_than_10 = ", ..." if len(untraditional_strands) > 9 else ""
+        from itertools import islice
+        untraditional_strands = islice(untraditional_strands, 10)
+        str_repr += "\n(Considered unstranded due to the values {}{} being present in the Strand column.)".format(
+            ", ".join((str(x) for x in untraditional_strands)), more_than_10)
 
     return str_repr
 
