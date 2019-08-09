@@ -4,6 +4,10 @@ import pandas as pd
 
 from pyranges import PyRanges
 
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "bedtools: tests rely on"
+    )
 
 @pytest.fixture
 def names():
