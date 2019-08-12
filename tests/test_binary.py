@@ -486,3 +486,44 @@ def test_join_new_pos(gr, gr2, strandedness, new_pos):
 #     print(result)
 
 #     assert_df_equal(result, expected)
+
+
+@pytest.mark.bedtools
+@pytest.mark.explore
+@pytest.mark.parametrize("nearest_how,overlap,strandedness",
+                         product(nearest_hows, [False], strandedness))
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    print_blob=True,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+# @reproduce_failure('4.32.2', b'AXicY2RAA4zofAAAVgAE')
+def test_knearest(gr, gr2, nearest_how, overlap, strandedness):
+
+    nearest_command = "bedtools closest {bedtools_how} {strand} {overlap} -t first -d -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
+
+    bedtools_result = run_bedtools(nearest_command, gr, gr2, strandedness,
+                                   overlap, nearest_how)
+
+    bedtools_df = pd.read_csv(
+        StringIO(bedtools_result),
+        header=None,
+        names="Chromosome Start End Strand Chromosome2 Distance".split(),
+        usecols=[0, 1, 2, 5, 6, 12],
+        sep="\t")
+
+    bedtools_df.Distance = bedtools_df.Distance.abs()
+
+    bedtools_df = bedtools_df[bedtools_df.Chromosome2 != "."]
+    bedtools_df = bedtools_df.drop("Chromosome2", 1)
+
+    result = gr.knearest(
+        gr2, strandedness=strandedness, overlap=overlap, how=nearest_how)
+
+    print("bedtools " * 5)
+    print(bedtools_df)
+    print("result " * 5)
+    print(result)
+
+    compare_results_nearest(bedtools_df, result)

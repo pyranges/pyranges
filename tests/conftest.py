@@ -6,7 +6,11 @@ from pyranges import PyRanges
 
 def pytest_configure(config):
     config.addinivalue_line(
-        "markers", "bedtools: tests rely on"
+        "markers", "bedtools: tests rely on",
+    )
+
+    config.addinivalue_line(
+        "markers", "explore: functionality not ready for prime-time"
     )
 
 @pytest.fixture

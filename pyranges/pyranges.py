@@ -164,6 +164,24 @@ class PyRanges():
 
         return PyRanges(dfs)
 
+
+    def knearest(self, other, k=1, **kwargs):
+
+        from pyranges.methods.k_nearest import _nearest
+
+        print(kwargs)
+        kwargs["k"] = k
+        kwargs = fill_kwargs(kwargs)
+        print(kwargs)
+
+        if kwargs.get("how") in "upstream downstream".split():
+            assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
+
+        dfs = pyrange_apply(_nearest, self, other, **kwargs)
+
+        return PyRanges(dfs)
+
+
     def intersect(self, other, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
