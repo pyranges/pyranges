@@ -10,7 +10,7 @@ from pyranges.pyranges import PyRanges
 from pyranges.version import __version__
 
 
-def read_bed(f, output_df=False):
+def read_bed(f, output_df=False, nrows=None):
 
     columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split(
     )
@@ -34,6 +34,7 @@ def read_bed(f, output_df=False):
             "Chromosome": "category",
             "Strand": "category"
         },
+        nrows=nrows,
         header=header,
         sep="\t")
 

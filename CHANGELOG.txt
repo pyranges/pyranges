@@ -6,6 +6,7 @@ Fixes:
   - fix drop when "Strand" is part of what is to be dropped
 
 Changes:
+  - read_bed now takes nrows arg
   - now assertion is raised if trying to drop "Chromosome", "Start" or "End" (instead of ignoring)
   - only printing ten first untraditional strands in str repr
   - to_bed, to_gtf, to_csv now take compression argument ("infer" by default)

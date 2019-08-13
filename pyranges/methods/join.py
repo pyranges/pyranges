@@ -2,15 +2,13 @@ import numpy as np
 import pandas as pd
 from ncls import NCLS
 
+def _both_indexes(scdf, ocdf, how=False):
 
-def _both_dfs(scdf, ocdf, how=False):
-
-    assert how in "containment first".split() + [False, None]
+    assert (how in "containment first".split() + [False, None]) or isinstance(how, int)
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values
 
-    ocdf = ocdf.reset_index(drop=True)
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how:
@@ -19,12 +17,23 @@ def _both_dfs(scdf, ocdf, how=False):
     elif how == "containment":
         _self_indexes, _other_indexes = it.all_containments_both(
             starts, ends, indexes)
+    elif isinstance(how, int): # and how > 1:
+        _self_indexes, _other_indexes = it.k_overlaps_both(
+            starts, ends, indexes, how)
     else:
         _self_indexes, _other_indexes = it.first_overlap_both(
             starts, ends, indexes)
 
-    _self_indexes = _self_indexes
-    _other_indexes = _other_indexes
+    return _self_indexes, _other_indexes
+
+
+def _both_dfs(scdf, ocdf, how=False):
+
+    assert how in "containment first".split() + [False, None]
+
+    _self_indexes, _other_indexes = _both_indexes(scdf, ocdf, how)
+
+
     scdf = scdf.reindex(_self_indexes)
     ocdf = ocdf.reindex(_other_indexes)
 

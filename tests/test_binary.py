@@ -365,6 +365,7 @@ def test_jaccard(gr, gr2, strandedness):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
+    print_blob=True,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
 def test_join(gr, gr2, strandedness):
@@ -491,17 +492,29 @@ def test_join_new_pos(gr, gr2, strandedness, new_pos):
 @pytest.mark.bedtools
 @pytest.mark.explore
 @pytest.mark.parametrize("nearest_how,overlap,strandedness",
-                         product(nearest_hows, [False], strandedness))
+                         product(nearest_hows, [True, False], strandedness))
 @settings(
     max_examples=max_examples,
     deadline=deadline,
     print_blob=True,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
-# @reproduce_failure('4.32.2', b'AXicY2RAA4zofAAAVgAE')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGCEYEY4CwgAAKcACA==')
+# @reproduce_failure('4.32.2', b'AXicY2RAA4zoAgAAVQAD')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGCEkxAWAAB6AAY=')
+# @reproduce_failure('4.32.2', b'AXicY2RgYGRABqg8IAAAAHQABA==')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGCEYEZkMQAAoQAH')
+# @reproduce_failure('4.32.2', b'AXicY2RAA4zoAgAAVQAD')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGBE5TMCAAB1AAY=')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGCEkxAWAAB6AAY=')
+# @reproduce_failure('4.32.2', b'AXicY2RgYGCEIkZGKJMBQTIyQlgAAUgADg==')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGCEYEZkMQAAoQAH')
+# @reproduce_failure('4.32.2', b'AXicY2RgYGCEIEYIEwoYkUgQAAABCgAJ')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGBE4wMAAHQABQ==')
+# @reproduce_failure('4.32.2', b'AXicY2QAAUYGGGCEkxAWAAB6AAY=')
 def test_knearest(gr, gr2, nearest_how, overlap, strandedness):
 
-    nearest_command = "bedtools closest {bedtools_how} {strand} {overlap} -t first -d -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
+    nearest_command = "bedtools closest -k 2 {bedtools_how} {strand} {overlap} -t first -d -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
     bedtools_result = run_bedtools(nearest_command, gr, gr2, strandedness,
                                    overlap, nearest_how)
@@ -519,7 +532,7 @@ def test_knearest(gr, gr2, nearest_how, overlap, strandedness):
     bedtools_df = bedtools_df.drop("Chromosome2", 1)
 
     result = gr.knearest(
-        gr2, strandedness=strandedness, overlap=overlap, how=nearest_how)
+        gr2, k=2, strandedness=strandedness, overlap=overlap, how=nearest_how)
 
     print("bedtools " * 5)
     print(bedtools_df)

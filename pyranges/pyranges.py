@@ -169,10 +169,8 @@ class PyRanges():
 
         from pyranges.methods.k_nearest import _nearest
 
-        print(kwargs)
         kwargs["k"] = k
         kwargs = fill_kwargs(kwargs)
-        print(kwargs)
 
         if kwargs.get("how") in "upstream downstream".split():
             assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
