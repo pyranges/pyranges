@@ -17,9 +17,6 @@ def _both_indexes(scdf, ocdf, how=False):
     elif how == "containment":
         _self_indexes, _other_indexes = it.all_containments_both(
             starts, ends, indexes)
-    elif isinstance(how, int): # and how > 1:
-        _self_indexes, _other_indexes = it.k_overlaps_both(
-            starts, ends, indexes, how)
     else:
         _self_indexes, _other_indexes = it.first_overlap_both(
             starts, ends, indexes)
