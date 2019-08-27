@@ -103,5 +103,7 @@ def _write_both(scdf, ocdf, kwargs):
                 "Strand" + suffixes[0]: "Strand"
             },
             inplace=True)
+    else:
+        raise Exception("Invalid new pos: {}. Use False/None/union/intersection.".format(new_pos))
 
     return df

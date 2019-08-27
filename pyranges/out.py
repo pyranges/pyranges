@@ -92,7 +92,7 @@ def _to_gtf(self, path=None, compression="infer"):
         ])
 
 
-def _to_csv(self, path=None, sep=",", header=False, compression="infer"):
+def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
 
     gr = self
 

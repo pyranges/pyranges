@@ -13,7 +13,8 @@ def _setattr(self, column_name, column):
         if not len(self) == len(column):
             raise Exception("DataFrame and column must be same length.")
 
-    already_exists = column_name in self.values()[0]
+    already_exists = column_name in self.columns
+
 
     if already_exists:
         pos = list(self.values()[0].columns).index(column_name)

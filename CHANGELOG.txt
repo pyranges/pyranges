@@ -4,12 +4,14 @@ Fixes:
   - read_bed now handles gzipped bed (if the file has the .gz extension)
   - now able to print untraditional strands which are not strings
   - fix drop when "Strand" is part of what is to be dropped
+  - more robust checking if column is in gr
 
 Changes:
   - read_bed now takes nrows arg
   - now assertion is raised if trying to drop "Chromosome", "Start" or "End" (instead of ignoring)
   - only printing ten first untraditional strands in str repr
   - to_bed, to_gtf, to_csv now take compression argument ("infer" by default)
+  - to_csv writes the header as default
 
 # 0.0.51 (01.08.19)
 Additions:

@@ -164,8 +164,7 @@ class PyRanges():
 
         return PyRanges(dfs)
 
-
-    def knearest(self, other, k=1, **kwargs):
+    def k_nearest(self, other, k=1, **kwargs):
 
         from pyranges.methods.k_nearest import _nearest
 
@@ -178,7 +177,6 @@ class PyRanges():
         dfs = pyrange_apply(_nearest, self, other, **kwargs)
 
         return PyRanges(dfs)
-
 
     def intersect(self, other, **kwargs):
 
@@ -274,14 +272,6 @@ class PyRanges():
 
         return counts
 
-
-
-
-
-
-
-
-
     # def insert(self, other, col, **kwargs):
 
     #     from pyranges.methods.insert import _insert
@@ -335,13 +325,15 @@ class PyRanges():
         if not strand and _stranded:
             # print(" wooo " * 100)
             # print(new_dfs)
-            new_dfs = {k: d.rename(columns={"Strand2": "Strand"}) for k, d in new_dfs.items()}
+            new_dfs = {
+                k: d.rename(columns={"Strand2": "Strand"})
+                for k, d in new_dfs.items()
+            }
             # print(new_dfs)
 
         self = PyRanges(new_dfs)
 
         return self
-
 
     def merge(self, strand=None, count=False, **kwargs):
 
@@ -375,7 +367,6 @@ class PyRanges():
         df = pyrange_apply_single(_windows, self, strand, kwargs)
 
         return PyRanges(df)
-
 
     def tile(self, tile_size, strand=None, **kwargs):
 
@@ -435,7 +426,6 @@ class PyRanges():
 
         return new_self
 
-
     def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
 
         if strand is None:
@@ -446,7 +436,6 @@ class PyRanges():
         return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
     def apply(self, f, strand=None, as_pyranges=True, **kwargs):
-
 
         if strand is None:
             strand = self.stranded
@@ -472,8 +461,12 @@ class PyRanges():
         else:
             return PyRanges(result)
 
-    def apply_pair(self, other, f, strandedness=False,
-                   as_pyranges=True, **kwargs):
+    def apply_pair(self,
+                   other,
+                   f,
+                   strandedness=False,
+                   as_pyranges=True,
+                   **kwargs):
 
         kwargs.update({"strandedness": strandedness})
         kwargs = fill_kwargs(kwargs)
@@ -516,7 +509,6 @@ class PyRanges():
         return PyRanges(
             pyrange_apply_single(_sort, self, self.stranded, kwargs))
 
-
     def drop_duplicate_positions(self, strand=None, **kwargs):
 
         from pyranges.methods.drop_duplicates import _drop_duplicate_positions
@@ -527,7 +519,8 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         kwargs["strand"] = strand and self.stranded
         return PyRanges(
-            pyrange_apply_single(_drop_duplicate_positions, self, strand, kwargs))
+            pyrange_apply_single(_drop_duplicate_positions, self, strand,
+                                 kwargs))
 
     def keys(self):
         return natsorted(self.dfs.keys())
@@ -544,16 +537,21 @@ class PyRanges():
             return []
 
     def set_columns(self, value):
-        assert len(value) == len(self.columns), "New and old columns must be same length"
+        assert len(value) == len(
+            self.columns), "New and old columns must be same length"
 
         def _columns(df):
             df.columns = value
             return df
 
-        return pr.PyRanges(pyrange_apply_single(_columns, self, strand=None, kwargs={"sparse": {"self": False}}))
-
-
-
+        return pr.PyRanges(
+            pyrange_apply_single(
+                _columns,
+                self,
+                strand=None,
+                kwargs={"sparse": {
+                    "self": False
+                }}))
 
     def drop(self, drop=None, like=None):
         """Drop column(s) from the PyRanges object.
@@ -646,9 +644,10 @@ class PyRanges():
 
         return _summary(self)
 
-    def to_csv(self, path=None, sep=",", header=False, compression="infer"):
+    def to_csv(self, path=None, sep=",", header=True, compression="infer"):
         from pyranges.out import _to_csv
-        result = _to_csv(self, path, sep=sep, header=header, compression=compression)
+        result = _to_csv(
+            self, path, sep=sep, header=header, compression=compression)
         if path:
             return self
         else:
@@ -664,7 +663,6 @@ class PyRanges():
         else:
             return result
 
-
     def to_gtf(self, path=None, compression="infer"):
         from pyranges.out import _to_gtf
 
@@ -674,7 +672,6 @@ class PyRanges():
             return self
         else:
             return result
-
 
     def to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
         from pyranges.out import _to_bigwig
@@ -690,7 +687,7 @@ class PyRanges():
 
     def tail(self, n=8):
         subsetter = np.zeros(len(self), dtype=np.bool)
-        subsetter[(len(self) -  n):] = True
+        subsetter[(len(self) - n):] = True
         return self[subsetter]
 
     def sample(self, n=8):
