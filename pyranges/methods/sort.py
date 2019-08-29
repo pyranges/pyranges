@@ -2,6 +2,7 @@ def _sort(df, kwargs):
 
     if "by" in kwargs:
         by = kwargs["by"]
+        # print("sorting by", by)
         # print("by " * 100)
         # print(by)
         return df.sort_values(by)
@@ -9,6 +10,7 @@ def _sort(df, kwargs):
         # print("else " * 100)
         # print(df)
         df = sort_one_by_one(df, "Start", "End")
+        # df = df.sort_values("Start End".split())
         return df
 
 
