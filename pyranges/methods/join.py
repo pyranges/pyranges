@@ -2,9 +2,11 @@ import numpy as np
 import pandas as pd
 from ncls import NCLS
 
+
 def _both_indexes(scdf, ocdf, how=False):
 
-    assert (how in "containment first".split() + [False, None]) or isinstance(how, int)
+    assert (how in "containment first".split() + [False, None]) or isinstance(
+        how, int)
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values
@@ -29,7 +31,6 @@ def _both_dfs(scdf, ocdf, how=False):
     assert how in "containment first".split() + [False, None]
 
     _self_indexes, _other_indexes = _both_indexes(scdf, ocdf, how)
-
 
     scdf = scdf.reindex(_self_indexes)
     ocdf = ocdf.reindex(_other_indexes)
@@ -104,6 +105,8 @@ def _write_both(scdf, ocdf, kwargs):
             },
             inplace=True)
     else:
-        raise Exception("Invalid new pos: {}. Use False/None/union/intersection.".format(new_pos))
+        raise Exception(
+            "Invalid new pos: {}. Use False/None/union/intersection.".format(
+                new_pos))
 
     return df

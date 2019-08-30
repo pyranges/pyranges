@@ -1,5 +1,7 @@
 # 0.0.52 (unreleased)
 Fixes:
+  - fix creating duplicate indexes in pyrange apply both
+  - fix regression where joining unstranded and stranded pyrange did not make a stranded pyrange
   - default was strand=False for a few methods, should have been None (i.e. autodetect)
   - read_bed now handles gzipped bed (if the file has the .gz extension)
   - now able to print untraditional strands which are not strings

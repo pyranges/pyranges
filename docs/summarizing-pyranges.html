@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-08-02" />
+<meta name="date" content="2019-08-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -171,31 +171,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="summarizing-pyranges" class="section level1">
 <h1><span class="header-section-number">11</span> Summarizing PyRanges</h1>
 <p>The summary-function gives a summary of the lengths of the intervals in a PyRange:</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb118-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb118-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb118-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb118-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb118-5" data-line-number="5"><span class="im">from</span> io <span class="im">import</span> StringIO</a>
-<a class="sourceLine" id="cb118-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb118-7" data-line-number="7">gr <span class="op">=</span> pr.data.exons()</a>
-<a class="sourceLine" id="cb118-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb118-9" data-line-number="9"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb120-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb120-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb120-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb120-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb120-5" data-line-number="5"><span class="im">from</span> io <span class="im">import</span> StringIO</a>
+<a class="sourceLine" id="cb120-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb120-7" data-line-number="7">gr <span class="op">=</span> pr.data.exons()</a>
+<a class="sourceLine" id="cb120-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb120-9" data-line-number="9"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
 ## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
-## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
-## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
 ## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f     | 0         | +            |
-## | chrX         | 77294333  | 77294480  | NM_000052_exon_17_0_chrX_77294334_f    | 0         | +            |
+## | chrX         | 49069126  | 49069255  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
+## | chrX         | 52257919  | 52258046  | NM_001097593_exon_1_0_chrX_52257920_r  | 0         | -            |
+## | chrX         | 70470281  | 70470576  | NM_201599_exon_20_0_chrX_70470282_r    | 0         | -            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
-## | chrY         | 15409586  | 15409728  | NR_047633_exon_3_0_chrY_15409587_r     | 0         | -            |
 ## | chrY         | 15478146  | 15478273  | NR_047634_exon_18_0_chrY_15478147_r    | 0         | -            |
-## | chrY         | 15360258  | 15361762  | NR_047601_exon_0_0_chrY_15360259_r     | 0         | -            |
-## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 16834996  | 16835149  | NR_028319_exon_2_0_chrY_16834997_f     | 0         | +            |
+## | chrY         | 23704576  | 23704729  | NM_005058_exon_4_0_chrY_23704577_f     | 0         | +            |
+## | chrY         | 24560624  | 24560735  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.</code></pre>
-<div class="sourceCode" id="cb120"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb120-1" data-line-number="1"><span class="bu">print</span>(gr.summary())</a></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb122-1" data-line-number="1"><span class="bu">print</span>(gr.summary())</a></code></pre></div>
 <pre><code>## +-------+-----------+---------------------+-----------------------+
 ## |       |   pyrange |   coverage_stranded |   coverage_unstranded |
 ## |-------+-----------+---------------------+-----------------------|

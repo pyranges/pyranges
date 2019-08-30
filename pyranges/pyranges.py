@@ -608,7 +608,8 @@ class PyRanges():
 
         gr = pr.concat([self["+"], self["-"]])
 
-        gr = gr.apply(lambda df: df.drop("Strand", axis=1))
+        gr = gr.apply(lambda df: df.drop("Strand", axis=1).reset_index(drop=
+                                                                       True))
 
         return gr
 
@@ -707,43 +708,55 @@ class PyRanges():
 
         print(s)
 
-    def mp(self, n=8):
+    def mp(self, n=8, formatting=None):
 
-        print(tostring(self, n=n, merge_position=True))
+        print(tostring(self, n=n, merge_position=True, formatting=formatting))
 
-    def sp(self, n=30):
+    def sp(self, n=30, formatting=None):
 
-        print(tostring(self, n=n, sort=True))
+        print(tostring(self, n=n, sort=True, formatting=formatting))
 
-    def msp(self, n=30):
+    def msp(self, n=30, formatting=None):
 
-        print(tostring(self, n=n, merge_position=True, sort=True))
+        print(
+            tostring(
+                self,
+                n=n,
+                merge_position=True,
+                sort=True,
+                formatting=formatting))
 
     def rp(self):
 
         print(self.dfs)
 
-    def pc(self, n=8):
+    def pc(self, n=8, formatting=None):
 
-        print(tostring(self, n=n))
-
-        return self
-
-    def mpc(self, n=8):
-
-        print(tostring(self, n=n, merge_position=True))
+        print(tostring(self, n=n, formatting=formatting))
 
         return self
 
-    def spc(self, n=30):
+    def mpc(self, n=8, formatting=None):
 
-        print(tostring(self, n=n, sort=True))
+        print(tostring(self, n=n, merge_position=True, formatting=formatting))
 
         return self
 
-    def mspc(self, n=30):
+    def spc(self, n=30, formatting=None):
 
-        print(tostring(self, n=n, merge_position=True, sort=True))
+        print(tostring(self, n=n, sort=True, formatting=formatting))
+
+        return self
+
+    def mspc(self, n=30, formatting=None):
+
+        print(
+            tostring(
+                self,
+                n=n,
+                merge_position=True,
+                sort=True,
+                formatting=formatting))
 
         return self
 

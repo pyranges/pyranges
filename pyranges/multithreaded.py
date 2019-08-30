@@ -16,6 +16,7 @@ def get_n_args(f):
     nparams = len(inspect.signature(f).parameters)
     return nparams
 
+
 def call_f(f, nparams, df, odf, kwargs):
 
     if nparams == 3:
@@ -42,6 +43,7 @@ class suppress_stdout_stderr(object):
     exited (at least, I think that is why it lets exceptions through).
 
     '''
+
     def __init__(self):
         # Open a pair of null files
         self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
@@ -61,6 +63,7 @@ class suppress_stdout_stderr(object):
         os.close(self.null_fds[0])
         os.close(self.null_fds[1])
 
+
 import pandas as pd
 
 import pyranges as pr
@@ -73,7 +76,7 @@ import sys
 def merge_dfs(df1, df2):
 
     if not df1.empty and not df2.empty:
-        return pd.concat([df1, df2], sort=False)
+        return pd.concat([df1, df2], sort=False).reset_index(drop=True)
 
     elif df1.empty and df2.empty:
         # can this happen?
@@ -112,7 +115,6 @@ def process_results(results, keys):
         del results_dict[k]
 
     return results_dict
-
 
 
 def make_sparse(df):
@@ -200,8 +202,8 @@ def pyrange_apply(function, self, other, **kwargs):
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu)
 
-    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
-
+    function, get, _merge_dfs = get_multithreaded_funcs(
+        function, nb_cpu=nb_cpu)
 
     strandedness = kwargs["strandedness"]
 
@@ -323,7 +325,6 @@ def pyrange_apply(function, self, other, **kwargs):
     return results
 
 
-
 def pyrange_apply_single(function, self, strand, kwargs):
 
     nparams = get_n_args(function)
@@ -334,14 +335,14 @@ def pyrange_apply_single(function, self, strand, kwargs):
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu)
 
-    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
+    function, get, _merge_dfs = get_multithreaded_funcs(
+        function, nb_cpu=nb_cpu)
 
     if strand:
         assert self.stranded, \
             "Can only do stranded operation when PyRange contains strand info"
 
     results = []
-
 
     if strand:
 
@@ -389,7 +390,6 @@ def pyrange_apply_single(function, self, strand, kwargs):
             result = call_f_single(function, nparams, df, kwargs)
             results.append(result)
             keys.append(c)
-
 
     results = get(results)
 
@@ -456,7 +456,8 @@ def _slack(df, kwargs):
     # dtype = df.Start.dtype
     slack = kwargs["slack"]
 
-    assert type(slack) == int, "Slack parameter must be integer, is {}".format(type(slack))
+    assert type(slack) == int, "Slack parameter must be integer, is {}".format(
+        type(slack))
     # df = self.df.copy()
     df.loc[:, "Start"] = df.Start - slack
     df.loc[df.Start < 0, "Start"] = 0
@@ -465,7 +466,6 @@ def _slack(df, kwargs):
     # df[cs] = df[cs].astype(dtype)
 
     return df
-
 
 
 def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
@@ -477,7 +477,8 @@ def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu)
 
-    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
+    function, get, _merge_dfs = get_multithreaded_funcs(
+        function, nb_cpu=nb_cpu)
 
     keys = []
     lengths = []
@@ -485,7 +486,8 @@ def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
     for k, v in self.items():
         dfs = np.array_split(v, nb_cpu)
         lengths.append(len(dfs))
-        results.extend([call_f_single(function, nparams, df, kwargs) for df in dfs])
+        results.extend(
+            [call_f_single(function, nparams, df, kwargs) for df in dfs])
         keys.append(k)
 
     results = get(results)

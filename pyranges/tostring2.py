@@ -15,9 +15,10 @@ def _get_stranded_f(self, half_entries, f, sort=False):
     if f == "tail":
         chromosomes = reversed(chromosomes)
 
+    default = pd.DataFrame(columns=self.columns)
     for chromosome in chromosomes:
-        plus = self.dfs.get((chromosome, "+"))
-        minus = self.dfs.get((chromosome, "-"))
+        plus = self.dfs.get((chromosome, "+"), default)
+        minus = self.dfs.get((chromosome, "-"), default)
 
         if sort:
             plus = plus.sort_values(sort_cols)

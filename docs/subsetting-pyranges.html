@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-08-02" />
+<meta name="date" content="2019-08-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -179,20 +179,20 @@ you want.</p>
 <a class="sourceLine" id="cb46-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb46-4" data-line-number="4">gr <span class="op">=</span> pr.data.chipseq()</a>
 <a class="sourceLine" id="cb46-5" data-line-number="5"><span class="bu">print</span>(gr.sample())</a></code></pre></div>
-<pre><code>## +--------------+------------+------------+------------+------------+------------+
-## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
-## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
-## |--------------+------------+------------+------------+------------+------------|
-## | chr1         |  144185630 |  144185655 | U0         |          0 | +          |
-## | chr3         |   50184514 |   50184539 | U0         |          0 | -          |
-## | chr4         |   57816677 |   57816702 | U0         |          0 | +          |
-## | chr9         |   35427776 |   35427801 | U0         |          0 | -          |
-## | chr12        |  108768075 |  108768100 | U0         |          0 | +          |
-## | chr12        |  130029920 |  130029945 | U0         |          0 | +          |
-## | chr13        |   19809701 |   19809726 | U0         |          0 | -          |
-## | chr16        |   28893339 |   28893364 | U0         |          0 | +          |
-## +--------------+------------+------------+------------+------------+------------+
-## Stranded PyRanges object has 8 rows and 6 columns from 7 chromosomes.</code></pre>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 102706148 | 102706173 | U0         |         0 | -            |
+## | chr2         | 220931248 | 220931273 | U0         |         0 | -            |
+## | chr8         |  10943544 |  10943569 | U0         |         0 | +            |
+## | chr9         | 125835999 | 125836024 | U0         |         0 | +            |
+## | chr10        | 104494468 | 104494493 | U0         |         0 | +            |
+## | chr11        | 114618758 | 114618783 | U0         |         0 | -            |
+## | chr12        |  93148524 |  93148549 | U0         |         0 | +            |
+## | chr15        |  46985027 |  46985052 | U0         |         0 | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 8 rows and 6 columns from 8 chromosomes.</code></pre>
 <div class="sourceCode" id="cb48"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="bu">print</span>(gr.tail(<span class="dv">4</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -214,15 +214,15 @@ you want.</p>
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | chr1         | 100079649 | 100079674 | U0         | 0         | -            |
 ## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+## | chr1         | 156338310 | 156338335 | U0         | 0         | -            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+## | chrY         | 11942770  | 11942795  | U0         | 0         | +            |
 ## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+## | chrY         | 21559181  | 21559206  | U0         | 0         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
 <div class="sourceCode" id="cb52"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="bu">print</span>(gr[[<span class="st">&quot;Name&quot;</span>]])</a></code></pre></div>
@@ -230,15 +230,15 @@ you want.</p>
 ## | Chromosome   | Start     | End       | Name       | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (category)   |
 ## |--------------+-----------+-----------+------------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | +            |
+## | chr1         | 100079649 | 100079674 | U0         | -            |
 ## | chr1         | 144227079 | 144227104 | U0         | +            |
+## | chr1         | 156338310 | 156338335 | U0         | -            |
+## | chr1         | 169887529 | 169887554 | U0         | +            |
 ## | ...          | ...       | ...       | ...        | ...          |
-## | chrY         | 15224235  | 15224260  | U0         | -            |
+## | chrY         | 11942770  | 11942795  | U0         | +            |
 ## | chrY         | 13517892  | 13517917  | U0         | -            |
-## | chrY         | 8010951   | 8010976   | U0         | -            |
-## | chrY         | 7405376   | 7405401   | U0         | -            |
+## | chrY         | 15224235  | 15224260  | U0         | -            |
+## | chrY         | 21559181  | 21559206  | U0         | +            |
 ## +--------------+-----------+-----------+------------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.</code></pre>
 <p>By subsetting using a boolean vector, you can get specific rows:</p>
@@ -256,10 +256,10 @@ you want.</p>
 ## | chrX         | 148685    | 149461    | 85        |
 ## | chrX         | 166504    | 167721    | 96        |
 ## | ...          | ...       | ...       | ...       |
-## | chrY         | 21154603  | 21155040  | 61        |
-## | chrY         | 21238448  | 21240005  | 133       |
-## | chrY         | 26351343  | 26352316  | 76        |
-## | chrY         | 27610115  | 27611088  | 76        |
+## | chrX         | 154299062 | 154299795 | 62        |
+## | chrX         | 154493303 | 154493907 | 52        |
+## | chrX         | 154611505 | 154612637 | 131       |
+## | chrX         | 154687387 | 154688519 | 131       |
 ## +--------------+-----------+-----------+-----------+
 ## Unstranded PyRanges object has 530 rows and 4 columns from 2 chromosomes.</code></pre>
 <p>By using strings, tuples and slices, you can subset the PyRanges based on position:</p>
@@ -271,14 +271,14 @@ you want.</p>
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
 ## | chrX         | 13843759  | 13843784  | U0         | 0         | +            |
-## | chrX         | 114673546 | 114673571 | U0         | 0         | +            |
-## | chrX         | 131816774 | 131816799 | U0         | 0         | +            |
+## | chrX         | 34824145  | 34824170  | U0         | 0         | -            |
+## | chrX         | 41852946  | 41852971  | U0         | 0         | -            |
 ## | chrX         | 45504745  | 45504770  | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrX         | 146694149 | 146694174 | U0         | 0         | -            |
-## | chrX         | 5044527   | 5044552   | U0         | 0         | -            |
-## | chrX         | 15281263  | 15281288  | U0         | 0         | -            |
+## | chrX         | 100349839 | 100349864 | U0         | 0         | +            |
 ## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
+## | chrX         | 146694149 | 146694174 | U0         | 0         | -            |
+## | chrX         | 151324943 | 151324968 | U0         | 0         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 282 rows and 6 columns from 1 chromosomes.</code></pre>
 <p>Chromosome and Strand</p>
@@ -288,33 +288,33 @@ you want.</p>
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrX         | 34824145  | 34824170  | U0         | 0         | -            |
 ## | chrX         | 41852946  | 41852971  | U0         | 0         | -            |
 ## | chrX         | 69979838  | 69979863  | U0         | 0         | -            |
-## | chrX         | 34824145  | 34824170  | U0         | 0         | -            |
 ## | chrX         | 132354117 | 132354142 | U0         | 0         | -            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrX         | 146694149 | 146694174 | U0         | 0         | -            |
 ## | chrX         | 5044527   | 5044552   | U0         | 0         | -            |
 ## | chrX         | 15281263  | 15281288  | U0         | 0         | -            |
 ## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
+## | chrX         | 146694149 | 146694174 | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 151 rows and 6 columns from 1 chromosomes.</code></pre>
 <p>Chromosome and Slice</p>
 <div class="sourceCode" id="cb60"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb60-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb60-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</a></code></pre></div>
-<pre><code>## +--------------+------------+------------+------------+------------+------------+
-## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
-## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
-## |--------------+------------+------------+------------+------------+------------|
-## | chrX         |  151324943 |  151324968 | U0         |          0 | +          |
-## | chrX         |  152902449 |  152902474 | U0         |          0 | +          |
-## | chrX         |  153632850 |  153632875 | U0         |          0 | +          |
-## | chrX         |  153874106 |  153874131 | U0         |          0 | +          |
-## | chrX         |  150277236 |  150277261 | U0         |          0 | -          |
-## | chrX         |  151277790 |  151277815 | U0         |          0 | -          |
-## | chrX         |  153037423 |  153037448 | U0         |          0 | -          |
-## | chrX         |  153255924 |  153255949 | U0         |          0 | -          |
-## +--------------+------------+------------+------------+------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrX         | 151324943 | 151324968 | U0         |         0 | +            |
+## | chrX         | 152902449 | 152902474 | U0         |         0 | +            |
+## | chrX         | 153632850 | 153632875 | U0         |         0 | +            |
+## | chrX         | 153874106 | 153874131 | U0         |         0 | +            |
+## | chrX         | 150277236 | 150277261 | U0         |         0 | -            |
+## | chrX         | 151277790 | 151277815 | U0         |         0 | -            |
+## | chrX         | 153037423 | 153037448 | U0         |         0 | -            |
+## | chrX         | 153255924 | 153255949 | U0         |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.</code></pre>
 <p>Chromosome, Strand and Slice</p>
 <div class="sourceCode" id="cb62"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb62-1" data-line-number="1"></a>
@@ -333,16 +333,16 @@ you want.</p>
 <p>Only using slices returns all ranges from all chromosomes and strands within those coordinates.</p>
 <div class="sourceCode" id="cb64"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb64-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb64-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="dv">0</span>:<span class="dv">100000</span>])</a></code></pre></div>
-<pre><code>## +--------------+------------+------------+------------+------------+------------+
-## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
-## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
-## |--------------+------------+------------+------------+------------+------------|
-## | chr2         |      33241 |      33266 | U0         |          0 | +          |
-## | chr2         |      13611 |      13636 | U0         |          0 | -          |
-## | chr2         |      32620 |      32645 | U0         |          0 | -          |
-## | chr3         |      87179 |      87204 | U0         |          0 | +          |
-## | chr4         |      45413 |      45438 | U0         |          0 | -          |
-## +--------------+------------+------------+------------+------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr2         |     33241 |     33266 | U0         |         0 | +            |
+## | chr2         |     13611 |     13636 | U0         |         0 | -            |
+## | chr2         |     32620 |     32645 | U0         |         0 | -            |
+## | chr3         |     87179 |     87204 | U0         |         0 | +            |
+## | chr4         |     45413 |     45438 | U0         |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 5 rows and 6 columns from 3 chromosomes.</code></pre>
 <p>Note that while the slice-operator is fast and returns seemingly immediately, it
 is inefficient; it builds the interval overlap datastructure anew every query.
@@ -355,27 +355,27 @@ intersect-operation.</p>
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
 ## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 21559181  | 21559206  | U0         | 0         | +            |
-## | chrY         | 11942770  | 11942795  | U0         | 0         | +            |
-## | chrY         | 8316773   | 8316798   | U0         | 0         | +            |
 ## | chrY         | 7463444   | 7463469   | U0         | 0         | +            |
+## | chrY         | 8316773   | 8316798   | U0         | 0         | +            |
+## | chrY         | 11942770  | 11942795  | U0         | 0         | +            |
+## | chrY         | 21559181  | 21559206  | U0         | 0         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 5,050 rows and 6 columns from 24 chromosomes.</code></pre>
 <p>Slice and Strand</p>
 <div class="sourceCode" id="cb68"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb68-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb68-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>, <span class="dv">0</span>:<span class="dv">100000</span>])</a></code></pre></div>
-<pre><code>## +--------------+------------+------------+------------+------------+------------+
-## | Chromosome   |      Start |        End | Name       |      Score | Strand     |
-## | (object)     |   (object) |   (object) | (object)   |   (object) | (object)   |
-## |--------------+------------+------------+------------+------------+------------|
-## | chr2         |      33241 |      33266 | U0         |          0 | +          |
-## | chr3         |      87179 |      87204 | U0         |          0 | +          |
-## +--------------+------------+------------+------------+------------+------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr2         |     33241 |     33266 | U0         |         0 | +            |
+## | chr3         |     87179 |     87204 | U0         |         0 | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 2 rows and 6 columns from 2 chromosomes.</code></pre>
 
 </div>

@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-08-02" />
+<meta name="date" content="2019-08-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -172,16 +172,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">9</span> Iterating over PyRanges</h1>
 <p>PyRanges can be iterated over by a simple for loop, and the data is guaranteed
 to come back in natsorted order:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb98-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb98-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb98-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb98-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb98-5" data-line-number="5">exons <span class="op">=</span> pr.data.exons()</a>
-<a class="sourceLine" id="cb98-6" data-line-number="6">cpg <span class="op">=</span> pr.data.cpg()</a>
-<a class="sourceLine" id="cb98-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb98-8" data-line-number="8"><span class="cf">for</span> k, df <span class="kw">in</span> cpg:</a>
-<a class="sourceLine" id="cb98-9" data-line-number="9">    <span class="bu">print</span>(k)</a>
-<a class="sourceLine" id="cb98-10" data-line-number="10">    <span class="bu">print</span>(df.head(<span class="dv">3</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb100-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb100-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb100-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb100-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb100-5" data-line-number="5">exons <span class="op">=</span> pr.data.exons()</a>
+<a class="sourceLine" id="cb100-6" data-line-number="6">cpg <span class="op">=</span> pr.data.cpg()</a>
+<a class="sourceLine" id="cb100-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb100-8" data-line-number="8"><span class="cf">for</span> k, df <span class="kw">in</span> cpg:</a>
+<a class="sourceLine" id="cb100-9" data-line-number="9">    <span class="bu">print</span>(k)</a>
+<a class="sourceLine" id="cb100-10" data-line-number="10">    <span class="bu">print</span>(df.head(<span class="dv">3</span>))</a></code></pre></div>
 <pre><code>## chrX
 ##   Chromosome   Start     End  CpG
 ## 0       chrX   64181   64793   62
@@ -194,9 +194,9 @@ to come back in natsorted order:</p>
 ## 898       chrY  98685  99461   85</code></pre>
 <p>If the data is unstranded, the key is just the chromosome names, but if the data
 is stranded the key is a tuple of the chromosome and strand:</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb100-1" data-line-number="1"><span class="cf">for</span> k, df <span class="kw">in</span> exons:</a>
-<a class="sourceLine" id="cb100-2" data-line-number="2">    <span class="bu">print</span>(k)</a>
-<a class="sourceLine" id="cb100-3" data-line-number="3">    <span class="bu">print</span>(df.head(<span class="dv">3</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb102-1" data-line-number="1"><span class="cf">for</span> k, df <span class="kw">in</span> exons:</a>
+<a class="sourceLine" id="cb102-2" data-line-number="2">    <span class="bu">print</span>(k)</a>
+<a class="sourceLine" id="cb102-3" data-line-number="3">    <span class="bu">print</span>(df.head(<span class="dv">3</span>))</a></code></pre></div>
 <pre><code>## (&#39;chrX&#39;, &#39;+&#39;)
 ##   Chromosome      Start        End                                 Name  Score Strand
 ## 0       chrX  135721701  135721963  NR_038462_exon_0_0_chrX_135721702_f      0      +
@@ -218,10 +218,10 @@ is stranded the key is a tuple of the chromosome and strand:</p>
 ## 8       chrY  15526614  15526673  NR_047607_exon_25_0_chrY_15526615_r      0      -
 ## 9       chrY  15591393  15592550  NR_047610_exon_27_0_chrY_15591394_r      0      -</code></pre>
 <p>If you would like to iterate over the chromosomes in a stranded PyRange the idiom is</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb102-1" data-line-number="1"><span class="cf">for</span> c <span class="kw">in</span> exons.chromosomes:</a>
-<a class="sourceLine" id="cb102-2" data-line-number="2">    <span class="bu">print</span>(c)</a>
-<a class="sourceLine" id="cb102-3" data-line-number="3">    df <span class="op">=</span> exons[c].df</a>
-<a class="sourceLine" id="cb102-4" data-line-number="4">    <span class="bu">print</span>(df.head())</a></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb104-1" data-line-number="1"><span class="cf">for</span> c <span class="kw">in</span> exons.chromosomes:</a>
+<a class="sourceLine" id="cb104-2" data-line-number="2">    <span class="bu">print</span>(c)</a>
+<a class="sourceLine" id="cb104-3" data-line-number="3">    df <span class="op">=</span> exons[c].df</a>
+<a class="sourceLine" id="cb104-4" data-line-number="4">    <span class="bu">print</span>(df.head())</a></code></pre></div>
 <pre><code>## chrX
 ##    Chromosome      Start        End                                   Name  Score Strand
 ## 0        chrX  135721701  135721963    NR_038462_exon_0_0_chrX_135721702_f      0      +
@@ -241,28 +241,28 @@ returns a PyRange.</p>
 <p>There are three more ways to iterate over a pyrange, namely the keys, values and
 items methods. These return a list, not a custom object like the python dict.</p>
 <p>If you want to create a new PyRange while iterating over it, the idiom is</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb104-1" data-line-number="1">d <span class="op">=</span> {}</a>
-<a class="sourceLine" id="cb104-2" data-line-number="2"><span class="cf">for</span> k, df <span class="kw">in</span> exons:</a>
-<a class="sourceLine" id="cb104-3" data-line-number="3">    <span class="bu">print</span>(k)</a>
-<a class="sourceLine" id="cb104-4" data-line-number="4">    d[k] <span class="op">=</span> df.head(<span class="dv">3</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb106-1" data-line-number="1">d <span class="op">=</span> {}</a>
+<a class="sourceLine" id="cb106-2" data-line-number="2"><span class="cf">for</span> k, df <span class="kw">in</span> exons:</a>
+<a class="sourceLine" id="cb106-3" data-line-number="3">    <span class="bu">print</span>(k)</a>
+<a class="sourceLine" id="cb106-4" data-line-number="4">    d[k] <span class="op">=</span> df.head(<span class="dv">3</span>)</a></code></pre></div>
 <pre><code>## (&#39;chrX&#39;, &#39;+&#39;)
 ## (&#39;chrX&#39;, &#39;-&#39;)
 ## (&#39;chrY&#39;, &#39;+&#39;)
 ## (&#39;chrY&#39;, &#39;-&#39;)</code></pre>
-<div class="sourceCode" id="cb106"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb106-1" data-line-number="1">new_gr <span class="op">=</span> pr.PyRanges(d)</a>
-<a class="sourceLine" id="cb106-2" data-line-number="2"><span class="bu">print</span>(new_gr)</a></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb108-1" data-line-number="1">new_gr <span class="op">=</span> pr.PyRanges(d)</a>
+<a class="sourceLine" id="cb108-2" data-line-number="2"><span class="bu">print</span>(new_gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
 ## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
-## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
-## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
 ## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f     | 0         | +            |
 ## | chrX         | 49069126  | 49069255  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
+## | chrX         | 52257919  | 52258046  | NM_001097593_exon_1_0_chrX_52257920_r  | 0         | -            |
+## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
-## | chrY         | 15591393  | 15592550  | NR_047610_exon_27_0_chrY_15591394_r    | 0         | -            |
 ## | chrY         | 1693161   | 1693291   | NM_001171039_exon_2_0_chrY_1693162_f   | 0         | +            |
-## | chrY         | 1357411   | 1357535   | NM_001161531_exon_4_0_chrY_1357412_f   | 0         | +            |
+## | chrY         | 15526614  | 15526673  | NR_047607_exon_25_0_chrY_15526615_r    | 0         | -            |
+## | chrY         | 15591393  | 15592550  | NR_047610_exon_27_0_chrY_15591394_r    | 0         | -            |
 ## | chrY         | 59233166  | 59233257  | NR_033715_exon_4_0_chrY_59233167_f     | 0         | +            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## Stranded PyRanges object has 12 rows and 6 columns from 2 chromosomes.</code></pre>
@@ -272,32 +272,32 @@ only that the for loops are never multithreaded.</p>
 multiple pyranges at the same time, returning the dfs belonging to the same
 Chromosome or Chromosome/Strand at each iteration. Missing entries in one or
 more PyRanges returns empty dfs.</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb108-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb108-2" data-line-number="2">cpg <span class="op">=</span> pr.data.cpg()</a>
-<a class="sourceLine" id="cb108-3" data-line-number="3">cpg.Strand <span class="op">=</span> <span class="st">&quot;+&quot;</span> <span class="co"># ensure that cpg only has one strand</span></a>
-<a class="sourceLine" id="cb108-4" data-line-number="4">exons <span class="op">=</span> pr.data.exons()</a>
-<a class="sourceLine" id="cb108-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb108-6" data-line-number="6"><span class="cf">for</span> cdf, edf <span class="kw">in</span> pr.itergrs([cpg, exons]):</a>
-<a class="sourceLine" id="cb108-7" data-line-number="7">    <span class="bu">print</span>(<span class="st">&quot;-----&quot;</span> <span class="op">*</span> <span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb108-8" data-line-number="8">    <span class="bu">print</span>(cdf.head(<span class="dv">1</span>), edf.head(<span class="dv">1</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb110-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb110-2" data-line-number="2">cpg <span class="op">=</span> pr.data.cpg()</a>
+<a class="sourceLine" id="cb110-3" data-line-number="3">cpg.Strand <span class="op">=</span> <span class="st">&quot;+&quot;</span> <span class="co"># ensure that cpg only has one strand</span></a>
+<a class="sourceLine" id="cb110-4" data-line-number="4">exons <span class="op">=</span> pr.data.exons()</a>
+<a class="sourceLine" id="cb110-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb110-6" data-line-number="6"><span class="cf">for</span> cdf, edf <span class="kw">in</span> pr.itergrs([cpg, exons]):</a>
+<a class="sourceLine" id="cb110-7" data-line-number="7">    <span class="bu">print</span>(<span class="st">&quot;-----&quot;</span> <span class="op">*</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb110-8" data-line-number="8">    <span class="bu">print</span>(cdf.head(<span class="dv">1</span>), edf.head(<span class="dv">1</span>))</a></code></pre></div>
 <pre><code>## -------------------------
-##     Chromosome  Start    End  CpG Strand
-## 896       chrY  14181  14793   62      +    Chromosome    Start      End                                  Name  Score Strand
-## 14       chrY  1693161  1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +
-## -------------------------
-##   Chromosome  Start    End  CpG Strand
-## 0       chrX  64181  64793   62      +   Chromosome      Start        End                                 Name  Score Strand
-## 0       chrX  135721701  135721963  NR_038462_exon_0_0_chrX_135721702_f      0      +
-## -------------------------
 ## Empty DataFrame
 ## Columns: [Chromosome, Start, End, CpG, Strand]
 ## Index: []   Chromosome     Start       End                                    Name  Score Strand
 ## 1       chrX  49069126  49069255  NM_001256790_exon_15_0_chrX_49069127_r      0      -
 ## -------------------------
+##     Chromosome  Start    End  CpG Strand
+## 896       chrY  14181  14793   62      +    Chromosome    Start      End                                  Name  Score Strand
+## 14       chrY  1693161  1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +
+## -------------------------
 ## Empty DataFrame
 ## Columns: [Chromosome, Start, End, CpG, Strand]
 ## Index: []   Chromosome    Start      End                               Name  Score Strand
-## 5       chrY  1481624  1481747  NM_004192_exon_1_0_chrY_1481625_r      0      -</code></pre>
+## 5       chrY  1481624  1481747  NM_004192_exon_1_0_chrY_1481625_r      0      -
+## -------------------------
+##   Chromosome  Start    End  CpG Strand
+## 0       chrX  64181  64793   62      +   Chromosome      Start        End                                 Name  Score Strand
+## 0       chrX  135721701  135721963  NR_038462_exon_0_0_chrX_135721702_f      0      +</code></pre>
 
 </div>
             </section>

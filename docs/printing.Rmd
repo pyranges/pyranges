@@ -1,6 +1,6 @@
 # Printing PyRanges
 
-There are 10 helper methods for printing PyRanges. These are p (regular print),
+There are 10 helper methods for printing PyRanges. These are p/print (regular print),
 mp (merged position print), sp (sorted print), msp (merged position sorted
 print) and rp (raw print).
 
@@ -22,6 +22,11 @@ import pyranges as pr
 
 exons = pr.data.exons()
 exons.pc(n=2).mpc(n=8).sp()
+
+exons.print(n=1,
+            merge_position=False,
+            sort=True,
+            formatting={"Start": "{:,}", "Name": "{:2.2}"})
 ```
 
 ```{python tidy=FALSE}
