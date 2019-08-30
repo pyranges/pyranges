@@ -5,7 +5,7 @@ from natsort import natsorted
 
 import pyranges as pr
 
-from pyranges.tostring import tostring, sort_tostring
+from pyranges.tostring2 import tostring
 
 from pyranges.methods.intersection import _intersection, _overlap
 from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, pyrange_apply_chunks, _slack, _tes, _tss
@@ -696,9 +696,16 @@ class PyRanges():
         subsetter[sample] = True
         return self[subsetter]
 
-    def p(self, n=8):
+    def print(self, n=8, merge_position=False, sort=False, formatting=None):
 
-        print(tostring(self, n=n))
+        s = tostring(
+            self,
+            n=n,
+            merge_position=merge_position,
+            sort=sort,
+            formatting=formatting)
+
+        print(s)
 
     def mp(self, n=8):
 
@@ -706,11 +713,11 @@ class PyRanges():
 
     def sp(self, n=30):
 
-        print(sort_tostring(self, n=n))
+        print(tostring(self, n=n, sort=True))
 
     def msp(self, n=30):
 
-        print(sort_tostring(self, n=n, merge_position=True))
+        print(tostring(self, n=n, merge_position=True, sort=True))
 
     def rp(self):
 
@@ -730,13 +737,13 @@ class PyRanges():
 
     def spc(self, n=30):
 
-        print(sort_tostring(self, n=n))
+        print(tostring(self, n=n, sort=True))
 
         return self
 
     def mspc(self, n=30):
 
-        print(sort_tostring(self, n=n, merge_position=True))
+        print(tostring(self, n=n, merge_position=True, sort=True))
 
         return self
 
