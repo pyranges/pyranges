@@ -1,4 +1,4 @@
-# 0.0.52 (unreleased)
+# 0.0.52 (30.08.19)
 Fixes:
   - fix creating duplicate indexes in pyrange apply both
   - fix regression where joining unstranded and stranded pyrange did not make a stranded pyrange
