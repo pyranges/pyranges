@@ -273,13 +273,11 @@ def genomicfeature(draw):
     # subsetter = draw(arrays(np.bool, shape=len(dataset)))
     length = draw(st.integers())
     gene_ids = list(dataset.gene_id.drop_duplicates())
-    genes = draw(st.lists(st.sampled_from(gene_ids), unique="True", min_size=1))
+    genes = draw(
+        st.lists(st.sampled_from(gene_ids), unique="True", min_size=1))
     dataset = dataset[dataset.gene_id.isin(genes)]
 
     return dataset
-
-
-
 
 
 @st.composite

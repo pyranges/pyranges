@@ -31,18 +31,22 @@ def set_dtypes(df, int64):
     if not "Strand" in df:
         del dtypes["Strand"]
 
-    # on test data with a few rows, the below code does not work
-    # therefore test for a good number of rows
-    # categoricals = (df.nunique() / len(df) <= 0.1).replace({
-    #     True: "category",
-    #     False: "object"
-    # }).to_dict()
-    # categoricals.update(dtypes)
-    # dtypes = categoricals
+    # need to ascertain that object columns do not consist of multiple types
+    # https://github.com/biocore-ntnu/epic2/issues/32
+    for column in "Chromosome Strand".split():
+        if not column in df:
+            continue
+
+        if df[column].dtype == object and len(
+                df[column].apply(type).drop_duplicates()) > 1:
+            df[column] = df[column].astype(str)
+        elif df[column].dtype != object:
+            df[column] = df[column].astype(str)
 
     for col, dtype in dtypes.items():
 
         if df[col].dtype.name != dtype:
+
             df[col] = df[col].astype(dtype)
 
     return df
@@ -142,6 +146,9 @@ def _init(self,
         raise Exception("Object is already a PyRange.")
 
     if isinstance(df, pd.DataFrame):
+        assert all(
+            c in df for c in "Chromosome Start End".split()
+        ), "The dataframe does not have all the columns Chromosome, Start and End."
         df = df.copy()
 
     if df is False or df is None:
@@ -153,12 +160,12 @@ def _init(self,
 
         df = set_dtypes(df, int64)
 
-    # below is not a good idea! then gr["chr1"] might change the dtypes of a gr!
-    # elif isinstance(df, dict):
-    #     df = {k: set_dtypes(v, extended) for k, v in df.items()}
+        # below is not a good idea! then gr["chr1"] might change the dtypes of a gr!
+        # elif isinstance(df, dict):
+        #     df = {k: set_dtypes(v, extended) for k, v in df.items()}
 
-    if isinstance(df, pd.DataFrame):
         self.__dict__["dfs"] = create_df_dict(df, stranded)
+
     # df is actually dict of dfs
     else:
 

@@ -20,7 +20,8 @@ def _getitem(self, val):
     elif isinstance(val, dict):
         dfs = get_booldict(self, val)
     elif (isinstance(val, (pd.Series, np.ndarray))) and val.dtype == "bool":
-        assert len(val) == len(self), "Boolean indexer must be same length as pyrange!"
+        assert len(val) == len(
+            self), "Boolean indexer must be same length as pyrange!"
         _length = 0
         if isinstance(val, pd.Series):
             val = val.values
@@ -32,7 +33,7 @@ def _getitem(self, val):
             dfs[k] = df[_bool]
             _length += length
     else:
-        raise Exception("Not valid subsetter: {}".format(str(val)))
+        raise Exception("Not a valid subsetter: {}".format(str(val)))
 
     gr = PyRanges(dfs)
     return gr

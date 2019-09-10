@@ -1,9 +1,8 @@
 import pyranges as pr
 
+# def test_read_bam():
 
-def test_read_bam():
-
-    pr.read_bam("tests/test_data/test_sorted.bam")
+#     pr.read_bam("tests/test_data/test_sorted.bam")
 
 
 def test_read_gtf():

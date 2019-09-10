@@ -530,7 +530,13 @@ class PyRanges():
         """Return the list of column names in the dataframes."""
 
         columns = [list(df.columns) for df in self.values()]
-        assert all([c == columns[0] for c in columns[1:]])
+        if not all([c == columns[0] for c in columns[1:]]):
+            print("Columns differ between dataframes:")
+            for k, df in self:
+                print(k, df.columns)
+
+            raise Exception()
+
         if columns:
             return columns[0]
         else:

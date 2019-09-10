@@ -1,3 +1,11 @@
+# 0.0.54 (10.09.19)
+- Ensure that Chromosome and Strand is str dtype before creating category
+- Add check to ensure that the columns Chromosome, Start and End exist when trying to create a PyRanges
+-
+
+# 0.0.53 (02.09.19)
+- Fix error in pypi file
+
 # 0.0.52 (30.08.19)
 Fixes:
   - fix creating duplicate indexes in pyrange apply both
