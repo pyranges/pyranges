@@ -1,7 +1,5 @@
 from hypothesis.extra.pandas import data_frames, column, indexes
-from hypothesis.extra.numpy import arrays
 import hypothesis.strategies as st
-from hypothesis import assume
 
 import pyranges as pr
 from pyranges import PyRanges
@@ -271,7 +269,6 @@ def genomicfeature(draw):
     dataset = dataset[dataset.Feature.isin(["gene", "transcript", "exon"])]
 
     # subsetter = draw(arrays(np.bool, shape=len(dataset)))
-    length = draw(st.integers())
     gene_ids = list(dataset.gene_id.drop_duplicates())
     genes = draw(
         st.lists(st.sampled_from(gene_ids), unique="True", min_size=1))

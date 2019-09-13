@@ -1,6 +1,3 @@
-
-import pandas as pd
-
 from sorted_nearest import annotate_clusters, cluster_by
 
 
@@ -8,7 +5,6 @@ def _cluster(df, kwargs):
 
     if df.empty:
         return None
-
 
     slack = kwargs.get("slack", 0)
 
@@ -18,6 +14,7 @@ def _cluster(df, kwargs):
 
     cdf.insert(df.shape[1], "Cluster", ids)
     return cdf
+
 
 def _cluster_by(df, kwargs):
 
@@ -34,7 +31,8 @@ def _cluster_by(df, kwargs):
 
     cdf = cdf.sort_values(["ClusterBy", "Start"])
 
-    ids = cluster_by(cdf.Start.values, cdf.End.values, cdf.ClusterBy.values, slack)
+    ids = cluster_by(cdf.Start.values, cdf.End.values, cdf.ClusterBy.values,
+                     slack)
 
     cdf = cdf.drop("ClusterBy", axis=1)
     cdf.insert(cdf.shape[1], "Cluster", ids)

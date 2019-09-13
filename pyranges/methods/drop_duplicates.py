@@ -1,5 +1,3 @@
-import pyranges as pr
-
 def _drop_duplicate_positions(df, kwargs):
 
     strand = kwargs.get("strand")

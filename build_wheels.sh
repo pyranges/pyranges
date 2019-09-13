@@ -1,3 +1,4 @@
+#!/bin/bash
 # docker pull quay.io/pypa/manylinux1_x86_64
 # # or docker pull quay.io/pypa/manylinux1_i686
 # docker run -it -v (pwd):/io quay.io/pypa/manylinux1_x86_64

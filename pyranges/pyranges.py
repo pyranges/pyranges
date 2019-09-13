@@ -114,18 +114,18 @@ class PyRanges():
 
         return iter(self.items())
 
-    def eval(self, eval_cmd, strand=True, as_pyranges=True, **kwargs):
+    # def eval(self, eval_cmd, strand=True, as_pyranges=True, **kwargs):
 
-        f = lambda df: eval(eval_cmd)
+    #     f = lambda df: eval(eval_cmd)
 
-        kwargs = fill_kwargs(kwargs)
+    #     kwargs = fill_kwargs(kwargs)
 
-        result = pyrange_apply_single(f, self, strand, kwargs)
+    #     result = pyrange_apply_single(f, self, strand, kwargs)
 
-        if not as_pyranges:
-            return result
-        else:
-            return PyRanges(result)
+    #     if not as_pyranges:
+    #         return result
+    #     else:
+    #         return PyRanges(result)
 
     def overlap(self, other, **kwargs):
 
@@ -415,9 +415,9 @@ class PyRanges():
 
         first_result = next(iter(result.values()))
 
-        assert type(
-            first_result
-        ) == pd.Series, "result of assign function must be Series, but is {}".format(
+        assert isinstance(
+            first_result, pd.Series
+        ), "result of assign function must be Series, but is {}".format(
             type(first_result))
 
         # do a deepcopy of object

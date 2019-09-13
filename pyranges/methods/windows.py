@@ -1,4 +1,3 @@
-import pandas as pd
 from sorted_nearest import makewindows
 from sorted_nearest import maketiles
 
@@ -6,8 +5,6 @@ from sorted_nearest import maketiles
 def _windows(df, kwargs):
 
     window_size = kwargs["window_size"]
-
-    strand = kwargs.get("strand", None)
 
     idxs, starts, ends = makewindows(df.index.values, df.Start.values,
                                      df.End.values, window_size)
@@ -22,8 +19,6 @@ def _windows(df, kwargs):
 def _tiles(df, kwargs):
 
     window_size = kwargs["tile_size"]
-
-    strand = kwargs.get("strand", None)
 
     idxs, starts, ends = maketiles(df.index.values, df.Start.values,
                                    df.End.values, window_size)

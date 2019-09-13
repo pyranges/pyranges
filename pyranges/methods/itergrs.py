@@ -1,13 +1,12 @@
-
-import pyranges as pr
 import pandas as pd
 
 from collections import defaultdict
 
+
 def itergrs(prs, strand=None):
 
     if strand is None:
-        strand =  all([gr.stranded for gr in prs])
+        strand = all([gr.stranded for gr in prs])
 
     if strand is False and any([gr.stranded for gr in prs]):
         prs = [gr.unstrand() for gr in prs]

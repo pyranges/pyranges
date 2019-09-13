@@ -6,7 +6,6 @@ import pyranges as pr
 
 from natsort import natsorted
 
-import sys
 import os
 
 
@@ -62,15 +61,6 @@ class suppress_stdout_stderr(object):
         # Close the null files
         os.close(self.null_fds[0])
         os.close(self.null_fds[1])
-
-
-import pandas as pd
-
-import pyranges as pr
-
-from natsort import natsorted
-
-import sys
 
 
 def merge_dfs(df1, df2):
@@ -162,7 +152,7 @@ def ray_initialized():
     try:
         test_function = ray.remote(test_function)
     except Exception as e:
-        if type(e) == NameError:
+        if isinstance(e, NameError):
             return False
 
         raise e
@@ -456,13 +446,13 @@ def _slack(df, kwargs):
     # dtype = df.Start.dtype
     slack = kwargs["slack"]
 
-    assert type(slack) == int, "Slack parameter must be integer, is {}".format(
-        type(slack))
+    assert isinstance(slack,
+                      int), "Slack parameter must be integer, is {}".format(
+                          type(slack))
     # df = self.df.copy()
     df.loc[:, "Start"] = df.Start - slack
     df.loc[df.Start < 0, "Start"] = 0
     df.End = df.End + slack
-    cs = "Start End".split()
     # df[cs] = df[cs].astype(dtype)
 
     return df
@@ -494,7 +484,7 @@ def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
 
     _results = []
     start = 0
-    for key, length in zip(keys, lengths):
+    for _, length in zip(keys, lengths):
         end = start + length
         _r = results[start:end]
 

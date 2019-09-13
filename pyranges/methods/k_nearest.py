@@ -1,13 +1,10 @@
 import numpy as np
-import pandas as pd
-
-from .join import _both_indexes
 
 from sorted_nearest import nearest_previous_nonoverlapping_all, nearest_next_nonoverlapping_all
 
 try:
     dummy = profile
-except:
+except NameError:
     profile = lambda x: x
 
 np.random.seed(0)
@@ -105,9 +102,9 @@ def _nearest(d1, d2, kwargs):
     if d1.empty or d2.empty:
         return None
 
-    how = kwargs["how"]
-    suffix = kwargs["suffix"]
-    k = kwargs["k"]
+    # how = kwargs["how"]
+    # suffix = kwargs["suffix"]
+    # k = kwargs["k"]
 
     # return nearest_previous(d1, d2, kwargs)
     return nearest_next(d1, d2, kwargs)

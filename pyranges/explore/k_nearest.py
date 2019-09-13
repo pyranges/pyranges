@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from pyranges.methods.join import _both_dfs
+# from pyranges.methods.join import _both_dfs
 
 np.random.seed(0)
 
@@ -50,17 +50,11 @@ else:
     s2 = np.random.randint(100, size=n)
     e2 = s2 + 10
 
-
-
-
 d1 = pd.DataFrame({"Start": s1, "End": e1})
 d2 = pd.DataFrame({"Start": s2, "End": e2})
 
 
-
-
 def nearest_next_idx(d1, d2, k=1):
-
     """Return k indexes from d1, d2 and their distance.
 
     d1.End <= d2.Start, i.e. next in forward direction.
@@ -89,14 +83,13 @@ def nearest_next_idx(d1, d2, k=1):
         d1e = d1e.iloc[r]
         d1_idx = d1e.index
 
-
     d2_idx = d2s.iloc[ix].index
 
     d2s = d2s[d2_idx].values
     dist = d2s - d1e
 
-
     return pd.DataFrame({"D1X": d1_idx, "D2X": d2_idx, "Dist": dist})
+
 
 def nearest_next(d1, d2, k, suffix):
 
@@ -138,7 +131,6 @@ def nearest_previous_idx(d1, d2, k=1):
 
     d2_idx = d2e.iloc[ix].index
 
-
     dist = d1s - d2e[d2_idx].values
 
     return pd.DataFrame({"D1X": d1_idx, "D2X": d2_idx, "Dist": dist})
@@ -163,7 +155,6 @@ n = nearest_idx(d1, d2, k=1)
 # print(d1.loc[n.D1X].head())
 # print(d2.loc[n.D2X].head())
 # print(n.Dist.head())
-
 
 # def _overlapping_for_nearest(scdf, ocdf, suffix):
 
@@ -191,7 +182,6 @@ n = nearest_idx(d1, d2, k=1)
 #         df_to_find_nearest_in = scdf
 
 #     return nearest_df, df_to_find_nearest_in
-
 
 # def _nearest(scdf, ocdf, kwargs):
 
@@ -229,7 +219,6 @@ n = nearest_idx(d1, d2, k=1)
 # d1x, d2x, dist = nearest_next(d1, d2, k=2)
 # d1x, d2x, dist = nearest_previous(d1, d2, k=2)
 
-
 # print("d1")
 # print(d1)
 # print("d2")
@@ -241,17 +230,10 @@ n = nearest_idx(d1, d2, k=1)
 # print(d2.loc[d2x])
 # print(dist)
 
-
-
-
-
 # print(len(d1))
 # print(d1)
 # print(len(res))
 # print(res)
-
-
-
 
 # a1 = np.sort(a1)
 # # CPU times: user 9.78 s, sys: 648 ms, total: 10.4 s
@@ -259,7 +241,6 @@ n = nearest_idx(d1, d2, k=1)
 # a2_s = np.sort(a2)
 # # CPU times: user 9.82 s, sys: 544 ms, total: 10.4 s
 # # Wall time: 956 ms
-
 
 # d1s = sort_one_by_one(d1, "Start", "End")
 # # CPU times: user 48.2 s, sys: 3.88 s, total: 52.1 s

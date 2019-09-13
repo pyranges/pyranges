@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 from pyranges.subset import (get_string, get_tuple, get_slice, get_booldict)
-from pyranges.methods.drop import _drop, _keep
+from pyranges.methods.drop import _keep
 
 from pyranges import PyRanges
 

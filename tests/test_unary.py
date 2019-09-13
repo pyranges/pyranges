@@ -17,8 +17,6 @@ from tests.hypothesis_helper import dfs_min, df_data, selector, dfs_min_with_id,
 
 import pyranges as pr
 
-from os import environ
-
 # if environ.get("TRAVIS"):
 #     max_examples = 100
 #     deadline = None
@@ -57,7 +55,7 @@ def test_merge(gr, strand):
         print(result)
 
         if not strand:
-            print("if not "  * 10)
+            print("if not " * 10)
             bedtools_df = pd.read_csv(
                 StringIO(result),
                 sep="\t",
@@ -92,7 +90,6 @@ def test_merge(gr, strand):
 
 
 cluster_command = "bedtools cluster {} -i <(sort -k1,1 -k2,2n {})"
-
 
 
 @pytest.mark.bedtools
@@ -177,12 +174,10 @@ def test_cluster_by(gr, strand):
     else:
         groupby = ["Chromosome", "ID"]
 
-
     grs = []
 
-    for g, gdf in natsorted(df.groupby(groupby)):
+    for _, gdf in natsorted(df.groupby(groupby)):
         grs.append(pr.PyRanges(gdf))
-
 
     clusters = [gr.cluster(strand=strand) for gr in grs]
     i = 1
@@ -218,7 +213,7 @@ def test_merge_by(gr, strand):
     df = gr.df
 
     grs = []
-    for g, gdf in df.groupby("ID"):
+    for _, gdf in df.groupby("ID"):
         grs.append(pr.PyRanges(gdf))
 
     expected = pr.concat([gr.merge() for gr in grs]).df
@@ -227,8 +222,6 @@ def test_merge_by(gr, strand):
     print(result)
 
     assert_df_equal(result, expected)
-
-
 
 
 makewindows_command = "bedtools makewindows -w 10 -b <(sort -k1,1 -k2,2n {})"

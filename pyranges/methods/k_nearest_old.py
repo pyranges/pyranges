@@ -5,7 +5,7 @@ from .join import _both_indexes
 
 try:
     dummy = profile
-except:
+except NameError:
     profile = lambda x: x
 
 np.random.seed(0)
@@ -174,7 +174,7 @@ def _nearest(d1, d2, kwargs):
         return None
 
     how = kwargs["how"]
-    k = kwargs["k"]
+    # k = kwargs["k"]
     suffix = kwargs["suffix"]
 
     if how == "upstream" or how == "downstream":

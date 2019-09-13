@@ -1,5 +1,4 @@
 from pyranges.multithreaded import pyrange_apply_single
-from pyranges.pyranges import fill_kwargs
 
 
 def _to_rle(ranges, value_col=None, strand=True, rpm=False, **kwargs):
@@ -11,7 +10,6 @@ def _to_rle(ranges, value_col=None, strand=True, rpm=False, **kwargs):
         raise Exception(
             "Using the coverage method requires that pyrle is installed.")
 
-    keep = [value_col if not value_col is None else "Score"]
     _kwargs = {
         "value_col": value_col,
         "sparse": {

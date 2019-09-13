@@ -4,7 +4,6 @@ import pandas as pd
 import pyranges as pr
 import numpy as np
 
-
 from pyranges.multithreaded import pyrange_apply
 from sorted_nearest.src.introns import find_introns
 
@@ -16,7 +15,7 @@ def _outside_bounds(df, kwargs):
     clip = kwargs.get("clip", False)
 
     ends_outside = df.End > size
-    if not clip: # i.e. remove
+    if not clip:  # i.e. remove
         df = df[~ends_outside]
     else:
         starts_inside = df.Start <= size
@@ -25,17 +24,18 @@ def _outside_bounds(df, kwargs):
     return df
 
 
-
-
 def genome_bounds(gr, chromsizes, clip=False):
 
     if not isinstance(chromsizes, dict):
-        chromsizes = {k: v for k, v in zip(chromsizes.Chromosome, chromsizes.End)}
+        chromsizes = {
+            k: v
+            for k, v in zip(chromsizes.Chromosome, chromsizes.End)
+        }
 
     return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip)
 
 
-def random(n=1000, length=100, chromsizes=None, strand=True):
+def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
 
     if chromsizes is None:
         chromsizes = pr.data.chromsizes()
@@ -44,14 +44,20 @@ def random(n=1000, length=100, chromsizes=None, strand=True):
 
     p = df.End / df.End.sum()
 
-    n_per_chrom = pd.Series(np.random.choice(df.index, size=n, p=p)).value_counts(sort=False).to_frame()
+    n_per_chrom = pd.Series(np.random.choice(
+        df.index, size=n, p=p)).value_counts(sort=False).to_frame()
     n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
     n_per_chrom.columns = "Count Chromosome".split()
 
     random_dfs = []
     for _, (count, chrom) in n_per_chrom.iterrows():
-        r = np.random.randint(0, df[df.Chromosome == chrom].End - length, size=count)
-        _df = pd.DataFrame({"Chromosome": chrom, "Start": r, "End": r + length})
+        r = np.random.randint(
+            0, df[df.Chromosome == chrom].End - length, size=count)
+        _df = pd.DataFrame({
+            "Chromosome": chrom,
+            "Start": r,
+            "End": r + length
+        })
         random_dfs.append(_df)
 
     random_df = pd.concat(random_dfs)
@@ -59,7 +65,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True):
         s = np.random.choice("+ -".split(), size=n)
         random_df.insert(3, "Strand", s)
 
-    return pr.PyRanges(random_df)
+    return pr.PyRanges(random_df, int64=int64)
 
 
 def _last_tile(df, kwargs):
@@ -178,6 +184,7 @@ def _tes(df, slack=0, drop_duplicates=True):
 
 by_to_id = {"gene": "gene_id", "transcript": "transcript_id"}
 
+
 def _introns2(df, exons, kwargs):
 
     if df.empty or exons.empty:
@@ -192,15 +199,22 @@ def _introns2(df, exons, kwargs):
     exons.columns = ["Start", "End", "gene_id"]
     genes.columns = ["Start", "End", "gene_id"]
 
-    intersection = pd.Series(np.intersect1d(exons["gene_id"], genes["gene_id"]))
+    intersection = pd.Series(
+        np.intersect1d(exons["gene_id"], genes["gene_id"]))
     if len(intersection) == 0:
         return None
 
-    exons = exons[exons["gene_id"].isin(intersection)].reset_index(drop=True).sort_values(["gene_id", "Start"])
-    genes = genes[genes["gene_id"].isin(intersection)].reset_index(drop=True).sort_values(["gene_id", "Start"])
-    df = df[df[id_column].isin(intersection)].reset_index(drop=True)#.sort_values(id_column)
+    exons = exons[exons["gene_id"].isin(intersection)].reset_index(
+        drop=True).sort_values(["gene_id", "Start"])
+    genes = genes[genes["gene_id"].isin(intersection)].reset_index(
+        drop=True).sort_values(["gene_id", "Start"])
+    df = df[df[id_column].isin(intersection)].reset_index(
+        drop=True)  #.sort_values(id_column)
 
-    assert len(genes) == len(genes.drop_duplicates("gene_id")), "The {id_column}s need to be unique to compute the introns.".format(id_column=id_column)
+    assert len(genes) == len(
+        genes.drop_duplicates("gene_id")
+    ), "The {id_column}s need to be unique to compute the introns.".format(
+        id_column=id_column)
 
     exon_ids = (exons["gene_id"].shift() != exons["gene_id"])
     gene_ids = pd.Series(range(1, len(genes) + 1))
@@ -213,24 +227,44 @@ def _introns2(df, exons, kwargs):
         exon_ids = exon_ids.cumsum()
 
     assert (gene_ids == exon_ids.drop_duplicates().values).all()
-    starts, ends, ids = find_introns(genes.Start.values, genes.End.values, gene_ids.values,
-                                     exons.Start.values, exons.End.values, exon_ids.values)
+    starts, ends, ids = find_introns(genes.Start.values, genes.End.values,
+                                     gene_ids.values, exons.Start.values,
+                                     exons.End.values, exon_ids.values)
 
-    introns = pd.DataFrame(data={"Chromosome": df.Chromosome.iloc[0], "Start": starts, "End": ends, "gene_id": ids})
+    introns = pd.DataFrame(
+        data={
+            "Chromosome": df.Chromosome.iloc[0],
+            "Start": starts,
+            "End": ends,
+            "gene_id": ids
+        })
 
     vc = introns["gene_id"].value_counts(sort=False).to_frame().reset_index()
     vc.columns = ["gene_id", "counts"]
 
-    genes_without_introns = pd.DataFrame(data={"gene_id": np.setdiff1d(gene_ids.values, vc.gene_id.values), "counts": 0})
+    genes_without_introns = pd.DataFrame(
+        data={
+            "gene_id": np.setdiff1d(gene_ids.values, vc.gene_id.values),
+            "counts": 0
+        })
 
     vc = pd.concat([vc, genes_without_introns]).sort_values("gene_id")
 
     original_ids = np.repeat(vc.gene_id, vc.counts).to_frame()
-    original_ids = original_ids.merge(df[["__temp__", id_column]], right_on="__temp__", left_on="gene_id", suffixes=("_drop", ""))
-    original_ids = original_ids.drop(["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1).sort_values("gene_id")
+    original_ids = original_ids.merge(
+        df[["__temp__", id_column]],
+        right_on="__temp__",
+        left_on="gene_id",
+        suffixes=("_drop", ""))
+    original_ids = original_ids.drop(
+        ["__temp__"] +
+        [c for c in original_ids.columns if c.endswith("_drop")],
+        axis=1).sort_values("gene_id")
     introns.loc[:, "gene_id"] = original_ids[id_column].values
-    introns = introns.merge(df, left_on="gene_id", right_on=id_column, suffixes=("", "_dropme"))
-    introns = introns.drop([c for c in introns.columns if c.endswith("_dropme")], axis=1)
+    introns = introns.merge(
+        df, left_on="gene_id", right_on=id_column, suffixes=("", "_dropme"))
+    introns = introns.drop(
+        [c for c in introns.columns if c.endswith("_dropme")], axis=1)
 
     if introns.Feature.dtype.name == "category" and not "intron" in introns.Feature.cat.categories:
         introns.Feature.cat.add_categories(["intron"], inplace=True)
@@ -268,7 +302,6 @@ class GenomicFeaturesMethods():
 
         return df
 
-
     def tes(self, drop_duplicate_tss=True, slack=0):
 
         pr = self.pr
@@ -288,7 +321,6 @@ class GenomicFeaturesMethods():
         df = df.drop(["ExonNumber", "ExonID"], 1)
 
         return df
-
 
     def introns(self, by="gene"):
 

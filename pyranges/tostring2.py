@@ -45,7 +45,7 @@ def _get_unstranded_f(self, half_entries, f, sort=False):
 
     counter = 0
     dfs = []
-    for chromosome, cdf in self:
+    for _, cdf in self:
 
         cdf = getattr(cdf, f)(half_entries)
 
@@ -284,10 +284,9 @@ def tostring(self, n=8, merge_position=False, formatting=None, sort=False):
     if merge_position:
         df = show_pos_merge_position(df)
         columns_dtypes["- Position -"] = "Multiple types"
-        [
-            columns_dtypes.pop(k, None)
-            for k in "Chromosome Start End Strand".split()
-        ]
+        for k in "Chromosome Start End Strand".split():
+            if k in columns_dtypes:
+                del columns_dtypes[k]
 
     df = df.astype(object).reset_index(drop=True)
     if len(self) > n:

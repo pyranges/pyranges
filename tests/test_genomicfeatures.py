@@ -1,16 +1,13 @@
-from io import StringIO
 import pandas as pd
 import pyranges as pr
-import pytest
 
-from hypothesis import given, settings, HealthCheck  #, assume
+from hypothesis import given, settings
 from hypothesis import reproduce_failure  # pylint: disable=unused-import
 
-from tests.hypothesis_helper import genomicfeature
-
-from tests.hypothesis_helper import max_examples, deadline, slow_max_examples
+from tests.hypothesis_helper import deadline, slow_max_examples
 
 by_to_id = {"gene": "gene_id", "transcript": "transcript_id"}
+
 
 def compute_introns_single(df, by):
     id_column = by_to_id[by]
@@ -51,7 +48,8 @@ def compute_introns_single(df, by):
     # x = x[~(x.End == g.End.iloc[0])]
     x = x[x.Start != x.End]
 
-    return x.sort_values("Start End".split())#.reset_index(drop=True)
+    return x.sort_values("Start End".split())  #.reset_index(drop=True)
+
 
 # actual   Chromosome     Start       End Strand
 # 0       chr1  13163233  13164184      -
@@ -71,10 +69,7 @@ def compute_introns_single(df, by):
 # 4       chr1  13199727  13161985      -
 
 
-
 def _introns_correct(full, genes, exons, introns, by):
-
-
     """Testing that introns:
 
     1: ends larger than starts
@@ -83,14 +78,17 @@ def _introns_correct(full, genes, exons, introns, by):
     4 & 5: that the intron positions are the same as the ones computed with the slow, but correct algo"""
     id_column = by_to_id[by]
     if len(introns):
-        assert (introns.Start < introns.End).all(), str(introns[(introns.Start >= introns.End)])
+        assert (introns.Start < introns.End).all(), str(
+            introns[(introns.Start >= introns.End)])
 
     expected_results = {}
     based_on = {}
-    for gene_id, gdf in full.groupby(id_column): # #[full.gene_id.isin(["ENSG00000078808.16"])]
+    for gene_id, gdf in full.groupby(
+            id_column):  # #[full.gene_id.isin(["ENSG00000078808.16"])]
         # print("gdf " * 10)
         # print(gdf)
-        if not len(gdf[gdf.Feature == "gene"]) or not len(gdf[gdf.Feature == "transcript"]):
+        if not len(gdf[gdf.Feature == "gene"]) or not len(
+                gdf[gdf.Feature == "transcript"]):
             continue
         expected_results[gene_id] = compute_introns_single(gdf, by)
 
@@ -99,15 +97,18 @@ def _introns_correct(full, genes, exons, introns, by):
     if not len(introns):
         for v in expected_results.values():
             assert v.empty
-        return # test passed
+        return  # test passed
 
     for gene_id, idf in introns.groupby(id_column):
         idf = idf.sort_values("Start End".split())
         if not gene_id in expected_results:
             continue
         expected = expected_results[gene_id]
-        exons = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == "exon").merge(by=id_column)
-        genes = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == by)
+        exons = pr.PyRanges(
+            based_on[gene_id]).subset(lambda df: df.Feature == "exon").merge(
+                by=id_column)
+        genes = pr.PyRanges(
+            based_on[gene_id]).subset(lambda df: df.Feature == by)
         print("exons", exons)
         print("based_on", based_on[gene_id])
         print("actual", idf["Chromosome Start End Strand".split()])
@@ -117,6 +118,7 @@ def _introns_correct(full, genes, exons, introns, by):
         assert len(genes.intersect(_introns)) == len(_introns)
         assert list(idf.Start) == list(expected.Start), "not equal"
         assert list(idf.End) == list(expected.End), "not equal"
+
 
 by = ["gene", "transcript"]
 
@@ -135,7 +137,6 @@ by = ["gene", "transcript"]
 #     delim = "-" * 20
 #     print("\n" + delim +" new test " + delim)
 
-
 #     if not len(gr[gr.Feature == "gene"]) or not len(gr[gr.Feature == "exon"]):
 #         pass
 
@@ -150,6 +151,7 @@ by = ["gene", "transcript"]
 #         print(introns)
 
 #         _introns_correct(gr.df, genes, exons, introns, by)
+
 
 def test_introns_single():
 

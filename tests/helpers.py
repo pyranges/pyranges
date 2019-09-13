@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 
 def assert_df_equal(df1, df2):

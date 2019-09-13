@@ -2,7 +2,6 @@
 
 [![Coverage Status](https://img.shields.io/coveralls/github/biocore-ntnu/pyranges.svg)](https://coveralls.io/github/biocore-ntnu/pyranges?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b61a53346d764a8d8f0ab2a6afd7b100)](https://www.codacy.com/app/endrebak/pyranges?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=biocore-ntnu/pyranges&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/biocore-ntnu/pyranges.svg?branch=master)](https://travis-ci.org/biocore-ntnu/pyranges) [![hypothesis tested](graphs/hypothesis-tested-brightgreen.svg)](http://hypothesis.readthedocs.io/) [![PyPI version](https://badge.fury.io/py/pyranges.svg)](https://badge.fury.io/py/pyranges) [![MIT](https://img.shields.io/pypi/l/pyranges.svg?color=green)](https://opensource.org/licenses/MIT) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyranges.svg) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/pyranges/README.html)
 
-
 ## Introduction
 
 GenomicRanges and genomic Rle-objects for Python.
@@ -129,13 +128,13 @@ cpg_rle
 
 ## Features
 
-- fast (also in single-core mode)
-- supports multiple cores
-- memory-efficient
-- featureful
-- pythonic/pandastic
-- supports chaining with a terse syntax
-- uses Pandas DataFrames, so the whole Python data science stack works on PyRanges.
+  - fast (also in single-core mode)
+  - supports multiple cores
+  - memory-efficient
+  - featureful
+  - pythonic/pandastic
+  - supports chaining with a terse syntax
+  - uses Pandas DataFrames, so the whole Python data science stack works on PyRanges.
 
 ## Documentation
 
@@ -179,15 +178,9 @@ https://www.biorxiv.org/content/10.1101/609396v1
 
 For the future:
 
-*   groupby
-*   settings
-*   write docstrings, autogenerate API-docs
-*   K-nearest
-*   write bam
+  - write docstrings, autogenerate API-docs
+  - K-nearest
 
-Potentially:
-
-*   support mixes of stranded and unstranded data
 
 PyRanges should always be the fastest general-purpose genomics library for
 Python. So I will happily change the multithreading library and overlap

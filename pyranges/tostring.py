@@ -1,6 +1,5 @@
 import shutil
 
-import pyranges as pr
 import pandas as pd
 
 from tabulate import tabulate
@@ -9,6 +8,7 @@ from tabulate import tabulate
 def get_terminal_size():
 
     return shutil.get_terminal_size().columns
+
 
 def show_pos_merge_position(self, df, first_df):
 
@@ -20,7 +20,6 @@ def show_pos_merge_position(self, df, first_df):
             str) + "-" + df.End.astype(str)
 
     return pos
-
 
 
 def increase_string_width(self, df, first_df, merge_position):
@@ -62,10 +61,11 @@ def increase_string_width(self, df, first_df, merge_position):
 
     h = [c + "\n(" + str(t) + ")" for c, t in zip(columns, list(dtypes))]
 
-    str_repr = tabulate(df.get(columns), headers=h, tablefmt='psql', showindex=False)
+    str_repr = tabulate(
+        df.get(columns), headers=h, tablefmt='psql', showindex=False)
     table_width = len(str_repr.split("\n", 1)[0])
 
-    for i, c in enumerate(df.columns):
+    for _, c in enumerate(df.columns):
         if c in never_add:
             continue
 
@@ -75,9 +75,10 @@ def increase_string_width(self, df, first_df, merge_position):
         _h = c + "\n(" + str(t) + ")"
         h.append(_h)
 
-        new_build_df =  pd.concat([build_df, df[c]], axis=1)
+        new_build_df = pd.concat([build_df, df[c]], axis=1)
 
-        new_str_repr = tabulate(new_build_df, headers=h, tablefmt='psql', showindex=False)
+        new_str_repr = tabulate(
+            new_build_df, headers=h, tablefmt='psql', showindex=False)
 
         table_width = len(new_str_repr.split("\n", 1)[0])
         # print("1", table_width, get_terminal_size())
@@ -104,8 +105,9 @@ def increase_string_width(self, df, first_df, merge_position):
         ddd.name = "...\n..."
         h[-1] = ddd.name
 
-        new_build_df =  pd.concat([build_df, ddd], axis=1)
-        new_str_repr = tabulate(new_build_df, headers=h, tablefmt='psql', showindex=False)
+        new_build_df = pd.concat([build_df, ddd], axis=1)
+        new_str_repr = tabulate(
+            new_build_df, headers=h, tablefmt='psql', showindex=False)
         table_width = len(new_str_repr.split("\n", 1)[0])
 
         if table_width <= terminal_width:
@@ -118,13 +120,15 @@ def increase_string_width(self, df, first_df, merge_position):
             ddd = pd.Series("...", index=build_df.index)
             ddd.name = "..."
             h[-2] = ddd.name
-            new_build_df =  pd.concat([build_df, ddd], axis=1)
-            str_repr = tabulate(new_build_df, headers=h, tablefmt='psql', showindex=False)
+            new_build_df = pd.concat([build_df, ddd], axis=1)
+            str_repr = tabulate(
+                new_build_df, headers=h, tablefmt='psql', showindex=False)
 
         # add hidden col info
         columns = list(df.columns)
         first_hidden_idx = columns.index(first_hidden)
-        str2 = "Hidden columns: {}".format(", ".join(columns[first_hidden_idx:first_hidden_idx+10]))
+        str2 = "Hidden columns: {}".format(", ".join(
+            columns[first_hidden_idx:first_hidden_idx + 10]))
         if (n_hidden_cols - 10) > 0:
             str2 += "... (+ {} more.)".format(n_hidden_cols - 10)
             str_repr = "\n".join([str_repr, str1, str2])
@@ -161,7 +165,6 @@ def tostring(self, n=8, merge_position=False):
 
     if len(self.keys()) == 1:
 
-
         first_key = self.keys()[0]
         # last_key = list(self.dfs.keys())[-1]
         first_df = self.dfs[first_key]
@@ -176,7 +179,7 @@ def tostring(self, n=8, merge_position=False):
             s = pd.concat([h, m, t])
         elif len(self) == entries:
             s = pd.concat([h, t])
-        else: # < entries
+        else:  # < entries
             s = first_df.copy()
     elif len(self) <= entries:
         s = self.df.copy()
@@ -263,7 +266,7 @@ def sort_tostring(self, n=30, merge_position=False):
         df = self.df.sort_values(sort_cols)
     else:
         dfs = []
-        half_n = int(n/2)
+        half_n = int(n / 2)
         current_len = 0
 
         for chromosome in self.chromosomes:
