@@ -1,3 +1,7 @@
+# 0.0.56 (unreleased)
+- add possibility of 5-end and 3-end slack being different/none
+- add slack to join-method
+
 # 0.0.55 (13.09.19)
 - Add int64-flag to method pr.random.
 

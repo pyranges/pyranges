@@ -446,14 +446,28 @@ def _slack(df, kwargs):
     # dtype = df.Start.dtype
     slack = kwargs["slack"]
 
-    assert isinstance(slack,
-                      int), "Slack parameter must be integer, is {}".format(
-                          type(slack))
+    assert isinstance(
+        slack,
+        (int, dict)), "Slack parameter must be integer or dict, is {}".format(
+            type(slack))
     # df = self.df.copy()
-    df.loc[:, "Start"] = df.Start - slack
-    df.loc[df.Start < 0, "Start"] = 0
-    df.End = df.End + slack
-    # df[cs] = df[cs].astype(dtype)
+    if isinstance(slack, int):
+        df.loc[:, "Start"] = df.Start - slack
+        df.loc[df.Start < 0, "Start"] = 0
+        df.End = df.End + slack
+    else:
+        strand = df.Strand.iloc[0]
+        slack_dict = slack
+        five_end_slack = slack.get("5")
+        three_end_slack = slack.get("3")
+
+        if five_end_slack:
+            df.loc[df.Strand == "+", "Start"] -= five_end_slack
+            df.loc[df.Strand == "-", "End"] += five_end_slack
+
+        if three_end_slack:
+            df.loc[df.Strand == "-", "Start"] -= three_end_slack
+            df.loc[df.Strand == "+", "End"] += three_end_slack
 
     return df
 

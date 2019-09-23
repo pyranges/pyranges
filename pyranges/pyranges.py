@@ -240,10 +240,24 @@ class PyRanges():
 
         from pyranges.methods.join import _write_both
 
+        slack = kwargs["slack"]
+        if slack:
+            self.Start__slack = self.Start
+            self.End__slack = self.End
+
+            self = self.slack(slack)
+
         kwargs = fill_kwargs(kwargs)
         dfs = pyrange_apply(_write_both, self, other, **kwargs)
 
-        return PyRanges(dfs)
+        gr = PyRanges(dfs)
+
+        if slack:
+            gr.Start = gr.Start__slack
+            gr.End = gr.End__slack
+            gr = gr.drop("Start__slack End__slack".split())
+
+        return gr
 
     def count_overlaps(self, other, **kwargs):
 
@@ -480,7 +494,11 @@ class PyRanges():
 
     def slack(self, slack):
 
+        if isinstance(slack, dict):
+            assert self.stranded, "PyRanges must be stranded to add 5/3-end specific slack."
+
         kwargs = fill_kwargs({"slack": slack})
+
         prg = PyRanges(
             pyrange_apply_single(_slack, self, self.stranded, kwargs))
 
