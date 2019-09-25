@@ -240,7 +240,7 @@ class PyRanges():
 
         from pyranges.methods.join import _write_both
 
-        slack = kwargs["slack"]
+        slack = kwargs.get("slack")
         if slack:
             self.Start__slack = self.Start
             self.End__slack = self.End
@@ -256,6 +256,12 @@ class PyRanges():
             gr.Start = gr.Start__slack
             gr.End = gr.End__slack
             gr = gr.drop("Start__slack End__slack".split())
+
+        new_position = kwargs.get("new_pos")
+        if new_position:
+            assert "suffixes" in kwargs, "Must use suffixes-arg together with new_pos-arg."
+            suffixes = kwargs.get("suffixes", ("_a", "_b"))
+            gr = gr.new_position(new_pos=new_position, suffixes=suffixes)
 
         return gr
 
@@ -348,6 +354,20 @@ class PyRanges():
         self = PyRanges(new_dfs)
 
         return self
+
+    def new_position(self, strand=None, new_pos="intersection", **kwargs):
+
+        from pyranges.methods.new_position import _new_position
+
+        kwargs["sparse"] = {"self": False}
+        kwargs["new_pos"] = new_pos
+
+        if strand is None:
+            strand = self.stranded
+
+        dfs = pyrange_apply_single(_new_position, self, strand, kwargs)
+
+        return pr.PyRanges(dfs)
 
     def merge(self, strand=None, count=False, **kwargs):
 

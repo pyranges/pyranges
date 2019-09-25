@@ -11,5 +11,3 @@ def test_slack():
         strands="+ -".split())
     print(gr)
     gr = gr.slack({"5": 10, "3": 5})
-    print(gr)
-    assert 0

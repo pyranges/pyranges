@@ -52,9 +52,9 @@ print(f1.three_end(slack=5))
 
 `slack` extends the starts and ends of your interval.
 
-
 ```{python tidy=FALSE}
 print(f1.slack(5))
+print(f1.slack({"5": 2, "3": -1}))
 ```
 
 `window` splits your data into windows:

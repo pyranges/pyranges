@@ -1,6 +1,7 @@
-# 0.0.56 (unreleased)
-- add possibility of 5-end and 3-end slack being different/none
+# 0.0.56 (25.09.19)
+- add possibility of 5-end and 3-end in slack being different/none
 - add slack to join-method
+- add new_position method to take union or intersection of two pairs of Start/End-columns in pyranges
 
 # 0.0.55 (13.09.19)
 - Add int64-flag to method pr.random.
