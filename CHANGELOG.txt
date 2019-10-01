@@ -1,3 +1,6 @@
+# unreleased
+- add chain to print-method
+
 # 0.0.56 (25.09.19)
 - add possibility of 5-end and 3-end in slack being different/none
 - add slack to join-method
