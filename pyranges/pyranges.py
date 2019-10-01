@@ -741,7 +741,7 @@ class PyRanges():
         subsetter[sample] = True
         return self[subsetter]
 
-    def print(self, n=8, merge_position=False, sort=False, formatting=None):
+    def print(self, n=8, merge_position=False, sort=False, formatting=None, chain=False):
 
         s = tostring(
             self,
@@ -751,6 +751,10 @@ class PyRanges():
             formatting=formatting)
 
         print(s)
+
+        if chain:
+            return self
+
 
     def mp(self, n=8, formatting=None):
 
