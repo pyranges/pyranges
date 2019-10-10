@@ -208,4 +208,4 @@ def _init(self,
         self.__dict__["dfs"] = empty_removed
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
-    self.__dict__["stats"] = Statis
+    self.__dict__["stats"] = StatisticsMethods(self)
