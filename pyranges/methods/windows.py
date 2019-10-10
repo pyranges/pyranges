@@ -31,6 +31,7 @@ def _tiles(df, kwargs):
     overlap = kwargs.get("overlap")
 
     if overlap:
+        df = df.copy()
         df.insert(df.shape[1], "__Start__", df.Start)
         df.insert(df.shape[1], "__End__", df.End)
 
