@@ -67,6 +67,10 @@ print(exons.window(5))
 
 If you want to all windows to start at a multiple of window_size, use the tile function:
 
+You can use the overlap flag to see how many basepairs each tile overlapped with
+the underlying interval.
+
 ```{python tidy=FALSE}
 print(exons.tile(5))
+print(exons.tile(5, overlap=True))
 ```

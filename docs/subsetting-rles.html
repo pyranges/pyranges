@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-08-30" />
+<meta name="date" content="2019-10-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -171,38 +171,38 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="subsetting-rles" class="section level1">
 <h1><span class="header-section-number">23</span> Subsetting Rles</h1>
 <p>Rles can be subsetted using an integer (or a list of integers) to get the RLE value at one or more points.</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb244-1" data-line-number="1"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
-<a class="sourceLine" id="cb244-2" data-line-number="2">r <span class="op">=</span> Rle([<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb244-3" data-line-number="3"><span class="bu">print</span>(r)</a></code></pre></div>
+<div class="sourceCode" id="cb248"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb248-1" data-line-number="1"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
+<a class="sourceLine" id="cb248-2" data-line-number="2">r <span class="op">=</span> Rle([<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb248-3" data-line-number="3"><span class="bu">print</span>(r)</a></code></pre></div>
 <pre><code>## +--------+-----+-----+-----+-----+-----+-----+
 ## | Runs   | 3   | 2   | 1   | 1   | 1   | 1   |
 ## |--------+-----+-----+-----+-----+-----+-----|
 ## | Values | 0.0 | 1.0 | 2.0 | 1.0 | 0.0 | 1.0 |
 ## +--------+-----+-----+-----+-----+-----+-----+
 ## Rle of length 9 containing 6 elements</code></pre>
-<div class="sourceCode" id="cb246"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb246-1" data-line-number="1"><span class="bu">print</span>(r[<span class="dv">2</span>], r[<span class="dv">3</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb250"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb250-1" data-line-number="1"><span class="bu">print</span>(r[<span class="dv">2</span>], r[<span class="dv">3</span>])</a></code></pre></div>
 <pre><code>## 0.0 1.0</code></pre>
-<div class="sourceCode" id="cb248"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb248-1" data-line-number="1"><span class="bu">print</span>(r[[<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>]])</a></code></pre></div>
+<div class="sourceCode" id="cb252"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb252-1" data-line-number="1"><span class="bu">print</span>(r[[<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>]])</a></code></pre></div>
 <pre><code>## [1. 2. 0.]</code></pre>
 <p>To get the slice of one or more run lengths use a slice or a dataframe with (at
 least) the columns Start and End.</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb250-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb250-2" data-line-number="2"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
-<a class="sourceLine" id="cb250-3" data-line-number="3">r <span class="op">=</span> Rle([<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb250-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb250-5" data-line-number="5"><span class="bu">print</span>(r[<span class="dv">5</span>:<span class="dv">10</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb254"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb254-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb254-2" data-line-number="2"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
+<a class="sourceLine" id="cb254-3" data-line-number="3">r <span class="op">=</span> Rle([<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb254-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb254-5" data-line-number="5"><span class="bu">print</span>(r[<span class="dv">5</span>:<span class="dv">10</span>])</a></code></pre></div>
 <pre><code>## +--------+-----+-----+-----+-----+
 ## | Runs   | 1   | 1   | 1   | 1   |
 ## |--------+-----+-----+-----+-----|
 ## | Values | 2.0 | 1.0 | 0.0 | 1.0 |
 ## +--------+-----+-----+-----+-----+
 ## Rle of length 4 containing 4 elements</code></pre>
-<div class="sourceCode" id="cb252"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb252-1" data-line-number="1">df <span class="op">=</span> pd.DataFrame({<span class="st">&quot;Start&quot;</span>: [<span class="dv">2</span>, <span class="dv">5</span>], <span class="st">&quot;End&quot;</span>: [<span class="dv">4</span>, <span class="dv">900</span>]})</a>
-<a class="sourceLine" id="cb252-2" data-line-number="2"><span class="bu">print</span>(df.to_csv(index<span class="op">=</span><span class="va">False</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb256"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb256-1" data-line-number="1">df <span class="op">=</span> pd.DataFrame({<span class="st">&quot;Start&quot;</span>: [<span class="dv">2</span>, <span class="dv">5</span>], <span class="st">&quot;End&quot;</span>: [<span class="dv">4</span>, <span class="dv">900</span>]})</a>
+<a class="sourceLine" id="cb256-2" data-line-number="2"><span class="bu">print</span>(df.to_csv(index<span class="op">=</span><span class="va">False</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>))</a></code></pre></div>
 <pre><code>## Start    End
 ## 2    4
 ## 5    900</code></pre>
-<div class="sourceCode" id="cb254"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb254-1" data-line-number="1"><span class="bu">print</span>(r[df], end<span class="op">=</span><span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb258"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb258-1" data-line-number="1"><span class="bu">print</span>(r[df], end<span class="op">=</span><span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a></code></pre></div>
 <pre><code>## [+--------+-----+-----+
 ## | Runs   | 1   | 1   |
 ## |--------+-----+-----|

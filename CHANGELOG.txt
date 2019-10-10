@@ -1,4 +1,5 @@
-# unreleased
+# 0.0.57 (unreleased)
+- add overlap-flag to tile
 - add chain to print-method
 
 # 0.0.56 (25.09.19)
