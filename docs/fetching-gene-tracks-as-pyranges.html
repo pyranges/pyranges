@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-08-30" />
+<meta name="date" content="2019-10-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -175,20 +175,20 @@ It can be installed with <code>pip install pyranges_db</code>.</p>
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and
 Ensembl also has the method chromosome_sizes.</p>
 <p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few thousand rows of data.</p>
-<div class="sourceCode" id="cb287"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb287-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
-<a class="sourceLine" id="cb287-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb287-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
-<a class="sourceLine" id="cb287-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb287-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
+<div class="sourceCode" id="cb291"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb291-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
+<a class="sourceLine" id="cb291-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb291-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
+<a class="sourceLine" id="cb291-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb291-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
 <pre><code>##     Genome
 ## 0  acaChl1
 ## 1  ailMel1
 ## 2  allMis1
 ## 3  allSin1
 ## 4  amaVit1</code></pre>
-<div class="sourceCode" id="cb289"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb289-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
-<a class="sourceLine" id="cb289-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb289-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
+<div class="sourceCode" id="cb293"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb293-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
+<a class="sourceLine" id="cb293-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb293-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
 <pre><code>## +---------------------+-----------+-----------+
 ## | Chromosome          | Start     | End       |
 ## | (category)          | (int32)   | (int32)   |
@@ -204,9 +204,9 @@ Ensembl also has the method chromosome_sizes.</p>
 ## | chr1_GL383520v2_alt | 0         | 366580    |
 ## +---------------------+-----------+-----------+
 ## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.</code></pre>
-<div class="sourceCode" id="cb291"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb291-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb291-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb291-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
+<div class="sourceCode" id="cb295"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb295-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb295-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb295-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+--------------+-------------------+
 ## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | ExonNumber   | transcript_name   |
 ## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)    | (category)        |

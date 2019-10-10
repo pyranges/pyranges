@@ -1,6 +1,8 @@
 from sorted_nearest import makewindows
 from sorted_nearest import maketiles
 
+import numpy as np
+
 
 def _windows(df, kwargs):
 
@@ -16,7 +18,21 @@ def _windows(df, kwargs):
     return df
 
 
+def _intersect_tile(df):
+
+    overlap = np.minimum(df.End, df.__End__) - np.maximum(df.Start, df.__Start__)
+    df.insert(df.shape[1], "TileOverlap", overlap)
+
+    return df.drop(["__Start__", "__End__"], axis=1)
+
+
 def _tiles(df, kwargs):
+
+    overlap = kwargs.get("overlap")
+
+    if overlap:
+        df.insert(df.shape[1], "__Start__", df.Start)
+        df.insert(df.shape[1], "__End__", df.End)
 
     window_size = kwargs["tile_size"]
 
@@ -27,4 +43,9 @@ def _tiles(df, kwargs):
     df.loc[:, "Start"] = starts
     df.loc[:, "End"] = ends
 
+    if overlap:
+        df = _intersect_tile(df)
+
     return df
+
+

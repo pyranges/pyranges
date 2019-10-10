@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-08-30" />
+<meta name="date" content="2019-10-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -247,26 +247,16 @@ can be used to display intermediate results in pipes.</p>
 ## | chrY         | 59233166  | 59233257  | NR_033715_exon_4_0_chrY_59233167_f    | 0         | +            |
 ## +--------------+-----------+-----------+---------------------------------------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.</code></pre>
-<div class="sourceCode" id="cb96"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb96-1" data-line-number="1">exons.<span class="bu">print</span>(n<span class="op">=</span><span class="dv">10</span>,</a>
+<div class="sourceCode" id="cb96"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb96-1" data-line-number="1">exons.<span class="bu">print</span>(n<span class="op">=</span><span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb96-2" data-line-number="2">            merge_position<span class="op">=</span><span class="va">False</span>,</a>
 <a class="sourceLine" id="cb96-3" data-line-number="3">            sort<span class="op">=</span><span class="va">True</span>,</a>
 <a class="sourceLine" id="cb96-4" data-line-number="4">            formatting<span class="op">=</span>{<span class="st">&quot;Start&quot;</span>: <span class="st">&quot;{:,}&quot;</span>, <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;</span><span class="sc">{:2.2}</span><span class="st">&quot;</span>})</a></code></pre></div>
-<pre><code>## +--------------+------------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start      | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)    | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+------------+-----------+------------+-----------+--------------|
-## | chrX         | 585,078    | 585337    | NM         | 0         | +            |
-## | chrX         | 1,393,647  | 1393735   | NM         | 0         | +            |
-## | chrX         | 1,393,647  | 1393735   | NM         | 0         | +            |
-## | chrX         | 1,404,670  | 1404813   | NM         | 0         | +            |
-## | chrX         | 1,407,411  | 1407535   | NM         | 0         | +            |
-## | ...          | ...        | ...       | ...        | ...       | ...          |
-## | chrY         | 27,197,822 | 27197945  | NM         | 0         | -            |
-## | chrY         | 27,606,238 | 27606322  | NR         | 0         | +            |
-## | chrY         | 27,606,238 | 27606322  | NR         | 0         | +            |
-## | chrY         | 59,222,126 | 59222216  | NR         | 0         | +            |
-## | chrY         | 59,233,166 | 59233257  | NR         | 0         | +            |
-## +--------------+------------+-----------+------------+-----------+--------------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.</code></pre>
 <div class="sourceCode" id="cb98"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb98-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
 <a class="sourceLine" id="cb98-2" data-line-number="2">f1.rp()</a></code></pre></div>
