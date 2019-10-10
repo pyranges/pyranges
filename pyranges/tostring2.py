@@ -268,7 +268,7 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
 
     order = {(True, True): "Chromosome, Start, End and Strand.",
              (True, False): "Chromosome, Start, End and Strand.",
-             (True, False): "Chromosome, Start and End.",
+             (False, False): "Chromosome.",
              (False, True): "Chromosome and Strand."}[sort, self.stranded]
 
     order = "The PyRanges is sorted on " + order
