@@ -178,17 +178,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            |
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9951      | 10150     | H3K27me3   | 8         | -            |
 ## | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            |
+## | chr1         | 10024     | 10223     | H3K27me3   | 1         | +            |
+## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chr1         | 9978      | 10177     | H3K27me3   | 7         | -            |
+## | chr1         | 10001     | 10200     | H3K27me3   | 5         | -            |
 ## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            |
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            |
-## | chr1         | 110246    | 110445    | H3K27me3   | 1         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb208"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb208-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle())</a></code></pre></div>
 <pre><code>## chr1 +
 ## --

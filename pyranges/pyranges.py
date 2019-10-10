@@ -673,7 +673,7 @@ class PyRanges():
         elif len(self) == 1:
             return self.values()[0]
         else:
-            return pd.concat(self.values())
+            return pd.concat(self.values()).reset_index(drop=True)
 
     def lengths(self):
 

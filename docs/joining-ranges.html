@@ -180,34 +180,36 @@ If you do not use a suffix, the default <code>_b</code> is chosen.</p>
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_2   | End_2     | Name_2     | Score_2   | Strand_2     |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            | 9988      | 10187     | Input      | 1         | -            |
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            | 10073     | 10272     | Input      | 1         | +            |
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            | 10079     | 10278     | Input      | 1         | -            |
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            | 10082     | 10281     | Input      | 1         | -            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | 1         | -            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10073     | 10272     | Input      | 1         | +            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | 1         | -            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10082     | 10281     | Input      | 1         | -            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10079     | 10278     | Input      | 1         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10082     | 10281     | Input      | 1         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10149     | 10348     | Input      | 1         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10280     | 10479     | Input      | 1         | +            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10079     | 10278     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10082     | 10281     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10149     | 10348     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10280     | 10479     | Input      | 1         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 49 rows and 11 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 49 rows and 11 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
 <div class="sourceCode" id="cb182"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb182-1" data-line-number="1"><span class="bu">print</span>(gr.join(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_b   | End_b     | Name_b     | Score_b   | Strand_b     |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9916      | 10115     | H3K27me3   | 5         | -            | 10073     | 10272     | Input      | 1         | +            |
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | 1         | -            |
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | 1         | -            |
 ## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10082     | 10281     | Input      | 1         | -            |
+## | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            | 9988      | 10187     | Input      | 1         | -            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            | 10073     | 10272     | Input      | 1         | +            |
+## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            | 10280     | 10479     | Input      | 1         | +            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10073     | 10272     | Input      | 1         | +            |
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10280     | 10479     | Input      | 1         | +            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10079     | 10278     | Input      | 1         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10082     | 10281     | Input      | 1         | -            |
-## | chr1         | 10246     | 10445     | H3K27me3   | 4         | +            | 10149     | 10348     | Input      | 1         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 22 rows and 11 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 22 rows and 11 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>The join method also takes a how argument, which currently accepts the
 option <code>&quot;containment&quot;</code>, which requires that the intervals in self be
 completely within the intervals in other.</p>
@@ -220,7 +222,8 @@ completely within the intervals in other.</p>
 ## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 1 rows and 11 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 1 rows and 11 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>The join method also takes the argument new_pos which can either be <code>union</code>or
 <code>ìntersection</code>. The default suffixes are <code>[&quot;_a&quot;, &quot;_b&quot;]</code>, but a suffixes argument
 overrides this.</p>
@@ -231,7 +234,8 @@ overrides this.</p>
 ## |--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
 ## | chr1         |         6 |         7 |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 1 rows and 13 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 1 rows and 13 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 
 </div>
             </section>

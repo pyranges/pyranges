@@ -23,7 +23,7 @@ def _intersect_tile(df):
     overlap = np.minimum(df.End, df.__End__) - np.maximum(df.Start, df.__Start__)
     df.insert(df.shape[1], "TileOverlap", overlap)
 
-    return df.drop(["__Start__", "__End__"], axis=1)
+    return df
 
 
 def _tiles(df, kwargs):
@@ -31,6 +31,7 @@ def _tiles(df, kwargs):
     overlap = kwargs.get("overlap")
 
     if overlap:
+        df = df.copy()
         df.insert(df.shape[1], "__Start__", df.Start)
         df.insert(df.shape[1], "__End__", df.End)
 
@@ -45,6 +46,8 @@ def _tiles(df, kwargs):
 
     if overlap:
         df = _intersect_tile(df)
+
+        df = df.drop(["__Start__", "__End__"], axis=1)
 
     return df
 

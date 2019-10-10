@@ -1,9 +1,14 @@
-# 0.0.57 (unreleased)
+# 0.0.57 (10.10.19)
 - add overlap-flag to tile
 - add chain to print-method
 - bugfix: printing stranded pyranges sorted output even though sort was false
+- bugfix: wrong number hidden cols on very small terminal widths
+- bugfix: unstrand did not change underlying dict to chromosomes only
+- show number of hidden columns in header
+- tests: mismatches in strand between dict and dataframes
+- .df/.as_df() now returns with non-duplicated index
 
-# 0.0.56 (25.09.19)
+# 0).0.56 (25.09.19)
 - add possibility of 5-end and 3-end in slack being different/none
 - add slack to join-method
 - add new_position method to take union or intersection of two pairs of Start/End-columns in pyranges

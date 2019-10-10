@@ -235,17 +235,18 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 100079649 | 100079674 | U0         | 0         | -            |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
-## | chr1         | 156338310 | 156338335 | U0         | 0         | -            |
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
 ## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 21559181  | 21559206  | U0         | 0         | +            |
 ## | chrY         | 21751211  | 21751236  | U0         | 0         | -            |
+## | chrY         | 7701983   | 7702008   | U0         | 0         | -            |
 ## | chrY         | 21910706  | 21910731  | U0         | 0         | -            |
 ## | chrY         | 22054002  | 22054027  | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 240 rows and 6 columns from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 240 rows and 6 columns from 24 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb160"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb160-1" data-line-number="1"><span class="kw">def</span> set_start_to_zero(df):</a>
 <a class="sourceLine" id="cb160-2" data-line-number="2">    df.Start <span class="op">=</span> <span class="dv">0</span></a>
 <a class="sourceLine" id="cb160-3" data-line-number="3">    <span class="cf">return</span> df</a>
@@ -255,17 +256,18 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int64)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 0         | 100079674 | U0         | 0         | -            |
-## | chr1         | 0         | 144227104 | U0         | 0         | +            |
-## | chr1         | 0         | 156338335 | U0         | 0         | -            |
+## | chr1         | 0         | 212609559 | U0         | 0         | +            |
 ## | chr1         | 0         | 169887554 | U0         | 0         | +            |
+## | chr1         | 0         | 216711036 | U0         | 0         | +            |
+## | chr1         | 0         | 144227104 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 0         | 11942795  | U0         | 0         | +            |
-## | chrY         | 0         | 13517917  | U0         | 0         | -            |
 ## | chrY         | 0         | 15224260  | U0         | 0         | -            |
-## | chrY         | 0         | 21559206  | U0         | 0         | +            |
+## | chrY         | 0         | 13517917  | U0         | 0         | -            |
+## | chrY         | 0         | 8010976   | U0         | 0         | -            |
+## | chrY         | 0         | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>Keyword arguments can be sent to the function:</p>
 <div class="sourceCode" id="cb162"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb162-1" data-line-number="1"><span class="kw">def</span> _print(df, kwargs):</a>
 <a class="sourceLine" id="cb162-2" data-line-number="2">    <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))</a>
@@ -324,17 +326,18 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int64)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 0         | 100079674 | U0         | 0         | -            |
-## | chr1         | 0         | 144227104 | U0         | 0         | +            |
-## | chr1         | 0         | 156338335 | U0         | 0         | -            |
+## | chr1         | 0         | 212609559 | U0         | 0         | +            |
 ## | chr1         | 0         | 169887554 | U0         | 0         | +            |
+## | chr1         | 0         | 216711036 | U0         | 0         | +            |
+## | chr1         | 0         | 144227104 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 0         | 11942795  | U0         | 0         | +            |
-## | chrY         | 0         | 13517917  | U0         | 0         | -            |
 ## | chrY         | 0         | 15224260  | U0         | 0         | -            |
-## | chrY         | 0         | 21559206  | U0         | 0         | +            |
+## | chrY         | 0         | 13517917  | U0         | 0         | -            |
+## | chrY         | 0         | 8010976   | U0         | 0         | -            |
+## | chrY         | 0         | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>They were printed 24 times since the function was applied once per chromosome.</p>
 <p>apply_chunks splits each chromosome into <code>nb_cpu</code> chunks and runs each chunk in
 parallel, which is useful for slow row-based operations (like fisher exact, for
