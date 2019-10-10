@@ -305,4 +305,19 @@ def tostring(self, n=8, merge_position=False, formatting=None, sort=False):
 
     str_repr, hidden_columns = grow_string_representation(df, columns_dtypes)
 
-    str_repr = add_text_to_str_repr(
+    str_repr = add_text_to_str_repr(self, str_repr, hidden_columns, sort)
+
+    return str_repr
+
+
+if __name__ == "__main__":
+
+    from pyranges.tostring2 import _get_stranded_f, _get_unstranded_f
+    from pyranges.tostring2 import tostring
+    import pyranges as pr
+    gr = pr.data.chipseq()
+    df = gr.df
+    _get_stranded_f(gr, 2, "head")
+    _get_unstranded_f(gr.unstrand(), 6, "tail")
+
+    tostring(gr)

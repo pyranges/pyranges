@@ -655,7 +655,7 @@ class PyRanges():
         gr = gr.apply(lambda df: df.drop("Strand", axis=1).reset_index(drop=
                                                                        True))
 
-        return gr
+        return pr.PyRanges(gr.dfs)
 
     @property
     def df(self):
