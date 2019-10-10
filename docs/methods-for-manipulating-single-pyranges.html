@@ -184,7 +184,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | chr1         |         8 |         9 | +            |         1 |
 ## | chr1         |         5 |         7 | -            |         1 |
 ## +--------------+-----------+-----------+--------------+-----------+
-## Stranded PyRanges object has 3 rows and 5 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 5 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>Cluster finds which intervals overlap, but gives each interval a cluster ID instead of merging them:</p>
 <div class="sourceCode" id="cb126"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb126-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
 <a class="sourceLine" id="cb126-2" data-line-number="2">f1 <span class="op">=</span> pr.data.f1()</a>
@@ -197,7 +198,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | chr1         |         8 |         9 | interval3  |         0 | +            |         2 |
 ## | chr1         |         5 |         7 | interval2  |         0 | -            |         3 |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb128"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb128-1" data-line-number="1"><span class="bu">print</span>(f1.cluster(strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |
@@ -207,7 +209,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | chr1         |         8 |         9 | interval3  |         0 | +            |         2 |
 ## | chr1         |         5 |         7 | interval2  |         0 | -            |         3 |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb130"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb130-1" data-line-number="1"><span class="bu">print</span>(f1.cluster(slack<span class="op">=</span><span class="dv">2</span>, strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |
@@ -217,46 +220,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | chr1         |         8 |         9 | interval3  |         0 | +            |         1 |
 ## | chr1         |         5 |         7 | interval2  |         0 | -            |         2 |
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>Both cluster and merge take the argument slack, so that you can merge features
 which are not directly overlapping. If you set slack to -1 you avoid merging bookended features.</p>
 <p>To cluster or merge only those rows which have the same values for a certain column, you can use the argument by to cluster and merge.</p>
 <div class="sourceCode" id="cb132"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb132-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
 <a class="sourceLine" id="cb132-2" data-line-number="2">gr <span class="op">=</span> pr.data.ensembl_gtf()</a>
 <a class="sourceLine" id="cb132-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
-<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-----------------+-------------+----------------+----------------+------------+----------------------+-------+
-## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | gene_id         | gene_name   | gene_source    | gene_version   | tag        | transcript_biotype   | ...   |
-## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | (object)        | (object)    | (object)       | (object)       | (object)   | (object)             | ...   |
-## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-----------------+-------------+----------------+----------------+------------+----------------------+-------|
-## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         | 5              | basic      | lncRNA               | ...   |
-## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         | 5              | nan        | nan                  | ...   |
-## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         | 5              | basic      | lncRNA               | ...   |
-## | 1            | havana     | exon         | 12613     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana         | 5              | basic      | lncRNA               | ...   |
-## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...             | ...         | ...            | ...            | ...        | ...                  | ...   |
-## | 1            | havana     | CDS          | 1182876   | 1183047   | .          | +            | 2          | protein_coding                     | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | basic      | protein_coding       | ...   |
-## | 1            | havana     | exon         | 1183920   | 1184091   | .          | +            | .          | protein_coding                     | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | basic      | protein_coding       | ...   |
-## | 1            | havana     | CDS          | 1183920   | 1184091   | .          | +            | 1          | protein_coding                     | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | basic      | protein_coding       | ...   |
-## | 1            | havana     | exon         | 1184969   | 1185864   | .          | +            | .          | protein_coding                     | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | basic      | protein_coding       | ...   |
-## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-----------------+-------------+----------------+----------------+------------+----------------------+-------+
+<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-----------------+-------------+---------------+----------------+------------+----------------------+-------+
+## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | gene_id         | gene_name   | gene_source   | gene_version   | tag        | transcript_biotype   | +13   |
+## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | (object)        | (object)    | (object)      | (object)       | (object)   | (object)             | ...   |
+## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-----------------+-------------+---------------+----------------+------------+----------------------+-------|
+## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana        | 5              | nan        | nan                  | ...   |
+## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana        | 5              | basic      | lncRNA               | ...   |
+## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana        | 5              | basic      | lncRNA               | ...   |
+## | 1            | havana     | exon         | 12613     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ENSG00000223972 | DDX11L1     | havana        | 5              | basic      | lncRNA               | ...   |
+## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...             | ...         | ...           | ...            | ...        | ...                  | ...   |
+## | 1            | havana     | gene         | 1173056   | 1179555   | .          | -            | .          | lncRNA                             | ENSG00000205231 | TTLL10-AS1  | havana        | 1              | nan        | nan                  | ...   |
+## | 1            | havana     | transcript   | 1173056   | 1179555   | .          | -            | .          | lncRNA                             | ENSG00000205231 | TTLL10-AS1  | havana        | 1              | basic      | lncRNA               | ...   |
+## | 1            | havana     | exon         | 1179365   | 1179555   | .          | -            | .          | lncRNA                             | ENSG00000205231 | TTLL10-AS1  | havana        | 1              | basic      | lncRNA               | ...   |
+## | 1            | havana     | exon         | 1173056   | 1176396   | .          | -            | .          | lncRNA                             | ENSG00000205231 | TTLL10-AS1  | havana        | 1              | basic      | lncRNA               | ...   |
+## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-----------------+-------------+---------------+----------------+------------+----------------------+-------+
 ## Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
-## Hidden columns: transcript_id, transcript_name, transcript_source, transcript_support_level, transcript_version, exon_id, exon_number, exon_version, (assigned, previous, protein_id, protein_version</code></pre>
+## The PyRanges is sorted on Chromosome and Strand.
+## 13 hidden columns: transcript_id, transcript_name, transcript_source, transcript_support_level, transcript_version, exon_id, exon_number, exon_version, (assigned, previous, protein_id, protein_version, ccds_id</code></pre>
 <div class="sourceCode" id="cb134"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb134-1" data-line-number="1"><span class="bu">print</span>(gr.cluster(by<span class="op">=</span><span class="st">&quot;gene_id&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+----------------+-----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------------+----------------+----------------+------------+----------------------+-----------------+-------+
-## | Chromosome   | Source         | Feature         | Start     | End       | Score      | Strand       | Frame      | gene_biotype   | gene_id         | gene_name   | gene_source    | gene_version   | tag        | transcript_biotype   | transcript_id   | ...   |
-## | (category)   | (object)       | (category)      | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)       | (object)        | (object)    | (object)       | (object)       | (object)   | (object)             | (object)        | ...   |
-## |--------------+----------------+-----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------------+----------------+----------------+------------+----------------------+-----------------+-------|
-## | 1            | havana         | three_prime_utr | 1081818   | 1082892   | .          | -            | .          | protein_coding | ENSG00000131591 | C1orf159    | ensembl_havana | 17             | basic      | protein_coding       | ENST00000379339 | ...   |
-## | 1            | havana         | exon            | 1081818   | 1082987   | .          | -            | .          | protein_coding | ENSG00000131591 | C1orf159    | ensembl_havana | 17             | basic      | protein_coding       | ENST00000379339 | ...   |
-## | 1            | havana         | transcript      | 1081818   | 1116081   | .          | -            | .          | protein_coding | ENSG00000131591 | C1orf159    | ensembl_havana | 17             | basic      | protein_coding       | ENST00000379339 | ...   |
-## | 1            | ensembl_havana | gene            | 1081818   | 1116361   | .          | -            | .          | protein_coding | ENSG00000131591 | C1orf159    | ensembl_havana | 17             | nan        | nan                  | nan             | ...   |
-## | ...          | ...            | ...             | ...       | ...       | ...        | ...          | ...        | ...            | ...             | ...         | ...            | ...            | ...        | ...                  | ...             | ...   |
-## | 1            | ensembl_havana | stop_codon      | 450740    | 450742    | .          | -            | 0          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
-## | 1            | ensembl_havana | CDS             | 450743    | 451678    | .          | -            | 0          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
-## | 1            | ensembl_havana | start_codon     | 451676    | 451678    | .          | -            | 0          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
-## | 1            | ensembl_havana | five_prime_utr  | 451679    | 451697    | .          | -            | .          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
-## +--------------+----------------+-----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------------+----------------+----------------+------------+----------------------+-----------------+-------+
+<pre><code>## +--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------------+----------------+----------------+------------+----------------------+-----------------+-------+
+## | Chromosome   | Source         | Feature        | Start     | End       | Score      | Strand       | Frame      | gene_biotype   | gene_id         | gene_name   | gene_source    | gene_version   | tag        | transcript_biotype   | transcript_id   | +13   |
+## | (category)   | (object)       | (category)     | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)       | (object)        | (object)    | (object)       | (object)       | (object)   | (object)             | (object)        | ...   |
+## |--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------------+----------------+----------------+------------+----------------------+-----------------+-------|
+## | 1            | ensembl_havana | gene           | 1173884   | 1197935   | .          | +            | .          | protein_coding | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | nan        | nan                  | nan             | ...   |
+## | 1            | havana         | transcript     | 1173884   | 1175034   | .          | +            | .          | protein_coding | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | nan        | lncRNA               | ENST00000506177 | ...   |
+## | 1            | havana         | exon           | 1173884   | 1173926   | .          | +            | .          | protein_coding | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | nan        | lncRNA               | ENST00000506177 | ...   |
+## | 1            | havana         | five_prime_utr | 1173903   | 1173926   | .          | +            | .          | protein_coding | ENSG00000162571 | TTLL10      | ensembl_havana | 13             | basic      | protein_coding       | ENST00000379290 | ...   |
+## | ...          | ...            | ...            | ...       | ...       | ...        | ...          | ...        | ...            | ...             | ...         | ...            | ...            | ...        | ...                  | ...             | ...   |
+## | 1            | ensembl_havana | stop_codon     | 450740    | 450742    | .          | -            | 0          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
+## | 1            | ensembl_havana | CDS            | 450743    | 451678    | .          | -            | 0          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
+## | 1            | ensembl_havana | start_codon    | 451676    | 451678    | .          | -            | 0          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
+## | 1            | ensembl_havana | five_prime_utr | 451679    | 451697    | .          | -            | .          | protein_coding | ENSG00000284733 | OR4F29      | ensembl_havana | 1              | basic      | protein_coding       | ENST00000426406 | ...   |
+## +--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------------+----------------+----------------+------------+----------------------+-----------------+-------+
 ## Stranded PyRanges object has 2,446 rows and 29 columns from 1 chromosomes.
-## Hidden columns: transcript_name, transcript_source, transcript_support_level, transcript_version, exon_id, exon_number, exon_version, (assigned, previous, protein_id, protein_version, ccds_id</code></pre>
+## The PyRanges is sorted on Chromosome and Strand.
+## 13 hidden columns: transcript_name, transcript_source, transcript_support_level, transcript_version, exon_id, exon_number, exon_version, (assigned, previous, protein_id, protein_version, ccds_id, Cluster</code></pre>
 <p><code>five_end</code> finds the starts of the regions (taking direction of transcription
 into account).</p>
 <div class="sourceCode" id="cb136"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb136-1" data-line-number="1">f1.five_end()</a></code></pre></div>
@@ -268,7 +274,8 @@ into account).</p>
 ## | chr1         |         8 |         9 | interval3  |         0 | +            |
 ## | chr1         |         7 |         8 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb138"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb138-1" data-line-number="1"><span class="bu">print</span>(f1.five_end(slack<span class="op">=</span><span class="dv">5</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -278,7 +285,8 @@ into account).</p>
 ## | chr1         |         3 |        14 | interval3  |         0 | +            |
 ## | chr1         |         2 |        13 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p><code>three_end</code> finds the ends of the regions (taking direction of transcription into account).</p>
 <div class="sourceCode" id="cb140"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb140-1" data-line-number="1">f1.three_end()</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
@@ -289,7 +297,8 @@ into account).</p>
 ## | chr1         |         9 |        10 | interval3  |         0 | +            |
 ## | chr1         |         7 |         8 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb142"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb142-1" data-line-number="1"><span class="bu">print</span>(f1.three_end(slack<span class="op">=</span><span class="dv">5</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -299,7 +308,8 @@ into account).</p>
 ## | chr1         |         4 |        15 | interval3  |         0 | +            |
 ## | chr1         |         2 |        13 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p><code>slack</code> extends the starts and ends of your interval.</p>
 <div class="sourceCode" id="cb144"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb144-1" data-line-number="1"><span class="bu">print</span>(f1.slack(<span class="dv">5</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
@@ -310,7 +320,8 @@ into account).</p>
 ## | chr1         |         3 |        14 | interval3  |         0 | +            |
 ## | chr1         |         0 |        12 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb146"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb146-1" data-line-number="1"><span class="bu">print</span>(f1.slack({<span class="st">&quot;5&quot;</span>: <span class="dv">2</span>, <span class="st">&quot;3&quot;</span>: <span class="dv">-1</span>}))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -320,7 +331,8 @@ into account).</p>
 ## | chr1         |         6 |         8 | interval3  |         0 | +            |
 ## | chr1         |         6 |         9 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p><code>window</code> splits your data into windows:</p>
 <div class="sourceCode" id="cb148"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb148-1" data-line-number="1">exons <span class="op">=</span> pr.data.exons()</a>
 <a class="sourceLine" id="cb148-2" data-line-number="2"><span class="bu">print</span>(exons)</a></code></pre></div>
@@ -328,33 +340,35 @@ into account).</p>
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
 ## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
+## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
 ## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f     | 0         | +            |
-## | chrX         | 49069126  | 49069255  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 52257919  | 52258046  | NM_001097593_exon_1_0_chrX_52257920_r  | 0         | -            |
-## | chrX         | 70470281  | 70470576  | NM_201599_exon_20_0_chrX_70470282_r    | 0         | -            |
+## | chrX         | 77294333  | 77294480  | NM_000052_exon_17_0_chrX_77294334_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
+## | chrY         | 15409586  | 15409728  | NR_047633_exon_3_0_chrY_15409587_r     | 0         | -            |
 ## | chrY         | 15478146  | 15478273  | NR_047634_exon_18_0_chrY_15478147_r    | 0         | -            |
-## | chrY         | 16834996  | 16835149  | NR_028319_exon_2_0_chrY_16834997_f     | 0         | +            |
-## | chrY         | 23704576  | 23704729  | NM_005058_exon_4_0_chrY_23704577_f     | 0         | +            |
-## | chrY         | 24560624  | 24560735  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
+## | chrY         | 15360258  | 15361762  | NR_047601_exon_0_0_chrY_15360259_r     | 0         | -            |
+## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
-## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb150"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb150-1" data-line-number="1"><span class="bu">print</span>(exons.window(<span class="dv">5</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
 ## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
-## | chrX         | 49069126  | 49069131  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 49069131  | 49069136  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 49069136  | 49069141  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 49069141  | 49069146  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
+## | chrX         | 135721701 | 135721706 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721706 | 135721711 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721711 | 135721716 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721716 | 135721721 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
-## | chrY         | 24560714  | 24560719  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
-## | chrY         | 24560719  | 24560724  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
-## | chrY         | 24560724  | 24560729  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
-## | chrY         | 24560729  | 24560734  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
+## | chrY         | 15467254  | 15467259  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467259  | 15467264  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467264  | 15467269  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467269  | 15467274  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
-## Stranded PyRanges object has 60,449 rows and 6 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 60,449 rows and 6 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>If you want to all windows to start at a multiple of window_size, use the tile function:</p>
 <p>You can use the overlap flag to see how many basepairs each tile overlapped with
 the underlying interval.</p>
@@ -363,33 +377,35 @@ the underlying interval.</p>
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
 ## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
-## | chrX         | 49069125  | 49069130  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 49069130  | 49069135  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 49069135  | 49069140  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 49069140  | 49069145  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
+## | chrX         | 135721700 | 135721705 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721705 | 135721710 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721710 | 135721715 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135721715 | 135721720 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
-## | chrY         | 24560715  | 24560720  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
-## | chrY         | 24560720  | 24560725  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
-## | chrY         | 24560725  | 24560730  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
-## | chrY         | 24560730  | 24560735  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            |
+## | chrY         | 15467260  | 15467265  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467265  | 15467270  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467270  | 15467275  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
+## | chrY         | 15467275  | 15467280  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
-## Stranded PyRanges object has 61,643 rows and 6 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 61,643 rows and 6 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb154"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb154-1" data-line-number="1"><span class="bu">print</span>(exons.tile(<span class="dv">5</span>, overlap<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+---------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       | TileOverlap   |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   | (int32)       |
 ## |--------------+-----------+-----------+----------------------------------------+-----------+--------------+---------------|
-## | chrX         | 49069125  | 49069130  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            | 4             |
-## | chrX         | 49069130  | 49069135  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            | 5             |
-## | chrX         | 49069135  | 49069140  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            | 5             |
-## | chrX         | 49069140  | 49069145  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            | 5             |
+## | chrX         | 135721700 | 135721705 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            | 4             |
+## | chrX         | 135721705 | 135721710 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            | 5             |
+## | chrX         | 135721710 | 135721715 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            | 5             |
+## | chrX         | 135721715 | 135721720 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            | 5             |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          | ...           |
-## | chrY         | 24560715  | 24560720  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            | 5             |
-## | chrY         | 24560720  | 24560725  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            | 5             |
-## | chrY         | 24560725  | 24560730  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            | 5             |
-## | chrY         | 24560730  | 24560735  | NM_001006117_exon_6_0_chrY_24560625_f  | 0         | +            | 5             |
+## | chrY         | 15467260  | 15467265  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            | 5             |
+## | chrY         | 15467265  | 15467270  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            | 5             |
+## | chrY         | 15467270  | 15467275  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            | 5             |
+## | chrY         | 15467275  | 15467280  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            | 3             |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+---------------+
-## Stranded PyRanges object has 61,643 rows and 7 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 61,643 rows and 7 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 
 </div>
             </section>

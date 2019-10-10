@@ -133,10 +133,10 @@ def build_header(columns_dtypes):
     return header
 
 
-def add_hidden_col_dotdot(df):
+def add_hidden_col_dotdot(df, n_hidden_cols):
 
     ddd = pd.Series("...", index=df.index)
-    ddd.name = "...\n..."
+    ddd.name = "+{}\n...".format(n_hidden_cols)
     df = pd.concat([df, ddd], axis=1)
 
     return df
@@ -190,7 +190,7 @@ def grow_string_representation(df, columns_dtypes):
 
     if i < total_columns:
 
-        new_build_df = add_hidden_col_dotdot(build_df)
+        new_build_df = add_hidden_col_dotdot(build_df, len(original_header[i:]))
         str_repr = tabulate(
             new_build_df,
             headers=new_build_df.columns,
@@ -215,8 +215,8 @@ def untraditional_strand_info(self, str_repr_width):
 
         if n_untraditional_strands:
             ustr = "Considered unstranded due to these Strand values: {}"
-            for i in range(n_untraditional_strands):
-                _ustr = ustr.format(", ".join(untraditional_strands[:i + 1]))
+            for i in range(n_untraditional_strands + 1):
+                _ustr = ustr.format(", ".join(untraditional_strands[:i]))
                 if len(_ustr) > str_repr_width - 20:
                     break
 
@@ -235,13 +235,13 @@ def hidden_columns_info(hidden_columns, str_repr_width):
     n_hidden_cols = len(hidden_columns)
     _hstr = ""
     if n_hidden_cols:
-        hstr = "Hidden columns: {}"
-        for i in range(n_hidden_cols):
+        hstr = str(n_hidden_cols) + " hidden columns: {}"
+        for i in range(n_hidden_cols + 1):
             _hstr = hstr.format(", ".join(hidden_columns[:i]))
-            if len(_hstr) > str_repr_width - 20:
+            if len(_hstr) > str_repr_width:
                 break
 
-        if i < n_hidden_cols - 1:
+        if i < n_hidden_cols:
             hidden_columns = hidden_columns[:i]
             hidden_columns.append("...")
 
@@ -273,7 +273,7 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
 
     order = "The PyRanges is sorted on " + order
 
-    str_repr = "\n".join([s for s in [str_repr, str1, ustr, hstr, order] if s])
+    str_repr = "\n".join([s for s in [str_repr, str1, order, ustr, hstr] if s])
 
     return str_repr
 

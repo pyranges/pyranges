@@ -207,7 +207,8 @@ manipulate the data in PyRanges-objects.</p>
 ## | chr1         |         6 |        11 |        0.13 | -            |
 ## | chr2         |         0 |        14 |       42.42 | +            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="dv">0</span>:<span class="dv">5</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
@@ -215,7 +216,8 @@ manipulate the data in PyRanges-objects.</p>
 ## |--------------+-----------+-----------+-------------+--------------|
 ## | chr1         |         4 |         7 |        23.8 | +            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">6</span>:<span class="dv">100</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
@@ -223,7 +225,8 @@ manipulate the data in PyRanges-objects.</p>
 ## |--------------+-----------+-----------+-------------+--------------|
 ## | chr1         |         6 |        11 |        0.13 | -            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="bu">print</span>(gr1.Score)</a></code></pre></div>
 <pre><code>## 0    23.80
 ## 1     0.13
@@ -248,7 +251,8 @@ manipulate the data in PyRanges-objects.</p>
 ## | chr1         |         5 |         6 |       -0.01 | -            |
 ## | chr3         |         0 |        14 |       21.21 | -            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
@@ -257,7 +261,8 @@ manipulate the data in PyRanges-objects.</p>
 ## | chr1         |         5 |         6 |       23.8  | +            |
 ## | chr1         |         9 |        11 |        0.13 | -            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="va">False</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-------------+--------------+
 ## | Chromosome   |     Start |       End |       Score | Strand       |
@@ -266,7 +271,8 @@ manipulate the data in PyRanges-objects.</p>
 ## | chr1         |         5 |         6 |       23.8  | +            |
 ## | chr1         |         9 |        11 |        0.13 | -            |
 ## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>There are also convenience methods for single PyRanges:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="bu">print</span>(gr1.merge())</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+
@@ -277,7 +283,8 @@ manipulate the data in PyRanges-objects.</p>
 ## | chr1         |         6 |        11 | -            |
 ## | chr2         |         0 |        14 | +            |
 ## +--------------+-----------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>The underlying dataframe can always be accessed:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="bu">print</span>(gr1.df)</a></code></pre></div>
 <pre><code>##   Chromosome  Start  End  Score Strand

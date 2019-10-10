@@ -29,10 +29,14 @@ def test_unstrand():
     exons = pr.data.exons()
 
     cpg = pr.data.cpg()
+    print(exons)
+    print(exons.columns)
     x = exons.unstrand()
+    print(x.stranded)
+    print(x)
+    print(x.columns)
     for _, df in x:
-        print(len(df.index), len(set(df.index)))
-        assert len(df.index) == len(set(df.index))
+        assert not df.index.duplicated().sum()
 
     # x = pr.PyRanges(x.df.reset_index(drop=True))
     cpg.join(x)

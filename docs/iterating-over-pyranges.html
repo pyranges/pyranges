@@ -255,17 +255,18 @@ items methods. These return a list, not a custom object like the python dict.</p
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
 ## |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
+## | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
+## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
 ## | chrX         | 47868945  | 47869126  | NM_205856_exon_4_0_chrX_47868946_f     | 0         | +            |
 ## | chrX         | 49069126  | 49069255  | NM_001256790_exon_15_0_chrX_49069127_r | 0         | -            |
-## | chrX         | 52257919  | 52258046  | NM_001097593_exon_1_0_chrX_52257920_r  | 0         | -            |
-## | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
 ## | ...          | ...       | ...       | ...                                    | ...       | ...          |
-## | chrY         | 1693161   | 1693291   | NM_001171039_exon_2_0_chrY_1693162_f   | 0         | +            |
+## | chrY         | 59233166  | 59233257  | NR_033715_exon_4_0_chrY_59233167_f     | 0         | +            |
+## | chrY         | 1481624   | 1481747   | NM_004192_exon_1_0_chrY_1481625_r      | 0         | -            |
 ## | chrY         | 15526614  | 15526673  | NR_047607_exon_25_0_chrY_15526615_r    | 0         | -            |
 ## | chrY         | 15591393  | 15592550  | NR_047610_exon_27_0_chrY_15591394_r    | 0         | -            |
-## | chrY         | 59233166  | 59233257  | NR_033715_exon_4_0_chrY_59233167_f     | 0         | +            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
-## Stranded PyRanges object has 12 rows and 6 columns from 2 chromosomes.</code></pre>
+## Stranded PyRanges object has 12 rows and 6 columns from 2 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <p>Note that this is basically the same as using the apply method of the PyRange,
 only that the for loops are never multithreaded.</p>
 <p>To iterate over multiple pyranges you can use pr.itergrs. It iterates over
@@ -281,23 +282,23 @@ more PyRanges returns empty dfs.</p>
 <a class="sourceLine" id="cb110-7" data-line-number="7">    <span class="bu">print</span>(<span class="st">&quot;-----&quot;</span> <span class="op">*</span> <span class="dv">5</span>)</a>
 <a class="sourceLine" id="cb110-8" data-line-number="8">    <span class="bu">print</span>(cdf.head(<span class="dv">1</span>), edf.head(<span class="dv">1</span>))</a></code></pre></div>
 <pre><code>## -------------------------
-##     Chromosome  Start    End  CpG Strand
-## 896       chrY  14181  14793   62      +    Chromosome    Start      End                                  Name  Score Strand
-## 14       chrY  1693161  1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +
-## -------------------------
 ## Empty DataFrame
 ## Columns: [Chromosome, Start, End, CpG, Strand]
 ## Index: []   Chromosome     Start       End                                    Name  Score Strand
 ## 1       chrX  49069126  49069255  NM_001256790_exon_15_0_chrX_49069127_r      0      -
 ## -------------------------
-## Empty DataFrame
-## Columns: [Chromosome, Start, End, CpG, Strand]
-## Index: []   Chromosome    Start      End                               Name  Score Strand
-## 5       chrY  1481624  1481747  NM_004192_exon_1_0_chrY_1481625_r      0      -
+##     Chromosome  Start    End  CpG Strand
+## 896       chrY  14181  14793   62      +    Chromosome    Start      End                                  Name  Score Strand
+## 14       chrY  1693161  1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +
 ## -------------------------
 ##   Chromosome  Start    End  CpG Strand
 ## 0       chrX  64181  64793   62      +   Chromosome      Start        End                                 Name  Score Strand
-## 0       chrX  135721701  135721963  NR_038462_exon_0_0_chrX_135721702_f      0      +</code></pre>
+## 0       chrX  135721701  135721963  NR_038462_exon_0_0_chrX_135721702_f      0      +
+## -------------------------
+## Empty DataFrame
+## Columns: [Chromosome, Start, End, CpG, Strand]
+## Index: []   Chromosome    Start      End                               Name  Score Strand
+## 5       chrY  1481624  1481747  NM_004192_exon_1_0_chrY_1481625_r      0      -</code></pre>
 
 </div>
             </section>

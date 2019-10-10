@@ -203,7 +203,8 @@ Ensembl also has the method chromosome_sizes.</p>
 ## | chr1_GL383519v1_alt | 0         | 110268    |
 ## | chr1_GL383520v2_alt | 0         | 366580    |
 ## +---------------------+-----------+-----------+
-## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.</code></pre>
+## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.
+## The PyRanges is sorted on Chromosome.</code></pre>
 <div class="sourceCode" id="cb295"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb295-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
 <a class="sourceLine" id="cb295-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb295-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
@@ -211,17 +212,18 @@ Ensembl also has the method chromosome_sizes.</p>
 ## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | ExonNumber   | transcript_name   |
 ## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)    | (category)        |
 ## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+--------------+-------------------|
-## | chr1         | 1385710   | 1398342   | gene         | CCNL2        | nan             | -            | nan          | nan               |
-## | chr1         | 6783891   | 6784980   | gene         | CAMTA1-DT    | nan             | -            | nan          | nan               |
+## | chr1         | 12716114  | 12728759  | gene         | AADACL3      | nan             | +            | nan          | nan               |
 ## | chr1         | 6785323   | 7769706   | gene         | CAMTA1       | nan             | +            | nan          | nan               |
 ## | chr1         | 10430746  | 10442815  | gene         | CENPS        | nan             | +            | nan          | nan               |
+## | chr1         | 10430746  | 10452003  | gene         | CENPS-CORT   | nan             | +            | nan          | nan               |
 ## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...          | ...               |
 ## | chrY         | 18547778  | 18548592  | exon         | HSFY1        | 244.0           | +            | 1.0          | NM_033108         |
 ## | chrY         | 18771813  | 18772627  | exon         | HSFY1        | 245.0           | -            | 0.0          | NM_033108         |
 ## | chrY         | 18771813  | 18773718  | transcript   | HSFY1        | 245.0           | -            | nan          | NM_033108         |
 ## | chrY         | 18773105  | 18773718  | exon         | HSFY1        | 245.0           | -            | 1.0          | NM_033108         |
 ## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+--------------+-------------------+
-## Stranded PyRanges object has 5,858 rows and 9 columns from 54 chromosomes.</code></pre>
+## Stranded PyRanges object has 5,858 rows and 9 columns from 54 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 
 </div>
 

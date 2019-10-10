@@ -202,17 +202,18 @@ optional. Any other columns in the dataframe are treated as metadata.</p>
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 100079649 | 100079674 | U0         | 0         | -            |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
-## | chr1         | 156338310 | 156338335 | U0         | 0         | -            |
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
 ## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 11942770  | 11942795  | U0         | 0         | +            |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
 ## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
-## | chrY         | 21559181  | 21559206  | U0         | 0         | +            |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</code></pre>
+## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 </div>
 <div id="using-constructor-keywords" class="section level4 unnumbered">
 <h4>Using constructor keywords</h4>
@@ -233,7 +234,8 @@ optional. Any other columns in the dataframe are treated as metadata.</p>
 ## | chr1         | 80668132  | 80668157  |
 ## | chr1         | 194245558 | 194245583 |
 ## +--------------+-----------+-----------+
-## Unstranded PyRanges object has 10,000 rows and 3 columns from 24 chromosomes.</code></pre>
+## Unstranded PyRanges object has 10,000 rows and 3 columns from 24 chromosomes.
+## The PyRanges is sorted on Chromosome.</code></pre>
 <p>It is possible to make PyRanges objects out of basic Python datatypes:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb28-1" data-line-number="1">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1&quot;</span>, strands<span class="op">=</span><span class="st">&quot;+&quot;</span>, starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</a>
 <a class="sourceLine" id="cb28-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
@@ -245,7 +247,8 @@ optional. Any other columns in the dataframe are treated as metadata.</p>
 ## | chr1         |         1 |         4 | +            |
 ## | chr1         |         2 |         5 | +            |
 ## +--------------+-----------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb30-1" data-line-number="1">gr <span class="op">=</span> pr.PyRanges(chromosomes<span class="op">=</span><span class="st">&quot;chr1 chr2 chr3&quot;</span>.split(), strands<span class="op">=</span><span class="st">&quot;+ - +&quot;</span>.split(), starts<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], ends<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</a>
 <a class="sourceLine" id="cb30-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+
@@ -256,7 +259,8 @@ optional. Any other columns in the dataframe are treated as metadata.</p>
 ## | chr2         |         1 |         4 | -            |
 ## | chr3         |         2 |         5 | +            |
 ## +--------------+-----------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 4 columns from 3 chromosomes.</code></pre>
+## Stranded PyRanges object has 3 rows and 4 columns from 3 chromosomes.
+## The PyRanges is sorted on Chromosome and Strand.</code></pre>
 </div>
 <div id="using-read_bed-read_gtf-or-read_bam" class="section level4 unnumbered">
 <h4>Using <code>read_bed</code>, <code>read_gtf</code> or <code>read_bam</code></h4>
@@ -265,21 +269,22 @@ optional. Any other columns in the dataframe are treated as metadata.</p>
 <a class="sourceLine" id="cb32-2" data-line-number="2">gr <span class="op">=</span> pr.read_gtf(ensembl_path)</a>
 <a class="sourceLine" id="cb32-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+------------------------------------+-----------------+----------------------+-------+
-## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | gene_name   | gene_source    | gene_biotype                       | transcript_id   | transcript_version   | ...   |
+## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | gene_name   | gene_source    | gene_biotype                       | transcript_id   | transcript_version   | +13   |
 ## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | (object)       | (object)                           | (object)        | (object)             | ...   |
 ## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+------------------------------------+-----------------+----------------------+-------|
-## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | transcribed_unprocessed_pseudogene | ENST00000456328 | 2                    | ...   |
 ## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | transcribed_unprocessed_pseudogene | nan             | nan                  | ...   |
 ## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | transcribed_unprocessed_pseudogene | ENST00000456328 | 2                    | ...   |
+## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | transcribed_unprocessed_pseudogene | ENST00000456328 | 2                    | ...   |
 ## | 1            | havana     | exon         | 12613     | 12721     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | transcribed_unprocessed_pseudogene | ENST00000456328 | 2                    | ...   |
 ## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...             | ...            | ...         | ...            | ...                                | ...             | ...                  | ...   |
 ## | 1            | ensembl    | transcript   | 120725    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | lincRNA                            | ENST00000610542 | 1                    | ...   |
-## | 1            | ensembl    | exon         | 120874    | 120932    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | lincRNA                            | ENST00000610542 | 1                    | ...   |
-## | 1            | ensembl    | exon         | 129055    | 129223    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | lincRNA                            | ENST00000610542 | 1                    | ...   |
 ## | 1            | ensembl    | exon         | 133374    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | lincRNA                            | ENST00000610542 | 1                    | ...   |
+## | 1            | ensembl    | exon         | 129055    | 129223    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | lincRNA                            | ENST00000610542 | 1                    | ...   |
+## | 1            | ensembl    | exon         | 120874    | 120932    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | lincRNA                            | ENST00000610542 | 1                    | ...   |
 ## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+------------------------------------+-----------------+----------------------+-------+
 ## Stranded PyRanges object has 95 rows and 28 columns from 1 chromosomes.
-## Hidden columns: transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, exon_number, exon_id, exon_version, (assigned, previous, ccds_id, protein_id</code></pre>
+## The PyRanges is sorted on Chromosome and Strand.
+## 13 hidden columns: transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, exon_number, exon_id, exon_version, (assigned, previous, ccds_id, protein_id, protein_version</code></pre>
 <p>To read bam files the optional bamread-library must be installed. Use <code>conda install -c bioconda bamread</code> or <code>pip install bamread</code> to install it.</p>
 <p><code>read_bam</code> takes the arguments <code>mapq</code>, <code>required_flag</code>, <code>filter_flag</code>, which
 have the default values 0, 0 and 1540, respectively.</p>

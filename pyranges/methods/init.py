@@ -202,7 +202,7 @@ def _init(self,
                 for c in natsorted(cs):
                     dfs = [empty_removed.get((c, s)) for s in "+-"]
                     new_dfs[c] = pd.concat(
-                        [df for df in dfs if not df is None])
+                        [df for df in dfs if not df is None]).reset_index(drop=True)
                 empty_removed = new_dfs
 
         self.__dict__["dfs"] = empty_removed
