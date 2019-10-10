@@ -6,4 +6,3 @@ def test_unstrand():
     u = gr.unstrand()
     assert all([not isinstance(k, tuple) for k in u.dfs ])
     assert u.stranded == False
-
