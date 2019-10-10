@@ -196,7 +196,7 @@ def _init(self,
                 empty_removed = new_dfs
 
             # need to merge strand keys if not strands valid anymore
-            elif has_strand_key and not all_strands_valid:
+            elif has_strand_key and (not all_strands_valid or not stranded):
                 new_dfs = {}
                 cs = set([k[0] for k in empty_removed.keys()])
                 for c in natsorted(cs):
@@ -208,4 +208,4 @@ def _init(self,
         self.__dict__["dfs"] = empty_removed
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
-    self.__dict__["stats"] = StatisticsMethods(self)
+    self.__dict__["stats"] = Statis

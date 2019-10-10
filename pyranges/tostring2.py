@@ -27,7 +27,10 @@ def _get_stranded_f(self, half_entries, f, sort=False):
         plus = getattr(plus, f)(half_entries)
         minus = getattr(minus, f)(half_entries)
 
-        df = pd.concat([plus, minus]).sort_values(sort_cols)
+        df = pd.concat([plus, minus])
+        if sort:
+            df = df.sort_values(sort_cols)
+
         counter += len(df)
 
         dfs.append(df)
@@ -248,7 +251,7 @@ def hidden_columns_info(hidden_columns, str_repr_width):
     return _hstr
 
 
-def add_text_to_str_repr(self, str_repr, hidden_columns):
+def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
 
     n_intervals = len(self)
     n_chromosomes = len(self.chromosomes)
@@ -263,7 +266,14 @@ def add_text_to_str_repr(self, str_repr, hidden_columns):
 
     ustr = untraditional_strand_info(self, str_repr_width)
 
-    str_repr = "\n".join([s for s in [str_repr, str1, ustr, hstr] if s])
+    order = {(True, True): "Chromosome, Start, End and Strand.",
+             (True, False): "Chromosome, Start, End and Strand.",
+             (True, False): "Chromosome, Start and End.",
+             (False, True): "Chromosome and Strand."}[sort, self.stranded]
+
+    order = "The PyRanges is sorted on " + order
+
+    str_repr = "\n".join([s for s in [str_repr, str1, ustr, hstr, order] if s])
 
     return str_repr
 
@@ -295,19 +305,4 @@ def tostring(self, n=8, merge_position=False, formatting=None, sort=False):
 
     str_repr, hidden_columns = grow_string_representation(df, columns_dtypes)
 
-    str_repr = add_text_to_str_repr(self, str_repr, hidden_columns)
-
-    return str_repr
-
-
-if __name__ == "__main__":
-
-    from pyranges.tostring2 import _get_stranded_f, _get_unstranded_f
-    from pyranges.tostring2 import tostring
-    import pyranges as pr
-    gr = pr.data.chipseq()
-    df = gr.df
-    _get_stranded_f(gr, 2, "head")
-    _get_unstranded_f(gr.unstrand(), 6, "tail")
-
-    tostring(gr)
+    str_repr = add_text_to_str_repr(

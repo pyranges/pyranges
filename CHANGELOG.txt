@@ -1,6 +1,7 @@
 # 0.0.57 (unreleased)
 - add overlap-flag to tile
 - add chain to print-method
+- bugfix: printing stranded pyranges sorted output even though sort was false
 
 # 0.0.56 (25.09.19)
 - add possibility of 5-end and 3-end in slack being different/none
@@ -308,8 +309,3 @@ Additions:
   - gr[["Score", "Name"]]: select subset of columns
 Fixes:
   - gr.stranded errored if chromosomes were ints
-  - gr.join errored if other had duplicate indexes
-
-# 0.0.20 (14.04.19)
-- changelog introduced
-- plenty of fixes for tiny bugs
