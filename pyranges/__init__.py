@@ -23,3 +23,4 @@ import pyranges.genomicfeatures.genomicfeatures as gf
 random = gf.random
 
 from pyranges.methods.itergrs import itergrs
+iter = itergrs
