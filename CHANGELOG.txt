@@ -1,3 +1,6 @@
+# 0.0.58 (unreleased)
+- add iter as alias for itergrs in pr. namespace
+
 # 0.0.57 (10.10.19)
 - add overlap-flag to tile
 - add chain to print-method
