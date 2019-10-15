@@ -1,5 +1,7 @@
 # 0.0.58 (unreleased)
 - add iter as alias for itergrs in pr. namespace
+- gr.length() shows nucleotide length (sum of all interval lengths)
+- gr.lengths() takes as_dict=False flag to return as vector
 
 # 0.0.57 (10.10.19)
 - add overlap-flag to tile

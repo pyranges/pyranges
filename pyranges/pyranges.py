@@ -675,13 +675,21 @@ class PyRanges():
         else:
             return pd.concat(self.values()).reset_index(drop=True)
 
-    def lengths(self):
+    def lengths(self, as_dict=True):
 
-        lengths = {}
-        for k, df in self.items():
-            lengths[k] = df.End - df.Start
+        if as_dict:
+            lengths = {}
+            for k, df in self.items():
+                lengths[k] = df.End - df.Start
 
-        return lengths
+            return lengths
+        else:
+            _lengths = []
+            for _, df in self:
+                lengths = df.End - df.Start
+                _lengths.append(lengths)
+
+            return pd.concat(_lengths).reset_index(drop=True)
 
     def summary(self):
 
@@ -724,6 +732,12 @@ class PyRanges():
         _to_bigwig(self, path, chromosome_sizes, rpm, divide_by)
 
         return self
+
+    @property
+    def length(self):
+
+        return sum(self.lengths(as_dict=False))
+
 
     def head(self, n=8):
         subsetter = np.zeros(len(self), dtype=np.bool)
