@@ -736,7 +736,7 @@ class PyRanges():
     @property
     def length(self):
 
-        return sum(self.lengths(as_dict=False))
+        return self.lengths(as_dict=False).sum()
 
 
     def head(self, n=8):
