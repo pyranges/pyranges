@@ -812,13 +812,7 @@ class PyRanges():
 
     def mspc(self, n=30, formatting=None):
 
-        print(
-            tostring(
-                self,
-                n=n,
-                merge_position=True,
-                sort=True,
-                formatting=formatting))
+        print(tostring(self, n=n, merge_position=True, sort=True, formatting=formatting))
 
         return self
 
