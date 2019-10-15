@@ -255,7 +255,7 @@ class PyRanges():
         if slack:
             gr.Start = gr.Start__slack
             gr.End = gr.End__slack
-            gr = gr.drop("Start__slack End__slack".split())
+            gr = gr.drop(like="(Start|End).*__slack")
 
         new_position = kwargs.get("new_pos")
         if new_position:
