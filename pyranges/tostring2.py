@@ -39,7 +39,6 @@ def _get_stranded_f(self, half_entries, f, sort=False):
             break
 
     df = pd.concat(dfs)
-    df = getattr(df, f)(half_entries)
 
     return df
 
@@ -70,7 +69,6 @@ def _get_unstranded_f(self, half_entries, f, sort=False):
             break
 
     df = pd.concat(dfs)
-    df = getattr(df, f)(half_entries)
 
     return df
 
