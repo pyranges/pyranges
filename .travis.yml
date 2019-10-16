@@ -12,12 +12,12 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
+  - conda update --force -q conda # force added 16.10.19 to try to fix build error
   - conda config --add channels bioconda
   - conda config --add channels r
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy pandas pytest pytest-cov cython tabulate hypothesis bedtools mysqlclient pybigwig pysam
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy pandas pytest pytest-cov cython tabulate hypothesis bedtools pybigwig pysam
   - source activate test-environment
   - python --version
   - pip --version
