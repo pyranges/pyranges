@@ -46,10 +46,18 @@ def _get_stranded_f(self, half_entries, f, sort=False):
 
 def _get_unstranded_f(self, half_entries, f, sort=False):
 
+    chromosomes = self.chromosomes
+
+    if f == "tail":
+        chromosomes = reversed(chromosomes)
+
+    default = pd.DataFrame(columns=self.columns)
+
     counter = 0
     dfs = []
-    for _, cdf in self:
+    for chromosome in chromosomes:
 
+        cdf = self.dfs.get((chromosome), default)
         cdf = getattr(cdf, f)(half_entries)
 
         if sort:
