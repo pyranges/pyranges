@@ -12,7 +12,7 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
-  - conda update --force -q conda # force added 16.10.19 to try to fix build error
+  # - conda update -q conda
   - conda config --add channels bioconda
   - conda config --add channels r
   # Useful for debugging any issues with conda
