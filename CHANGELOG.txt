@@ -3,6 +3,7 @@
 - gr.length() shows nucleotide length (sum of all interval lengths)
 - gr.lengths() takes as_dict=False flag to return as vector
 - fix slack in join: added columns when joining with itself
+- fix print for unstranded pyranges: printed tail and head of first chromosome
 
 # 0.0.57 (10.10.19)
 - add overlap-flag to tile
