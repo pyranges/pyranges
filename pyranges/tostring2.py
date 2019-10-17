@@ -39,6 +39,9 @@ def _get_stranded_f(self, half_entries, f, sort=False):
             break
 
     df = pd.concat(dfs)
+    # got twice as many entries as needed before sort. Halve here:
+    df = getattr(df, f)(half_entries)
+
 
     return df
 
