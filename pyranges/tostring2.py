@@ -280,7 +280,7 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
              (False, False): "Chromosome.",
              (False, True): "Chromosome and Strand."}[sort, self.stranded]
 
-    order = "The PyRanges is sorted on " + order
+    order = "For printing, the PyRanges was sorted on " + order
 
     str_repr = "\n".join([s for s in [str_repr, str1, order, ustr, hstr] if s])
 
