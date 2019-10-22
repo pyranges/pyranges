@@ -1,3 +1,6 @@
+docs/chipseq.csv
+docs/chipseq.gtf
+docs/test.bed
 
 .snakemake/
 wheelhouse/
