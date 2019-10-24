@@ -1,4 +1,4 @@
-# 0.0.58 (unreleased)
+# 0.0.58 (24.10.19)
 - make pickleable
 - add iter as alias for itergrs in pr. namespace
 - gr.length() shows nucleotide length (sum of all interval lengths)
