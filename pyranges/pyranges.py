@@ -827,3 +827,9 @@ class PyRanges():
         print(self.dfs)
 
         return self
+
+    def __getstate__(self):
+        return self.dfs
+
+    def __setstate__(self, d):
+        self.__dict__["dfs"] = d
