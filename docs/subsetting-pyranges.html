@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -172,29 +172,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">4</span> Subsetting PyRanges</h1>
 <p>There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.</p>
 <p>For data exploration, the functions head, tail and sample (random choice without
-replacement) are convenient. They take an argument n to denote how many entries
+replacment) are convenient. They take an argument n to denote how many entries
 you want.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb46-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb46-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb46-4" data-line-number="4">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb46-5" data-line-number="5"><span class="bu">print</span>(gr.sample())</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb47-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb47-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb47-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb47-4" data-line-number="4">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb47-5" data-line-number="5"><span class="bu">print</span>(gr.sample())</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr2         |   1201685 |   1201710 | U0         |         0 | -            |
-## | chr3         | 103674236 | 103674261 | U0         |         0 | -            |
-## | chr5         | 145057716 | 145057741 | U0         |         0 | -            |
-## | chr5         | 102490986 | 102491011 | U0         |         0 | -            |
-## | chr6         |   5564361 |   5564386 | U0         |         0 | -            |
-## | chr9         |  96052102 |  96052127 | U0         |         0 | +            |
-## | chr11        |  35202047 |  35202072 | U0         |         0 | -            |
-## | chr13        |  31090423 |  31090448 | U0         |         0 | +            |
+## | chr1         | 244182758 | 244182783 | U0         |         0 | -            |
+## | chr1         | 115014866 | 115014891 | U0         |         0 | -            |
+## | chr2         |  55343921 |  55343946 | U0         |         0 | -            |
+## | chr4         |  26658990 |  26659015 | U0         |         0 | +            |
+## | chr7         |  93845813 |  93845838 | U0         |         0 | +            |
+## | chr14        |  43448078 |  43448103 | U0         |         0 | +            |
+## | chr15        |  38803826 |  38803851 | U0         |         0 | -            |
+## | chr16        |  33866321 |  33866346 | U0         |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 8 rows and 6 columns from 7 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb48"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="bu">print</span>(gr.tail(<span class="dv">4</span>))</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb49"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb49-1" data-line-number="1"><span class="bu">print</span>(gr.tail(<span class="dv">4</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -205,13 +205,13 @@ you want.</p>
 ## | chrY         |   7405376 |   7405401 | U0         |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>By subsetting with a list you can select one or more columns:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb50-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb50-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb50-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb50-4" data-line-number="4">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb50-5" data-line-number="5"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb51-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb51-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb51-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb51-4" data-line-number="4">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb51-5" data-line-number="5"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -227,8 +227,8 @@ you want.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb52"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="bu">print</span>(gr[[<span class="st">&quot;Name&quot;</span>]])</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb53"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="bu">print</span>(gr[[<span class="st">&quot;Name&quot;</span>]])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (category)   |
@@ -244,13 +244,13 @@ you want.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | -            |
 ## +--------------+-----------+-----------+------------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>By subsetting using a boolean vector, you can get specific rows:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb54-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb54-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb54-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb54-4" data-line-number="4">cpg <span class="op">=</span> pr.data.cpg()</a>
-<a class="sourceLine" id="cb54-5" data-line-number="5"><span class="bu">print</span>(cpg[cpg.CpG <span class="op">&gt;</span> <span class="dv">50</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb55-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb55-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb55-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb55-4" data-line-number="4">cpg <span class="op">=</span> pr.data.cpg()</a>
+<a class="sourceLine" id="cb55-5" data-line-number="5"><span class="bu">print</span>(cpg[cpg.CpG <span class="op">&gt;</span> <span class="dv">50</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+
 ## | Chromosome   | Start     | End       | CpG       |
 ## | (category)   | (int32)   | (int32)   | (int64)   |
@@ -260,17 +260,17 @@ you want.</p>
 ## | chrX         | 148685    | 149461    | 85        |
 ## | chrX         | 166504    | 167721    | 96        |
 ## | ...          | ...       | ...       | ...       |
-## | chrX         | 154299062 | 154299795 | 62        |
-## | chrX         | 154493303 | 154493907 | 52        |
-## | chrX         | 154611505 | 154612637 | 131       |
-## | chrX         | 154687387 | 154688519 | 131       |
+## | chrY         | 21154603  | 21155040  | 61        |
+## | chrY         | 21238448  | 21240005  | 133       |
+## | chrY         | 26351343  | 26352316  | 76        |
+## | chrY         | 27610115  | 27611088  | 76        |
 ## +--------------+-----------+-----------+-----------+
 ## Unstranded PyRanges object has 530 rows and 4 columns from 2 chromosomes.
-## The PyRanges is sorted on Chromosome.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
 <p>By using strings, tuples and slices, you can subset the PyRanges based on position:</p>
 <p>Chromosome only</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb56-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb56-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb57-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb57-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -286,10 +286,10 @@ you want.</p>
 ## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 282 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Chromosome and Strand</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb58-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb58-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb59-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb59-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -305,10 +305,10 @@ you want.</p>
 ## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 151 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Chromosome and Slice</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb60-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb60-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb61-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb61-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -323,10 +323,10 @@ you want.</p>
 ## | chrX         | 153255924 | 153255949 | U0         |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Chromosome, Strand and Slice</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb62-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb62-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb63-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb63-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -337,11 +337,11 @@ you want.</p>
 ## | chrX         | 153255924 | 153255949 | U0         |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Slice</p>
 <p>Only using slices returns all ranges from all chromosomes and strands within those coordinates.</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb64-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb64-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="dv">0</span>:<span class="dv">100000</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb65-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb65-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="dv">0</span>:<span class="dv">100000</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -353,14 +353,14 @@ you want.</p>
 ## | chr4         |     45413 |     45438 | U0         |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 5 rows and 6 columns from 3 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Note that while the slice-operator is fast and returns seemingly immediately, it
 is inefficient; it builds the interval overlap datastructure anew every query.
 So if you have multiple queries you should build another PyRanges and do an
 intersect-operation.</p>
 <p>Strand</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb66-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb66-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb67-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb67-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -376,10 +376,10 @@ intersect-operation.</p>
 ## | chrY         | 7463444   | 7463469   | U0         | 0         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 5,050 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Slice and Strand</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb68-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb68-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>, <span class="dv">0</span>:<span class="dv">100000</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb69-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb69-2" data-line-number="2"><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>, <span class="dv">0</span>:<span class="dv">100000</span>])</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -388,7 +388,7 @@ intersect-operation.</p>
 ## | chr3         |     87179 |     87204 | U0         |         0 | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 2 rows and 6 columns from 2 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 
 </div>
             </section>

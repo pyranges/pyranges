@@ -7,16 +7,18 @@ import pyranges as pr
 
 def test_read_gtf():
 
-    gr = pr.read_gtf("tests/test_data/ensembl.gtf", full=False)
+    gr = pr.read_gtf("tests/test_data/ensembl.gtf", full=True)
+    assert len(gr.columns) == 28
 
-    assert list(gr.df.columns[:4]) == "Chromosome Start End Strand".split()
+    # assert list(gr.df.columns[:4]) == "Chromosome Start End Strand".split()
 
 
 def test_read_gff3():
 
-    gr = pr.read_gtf("tests/test_data/gencode.gff3", full=False)
+    gr = pr.read_gff3("tests/test_data/gencode.gff3")
 
-    assert list(gr.df.columns[:4]) == "Chromosome Start End Strand".split()
+    assert len(gr.columns) == 26
+    # assert list(gr.df.columns[:4]) == "Chromosome Start End Strand".split()
 
 
 def test_read_bed():

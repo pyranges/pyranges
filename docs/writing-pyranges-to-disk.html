@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -170,7 +170,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="writing-pyranges-to-disk" class="section level1">
 <h1><span class="header-section-number">3</span> Writing PyRanges to disk</h1>
-<p>The PyRanges can be written to several formats, namely csv, gtf and bigwig.</p>
+<p>The PyRanges can be written to several formats, namely csv, gtf, gff3 and bigwig.</p>
 <p>If no path-argument is given, the string representation of the data is returned.
 (It may potentially be very large.) If a path is given, the return value is the
 object itself. This way the write methods can easily be inserted in method call
@@ -195,10 +195,11 @@ chains.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gtf())</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gff3())</a></code></pre></div>
 <p>The to_csv method takes the arguments header and sep.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb37-1" data-line-number="1">gr.to_csv(<span class="st">&quot;chipseq.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, header<span class="op">=</span><span class="va">True</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb38-1" data-line-number="1">gr.to_csv(<span class="st">&quot;chipseq.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, header<span class="op">=</span><span class="va">True</span>)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -214,15 +215,15 @@ chains.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_csv(sep<span class="op">=</span><span class="st">&quot;|&quot;</span>, header<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_csv(sep<span class="op">=</span><span class="st">&quot;|&quot;</span>, header<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <p>The pyranges library can also create bigwigs, but it needs the library pybigwig
 which is not installed by default. Use <code>conda install -c bioconda pybigwig</code> or
 <code>pip install pybigwig</code> to install it.</p>
 <p>The bigwig writer needs to know the chromosome sizes. You can fetch these using
 the pyranges database functions.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb40-1" data-line-number="1">chromsizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg19&quot;</span>)</a>
-<a class="sourceLine" id="cb40-2" data-line-number="2">gr.to_bigwig(<span class="st">&quot;chipseq.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb41-1" data-line-number="1">chromsizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg19&quot;</span>)</a>
+<a class="sourceLine" id="cb41-2" data-line-number="2">gr.to_bigwig(<span class="st">&quot;chipseq.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -238,9 +239,9 @@ the pyranges database functions.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>If you want to write one bigwig for each strand, you need to do it manually.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb42-1" data-line-number="1">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_plus.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb43-1" data-line-number="1">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_plus.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -256,8 +257,8 @@ the pyranges database functions.</p>
 ## | chrY         | 7463444   | 7463469   | U0         | 0         | +            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 5,050 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb44-1" data-line-number="1">gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_minus.bw&quot;</span>, chromsizes)</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb45-1" data-line-number="1">gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_minus.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -273,7 +274,7 @@ the pyranges database functions.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 4,950 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>to_bigwig also takes a flag <code>divide_by</code> which takes another PyRanges. Using
 <code>divide_by</code> creates a log2-normalized bigwig.</p>
 

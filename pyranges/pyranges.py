@@ -726,6 +726,17 @@ class PyRanges():
         else:
             return result
 
+    def to_gff3(self, path=None, compression="infer"):
+        from pyranges.out import _to_gff3
+
+        result = _to_gff3(self, path, compression=compression)
+
+        if path:
+            return self
+        else:
+            return result
+
+
     def to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
         from pyranges.out import _to_bigwig
 

@@ -6,7 +6,7 @@ import numpy as np
 import pkg_resources
 
 from pyranges.pyranges import PyRanges
-from pyranges.readers import read_gtf, read_bam, read_bed
+from pyranges.readers import read_gtf, read_bam, read_bed, read_gff3
 from pyranges import data
 from pyranges.methods.concat import concat
 

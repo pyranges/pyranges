@@ -191,3 +191,56 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
     values = df.Score.tolist()
 
     bw.addEntries(chromosomes, starts, ends=ends, values=values)
+
+
+
+def _to_gff3(self, path=None, compression="infer"):
+
+    gr = self
+
+    outdfs = [_gff3(v) for k, v in sorted(gr.dfs.items())]
+
+    if path:
+        mode = "w+"
+        for outdf in outdfs:
+            outdf.to_csv(
+                path,
+                index=False,
+                header=False,
+                compression=compression,
+                mode=mode,
+                sep="\t",
+                quoting=csv.QUOTE_NONE)
+            mode = "a"
+    else:
+        return "".join([
+            outdf.to_csv(
+                index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
+            for outdf in outdfs
+        ])
+
+def _gff3(df):
+
+    all_columns = "Chromosome   Source   Feature    Start     End       Score    Strand   Frame".split(
+    )
+    columns = list(df.columns)
+
+    outdf = _fill_missing(df, all_columns)
+
+    # gotten all needed columns, need to join the rest
+    rest = set(df.columns) - set(all_columns)
+    rest = sorted(rest, key=columns.index)
+    rest_df = df.get(rest).copy()
+    for c in rest_df:
+        col = rest_df[c]
+        isnull = col.isnull()
+        col = col.astype(str).str.replace("nan", "")
+        new_val = c + '=' + col + ';'
+        rest_df.loc[:, c] = rest_df[c].astype(str)
+        rest_df.loc[~isnull, c] = new_val
+        rest_df.loc[isnull, c] = ""
+
+    attribute = rest_df.apply(lambda r: "".join([v for v in r if v]), axis=1)
+    outdf.insert(outdf.shape[1], "Attribute", attribute)
+
+    return outdf

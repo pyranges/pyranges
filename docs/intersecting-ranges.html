@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -173,10 +173,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>PyRanges objects can be intersected with other PyRanges to find the subset of
 the genome that is contained in both. The regular intersect-method finds the
 intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
-<div class="sourceCode" id="cb164"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb164-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb164-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
-<a class="sourceLine" id="cb164-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
-<a class="sourceLine" id="cb164-4" data-line-number="4"><span class="bu">print</span>(gr.intersect(gr2))</a></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb173-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb173-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
+<a class="sourceLine" id="cb173-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
+<a class="sourceLine" id="cb173-4" data-line-number="4"><span class="bu">print</span>(gr.intersect(gr2))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -192,9 +192,9 @@ intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" 
 ## | chr1         | 10280     | 10440     | H3K27me3   | 6         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 49 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>The set_intersect method merges the intervals before finding the intersect: <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<div class="sourceCode" id="cb166"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb166-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2))</a></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb175-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   |     Start |       End |
 ## | (category)   |   (int32) |   (int32) |
@@ -202,9 +202,9 @@ intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" 
 ## | chr1         |      9988 |     10445 |
 ## +--------------+-----------+-----------+
 ## Unstranded PyRanges object has 1 rows and 3 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode" id="cb168"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb168-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb177-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Strand       |
 ## | (category)   |   (int32) |   (int32) | (category)   |
@@ -215,12 +215,12 @@ intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" 
 ## | chr1         |     10280 |     10440 | -            |
 ## +--------------+-----------+-----------+--------------+
 ## Stranded PyRanges object has 4 rows and 4 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>The intersect method also takes a how argument, which currently accepts the
 option <code>&quot;containment&quot;</code>, which requires that the intervals in self be completely
 within the intervals in other.</p>
-<div class="sourceCode" id="cb170"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb170-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
-<a class="sourceLine" id="cb170-2" data-line-number="2"><span class="bu">print</span>(f1)</a></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb179-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb179-2" data-line-number="2"><span class="bu">print</span>(f1)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -230,9 +230,9 @@ within the intervals in other.</p>
 ## | chr1         |         5 |         7 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb172"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb172-1" data-line-number="1">f2 <span class="op">=</span> pr.data.f2()</a>
-<a class="sourceLine" id="cb172-2" data-line-number="2"><span class="bu">print</span>(f2)</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb181"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb181-1" data-line-number="1">f2 <span class="op">=</span> pr.data.f2()</a>
+<a class="sourceLine" id="cb181-2" data-line-number="2"><span class="bu">print</span>(f2)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -241,9 +241,9 @@ within the intervals in other.</p>
 ## | chr1         |         6 |         7 | b          |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb174"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb174-1" data-line-number="1">result <span class="op">=</span> f2.intersect(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>)</a>
-<a class="sourceLine" id="cb174-2" data-line-number="2"><span class="bu">print</span>(result)</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb183"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb183-1" data-line-number="1">result <span class="op">=</span> f2.intersect(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>)</a>
+<a class="sourceLine" id="cb183-2" data-line-number="2"><span class="bu">print</span>(result)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -251,7 +251,7 @@ within the intervals in other.</p>
 ## | chr1         |         6 |         7 | b          |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 1 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 
 </div>
 <div class="footnotes">

@@ -4,7 +4,7 @@ A PyRanges object can be built in three ways:
 
 1. from a Pandas dataframe
 2. using the PyRanges constructor with the chromosomes, starts and ends (and optionally strands), individually.
-3. using one of the custom reader functions for genomic data (`read_bed`, `read_bam` or `read_gtf`)
+3. using one of the custom reader functions for genomic data (`read_bed`, `read_bam` or `read_gtf`, `read_gff3`)
 
 #### Using a DataFrame {-}
 
@@ -46,9 +46,9 @@ gr = pr.PyRanges(chromosomes="chr1 chr2 chr3".split(), strands="+ - +".split(), 
 print(gr)
 ```
 
-#### Using `read_bed`, `read_gtf` or `read_bam` {-}
+#### Using `read_bed`, `read_gtf`, `read_gff3` or `read_bam` {-}
 
-The pyranges library can create PyRanges from three common file formats, namely gtf/gff, bed and bam [^].
+The pyranges library can create PyRanges from gff3 common file formats, namely gtf/gff, gff3, bed and bam [^].
 
 ```{python tidy=FALSE}
 ensembl_path = pr.get_example_path("ensembl.gtf")

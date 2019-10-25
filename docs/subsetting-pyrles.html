@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -171,11 +171,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="subsetting-pyrles" class="section level1">
 <h1><span class="header-section-number">24</span> Subsetting PyRles</h1>
 <p>Rles can be subsetted on Chromosome, Strand or Chromosome/Strand pairs</p>
-<div class="sourceCode" id="cb260"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb260-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb260-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb260-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb260-4" data-line-number="4">c <span class="op">=</span> gr.to_rle()</a>
-<a class="sourceLine" id="cb260-5" data-line-number="5"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb269"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb269-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb269-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb269-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb269-4" data-line-number="4">c <span class="op">=</span> gr.to_rle()</a>
+<a class="sourceLine" id="cb269-5" data-line-number="5"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>])</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
@@ -194,14 +194,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
 ## Rle of length 246145556 containing 868 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb262"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb262-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;+&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb271"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb271-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;+&quot;</span>])</a></code></pre></div>
 <pre><code>## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
 ## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   |  ...    | 25   | 2952580   | 25   | 1156833   | 25   |
 ## |--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------|
 ## | Values | 0.0       | 1.0  | 0.0     | 1.0  | 0.0       | ...     | 1.0  | 0.0       | 1.0  | 0.0       | 1.0  |
 ## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
 ## Rle of length 247134924 containing 894 elements</code></pre>
-<div class="sourceCode" id="cb264"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb264-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;-&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb273"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb273-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;-&quot;</span>])</a></code></pre></div>
 <pre><code>## chr1 -
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
 ## | Runs   | 1325303   | 25   | 494957   | 25   | 628012   |  ...    | 25   | 438610   | 25   | 962494   | 25   |
@@ -219,9 +219,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Rle of length 22210662 containing 32 elements
 ## PyRles object with 24 chromosomes/strand pairs.</code></pre>
 <p>To get the coverage of one or more intervals, you can use a PyRanges-object to subset the PyRles</p>
-<div class="sourceCode" id="cb266"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb266-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb266-2" data-line-number="2">f1 <span class="op">=</span> pr.data.f1()</a>
-<a class="sourceLine" id="cb266-3" data-line-number="3"><span class="bu">print</span>(f1)</a></code></pre></div>
+<div class="sourceCode" id="cb275"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb275-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb275-2" data-line-number="2">f1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb275-3" data-line-number="3"><span class="bu">print</span>(f1)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -231,9 +231,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | chr1         |         5 |         7 | interval2  |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb268"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb268-1" data-line-number="1">f1_c <span class="op">=</span> f1.to_rle()</a>
-<a class="sourceLine" id="cb268-2" data-line-number="2"><span class="bu">print</span>(f1_c)</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb277"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb277-1" data-line-number="1">f1_c <span class="op">=</span> f1.to_rle()</a>
+<a class="sourceLine" id="cb277-2" data-line-number="2"><span class="bu">print</span>(f1_c)</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+-----+-----+-----+-----+
@@ -252,7 +252,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------+-----+-----+
 ## Rle of length 7 containing 2 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb270"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb270-1" data-line-number="1"><span class="bu">print</span>(f1_c[f1])</a></code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb279-1" data-line-number="1"><span class="bu">print</span>(f1_c[f1])</a></code></pre></div>
 <pre><code>## {(&#39;chr1&#39;, &#39;+&#39;): [(array([3]), array([1.])), (array([1]), array([1.]))], (&#39;chr1&#39;, &#39;-&#39;): [(array([2]), array([1.]))]}</code></pre>
 
 </div>
