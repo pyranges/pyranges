@@ -1,4 +1,5 @@
-# 0.0.58 (24.10.19)
+# 0.0.58 (25.10.19)
+- fix merge print functions
 - make pickleable
 - add iter as alias for itergrs in pr. namespace
 - gr.length() shows nucleotide length (sum of all interval lengths)

@@ -302,10 +302,15 @@ def tostring(self, n=8, merge_position=False, formatting=None, sort=False):
 
     if merge_position:
         df = show_pos_merge_position(df)
-        columns_dtypes["- Position -"] = "Multiple types"
         for k in "Chromosome Start End Strand".split():
             if k in columns_dtypes:
                 del columns_dtypes[k]
+
+        _columns_dtypes = {}
+        _columns_dtypes["- Position -"] = "Multiple types"
+        for k, v in columns_dtypes.items():
+            _columns_dtypes[k] = v
+        columns_dtypes = _columns_dtypes
 
     df = df.astype(object).reset_index(drop=True)
     if len(self) > n:
