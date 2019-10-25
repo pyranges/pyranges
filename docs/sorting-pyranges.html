@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -172,15 +172,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">10</span> Sorting PyRanges</h1>
 <p>pyranges are always sorted on chromosome and strand to enable faster operations.</p>
 <p>pyranges can in addition be sorted on start and end by using the function sort:</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb112-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb112-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb112-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb112-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb112-5" data-line-number="5"><span class="im">from</span> io <span class="im">import</span> StringIO</a>
-<a class="sourceLine" id="cb112-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb112-7" data-line-number="7">cs <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb112-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb112-9" data-line-number="9"><span class="bu">print</span>(cs)</a></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb113-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb113-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb113-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb113-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb113-5" data-line-number="5"><span class="im">from</span> io <span class="im">import</span> StringIO</a>
+<a class="sourceLine" id="cb113-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb113-7" data-line-number="7">cs <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb113-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb113-9" data-line-number="9"><span class="bu">print</span>(cs)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -196,10 +196,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb114"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb114-1" data-line-number="1">cs_sorted <span class="op">=</span> cs.sort()</a>
-<a class="sourceLine" id="cb114-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb114-3" data-line-number="3"><span class="bu">print</span>(cs)</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb115"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb115-1" data-line-number="1">cs_sorted <span class="op">=</span> cs.sort()</a>
+<a class="sourceLine" id="cb115-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb115-3" data-line-number="3"><span class="bu">print</span>(cs)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -215,44 +215,44 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>This will sort them on Chromosome, Strand, Start and then End.</p>
 <p>Custom sorting can be done after you are done with the PyRanges-related
 functionality. Then you can extract the underlying dataframes with df and sort
 it:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb116-1" data-line-number="1">df <span class="op">=</span> cs_sorted.df</a>
-<a class="sourceLine" id="cb116-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb116-3" data-line-number="3"><span class="bu">print</span>(df.head())</a></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb117-1" data-line-number="1">df <span class="op">=</span> cs_sorted.df</a>
+<a class="sourceLine" id="cb117-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb117-3" data-line-number="3"><span class="bu">print</span>(df.head())</a></code></pre></div>
 <pre><code>##   Chromosome    Start      End Name  Score Strand
 ## 0       chr1  1541598  1541623   U0      0      +
 ## 1       chr1  1599121  1599146   U0      0      +
 ## 2       chr1  3504032  3504057   U0      0      +
 ## 3       chr1  3806532  3806557   U0      0      +
 ## 4       chr1  5079955  5079980   U0      0      +</code></pre>
-<div class="sourceCode" id="cb118"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb118-1" data-line-number="1">df_sorted <span class="op">=</span> df.sort_values([<span class="st">&quot;Chromosome&quot;</span>, <span class="st">&quot;Start&quot;</span>, <span class="st">&quot;End&quot;</span>])</a>
-<a class="sourceLine" id="cb118-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb118-3" data-line-number="3"><span class="bu">print</span>(df_sorted.head(<span class="dv">20</span>))</a></code></pre></div>
-<pre><code>##    Chromosome    Start      End Name  Score Strand
-## 0        chr1  1325303  1325328   U0      0      -
-## 0        chr1  1541598  1541623   U0      0      +
-## 1        chr1  1599121  1599146   U0      0      +
-## 1        chr1  1820285  1820310   U0      0      -
-## 2        chr1  2448322  2448347   U0      0      -
-## 3        chr1  3046141  3046166   U0      0      -
-## 4        chr1  3437168  3437193   U0      0      -
-## 2        chr1  3504032  3504057   U0      0      +
-## 5        chr1  3637087  3637112   U0      0      -
-## 6        chr1  3681903  3681928   U0      0      -
-## 3        chr1  3806532  3806557   U0      0      +
-## 7        chr1  3953790  3953815   U0      0      -
-## 8        chr1  5037292  5037317   U0      0      -
-## 4        chr1  5079955  5079980   U0      0      +
-## 5        chr1  5233543  5233568   U0      0      +
-## 6        chr1  5301327  5301352   U0      0      +
-## 7        chr1  5431308  5431333   U0      0      +
-## 8        chr1  5449222  5449247   U0      0      +
-## 9        chr1  5481750  5481775   U0      0      -
-## 10       chr1  5699351  5699376   U0      0      -</code></pre>
+<div class="sourceCode" id="cb119"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb119-1" data-line-number="1">df_sorted <span class="op">=</span> df.sort_values([<span class="st">&quot;Chromosome&quot;</span>, <span class="st">&quot;Start&quot;</span>, <span class="st">&quot;End&quot;</span>])</a>
+<a class="sourceLine" id="cb119-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb119-3" data-line-number="3"><span class="bu">print</span>(df_sorted.head(<span class="dv">20</span>))</a></code></pre></div>
+<pre><code>##     Chromosome    Start      End Name  Score Strand
+## 451       chr1  1325303  1325328   U0      0      -
+## 0         chr1  1541598  1541623   U0      0      +
+## 1         chr1  1599121  1599146   U0      0      +
+## 452       chr1  1820285  1820310   U0      0      -
+## 453       chr1  2448322  2448347   U0      0      -
+## 454       chr1  3046141  3046166   U0      0      -
+## 455       chr1  3437168  3437193   U0      0      -
+## 2         chr1  3504032  3504057   U0      0      +
+## 456       chr1  3637087  3637112   U0      0      -
+## 457       chr1  3681903  3681928   U0      0      -
+## 3         chr1  3806532  3806557   U0      0      +
+## 458       chr1  3953790  3953815   U0      0      -
+## 459       chr1  5037292  5037317   U0      0      -
+## 4         chr1  5079955  5079980   U0      0      +
+## 5         chr1  5233543  5233568   U0      0      +
+## 6         chr1  5301327  5301352   U0      0      +
+## 7         chr1  5431308  5431333   U0      0      +
+## 8         chr1  5449222  5449247   U0      0      +
+## 460       chr1  5481750  5481775   U0      0      -
+## 461       chr1  5699351  5699376   U0      0      -</code></pre>
 <p>Now the df is sorted and start and end with interleaved strands.</p>
 
 </div>

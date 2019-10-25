@@ -1,6 +1,6 @@
 # Writing PyRanges to disk
 
-The PyRanges can be written to several formats, namely csv, gtf and bigwig.
+The PyRanges can be written to several formats, namely csv, gtf, gff3 and bigwig.
 
 If no path-argument is given, the string representation of the data is returned.
 (It may potentially be very large.) If a path is given, the return value is the
@@ -15,6 +15,7 @@ gr = pr.data.chipseq()
 gr.to_gtf("chipseq.gtf")
 
 print(gr[:10000].to_gtf())
+print(gr[:10000].to_gff3())
 ```
 
 The to_csv method takes the arguments header and sep.

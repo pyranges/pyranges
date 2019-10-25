@@ -1,3 +1,7 @@
+# 0.0.59 (unreleased)
+- add reader for gff3
+- add writer for gff3
+
 # 0.0.58 (25.10.19)
 - fix merge print functions
 - make pickleable

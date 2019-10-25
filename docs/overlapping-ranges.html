@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -172,10 +172,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">15</span> Overlapping Ranges</h1>
 <p>PyRanges objects can be overlapped with other PyRanges to report the intervals
 in self that overlap with those in other.</p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb176-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb176-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
-<a class="sourceLine" id="cb176-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
-<a class="sourceLine" id="cb176-4" data-line-number="4"><span class="bu">print</span>(gr.overlap(gr2))</a></code></pre></div>
+<div class="sourceCode" id="cb185"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb185-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb185-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
+<a class="sourceLine" id="cb185-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
+<a class="sourceLine" id="cb185-4" data-line-number="4"><span class="bu">print</span>(gr.overlap(gr2))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -191,9 +191,9 @@ in self that overlap with those in other.</p>
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 49 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb178-1" data-line-number="1"><span class="bu">print</span>(gr.overlap(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb187"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb187-1" data-line-number="1"><span class="bu">print</span>(gr.overlap(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -209,7 +209,7 @@ in self that overlap with those in other.</p>
 ## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 22 rows and 6 columns from 1 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 
 </div>
             </section>

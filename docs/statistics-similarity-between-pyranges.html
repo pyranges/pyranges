@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -172,10 +172,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">18</span> Statistics: similarity between PyRanges</h1>
 <p>PyRanges can compute a normalized Jaccard-statistic (ranging from 0 to 1) to
 compute the similarities between two ranges.</p>
-<div class="sourceCode" id="cb202"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb202-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb202-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb202-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb202-4" data-line-number="4"><span class="bu">print</span>(gr.stats.jaccard(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb211-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb211-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb211-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb211-4" data-line-number="4"><span class="bu">print</span>(gr.stats.jaccard(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
 <pre><code>## 6.241132391061034e-06</code></pre>
 
 </div>

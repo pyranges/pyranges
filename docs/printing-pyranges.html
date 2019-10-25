@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -182,10 +182,10 @@ strands, sorted print is the way to do it.</p>
 <p>All print methods except rp take an n-argument to control how many entries should be displayed.</p>
 <p>The pc, mpc, spc, mspc and rpc also return the pyranges so that print methods
 can be used to display intermediate results in pipes.</p>
-<div class="sourceCode" id="cb94"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb94-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb94-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb94-3" data-line-number="3">exons <span class="op">=</span> pr.data.exons()</a>
-<a class="sourceLine" id="cb94-4" data-line-number="4">exons.pc(n<span class="op">=</span><span class="dv">2</span>).mpc(n<span class="op">=</span><span class="dv">8</span>).sp()</a></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb95-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb95-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb95-3" data-line-number="3">exons <span class="op">=</span> pr.data.exons()</a>
+<a class="sourceLine" id="cb95-4" data-line-number="4">exons.pc(n<span class="op">=</span><span class="dv">2</span>).mpc(n<span class="op">=</span><span class="dv">8</span>).sp()</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
@@ -195,23 +195,23 @@ can be used to display intermediate results in pipes.</p>
 ## | chrY         | 15467254  | 15467278  | NM_001258270_exon_13_0_chrY_15467255_r | 0         | -            |
 ## +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.
-## +----------------------------+----------------------------------------+--------------------+
-## | Name                       | Score                                  | - Position -       |
-## | (object)                   | (int64)                                | (Multiple types)   |
-## |----------------------------+----------------------------------------+--------------------|
-## | chrX 135721701-135721963 + | NR_038462_exon_0_0_chrX_135721702_f    | 0                  |
-## | chrX 135574120-135574598 + | NM_001727_exon_2_0_chrX_135574121_f    | 0                  |
-## | chrX 47868945-47869126 +   | NM_205856_exon_4_0_chrX_47868946_f     | 0                  |
-## | chrX 77294333-77294480 +   | NM_000052_exon_17_0_chrX_77294334_f    | 0                  |
-## | ...                        | ...                                    | ...                |
-## | chrY 15409586-15409728 -   | NR_047633_exon_3_0_chrY_15409587_r     | 0                  |
-## | chrY 15478146-15478273 -   | NR_047634_exon_18_0_chrY_15478147_r    | 0                  |
-## | chrY 15360258-15361762 -   | NR_047601_exon_0_0_chrY_15360259_r     | 0                  |
-## | chrY 15467254-15467278 -   | NM_001258270_exon_13_0_chrY_15467255_r | 0                  |
-## +----------------------------+----------------------------------------+--------------------+
+## For printing, the PyRanges was sorted on Chromosome and Strand.
+## +----------------------------+----------------------------------------+-----------+
+## | - Position -               | Name                                   | Score     |
+## | (Multiple types)           | (object)                               | (int64)   |
+## |----------------------------+----------------------------------------+-----------|
+## | chrX 135721701-135721963 + | NR_038462_exon_0_0_chrX_135721702_f    | 0         |
+## | chrX 135574120-135574598 + | NM_001727_exon_2_0_chrX_135574121_f    | 0         |
+## | chrX 47868945-47869126 +   | NM_205856_exon_4_0_chrX_47868946_f     | 0         |
+## | chrX 77294333-77294480 +   | NM_000052_exon_17_0_chrX_77294334_f    | 0         |
+## | ...                        | ...                                    | ...       |
+## | chrY 15409586-15409728 -   | NR_047633_exon_3_0_chrY_15409587_r     | 0         |
+## | chrY 15478146-15478273 -   | NR_047634_exon_18_0_chrY_15478147_r    | 0         |
+## | chrY 15360258-15361762 -   | NR_047601_exon_0_0_chrY_15360259_r     | 0         |
+## | chrY 15467254-15467278 -   | NM_001258270_exon_13_0_chrY_15467255_r | 0         |
+## +----------------------------+----------------------------------------+-----------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.
+## For printing, the PyRanges was sorted on Chromosome and Strand.
 ## +--------------+-----------+-----------+---------------------------------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name                                  | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)                              | (int64)   | (category)   |
@@ -249,11 +249,11 @@ can be used to display intermediate results in pipes.</p>
 ## | chrY         | 59233166  | 59233257  | NR_033715_exon_4_0_chrY_59233167_f    | 0         | +            |
 ## +--------------+-----------+-----------+---------------------------------------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
-## The PyRanges is sorted on Chromosome, Start, End and Strand.</code></pre>
-<div class="sourceCode" id="cb96"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb96-1" data-line-number="1">exons.<span class="bu">print</span>(n<span class="op">=</span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb96-2" data-line-number="2">            merge_position<span class="op">=</span><span class="va">False</span>,</a>
-<a class="sourceLine" id="cb96-3" data-line-number="3">            sort<span class="op">=</span><span class="va">True</span>,</a>
-<a class="sourceLine" id="cb96-4" data-line-number="4">            formatting<span class="op">=</span>{<span class="st">&quot;Start&quot;</span>: <span class="st">&quot;{:,}&quot;</span>, <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;</span><span class="sc">{:2.2}</span><span class="st">&quot;</span>})</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome, Start, End and Strand.</code></pre>
+<div class="sourceCode" id="cb97"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb97-1" data-line-number="1">exons.<span class="bu">print</span>(n<span class="op">=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb97-2" data-line-number="2">            merge_position<span class="op">=</span><span class="va">False</span>,</a>
+<a class="sourceLine" id="cb97-3" data-line-number="3">            sort<span class="op">=</span><span class="va">True</span>,</a>
+<a class="sourceLine" id="cb97-4" data-line-number="4">            formatting<span class="op">=</span>{<span class="st">&quot;Start&quot;</span>: <span class="st">&quot;{:,}&quot;</span>, <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;</span><span class="sc">{:2.2}</span><span class="st">&quot;</span>})</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -261,9 +261,9 @@ can be used to display intermediate results in pipes.</p>
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
-## The PyRanges is sorted on Chromosome, Start, End and Strand.</code></pre>
-<div class="sourceCode" id="cb98"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb98-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
-<a class="sourceLine" id="cb98-2" data-line-number="2">f1.rp()</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome, Start, End and Strand.</code></pre>
+<div class="sourceCode" id="cb99"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb99-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb99-2" data-line-number="2">f1.rp()</a></code></pre></div>
 <pre><code>## {(&#39;chr1&#39;, &#39;+&#39;):   Chromosome  Start  End       Name  Score Strand
 ## 0       chr1      3    6  interval1      0      +
 ## 2       chr1      8    9  interval3      0      +, (&#39;chr1&#39;, &#39;-&#39;):   Chromosome  Start  End       Name  Score Strand

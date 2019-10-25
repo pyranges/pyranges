@@ -225,6 +225,62 @@ def read_gtf_restricted(f,
 
     df = pd.concat(dfs, sort=False)
 
+
+    if not output_df:
+        return PyRanges(df)
+    else:
+        return df
+
+def to_rows_gff3(anno):
+    rowdicts = []
+    for l in list(anno):
+        l = l.replace(";", " ").replace("=", " ").split()
+        rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
+
+    return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
+
+
+def read_gff3(f, annotation=None, output_df=False, nrows=None, skiprows=0):
+
+    """seqid - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seq ID must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
+source - name of the program that generated this feature, or the data source (database or project name)
+type - type of feature. Must be a term or accession from the SOFA sequence ontology
+start - Start position of the feature, with sequence numbering starting at 1.
+end - End position of the feature, with sequence numbering starting at 1.
+score - A floating point value.
+strand - defined as + (forward) or - (reverse).
+phase - One of '0', '1' or '2'. '0' indicates that the first base of the feature is the first base of a codon, '1' that the second base is the first base of a codon, and so on..
+attributes - A semicolon-separated list of tag-value pairs, providing additional information about each feature. Some of these tags are predefined, e.g. ID, Name, Alias, Parent - see the GFF documentation for more details."""
+
+    dtypes = {
+        "Chromosome": "category",
+        "Feature": "category",
+        "Strand": "category"
+    }
+
+    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split(
+    )
+
+    df_iter = pd.read_csv(
+        f,
+        comment="#",
+        sep="\t",
+        header=None,
+        names=names,
+        dtype=dtypes,
+        chunksize=int(1e5),
+        skiprows=skiprows,
+        nrows=nrows)
+
+    dfs = []
+    for df in df_iter:
+        extra = to_rows_gff3(df.Attribute.astype(str))
+        df = df.drop("Attribute", axis=1)
+        ndf = pd.concat([df, extra], axis=1, sort=False)
+        dfs.append(ndf)
+
+    df = pd.concat(dfs, sort=False)
+
     if not output_df:
         return PyRanges(df)
     else:

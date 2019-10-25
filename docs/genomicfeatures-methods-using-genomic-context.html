@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-10" />
+<meta name="date" content="2019-10-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -174,9 +174,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 functions are found in the <code>pyranges.gf</code> namespace and the methods to be used on
 a PyRanges-object are found in the <code>gr.features</code> namespace.</p>
 <p><code>introns</code> can be used on pyranges annotated with gene_id and exon_id.</p>
-<div class="sourceCode" id="cb273"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb273-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb273-2" data-line-number="2">gr <span class="op">=</span> pr.data.ucsc_bed()</a>
-<a class="sourceLine" id="cb273-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb282-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb282-2" data-line-number="2">gr <span class="op">=</span> pr.data.ucsc_bed()</a>
+<a class="sourceLine" id="cb282-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+------------+-----------------+--------------+--------------+-------------------+
 ## | Chromosome   | Start     | End       | Feature    | gene_id    | transcript_id   | Strand       | ExonNumber   | transcript_name   |
 ## | (category)   | (int32)   | (int32)   | (object)   | (object)   | (float64)       | (category)   | (float64)    | (object)          |
@@ -192,8 +192,8 @@ a PyRanges-object are found in the <code>gr.features</code> namespace.</p>
 ## | chrX         | 152666701 | 152666808 | exon       | PNMA6E     | 260.0           | -            | 2.0          | NM_001351293      |
 ## +--------------+-----------+-----------+------------+------------+-----------------+--------------+--------------+-------------------+
 ## Stranded PyRanges object has 5,519 rows and 9 columns from 30 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb275"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb275-1" data-line-number="1"><span class="bu">print</span>(gr.features.introns(by<span class="op">=</span><span class="st">&quot;transcript&quot;</span>)) <span class="co"># default is by gene</span></a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb284"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb284-1" data-line-number="1"><span class="bu">print</span>(gr.features.introns(by<span class="op">=</span><span class="st">&quot;transcript&quot;</span>)) <span class="co"># default is by gene</span></a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-------------+-----------------+--------------+--------------+-------------------+
 ## | Chromosome   | Start     | End       | Feature    | gene_id     | transcript_id   | Strand       | ExonNumber   | transcript_name   |
 ## | (object)     | (int32)   | (int32)   | (object)   | (float64)   | (float64)       | (category)   | (float64)    | (object)          |
@@ -209,14 +209,14 @@ a PyRanges-object are found in the <code>gr.features</code> namespace.</p>
 ## | chrX         | 9728866   | 9733607   | intron     | 361.0       | 361.0           | -            | nan          | NM_000273         |
 ## +--------------+-----------+-----------+------------+-------------+-----------------+--------------+--------------+-------------------+
 ## Stranded PyRanges object has 4,128 rows and 9 columns from 30 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p><code>tile_genome</code> splits a PyRanges of chromosome sizes into a tiled genome.</p>
-<div class="sourceCode" id="cb277"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb277-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb277-2" data-line-number="2">cs <span class="op">=</span> pr.data.chromsizes()</a>
-<a class="sourceLine" id="cb277-3" data-line-number="3"><span class="bu">print</span>(cs)</a>
-<a class="sourceLine" id="cb277-4" data-line-number="4"><span class="co"># can also do</span></a>
-<a class="sourceLine" id="cb277-5" data-line-number="5"><span class="co"># pip install pyranges_db as db</span></a>
-<a class="sourceLine" id="cb277-6" data-line-number="6"><span class="co"># cs =  db.ucsc.chromsizes(&quot;hg19&quot;)</span></a></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb286-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb286-2" data-line-number="2">cs <span class="op">=</span> pr.data.chromsizes()</a>
+<a class="sourceLine" id="cb286-3" data-line-number="3"><span class="bu">print</span>(cs)</a>
+<a class="sourceLine" id="cb286-4" data-line-number="4"><span class="co"># can also do</span></a>
+<a class="sourceLine" id="cb286-5" data-line-number="5"><span class="co"># pip install pyranges_db as db</span></a>
+<a class="sourceLine" id="cb286-6" data-line-number="6"><span class="co"># cs =  db.ucsc.chromsizes(&quot;hg19&quot;)</span></a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       |
 ## | (category)   | (int32)   | (int32)   |
@@ -226,15 +226,15 @@ a PyRanges-object are found in the <code>gr.features</code> namespace.</p>
 ## | chr3         | 0         | 198022430 |
 ## | chr4         | 0         | 191154276 |
 ## | ...          | ...       | ...       |
-## | chr1         | 0         | 249250621 |
-## | chr2         | 0         | 243199373 |
-## | chr3         | 0         | 198022430 |
-## | chr4         | 0         | 191154276 |
+## | chrY         | 0         | 59373566  |
+## | chrX         | 0         | 155270560 |
+## | chrM         | 0         | 16571     |
+## | chr22        | 0         | 51304566  |
 ## +--------------+-----------+-----------+
 ## Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.
-## The PyRanges is sorted on Chromosome.</code></pre>
-<div class="sourceCode" id="cb279"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb279-1" data-line-number="1">tile_size <span class="op">=</span> <span class="bu">int</span>(<span class="fl">1e6</span>)</a>
-<a class="sourceLine" id="cb279-2" data-line-number="2"><span class="bu">print</span>(pr.gf.tile_genome(cs, tile_size, tile_last<span class="op">=</span><span class="va">False</span>))</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
+<div class="sourceCode" id="cb288"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb288-1" data-line-number="1">tile_size <span class="op">=</span> <span class="bu">int</span>(<span class="fl">1e6</span>)</a>
+<a class="sourceLine" id="cb288-2" data-line-number="2"><span class="bu">print</span>(pr.gf.tile_genome(cs, tile_size, tile_last<span class="op">=</span><span class="va">False</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       |
 ## | (category)   | (int32)   | (int32)   |
@@ -244,14 +244,14 @@ a PyRanges-object are found in the <code>gr.features</code> namespace.</p>
 ## | chr1         | 2000000   | 3000000   |
 ## | chr1         | 3000000   | 4000000   |
 ## | ...          | ...       | ...       |
-## | chr1         | 246000000 | 247000000 |
-## | chr1         | 247000000 | 248000000 |
-## | chr1         | 248000000 | 249000000 |
-## | chr1         | 249000000 | 249250621 |
+## | chrY         | 56000000  | 57000000  |
+## | chrY         | 57000000  | 58000000  |
+## | chrY         | 58000000  | 59000000  |
+## | chrY         | 59000000  | 59373566  |
 ## +--------------+-----------+-----------+
 ## Unstranded PyRanges object has 3,114 rows and 3 columns from 25 chromosomes.
-## The PyRanges is sorted on Chromosome.</code></pre>
-<div class="sourceCode" id="cb281"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb281-1" data-line-number="1"><span class="bu">print</span>(pr.gf.tile_genome(cs, tile_size, tile_last<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
+<div class="sourceCode" id="cb290"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb290-1" data-line-number="1"><span class="bu">print</span>(pr.gf.tile_genome(cs, tile_size, tile_last<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       |
 ## | (category)   | (int32)   | (int32)   |
@@ -261,23 +261,23 @@ a PyRanges-object are found in the <code>gr.features</code> namespace.</p>
 ## | chr1         | 2000000   | 3000000   |
 ## | chr1         | 3000000   | 4000000   |
 ## | ...          | ...       | ...       |
-## | chr1         | 246000000 | 247000000 |
-## | chr1         | 247000000 | 248000000 |
-## | chr1         | 248000000 | 249000000 |
-## | chr1         | 249000000 | 250000000 |
+## | chrY         | 56000000  | 57000000  |
+## | chrY         | 57000000  | 58000000  |
+## | chrY         | 58000000  | 59000000  |
+## | chrY         | 59000000  | 60000000  |
 ## +--------------+-----------+-----------+
 ## Unstranded PyRanges object has 3,114 rows and 3 columns from 25 chromosomes.
-## The PyRanges is sorted on Chromosome.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
 <p><code>genome_bounds</code> removes all intervals in the PyRanges which are outside the
 genome bounds. If the flag clip is used, the parts of the intervals which are
 inside the boundaries are kept.</p>
-<div class="sourceCode" id="cb283"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb283-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb283-2" data-line-number="2">cs <span class="op">=</span> pr.data.chromsizes()</a>
-<a class="sourceLine" id="cb283-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb283-4" data-line-number="4"><span class="bu">print</span>(cs)</a>
-<a class="sourceLine" id="cb283-5" data-line-number="5"><span class="co"># can also do</span></a>
-<a class="sourceLine" id="cb283-6" data-line-number="6"><span class="co"># pip install pyranges_db as db</span></a>
-<a class="sourceLine" id="cb283-7" data-line-number="7"><span class="co"># cs =  db.ucsc.chromsizes(&quot;hg19&quot;)</span></a></code></pre></div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb292-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb292-2" data-line-number="2">cs <span class="op">=</span> pr.data.chromsizes()</a>
+<a class="sourceLine" id="cb292-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb292-4" data-line-number="4"><span class="bu">print</span>(cs)</a>
+<a class="sourceLine" id="cb292-5" data-line-number="5"><span class="co"># can also do</span></a>
+<a class="sourceLine" id="cb292-6" data-line-number="6"><span class="co"># pip install pyranges_db as db</span></a>
+<a class="sourceLine" id="cb292-7" data-line-number="7"><span class="co"># cs =  db.ucsc.chromsizes(&quot;hg19&quot;)</span></a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       |
 ## | (category)   | (int32)   | (int32)   |
@@ -287,14 +287,14 @@ inside the boundaries are kept.</p>
 ## | chr3         | 0         | 198022430 |
 ## | chr4         | 0         | 191154276 |
 ## | ...          | ...       | ...       |
-## | chr1         | 0         | 249250621 |
-## | chr2         | 0         | 243199373 |
-## | chr3         | 0         | 198022430 |
-## | chr4         | 0         | 191154276 |
+## | chrY         | 0         | 59373566  |
+## | chrX         | 0         | 155270560 |
+## | chrM         | 0         | 16571     |
+## | chr22        | 0         | 51304566  |
 ## +--------------+-----------+-----------+
 ## Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.
-## The PyRanges is sorted on Chromosome.</code></pre>
-<div class="sourceCode" id="cb285"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb285-1" data-line-number="1"><span class="bu">print</span>(pr.gf.genome_bounds(gr, cs, clip<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
+<div class="sourceCode" id="cb294"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb294-1" data-line-number="1"><span class="bu">print</span>(pr.gf.genome_bounds(gr, cs, clip<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -310,8 +310,8 @@ inside the boundaries are kept.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb287"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb287-1" data-line-number="1"><span class="bu">print</span>(pr.gf.genome_bounds(gr, cs))</a></code></pre></div>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb296"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb296-1" data-line-number="1"><span class="bu">print</span>(pr.gf.genome_bounds(gr, cs))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -327,25 +327,25 @@ inside the boundaries are kept.</p>
 ## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 9,979 rows and 6 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p><code>random</code> creates a random PyRanges from the PyRanges of chromosome sizes given:</p>
-<div class="sourceCode" id="cb289"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb289-1" data-line-number="1">pr.random(n<span class="op">=</span><span class="dv">1000</span>, length<span class="op">=</span><span class="dv">100</span>, chromsizes<span class="op">=</span><span class="va">None</span>, strand<span class="op">=</span><span class="va">True</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb298"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb298-1" data-line-number="1">pr.random(n<span class="op">=</span><span class="dv">1000</span>, length<span class="op">=</span><span class="dv">100</span>, chromsizes<span class="op">=</span><span class="va">None</span>, strand<span class="op">=</span><span class="va">True</span>)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Strand       |
 ## | (category)   | (int32)   | (int32)   | (category)   |
 ## |--------------+-----------+-----------+--------------|
-## | chr1         | 139720346 | 139720446 | +            |
-## | chr1         | 66125997  | 66126097  | +            |
-## | chr1         | 109268800 | 109268900 | +            |
-## | chr1         | 82716317  | 82716417  | +            |
+## | chr1         | 14653914  | 14654014  | +            |
+## | chr1         | 4601000   | 4601100   | +            |
+## | chr1         | 104521852 | 104521952 | +            |
+## | chr1         | 34941604  | 34941704  | +            |
 ## | ...          | ...       | ...       | ...          |
-## | chrY         | 58276096  | 58276196  | -            |
-## | chrY         | 12693172  | 12693272  | -            |
-## | chrY         | 25377677  | 25377777  | -            |
-## | chrY         | 48022749  | 48022849  | -            |
+## | chrY         | 7100573   | 7100673   | -            |
+## | chrY         | 26123805  | 26123905  | -            |
+## | chrY         | 24724207  | 24724307  | -            |
+## | chrY         | 1214725   | 1214825   | -            |
 ## +--------------+-----------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 4 columns from 24 chromosomes.
-## The PyRanges is sorted on Chromosome and Strand.</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>if no chromsize is given, hg19 is used (from pr.data.chromsizes).</p>
 
 </div>

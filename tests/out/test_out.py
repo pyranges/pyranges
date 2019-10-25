@@ -16,6 +16,13 @@ def test_write_gtf(chip_10, tmp_path):
     chip_10.to_gtf(outfile)
 
 
+def test_write_gff3(chip_10, tmp_path):
+
+    outfile = tmp_path / "deleteme.gff3"
+    chip_10.to_gff3(outfile)
+
+
+
 def test_write_gtf_no_path(chip_10):
 
     result = chip_10.to_gtf()
