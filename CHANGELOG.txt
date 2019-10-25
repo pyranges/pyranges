@@ -1,6 +1,7 @@
 # 0.0.59 (unreleased)
 - add reader for gff3
 - add writer for gff3
+- add count flag to cluster/cluster_by
 
 # 0.0.58 (25.10.19)
 - fix merge print functions
