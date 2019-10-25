@@ -19,11 +19,14 @@ import pyranges as pr
 f1 = pr.data.f1()
 print(f1.cluster())
 print(f1.cluster(strand=True))
-print(f1.cluster(slack=2, strand=True))
+print(f1.cluster(slack=2, strand=True, count=True))
 ```
+
+It also takes an flag count.
 
 Both cluster and merge take the argument slack, so that you can merge features
 which are not directly overlapping. If you set slack to -1 you avoid merging bookended features.
+To only merge features overlapping by at least X, set slack to -X.
 
 To cluster or merge only those rows which have the same values for a certain column, you can use the argument by to cluster and merge.
 
