@@ -53,4 +53,4 @@ def _getattr(self, name):
     if name in self.columns:
         return pd.concat([df[name] for df in self.values()])
     else:
-        raise Exception("PyRanges object has no attribute", name)
+        raise AttributeError("PyRanges object has no attribute", name)
