@@ -1,3 +1,6 @@
+# 0.0.60 (unreleased)
+- ensure that start/end have the same dtype after calling slack
+
 # 0.0.59 (28.10.19)
 - fix attributerrors on pyranges (thanks https://github.com/MuhammedHasan)
 - add reader for gff3

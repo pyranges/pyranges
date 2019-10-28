@@ -443,7 +443,7 @@ def _tes(df, kwargs):
 def _slack(df, kwargs):
 
     df = df.copy()
-    # dtype = df.Start.dtype
+    dtype = df.Start.dtype
     slack = kwargs["slack"]
 
     assert isinstance(
@@ -468,6 +468,8 @@ def _slack(df, kwargs):
         if three_end_slack:
             df.loc[df.Strand == "-", "Start"] -= three_end_slack
             df.loc[df.Strand == "+", "End"] += three_end_slack
+
+    df = df.astype({"Start": dtype, "End": dtype})
 
     return df
 
