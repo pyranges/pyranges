@@ -1,4 +1,5 @@
-# 0.0.59 (unreleased)
+# 0.0.59 (28.10.19)
+- fix attributerrors on pyranges (thanks https://github.com/MuhammedHasan)
 - add reader for gff3
 - add writer for gff3
 - add count flag to cluster/cluster_by
