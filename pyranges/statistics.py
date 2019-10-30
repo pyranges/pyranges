@@ -61,3 +61,20 @@ class StatisticsMethods():
         vc = vc.reset_index(drop=True)
 
         return vc
+
+
+
+
+def mcc(grs):
+
+    from itertools import product
+
+    rowdicts = {}
+    for gr, gr2 in product(grs, grs):
+
+        j = gr.join(gr2)
+        tp = j.new_position("intersection").cluster().length
+        fp = j.new_position("swap")
+
+
+
