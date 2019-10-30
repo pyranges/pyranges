@@ -247,7 +247,19 @@ class PyRanges():
 
             self = self.slack(slack)
 
+        if "suffix" in kwargs:
+            suffixes = "", kwargs["suffix"]
+            kwargs["suffixes"] = suffixes
+
         kwargs = fill_kwargs(kwargs)
+
+        if "new_pos" in kwargs:
+            if kwargs["new_pos"] in "intersection union".split():
+                suffixes = kwargs.get("suffixes")
+                assert suffixes is not None, "Must give two non-empty suffixes when using new_pos with intersection or union."
+                assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
+                assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
+
         dfs = pyrange_apply(_write_both, self, other, **kwargs)
 
         gr = PyRanges(dfs)
@@ -259,9 +271,7 @@ class PyRanges():
 
         new_position = kwargs.get("new_pos")
         if new_position:
-            assert "suffixes" in kwargs, "Must use suffixes-arg together with new_pos-arg."
-            suffixes = kwargs.get("suffixes", ("_a", "_b"))
-            gr = gr.new_position(new_pos=new_position, suffixes=suffixes)
+            gr = gr.new_position(new_pos=new_position, suffixes=kwargs["suffixes"])
 
         return gr
 
@@ -355,12 +365,13 @@ class PyRanges():
 
         return self
 
-    def new_position(self, strand=None, new_pos="intersection", **kwargs):
+    def new_position(self, new_pos, strand=None, **kwargs):
 
         from pyranges.methods.new_position import _new_position
 
         kwargs["sparse"] = {"self": False}
         kwargs["new_pos"] = new_pos
+        kwargs = fill_kwargs(kwargs)
 
         if strand is None:
             strand = self.stranded
