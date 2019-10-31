@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-25" />
+<meta name="date" content="2019-10-31" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -143,14 +143,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
 <li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
 <li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="20" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>20</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="21" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>21</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="22" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>22</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="23" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>23</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="24" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>24</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="25" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>25</b> Using multiple cores</a></li>
-<li class="chapter" data-level="26" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>26</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="27" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>27</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="21" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>21</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="22" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>22</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="23" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>23</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="24" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>24</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="25" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>25</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
+<li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -211,58 +212,60 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
 ## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb139"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb139-1" data-line-number="1"><span class="bu">print</span>(f1.cluster(slack<span class="op">=</span><span class="dv">2</span>, strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |
-## |--------------+-----------+-----------+------------+-----------+--------------+-----------|
-## | chr1         |         3 |         6 | interval1  |         0 | +            |         1 |
-## | chr1         |         8 |         9 | interval3  |         0 | +            |         1 |
-## | chr1         |         5 |         7 | interval2  |         0 | -            |         2 |
-## +--------------+-----------+-----------+------------+-----------+--------------+-----------+
-## Stranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.
+<div class="sourceCode" id="cb139"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb139-1" data-line-number="1"><span class="bu">print</span>(f1.cluster(slack<span class="op">=</span><span class="dv">2</span>, strand<span class="op">=</span><span class="va">True</span>, count<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Cluster |     Count |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int64) |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------|
+## | chr1         |         3 |         6 | interval1  |         0 | +            |         1 |         2 |
+## | chr1         |         8 |         9 | interval3  |         0 | +            |         1 |         2 |
+## | chr1         |         5 |         7 | interval2  |         0 | -            |         2 |         1 |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+
+## Stranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>It also takes an flag count.</p>
 <p>Both cluster and merge take the argument slack, so that you can merge features
-which are not directly overlapping. If you set slack to -1 you avoid merging bookended features.</p>
+which are not directly overlapping. If you set slack to -1 you avoid merging bookended features.
+To only merge features overlapping by at least X, set slack to -X.</p>
 <p>To cluster or merge only those rows which have the same values for a certain column, you can use the argument by to cluster and merge.</p>
 <div class="sourceCode" id="cb141"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb141-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
 <a class="sourceLine" id="cb141-2" data-line-number="2">gr <span class="op">=</span> pr.data.ensembl_gtf()</a>
 <a class="sourceLine" id="cb141-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
-<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
-## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | +20   |
-## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |
-## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------|
-## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | ...   |
-## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | ...   |
-## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | ...   |
-## | 1            | havana     | exon         | 12613     | 12721     | .          | +            | .          | ...   |
-## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...   |
-## | 1            | havana     | gene         | 1173056   | 1179555   | .          | -            | .          | ...   |
-## | 1            | havana     | transcript   | 1173056   | 1179555   | .          | -            | .          | ...   |
-## | 1            | havana     | exon         | 1179365   | 1179555   | .          | -            | .          | ...   |
-## | 1            | havana     | exon         | 1173056   | 1176396   | .          | -            | .          | ...   |
-## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
+<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
+## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
+## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
+## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
+## | 1            | havana     | gene         | 11869     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+## | 1            | havana     | transcript   | 11869     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+## | 1            | havana     | exon         | 11869     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+## | 1            | havana     | exon         | 12613     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
+## | 1            | havana     | gene         | 1173056   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
+## | 1            | havana     | transcript   | 1173056   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
+## | 1            | havana     | exon         | 1179365   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
+## | 1            | havana     | exon         | 1173056   | 1176396   | .          | -            | .          | lncRNA                             | ...   |
+## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
 ## Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 20 hidden columns: gene_biotype, gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, ... (+ 12 more.)</code></pre>
+## 19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</code></pre>
 <div class="sourceCode" id="cb143"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb143-1" data-line-number="1"><span class="bu">print</span>(gr.cluster(by<span class="op">=</span><span class="st">&quot;gene_id&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+-------+
-## | Chromosome   | Source         | Feature        | Start     | End       | Score      | Strand       | Frame      | +21   |
-## | (category)   | (object)       | (category)     | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |
-## |--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+-------|
-## | 1            | ensembl_havana | gene           | 1173884   | 1197935   | .          | +            | .          | ...   |
-## | 1            | havana         | transcript     | 1173884   | 1175034   | .          | +            | .          | ...   |
-## | 1            | havana         | exon           | 1173884   | 1173926   | .          | +            | .          | ...   |
-## | 1            | havana         | five_prime_utr | 1173903   | 1173926   | .          | +            | .          | ...   |
-## | ...          | ...            | ...            | ...       | ...       | ...        | ...          | ...        | ...   |
-## | 1            | ensembl_havana | stop_codon     | 450740    | 450742    | .          | -            | 0          | ...   |
-## | 1            | ensembl_havana | CDS            | 450743    | 451678    | .          | -            | 0          | ...   |
-## | 1            | ensembl_havana | start_codon    | 451676    | 451678    | .          | -            | 0          | ...   |
-## | 1            | ensembl_havana | five_prime_utr | 451679    | 451697    | .          | -            | .          | ...   |
-## +--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+-------+
+<pre><code>## +--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------+
+## | Chromosome   | Source         | Feature        | Start     | End       | Score      | Strand       | Frame      | gene_biotype   | gene_id         | +19   |
+## | (category)   | (object)       | (category)     | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)       | (object)        | ...   |
+## |--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------|
+## | 1            | ensembl_havana | gene           | 1173884   | 1197935   | .          | +            | .          | protein_coding | ENSG00000162571 | ...   |
+## | 1            | havana         | transcript     | 1173884   | 1175034   | .          | +            | .          | protein_coding | ENSG00000162571 | ...   |
+## | 1            | havana         | exon           | 1173884   | 1173926   | .          | +            | .          | protein_coding | ENSG00000162571 | ...   |
+## | 1            | havana         | five_prime_utr | 1173903   | 1173926   | .          | +            | .          | protein_coding | ENSG00000162571 | ...   |
+## | ...          | ...            | ...            | ...       | ...       | ...        | ...          | ...        | ...            | ...             | ...   |
+## | 1            | ensembl_havana | stop_codon     | 450740    | 450742    | .          | -            | 0          | protein_coding | ENSG00000284733 | ...   |
+## | 1            | ensembl_havana | CDS            | 450743    | 451678    | .          | -            | 0          | protein_coding | ENSG00000284733 | ...   |
+## | 1            | ensembl_havana | start_codon    | 451676    | 451678    | .          | -            | 0          | protein_coding | ENSG00000284733 | ...   |
+## | 1            | ensembl_havana | five_prime_utr | 451679    | 451697    | .          | -            | .          | protein_coding | ENSG00000284733 | ...   |
+## +--------------+----------------+----------------+-----------+-----------+------------+--------------+------------+----------------+-----------------+-------+
 ## Stranded PyRanges object has 2,446 rows and 29 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 21 hidden columns: gene_biotype, gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, ... (+ 12 more.)</code></pre>
+## 19 hidden columns: gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, transcript_version, ... (+ 9 more.)</code></pre>
 <p><code>five_end</code> finds the starts of the regions (taking direction of transcription
 into account).</p>
 <div class="sourceCode" id="cb145"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb145-1" data-line-number="1">f1.five_end()</a></code></pre></div>

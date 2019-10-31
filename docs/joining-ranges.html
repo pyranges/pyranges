@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-25" />
+<meta name="date" content="2019-10-31" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -143,14 +143,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
 <li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
 <li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="20" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>20</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="21" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>21</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="22" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>22</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="23" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>23</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="24" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>24</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="25" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>25</b> Using multiple cores</a></li>
-<li class="chapter" data-level="26" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>26</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="27" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>27</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="21" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>21</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="22" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>22</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="23" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>23</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="24" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>24</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="25" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>25</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
+<li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -176,70 +177,120 @@ If you do not use a suffix, the default <code>_b</code> is chosen.</p>
 <a class="sourceLine" id="cb189-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
 <a class="sourceLine" id="cb189-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
 <a class="sourceLine" id="cb189-4" data-line-number="4"><span class="bu">print</span>(gr.join(gr2, suffix<span class="op">=</span><span class="st">&quot;_2&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_2   | End_2     | Name_2     | +2    |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | ...   |
-## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------|
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | ...   |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10073     | 10272     | Input      | ...   |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | ...   |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10082     | 10281     | Input      | ...   |
-## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       | ...        | ...   |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10079     | 10278     | Input      | ...   |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10082     | 10281     | Input      | ...   |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10149     | 10348     | Input      | ...   |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10280     | 10479     | Input      | ...   |
-## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_2   | End_2     | Name_2     | Score_2   | Strand_2     |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | 1         | -            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10073     | 10272     | Input      | 1         | +            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | 1         | -            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10082     | 10281     | Input      | 1         | -            |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10079     | 10278     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10082     | 10281     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10149     | 10348     | Input      | 1         | -            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10280     | 10479     | Input      | 1         | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 49 rows and 11 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 2 hidden columns: Score_2, Strand_2</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
 <div class="sourceCode" id="cb191"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb191-1" data-line-number="1"><span class="bu">print</span>(gr.join(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_b   | End_b     | Name_b     | +2    |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | ...   |
-## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------|
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | ...   |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | ...   |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10082     | 10281     | Input      | ...   |
-## | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            | 9988      | 10187     | Input      | ...   |
-## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       | ...        | ...   |
-## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            | 10073     | 10272     | Input      | ...   |
-## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            | 10280     | 10479     | Input      | ...   |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10073     | 10272     | Input      | ...   |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10280     | 10479     | Input      | ...   |
-## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_b   | End_b     | Name_b     | Score_b   | Strand_b     |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 9988      | 10187     | Input      | 1         | -            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10079     | 10278     | Input      | 1         | -            |
+## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            | 10082     | 10281     | Input      | 1         | -            |
+## | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            | 9988      | 10187     | Input      | 1         | -            |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            | 10073     | 10272     | Input      | 1         | +            |
+## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            | 10280     | 10479     | Input      | 1         | +            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10073     | 10272     | Input      | 1         | +            |
+## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            | 10280     | 10479     | Input      | 1         | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 22 rows and 11 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 2 hidden columns: Score_b, Strand_b</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>The join method also takes a how argument, which currently accepts the
 option <code>&quot;containment&quot;</code>, which requires that the intervals in self be
 completely within the intervals in other.</p>
 <div class="sourceCode" id="cb193"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb193-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
 <a class="sourceLine" id="cb193-2" data-line-number="2">f2 <span class="op">=</span> pr.data.f2()</a>
 <a class="sourceLine" id="cb193-3" data-line-number="3"><span class="bu">print</span>(f2.join(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------+
-## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     | +2    |
-## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   | ...   |
-## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------|
-## | chr1         |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  | ...   |
-## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-------+
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 1 rows and 11 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 2 hidden columns: Score_b, Strand_b</code></pre>
-<p>The join method also takes the argument new_pos which can either be <code>union</code>or
-<code>ìntersection</code>. The default suffixes are <code>[&quot;_a&quot;, &quot;_b&quot;]</code>, but a suffixes argument
-overrides this.</p>
-<div class="sourceCode" id="cb195"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb195-1" data-line-number="1"><span class="bu">print</span>(f2.join(f1, new_pos<span class="op">=</span><span class="st">&quot;intersection&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-------+
-## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b | +4    |
-## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) | ...   |
-## |--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-------|
-## | chr1         |         6 |         7 |         6 |         7 | b          |         0 | -            |         5 | ...   |
-## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-------+
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>After joining, you can use the method new_position() to find the union or
+intersection of the joined ranges. The default suffixes are <code>[&quot;_a&quot;, &quot;_b&quot;]</code>, but
+a suffixes argument overrides this.</p>
+<p>Positions with the second suffix should exist in the PyRanges already. The first
+suffix is used to rename the old Starts and Ends so they are kept.</p>
+<div class="sourceCode" id="cb195"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb195-1" data-line-number="1"><span class="bu">print</span>(f2.join(f1).new_position(<span class="st">&quot;intersection&quot;</span>))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
+## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         |         6 |         7 |         6 |         7 | b          |         0 | -            |         5 |         7 | interval2  |         0 | -            |
+## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 1 rows and 13 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 4 hidden columns: End_b, Name_b, Score_b, Strand_b</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>If you want to swap which columns are considered the Start and End, you can use
+the swap argument.</p>
+<p>In this case, the suffixes should be the suffixes of the columns you want to
+swap. So if the columns are named “Start”, “End”, “Start_b” and “End_b”, you
+should give the suffixes [&quot;“,”_b&quot;]</p>
+<div class="sourceCode" id="cb197"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb197-1" data-line-number="1">gr1, gr2 <span class="op">=</span> pr.data.chipseq(), pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb197-2" data-line-number="2">j <span class="op">=</span> gr1.join(gr2)</a>
+<a class="sourceLine" id="cb197-3" data-line-number="3"><span class="bu">print</span>(j)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 226987592 | 226987617 | U0         |         0 | +            | 226987603 | 226987628 | U0         |         0 | -            |
+## | chr8         |  38747226 |  38747251 | U0         |         0 | -            |  38747236 |  38747261 | U0         |         0 | +            |
+## | chr15        |  26105515 |  26105540 | U0         |         0 | +            |  26105493 |  26105518 | U0         |         0 | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 3 rows and 11 columns from 3 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb199"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb199-1" data-line-number="1">j2 <span class="op">=</span> j.new_position(<span class="st">&quot;intersection&quot;</span>)</a>
+<a class="sourceLine" id="cb199-2" data-line-number="2"><span class="bu">print</span>(j2)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
+## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 226987603 | 226987617 | 226987592 | 226987617 | U0         |         0 | +            | 226987603 | 226987628 | U0         |         0 | -            |
+## | chr8         |  38747236 |  38747251 |  38747226 |  38747251 | U0         |         0 | -            |  38747236 |  38747261 | U0         |         0 | +            |
+## | chr15        |  26105515 |  26105518 |  26105515 |  26105540 | U0         |         0 | +            |  26105493 |  26105518 | U0         |         0 | +            |
+## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 3 rows and 13 columns from 3 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb201"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb201-1" data-line-number="1"><span class="bu">print</span>(j2.new_position(<span class="st">&quot;swap&quot;</span>, suffixes<span class="op">=</span>[<span class="st">&quot;&quot;</span>, <span class="st">&quot;_b&quot;</span>]))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
+## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 226987603 | 226987628 | 226987592 | 226987617 | U0         |         0 | -            | 226987603 | 226987617 | U0         |         0 | +            |
+## | chr8         |  38747236 |  38747261 |  38747226 |  38747251 | U0         |         0 | +            |  38747236 |  38747251 | U0         |         0 | -            |
+## | chr15        |  26105493 |  26105518 |  26105515 |  26105540 | U0         |         0 | +            |  26105515 |  26105518 | U0         |         0 | +            |
+## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 3 rows and 13 columns from 3 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb203"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb203-1" data-line-number="1"><span class="bu">print</span>(j2.new_position(<span class="st">&quot;swap&quot;</span>, suffixes<span class="op">=</span>[<span class="st">&quot;_a&quot;</span>, <span class="st">&quot;_b&quot;</span>]))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
+## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 226987603 | 226987617 | 226987603 | 226987628 | U0         |         0 | -            | 226987592 | 226987617 | U0         |         0 | +            |
+## | chr8         |  38747236 |  38747251 |  38747236 |  38747261 | U0         |         0 | +            |  38747226 |  38747251 | U0         |         0 | -            |
+## | chr15        |  26105515 |  26105518 |  26105493 |  26105518 | U0         |         0 | +            |  26105515 |  26105540 | U0         |         0 | +            |
+## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 3 rows and 13 columns from 3 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 
 </div>
             </section>
