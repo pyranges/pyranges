@@ -3,6 +3,7 @@
 - breaking change: new_position takes no default arg
 - new_position takes an argument swap
 - .length returns a python integer
+- breaking change: lengths returns a vector by default
 
 # 0.0.59 (28.10.19)
 - fix attributerrors on pyranges (thanks https://github.com/MuhammedHasan)
