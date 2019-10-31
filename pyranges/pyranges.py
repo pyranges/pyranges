@@ -686,9 +686,12 @@ class PyRanges():
         else:
             return pd.concat(self.values()).reset_index(drop=True)
 
-    def lengths(self, as_dict=True):
+    def lengths(self, as_dict=False):
+
 
         if as_dict:
+            if not len(self):
+                return {}
             lengths = {}
             for k, df in self.items():
                 lengths[k] = df.End - df.Start
@@ -696,6 +699,8 @@ class PyRanges():
             return lengths
         else:
             _lengths = []
+            if not len(self):
+                return np.array(_lengths, dtype=int)
             for _, df in self:
                 lengths = df.End - df.Start
                 _lengths.append(lengths)

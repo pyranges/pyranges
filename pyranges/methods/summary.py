@@ -8,14 +8,14 @@ from tabulate import tabulate
 def _summary(self):
 
     lengths = OrderedDict()
-    lengths["pyrange"] = self.lengths()
+    lengths["pyrange"] = self.lengths(as_dict=True)
 
     if self.stranded:
         c = self.merge(strand=True)
-        lengths["coverage_stranded"] = c.lengths()
+        lengths["coverage_stranded"] = c.lengths(as_dict=True)
 
     c = self.merge(strand=False)
-    lengths["coverage_unstranded"] = c.lengths()
+    lengths["coverage_unstranded"] = c.lengths(as_dict=True)
 
     summaries = OrderedDict()
 

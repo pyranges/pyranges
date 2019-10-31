@@ -25,12 +25,12 @@ class StatisticsMethods():
 
         intersection_sum = sum(
             v.sum()
-            for v in self.set_intersect(other, **kwargs).lengths().values())
+            for v in self.set_intersect(other, **kwargs).lengths(as_dict=True).values())
 
         union_sum = 0
         for gr in [self, other]:
             union_sum += sum(
-                v.sum() for v in gr.merge(strand=strand).lengths().values())
+                v.sum() for v in gr.merge(strand=strand).lengths(as_dict=True).values())
 
         denominator = (union_sum - intersection_sum)
         if denominator == 0:
@@ -63,18 +63,48 @@ class StatisticsMethods():
         return vc
 
 
-
-
-def mcc(grs):
+def mcc(grs, genome, labels=None, strandedness=None):
 
     from itertools import product
 
-    rowdicts = {}
-    for gr, gr2 in product(grs, grs):
+    if labels is None:
+        labels = list(range(len(grs)))
+        labels = product(labels, labels)
+    else:
+        assert len(labels) == len(grs)
+        labels = product(labels, labels)
 
-        j = gr.join(gr2)
-        tp = j.new_position("intersection").cluster().length
-        fp = j.new_position("swap")
+    rowdicts = []
+    for (lt, lf), (t, f) in zip(labels, product(grs, grs)):
+        print(lt, lf)
 
+        if t == f:
+            tp = t.length
+            fn = 0
+            tn = genome.length - tp
+            fp = 0
+        else:
+            f = f.merge()
+            c = pr.concat([t, f])
+            j = t.join(f, strandedness=strandedness)
+            tp_gr = j.new_position("intersection").merge()
+            tp = tp_gr.length
+            fp = f.subtract(tp_gr, strandedness=strandedness, no_merge=True).merge(strand=False).length
+            fn = t.subtract(tp_gr, strandedness=strandedness, no_merge=True).merge(strand=False).length
+            tn = genome.subtract(c, strandedness=strandedness, no_merge=True).merge(strand=False).length
+
+        # https://stackoverflow.com/a/56875660/992687
+        vals = [tp, fp, fn, tn]
+        print(vals)
+        print([ type(v) for v in vals ])
+        x = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
+        print("x", x)
+        mcc = ((tp * tn) - (fp * fn)) / np.sqrt(x)
+
+        rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
+
+    df = pd.DataFrame.from_dict(rowdicts)
+
+    return df
 
 
