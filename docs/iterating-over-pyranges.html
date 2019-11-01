@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-31" />
+<meta name="date" content="2019-11-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -283,23 +283,23 @@ more PyRanges returns empty dfs.</p>
 <a class="sourceLine" id="cb111-7" data-line-number="7">    <span class="bu">print</span>(<span class="st">&quot;-----&quot;</span> <span class="op">*</span> <span class="dv">5</span>)</a>
 <a class="sourceLine" id="cb111-8" data-line-number="8">    <span class="bu">print</span>(cdf.head(<span class="dv">1</span>), edf.head(<span class="dv">1</span>))</a></code></pre></div>
 <pre><code>## -------------------------
+## Empty DataFrame
+## Columns: [Chromosome, Start, End, CpG, Strand]
+## Index: []   Chromosome    Start      End                               Name  Score Strand
+## 5       chrY  1481624  1481747  NM_004192_exon_1_0_chrY_1481625_r      0      -
+## -------------------------
+##     Chromosome  Start    End  CpG Strand
+## 896       chrY  14181  14793   62      +    Chromosome    Start      End                                  Name  Score Strand
+## 14       chrY  1693161  1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +
+## -------------------------
 ##   Chromosome  Start    End  CpG Strand
 ## 0       chrX  64181  64793   62      +   Chromosome      Start        End                                 Name  Score Strand
 ## 0       chrX  135721701  135721963  NR_038462_exon_0_0_chrX_135721702_f      0      +
 ## -------------------------
 ## Empty DataFrame
 ## Columns: [Chromosome, Start, End, CpG, Strand]
-## Index: []   Chromosome    Start      End                               Name  Score Strand
-## 5       chrY  1481624  1481747  NM_004192_exon_1_0_chrY_1481625_r      0      -
-## -------------------------
-## Empty DataFrame
-## Columns: [Chromosome, Start, End, CpG, Strand]
 ## Index: []   Chromosome     Start       End                                    Name  Score Strand
-## 1       chrX  49069126  49069255  NM_001256790_exon_15_0_chrX_49069127_r      0      -
-## -------------------------
-##     Chromosome  Start    End  CpG Strand
-## 896       chrY  14181  14793   62      +    Chromosome    Start      End                                  Name  Score Strand
-## 14       chrY  1693161  1693291  NM_001171039_exon_2_0_chrY_1693162_f      0      +</code></pre>
+## 1       chrX  49069126  49069255  NM_001256790_exon_15_0_chrX_49069127_r      0      -</code></pre>
 
 </div>
             </section>

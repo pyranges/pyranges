@@ -70,16 +70,15 @@ def _mcc(tp, fp, tn, fn):
     return ((tp * tn) - (fp * fn)) / sqrt(x)
 
 
-def mcc(grs, genome, labels=None, strand=False, verbose=False, nb_cpu=1):
+def mcc(grs, genome, labels=None, strand=False, verbose=False):
     import sys
 
     try:
         genome_length = int(genome)
-    except:
+    except (TypeError, ValueError):
         genome_length = int(genome.End.sum())
 
-
-    from itertools import combinations_with_replacement
+    from itertools import combinations_with_replacement, chain
 
     if labels is None:
         _labels = list(range(len(grs)))
@@ -87,6 +86,18 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False, nb_cpu=1):
     else:
         assert len(labels) == len(grs)
         _labels = combinations_with_replacement(labels, r=2)
+
+
+
+    if verbose:
+        # check that genome definition does not have many more
+        # chromosomes than datafiles
+        gr_cs = set(chain(*[gr.chromosomes for gr in grs]))
+
+        g_cs = set(genome.chromosomes)
+        surplus = g_cs - gr_cs
+        if len(surplus):
+            print("The following chromosomes are in the genome, but not the PyRanges:", ", ".join(surplus), file=sys.stderr)
 
     # remove all non-loc columns before computation
     grs = [gr.merge(strand=strand) for gr in grs]
@@ -127,7 +138,7 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False, nb_cpu=1):
 
         else:
             c = pr.concat([t, f]).merge(strand=strand)
-            j = t.join(f, strandedness=strandedness, nb_cpu=nb_cpu)
+            j = t.join(f, strandedness=strandedness)
             tp_gr = j.new_position("intersection").merge(strand=strand)
             if strand:
                 for strand in "+ -".split():
@@ -148,9 +159,7 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False, nb_cpu=1):
                 rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
                 rowdicts.append({"T": lf, "F": lt, "TP": tp, "FP": fn, "TN": tn, "FN": fp, "MCC": mcc})
 
-    df = pd.DataFrame.from_dict(rowdicts)
-
-    df = df.sort_values(["T", "F"])
+    df = pd.DataFrame.from_dict(rowdicts).sort_values(["T", "F"])
 
     return df
 

@@ -13,5 +13,5 @@ import pyranges as pr
 gr = pr.data.chipseq()
 gr2 = pr.data.chipseq_background()
 chromsizes = pr.data.chromsizes()
-print(pr.stats.mcc([gr, gr2], labels="chip background".split(), genome=chromsizes, strand=False))
+print(pr.stats.mcc([gr, gr2], labels="chip input".split(), genome=chromsizes, strand=True))
 ```
