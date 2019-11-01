@@ -1,0 +1,26 @@
+# Statistics: computing the Matthews correlation coeficcient between ranges
+
+The Matthews correlation coefficient is a correlation coefficient that works
+well when the classes of data are really imbalanced. For this reason it works
+well when you want to compare the correlation between two ranges.
+
+If you want to compute the MCC between two or more ranges, you can use
+`pr.stat.mcc`. You need to give the chromosome sizes as a pyrange. You can get
+these using pyranges_db.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.chipseq()
+gr2 = pr.data.chipseq_background()
+chromsizes = pr.data.chromsizes()
+mcc = pr.stats.mcc([gr, gr2], labels="chip input".split(), genome=chromsizes, strand=True)
+print(mcc)
+```
+
+If you want to create a symmetric matrix from the result:
+
+
+```{python tidy=FALSE}
+print(print(mcc.set_index(["Strand", "T", "F"]).MCC.unstack()))
+# or just mcc.set_index(["T", "F"]).MCC.unstack() in the unstranded case
+```

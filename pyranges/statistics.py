@@ -62,49 +62,104 @@ class StatisticsMethods():
 
         return vc
 
+from math import sqrt
+def _mcc(tp, fp, tn, fn):
 
-def mcc(grs, genome, labels=None, strandedness=None):
+    # https://stackoverflow.com/a/56875660/992687
+    x = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
+    return ((tp * tn) - (fp * fn)) / sqrt(x)
 
-    from itertools import product
+
+def mcc(grs, genome, labels=None, strand=False, verbose=False):
+    import sys
+
+    try:
+        genome_length = int(genome)
+    except (TypeError, ValueError):
+        genome_length = int(genome.End.sum())
+
+    from itertools import combinations_with_replacement, chain
 
     if labels is None:
-        labels = list(range(len(grs)))
-        labels = product(labels, labels)
+        _labels = list(range(len(grs)))
+        _labels = combinations_with_replacement(_labels, r=2)
     else:
         assert len(labels) == len(grs)
-        labels = product(labels, labels)
+        _labels = combinations_with_replacement(labels, r=2)
+
+
+
+    if verbose:
+        # check that genome definition does not have many more
+        # chromosomes than datafiles
+        gr_cs = set(chain(*[gr.chromosomes for gr in grs]))
+
+        g_cs = set(genome.chromosomes)
+        surplus = g_cs - gr_cs
+        if len(surplus):
+            print("The following chromosomes are in the genome, but not the PyRanges:", ", ".join(surplus), file=sys.stderr)
+
+    # remove all non-loc columns before computation
+    grs = [gr.merge(strand=strand) for gr in grs]
+
+    if strand:
+        def make_stranded(df):
+            df = df.copy()
+            df2 = df.copy()
+            df.insert(df.shape[1], "Strand", "+")
+            df2.insert(df2.shape[1], "Strand", "-")
+            return pd.concat([df, df2])
+
+        genome = genome.apply(make_stranded)
+
+    strandedness = "same" if strand else None
 
     rowdicts = []
-    for (lt, lf), (t, f) in zip(labels, product(grs, grs)):
-        print(lt, lf)
+    for (lt, lf), (t, f) in zip(_labels, combinations_with_replacement(grs, r=2)):
+        if verbose:
+            print(lt, lf, file=sys.stderr)
 
-        if t == f:
-            tp = t.length
-            fn = 0
-            tn = genome.length - tp
-            fp = 0
+        if lt == lf:
+
+            if not strand:
+                tp = t.length
+                fn = 0
+                tn = genome.length - tp
+                fp = 0
+                rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1})
+            else:
+                for strand in "+ -".split():
+                    tp = t[strand].length
+                    fn = 0
+                    tn = genome_length - tp
+                    fp = 0
+                    rowdicts.append({"T": lt, "F": lf, "Strand": strand, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1})
+            continue
+
         else:
-            f = f.merge()
-            c = pr.concat([t, f])
+            c = pr.concat([t, f]).merge(strand=strand)
             j = t.join(f, strandedness=strandedness)
-            tp_gr = j.new_position("intersection").merge()
-            tp = tp_gr.length
-            fp = f.subtract(tp_gr, strandedness=strandedness, no_merge=True).merge(strand=False).length
-            fn = t.subtract(tp_gr, strandedness=strandedness, no_merge=True).merge(strand=False).length
-            tn = genome.subtract(c, strandedness=strandedness, no_merge=True).merge(strand=False).length
+            tp_gr = j.new_position("intersection").merge(strand=strand)
+            if strand:
+                for strand in "+ -".split():
+                    tp = tp_gr[strand].length
+                    fp = f[strand].length - tp
+                    fn = t[strand].length - tp
+                    tn = genome_length - c[strand].length
+                    mcc = _mcc(tp, fp, tn, fn)
+                    rowdicts.append({"T": lt, "F": lf, "Strand": strand, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
+                    rowdicts.append({"T": lf, "F": lt, "Strand": strand, "TP": tp, "FP": fn, "TN": tn, "FN": fp, "MCC": mcc})
+            else:
+                tp = tp_gr.length
+                fp = f.length - tp
+                fn = t.length - tp
+                tn = genome_length - c.length
+                mcc = _mcc(tp, fp, tn, fn)
 
-        # https://stackoverflow.com/a/56875660/992687
-        vals = [tp, fp, fn, tn]
-        print(vals)
-        print([ type(v) for v in vals ])
-        x = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
-        print("x", x)
-        mcc = ((tp * tn) - (fp * fn)) / np.sqrt(x)
+                rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
+                rowdicts.append({"T": lf, "F": lt, "TP": tp, "FP": fn, "TN": tn, "FN": fp, "MCC": mcc})
 
-        rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
-
-    df = pd.DataFrame.from_dict(rowdicts)
+    df = pd.DataFrame.from_dict(rowdicts).sort_values(["T", "F"])
 
     return df
-
 

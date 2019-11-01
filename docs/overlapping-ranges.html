@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-10-25" />
+<meta name="date" content="2019-11-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -143,14 +143,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
 <li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
 <li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="20" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>20</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="21" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>21</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="22" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>22</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="23" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>23</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="24" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>24</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="25" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>25</b> Using multiple cores</a></li>
-<li class="chapter" data-level="26" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>26</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="27" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>27</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="21" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>21</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="22" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>22</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="23" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>23</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="24" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>24</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="25" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>25</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
+<li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -170,45 +171,278 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="overlapping-ranges" class="section level1">
 <h1><span class="header-section-number">15</span> Overlapping Ranges</h1>
-<p>PyRanges objects can be overlapped with other PyRanges to report the intervals
-in self that overlap with those in other.</p>
+<p>PyRanges objects can be subtracted from other PyRanges to report the intervals
+in self that are not in other.</p>
 <div class="sourceCode" id="cb185"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb185-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
 <a class="sourceLine" id="cb185-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
 <a class="sourceLine" id="cb185-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
-<a class="sourceLine" id="cb185-4" data-line-number="4"><span class="bu">print</span>(gr.overlap(gr2))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
+<a class="sourceLine" id="cb185-4" data-line-number="4"><span class="bu">print</span>(gr.subtract(gr2))</a></code></pre></div>
+<pre><code>## --------------------
+## (&#39;loop counter&#39;, 0)
+## (&#39;nstart&#39;, 9939)
+## (&#39;nend&#39;, 10138)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 0)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10479)
+## (&#39;  nfound:&#39;, 0)
+## (&#39;  output_arr_start&#39;, array([0, 0, 0, 0, 0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([0, 0, 0, 0, 0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 1)
+## (&#39;nstart&#39;, 9953)
+## (&#39;nend&#39;, 10152)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 1)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10479)
+## (&#39;  nfound:&#39;, 1)
+## (&#39;  output_arr_start&#39;, array([9939,    0,    0,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([9988,    0,    0,    0,    0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 2)
+## (&#39;nstart&#39;, 10024)
+## (&#39;nend&#39;, 10223)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 2)
+## --------------------
+## (&#39;loop counter&#39;, 3)
+## (&#39;nstart&#39;, 10246)
+## (&#39;nend&#39;, 10445)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 3)
+## --------------------
+## (&#39;loop counter&#39;, 4)
+## (&#39;nstart&#39;, 110246)
+## (&#39;nend&#39;, 110445)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 4)
+## --------------------
+## (&#39;loop counter&#39;, 0)
+## (&#39;nstart&#39;, 9916)
+## (&#39;nend&#39;, 10115)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 0)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10479)
+## (&#39;  nfound:&#39;, 0)
+## (&#39;  output_arr_start&#39;, array([0, 0, 0, 0, 0, 0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([0, 0, 0, 0, 0, 0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 1)
+## (&#39;nstart&#39;, 9951)
+## (&#39;nend&#39;, 10150)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 1)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10479)
+## (&#39;  nfound:&#39;, 1)
+## (&#39;  output_arr_start&#39;, array([9916,    0,    0,    0,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([9988,    0,    0,    0,    0,    0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 2)
+## (&#39;nstart&#39;, 9978)
+## (&#39;nend&#39;, 10177)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 2)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10479)
+## (&#39;  nfound:&#39;, 2)
+## (&#39;  output_arr_start&#39;, array([9916, 9951,    0,    0,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([9988, 9988,    0,    0,    0,    0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 3)
+## (&#39;nstart&#39;, 10001)
+## (&#39;nend&#39;, 10200)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 3)
+## --------------------
+## (&#39;loop counter&#39;, 4)
+## (&#39;nstart&#39;, 10127)
+## (&#39;nend&#39;, 10326)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 4)
+## --------------------
+## (&#39;loop counter&#39;, 5)
+## (&#39;nstart&#39;, 10241)
+## (&#39;nend&#39;, 10440)
+## (&#39;  length is&#39;, 12)
+## (&#39;  nfound is&#39;, 5)
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 49 rows and 6 columns from 1 chromosomes.
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         |      9939 |      9988 | H3K27me3   |         7 | +            |
+## | chr1         |      9953 |      9988 | H3K27me3   |         5 | +            |
+## | chr1         |    110246 |    110445 | H3K27me3   |         1 | +            |
+## | chr1         |      9916 |      9988 | H3K27me3   |         5 | -            |
+## | chr1         |      9951 |      9988 | H3K27me3   |         8 | -            |
+## | chr1         |      9978 |      9988 | H3K27me3   |         7 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 6 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode" id="cb187"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb187-1" data-line-number="1"><span class="bu">print</span>(gr.overlap(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+<div class="sourceCode" id="cb187"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb187-1" data-line-number="1"><span class="bu">print</span>(gr.subtract(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
+<pre><code>## --------------------
+## (&#39;loop counter&#39;, 0)
+## (&#39;nstart&#39;, 9939)
+## (&#39;nend&#39;, 10138)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 0)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10348)
+## (&#39;  nfound:&#39;, 0)
+## (&#39;  output_arr_start&#39;, array([0, 0, 0, 0, 0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([0, 0, 0, 0, 0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 1)
+## (&#39;nstart&#39;, 9953)
+## (&#39;nend&#39;, 10152)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 1)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10348)
+## (&#39;  nfound:&#39;, 1)
+## (&#39;  output_arr_start&#39;, array([9939,    0,    0,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([9988,    0,    0,    0,    0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 2)
+## (&#39;nstart&#39;, 10024)
+## (&#39;nend&#39;, 10223)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 2)
+## --------------------
+## (&#39;loop counter&#39;, 3)
+## (&#39;nstart&#39;, 10246)
+## (&#39;nend&#39;, 10445)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 3)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 9988)
+## (&#39;  B end:&#39;, 10348)
+## (&#39;  nfound:&#39;, 3)
+## (&#39;  output_arr_start&#39;, array([9939, 9953,   -1,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([9988, 9988,   -1,    0,    0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 4)
+## (&#39;nstart&#39;, 110246)
+## (&#39;nend&#39;, 110445)
+## (&#39;  length is&#39;, 5)
+## (&#39;  nfound is&#39;, 4)
+## --------------------
+## (&#39;loop counter&#39;, 0)
+## (&#39;nstart&#39;, 9916)
+## (&#39;nend&#39;, 10115)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 0)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 10073)
+## (&#39;  B end:&#39;, 10272)
+## (&#39;  nfound:&#39;, 0)
+## (&#39;  output_arr_start&#39;, array([0, 0, 0, 0, 0, 0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([0, 0, 0, 0, 0, 0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 1)
+## (&#39;nstart&#39;, 9951)
+## (&#39;nend&#39;, 10150)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 1)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 10073)
+## (&#39;  B end:&#39;, 10272)
+## (&#39;  nfound:&#39;, 1)
+## (&#39;  output_arr_start&#39;, array([9916,    0,    0,    0,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([10073,     0,     0,     0,     0,     0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 2)
+## (&#39;nstart&#39;, 9978)
+## (&#39;nend&#39;, 10177)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 2)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 10073)
+## (&#39;  B end:&#39;, 10272)
+## (&#39;  nfound:&#39;, 2)
+## (&#39;  output_arr_start&#39;, array([9916, 9951,    0,    0,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([10073, 10073,     0,     0,     0,     0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 3)
+## (&#39;nstart&#39;, 10001)
+## (&#39;nend&#39;, 10200)
+## (&#39;  length is&#39;, 6)
+## (&#39;  nfound is&#39;, 3)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 10073)
+## (&#39;  B end:&#39;, 10272)
+## (&#39;  nfound:&#39;, 3)
+## (&#39;  output_arr_start&#39;, array([9916, 9951, 9978,    0,    0,    0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([10073, 10073, 10073,     0,     0,     0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 4)
+## (&#39;nstart&#39;, 10127)
+## (&#39;nend&#39;, 10326)
+## (&#39;  length is&#39;, 12)
+## (&#39;  nfound is&#39;, 4)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 10073)
+## (&#39;  B end:&#39;, 10272)
+## (&#39;  nfound:&#39;, 4)
+## (&#39;  output_arr_start&#39;, array([ 9916,  9951,  9978, 10001,     0,     0,  9916,  9951,  9978,
+##        10001,     0,     0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([10073, 10073, 10073, 10073,     0,     0, 10073, 10073, 10073,
+##        10073,     0,     0], dtype=int32))
+## (&#39;    i&#39;, 1)
+## (&#39;  B start:&#39;, 10280)
+## (&#39;  B end:&#39;, 10479)
+## (&#39;  nfound:&#39;, 4)
+## (&#39;  output_arr_start&#39;, array([ 9916,  9951,  9978, 10001,     0,     0,  9916,  9951,  9978,
+##        10001,     0,     0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([10073, 10073, 10073, 10073,     0,     0, 10073, 10073, 10073,
+##        10073,     0,     0], dtype=int32))
+## --------------------
+## (&#39;loop counter&#39;, 5)
+## (&#39;nstart&#39;, 10241)
+## (&#39;nend&#39;, 10440)
+## (&#39;  length is&#39;, 12)
+## (&#39;  nfound is&#39;, 5)
+## (&#39;    i&#39;, 0)
+## (&#39;  B start:&#39;, 10073)
+## (&#39;  B end:&#39;, 10272)
+## (&#39;  nfound:&#39;, 5)
+## (&#39;  output_arr_start&#39;, array([ 9916,  9951,  9978, 10001, 10272,     0,  9916,  9951,  9978,
+##        10001,     0,     0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([10073, 10073, 10073, 10073, 10280,     0, 10073, 10073, 10073,
+##        10073,     0,     0], dtype=int32))
+## (&#39;    i&#39;, 1)
+## (&#39;  B start:&#39;, 10280)
+## (&#39;  B end:&#39;, 10479)
+## (&#39;  nfound:&#39;, 5)
+## (&#39;  output_arr_start&#39;, array([ 9916,  9951,  9978, 10001, 10272,     0,  9916,  9951,  9978,
+##        10001,     0,     0], dtype=int32))
+## (&#39;  output_arr_end&#39;, array([10073, 10073, 10073, 10073, 10280,     0, 10073, 10073, 10073,
+##        10073,     0,     0], dtype=int32))
+## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
-## | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            |
+## | chr1         | 9939      | 9988      | H3K27me3   | 7         | +            |
+## | chr1         | 9953      | 9988      | H3K27me3   | 5         | +            |
+## | chr1         | 10348     | 10445     | H3K27me3   | 4         | +            |
+## | chr1         | 110246    | 110445    | H3K27me3   | 1         | +            |
 ## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            |
-## | chr1         | 10127     | 10326     | H3K27me3   | 1         | -            |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
-## | chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |
+## | chr1         | 9978      | 10073     | H3K27me3   | 7         | -            |
+## | chr1         | 10001     | 10073     | H3K27me3   | 5         | -            |
+## | chr1         | 10272     | 10280     | H3K27me3   | 1         | -            |
+## | chr1         | 10272     | 10280     | H3K27me3   | 6         | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 22 rows and 6 columns from 1 chromosomes.
+## Stranded PyRanges object has 10 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 
 </div>
