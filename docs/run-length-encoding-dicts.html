@@ -175,13 +175,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 chromosomes, pyranges has a datastructure called PyRles for collections of Rles.
 It can be created from a PyRanges object by invoking the to_rle function.</p>
 <p>Rledicts support the arithmetic operations +, -, /, and *.</p>
-<div class="sourceCode" id="cb255"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb255-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb255-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb255-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb255-4" data-line-number="4">gr_bg <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb255-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb255-6" data-line-number="6">cs <span class="op">=</span> gr.to_rle()</a>
-<a class="sourceLine" id="cb255-7" data-line-number="7"><span class="bu">print</span>(cs)</a></code></pre></div>
+<div class="sourceCode" id="cb257"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb257-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb257-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb257-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb257-4" data-line-number="4">gr_bg <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb257-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb257-6" data-line-number="6">cs <span class="op">=</span> gr.to_rle()</a>
+<a class="sourceLine" id="cb257-7" data-line-number="7"><span class="bu">print</span>(cs)</a></code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
 ## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   |  ...    | 25   | 2952580   | 25   | 1156833   | 25   |
@@ -198,8 +198,8 @@ It can be created from a PyRanges object by invoking the to_rle function.</p>
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
 ## Rle of length 22210662 containing 32 elements
 ## PyRles object with 48 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb257"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb257-1" data-line-number="1">bg <span class="op">=</span> gr_bg.to_rle()</a>
-<a class="sourceLine" id="cb257-2" data-line-number="2"><span class="bu">print</span>(bg)</a></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb259-1" data-line-number="1">bg <span class="op">=</span> gr_bg.to_rle()</a>
+<a class="sourceLine" id="cb259-2" data-line-number="2"><span class="bu">print</span>(bg)</a></code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------+
 ## | Runs   | 1041102   | 25   | 1088232   | 25   | 109724   |  ...    | 25   | 719119   | 25   | 1774357   | 25   |
@@ -216,7 +216,7 @@ It can be created from a PyRanges object by invoking the to_rle function.</p>
 ## +--------+------------+------+--------+------+-----------+------+---------+------+------------+------+
 ## Rle of length 57402239 containing 10 elements
 ## PyRles object with 50 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb259"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb259-1" data-line-number="1"><span class="bu">print</span>(cs <span class="op">+</span> bg)</a></code></pre></div>
+<div class="sourceCode" id="cb261"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb261-1" data-line-number="1"><span class="bu">print</span>(cs <span class="op">+</span> bg)</a></code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
 ## | Runs   | 1041102   | 25   | 500471   | 25   | 57498   |  ...    | 25   | 363693   | 25   | 1156833   | 25   |
@@ -235,10 +235,10 @@ It can be created from a PyRanges object by invoking the to_rle function.</p>
 ## PyRles object with 50 chromosomes/strand pairs.</code></pre>
 <p>When using arithmetic operations with a stranded and an unstranded PyRle, the
 stranded PyRle is automatically demoted to an unstranded PyRle.</p>
-<div class="sourceCode" id="cb261"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb261-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb261-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb261-3" data-line-number="3">bg_stranded <span class="op">=</span> gr_bg.to_rle(strand<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb261-4" data-line-number="4"><span class="bu">print</span>(bg_stranded)</a></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb263-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb263-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb263-3" data-line-number="3">bg_stranded <span class="op">=</span> gr_bg.to_rle(strand<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb263-4" data-line-number="4"><span class="bu">print</span>(bg_stranded)</a></code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+-----------+------+----------+---------+------+----------+------+-----------+------+
 ## | Runs   | 1041102   | 25   | 1088232   | 25   | 109724   |  ...    | 25   | 719119   | 25   | 1774357   | 25   |
@@ -255,7 +255,7 @@ stranded PyRle is automatically demoted to an unstranded PyRle.</p>
 ## +--------+------------+------+--------+------+-----------+------+---------+------+------------+------+
 ## Rle of length 57402239 containing 10 elements
 ## PyRles object with 50 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb263"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb263-1" data-line-number="1"><span class="bu">print</span>(cs <span class="op">+</span> bg_stranded)</a></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb265-1" data-line-number="1"><span class="bu">print</span>(cs <span class="op">+</span> bg_stranded)</a></code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+----------+------+---------+---------+------+----------+------+-----------+------+
 ## | Runs   | 1041102   | 25   | 500471   | 25   | 57498   |  ...    | 25   | 363693   | 25   | 1156833   | 25   |
@@ -273,8 +273,8 @@ stranded PyRle is automatically demoted to an unstranded PyRle.</p>
 ## Rle of length 57402239 containing 42 elements
 ## PyRles object with 50 chromosomes/strand pairs.</code></pre>
 <p>Like Rles, PyGRles supports arithmetic operations with numbers.</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb265-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb265-2" data-line-number="2"><span class="bu">print</span>((<span class="fl">0.67</span> <span class="op">+</span> cs) <span class="op">*</span> <span class="dv">5</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb267-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb267-2" data-line-number="2"><span class="bu">print</span>((<span class="fl">0.67</span> <span class="op">+</span> cs) <span class="op">*</span> <span class="dv">5</span>)</a></code></pre></div>
 <pre><code>## chr1 +
 ## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
 ## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   |  ...    | 25   | 2952580   | 25   | 1156833   | 25   |

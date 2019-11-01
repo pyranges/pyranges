@@ -176,20 +176,20 @@ It can be installed with <code>pip install pyranges_db</code>.</p>
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and
 Ensembl also has the method chromosome_sizes.</p>
 <p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few thousand rows of data.</p>
-<div class="sourceCode" id="cb310"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb310-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
-<a class="sourceLine" id="cb310-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb310-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
-<a class="sourceLine" id="cb310-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb310-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
+<div class="sourceCode" id="cb312"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb312-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
+<a class="sourceLine" id="cb312-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb312-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
+<a class="sourceLine" id="cb312-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb312-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
 <pre><code>##     Genome
 ## 0  acaChl1
 ## 1  ailMel1
 ## 2  allMis1
 ## 3  allSin1
 ## 4  amaVit1</code></pre>
-<div class="sourceCode" id="cb312"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb312-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
-<a class="sourceLine" id="cb312-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb312-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb314-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
+<a class="sourceLine" id="cb314-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb314-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
 <pre><code>## +------------------------+-----------+-----------+
 ## | Chromosome             | Start     | End       |
 ## | (category)             | (int32)   | (int32)   |
@@ -206,9 +206,9 @@ Ensembl also has the method chromosome_sizes.</p>
 ## +------------------------+-----------+-----------+
 ## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome.</code></pre>
-<div class="sourceCode" id="cb314"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb314-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb314-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb314-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
+<div class="sourceCode" id="cb316"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb316-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb316-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb316-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+--------------+-------------------+
 ## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | ExonNumber   | transcript_name   |
 ## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)    | (category)        |

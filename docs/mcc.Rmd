@@ -13,5 +13,14 @@ import pyranges as pr
 gr = pr.data.chipseq()
 gr2 = pr.data.chipseq_background()
 chromsizes = pr.data.chromsizes()
-print(pr.stats.mcc([gr, gr2], labels="chip input".split(), genome=chromsizes, strand=True))
+mcc = pr.stats.mcc([gr, gr2], labels="chip input".split(), genome=chromsizes, strand=True)
+print(mcc)
+```
+
+If you want to create a symmetric matrix from the result:
+
+
+```{python tidy=FALSE}
+print(print(mcc.set_index(["Strand", "T", "F"]).MCC.unstack()))
+# or just mcc.set_index(["T", "F"]).MCC.unstack() in the unstranded case
 ```
