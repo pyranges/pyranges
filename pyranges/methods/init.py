@@ -72,7 +72,7 @@ def create_df_dict(df, stranded):
 
 def create_pyranges_df(chromosomes, starts, ends, strands=None):
 
-    if isinstance(chromosomes, str):
+    if isinstance(chromosomes, str) or isinstance(chromosomes, int):
         chromosomes = pd.Series([chromosomes] * len(starts), dtype="category")
 
     if strands is not None:

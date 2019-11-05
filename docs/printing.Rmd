@@ -26,7 +26,8 @@ exons.pc(n=2).mpc(n=8).sp()
 exons.print(n=1,
             merge_position=False,
             sort=True,
-            formatting={"Start": "{:,}", "Name": "{:2.2}"})
+            formatting={"Start": "{:,}", "Name": "{:2.2}"},
+            chain=False)
 ```
 
 ```{python tidy=FALSE}

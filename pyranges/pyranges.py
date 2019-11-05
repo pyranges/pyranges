@@ -164,19 +164,99 @@ class PyRanges():
 
         return PyRanges(dfs)
 
+
     def k_nearest(self, other, k=1, **kwargs):
 
         from pyranges.methods.k_nearest import _nearest
 
-        kwargs["k"] = k
         kwargs = fill_kwargs(kwargs)
+        kwargs["stranded"] = self.stranded and other.stranded
 
-        if kwargs.get("how") in "upstream downstream".split():
-            assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
+        overlap = kwargs.get("overlap", True)
+        ties = kwargs.get("ties", False)
 
+        self.__k__ = k
+        if overlap:
+            self.__IX__ = np.arange(len(self))
+
+        from time import time
+        start = time()
         dfs = pyrange_apply(_nearest, self, other, **kwargs)
+        end = time()
+        print("nearest", end - start)
 
-        return PyRanges(dfs)
+        nearest = PyRanges(dfs)
+
+        if not overlap:
+            self = self.drop(like="__k__")
+            nearest = nearest.drop(like="__k__")
+            return nearest
+        else:
+            from collections import defaultdict
+            overlap_kwargs = {k: v for k, v in kwargs.items()}
+            overlap_kwargs["how"] = defaultdict(lambda: None, {"first": "first"})[kwargs.get("ties")]
+            start = time()
+            overlaps = self.join(other, **overlap_kwargs)
+            end = time()
+            print("overlaps", end - start)
+            overlaps.Distance = 0
+
+        from time import time
+        start = time()
+        result = pr.concat([overlaps, nearest])
+        end = time()
+        print("concat", end - start)
+
+        start = time()
+        new_result = {}
+        if ties in ["first", None, False]:
+            for c, df in result:
+                # print(c)
+                df = df.sort_values(["__IX__", "Distance"])
+                grpby = df.groupby("__k__", sort=False)
+                dfs = []
+                for k, kdf in grpby:
+                    _df = kdf.groupby("__IX__", sort=False).head(k)
+                    dfs.append(_df)
+
+                new_result[c] = pd.concat(dfs)
+
+        elif ties == "different":
+            for c, df in result:
+                if df.empty:
+                    continue
+
+                df = df.sort_values(["__IX__", "Distance"])
+                grpby = df.groupby("__k__", sort=False)
+
+                dfs = []
+                for k, kdf in grpby:
+                    l = kdf[["__IX__", "Distance"]]
+                    # d = l.duplicated(keep="first")
+
+                    equal = ~(l.shift() == l).all(axis=1)
+                    ids = equal.cumsum()
+                    _df = kdf[ids <= k]
+                    # print("_df", _df.head())
+                    dfs.append(_df)
+
+                new_result[c] = pd.concat(dfs)
+
+        end = time()
+        print("remove too many", end - start)
+
+        result = pr.PyRanges(new_result).drop(like="__IX__|__k__")
+
+        def prev_to_neg(df, kwargs):
+            suffix = kwargs["suffix"]
+            bools = df["End" + suffix] < df.Start
+            df.loc[bools, "Distance"] = -df.loc[bools, "Distance"]
+            return df
+
+        result = result.apply(prev_to_neg, suffix=kwargs["suffix"])
+
+        return result
+
 
     def intersect(self, other, **kwargs):
 
@@ -734,7 +814,7 @@ class PyRanges():
         if path:
             return self
         else:
-            return result
+            return res0ult
 
     def to_gtf(self, path=None, compression="infer"):
         from pyranges.out import _to_gtf

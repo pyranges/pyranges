@@ -5,6 +5,9 @@ import pandas as pd
 
 def _setattr(self, column_name, column):
 
+    if not len(self):
+        return
+
     isiterable = isinstance(column, list) or isinstance(
         column, pd.Series) or isinstance(column, np.ndarray)
     isdict = isinstance(column, dict)
