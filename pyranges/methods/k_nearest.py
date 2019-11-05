@@ -188,21 +188,17 @@ if __name__ == "__main__":
     import numpy as np
     np.random.seed(0)
     chrM = pr.data.chromsizes()
-    # chrM = chrM[chrM.Chromosome == "chrM"]
-    size = int(5e5)
+    chrM = chrM[chrM.Chromosome == "chrM"]
+    size = int(1e4)
     print(np.log10(size))
     half_size = int(size / 2)
     strand = True
-
-    # print("size")
-    # print(chrM)
 
     gr = pr.random(size, chromsizes=chrM, strand=strand).sort()
     gr2 = pr.random(size, chromsizes=chrM, strand=strand).sort()
     gr.ID = np.arange(len(gr))
     gr2.ID = np.arange(len(gr2))
 
-    # print(gr.nearest(gr2))
     from time import time
     start = time()
     ks = np.array([1, 2] * half_size, dtype=int)
@@ -211,6 +207,6 @@ if __name__ == "__main__":
 
     print(end - start)
     print(result)
-    # print(result.sort("ID").msp())
-    ids = result[result.Distance == 0].ID
-    print(result[result.ID.isin(ids)])
+    vc = result.ID.value_counts()
+    print(vc[vc > 2])
+    print(result[result.ID.isin(vc[vc > 2].index)])
