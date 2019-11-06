@@ -83,7 +83,6 @@ def nearest(d1, d2, kwargs):
     if not ties == "different":
         for k, kdf in k_grpby:
             k_dfs.append(kdf.groupby("LX", sort=False).head(k))
-
         xdf = pd.concat(k_dfs)
     else:
         xdf = df
@@ -180,8 +179,8 @@ if __name__ == "__main__":
     import numpy as np
     np.random.seed(0)
     chrM = pr.data.chromsizes()
-    chrM = chrM[chrM.Chromosome == "chrM"]
-    size = int(1e4)
+    # chrM = chrM[chrM.Chromosome == "chrM"]
+    size = int(1e6)
     print(np.log10(size))
     half_size = int(size / 2)
     strand = True
@@ -198,7 +197,11 @@ if __name__ == "__main__":
     end = time()
 
     print(end - start)
-    print(result)
+
+    gr.msp()
+    gr2.msp()
+
+    result.msp()
     vc = result.ID.value_counts()
     print(vc[vc > 2])
     print(result[result.ID.isin(vc[vc > 2].index)])

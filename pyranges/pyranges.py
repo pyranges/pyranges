@@ -223,6 +223,7 @@ class PyRanges():
 
         elif ties == "different":
             for c, df in result:
+                # print(df)
                 if df.empty:
                     continue
 
@@ -230,22 +231,26 @@ class PyRanges():
                 grpby = df.groupby("__k__", sort=False)
 
                 dfs = []
-                for k, kdf in grpby:
-                    l = kdf[["__IX__", "Distance"]]
-                    # d = l.duplicated(keep="first")
 
-                    equal = ~(l.shift() == l).all(axis=1)
-                    ids = equal.cumsum()
-                    _df = kdf[ids <= k]
-                    # print("_df", _df.head())
-                    dfs.append(_df)
+                for k, kdf in grpby:
+                    equal = (~kdf.Distance.eq(kdf.Distance.shift()))
+                    kdf.insert(kdf.shape[1], "__EqualDist__", equal)
+                    ids = kdf.groupby("__IX__").__EqualDist__.cumsum()
+                    kdf.insert(kdf.shape[1], "__ID__", ids)
+                    kdf = kdf[kdf.__ID__.le(k)]
+
+                    kdf = kdf.drop("__EqualDist__ __ID__".split(), axis=1)
+
+                    dfs.append(kdf)
 
                 new_result[c] = pd.concat(dfs)
+                # print(new_result[c])
 
         end = time()
         print("remove too many", end - start)
 
         result = pr.PyRanges(new_result).drop(like="__IX__|__k__")
+        self = self.drop(like="__k__")
 
         def prev_to_neg(df, kwargs):
             suffix = kwargs["suffix"]
@@ -814,7 +819,7 @@ class PyRanges():
         if path:
             return self
         else:
-            return res0ult
+            return result
 
     def to_gtf(self, path=None, compression="infer"):
         from pyranges.out import _to_gtf
