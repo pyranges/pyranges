@@ -1,14 +1,6 @@
 import numpy as np
 import pandas as pd
 
-"""Problems with overlap:
-
-If we find overlapping then how many others do we need? Just fetch all?
-
-Number different lengths rather.
-
-Simplest, then reduce number afterwards :)"""
-
 from sorted_nearest import nearest_previous_nonoverlapping, nearest_next_nonoverlapping
 
 try:
