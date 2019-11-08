@@ -179,6 +179,11 @@ class PyRanges():
 
         self = pr.PyRanges({k: v.copy() for k, v in self.dfs.items()})
 
+        try: # if k is an array
+            k = k.values
+        except:
+            pass
+
         self.__k__ = k
         self.__IX__ = np.arange(len(self))
 
@@ -295,8 +300,15 @@ class PyRanges():
         self = self.drop(like="__k__|__IX__")
 
         def prev_to_neg(df, kwargs):
+
+            strand = df.Strand.iloc[0] if "Strand" in df else "+"
+
             suffix = kwargs["suffix"]
+
             bools = df["End" + suffix] < df.Start
+            if not strand == "+":
+                bools = ~bools
+
             df.loc[bools, "Distance"] = -df.loc[bools, "Distance"]
             return df
 

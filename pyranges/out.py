@@ -174,6 +174,7 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
         import pyBigWig
     except ModuleNotFoundError:
         print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
+        import sys
         sys.exit(1)
 
     if not isinstance(chromosome_sizes, dict):

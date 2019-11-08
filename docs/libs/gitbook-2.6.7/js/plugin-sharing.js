@@ -103,8 +103,7 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
 
             gitbook.toolbar.createButton({
                 icon: site.icon,
-                label: site.label,
-                title: site.label,
+                label: site.text,
                 position: 'right',
                 onClick: site.onClick
             });

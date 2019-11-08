@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html >
+
 <head>
 
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>13 Applying custom methods to pairs of PyRanges | PyRanges documentation</title>
-  <meta name="description" content="13 Applying custom methods to pairs of PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="13 Applying custom methods to pairs of PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -16,26 +17,25 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="13 Applying custom methods to pairs of PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
 
-<meta name="author" content="Endre Bakken Stovner" />
+<meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-11-01" />
+<meta name="date" content="2019-11-08">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
 <link rel="prev" href="methods-for-manipulating-single-pyranges.html">
 <link rel="next" href="intersecting-ranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -55,6 +55,7 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -141,17 +142,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
 <li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
 <li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
-<li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="20" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
-<li class="chapter" data-level="21" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>21</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="22" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>22</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="23" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>23</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="24" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>24</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="25" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>25</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
-<li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
+<li class="chapter" data-level="19" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: similarity between PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
+<li class="chapter" data-level="21" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>21</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="22" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>22</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="23" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>23</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="24" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>24</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="25" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>25</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="26" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>26</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="27" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>27</b> Using multiple cores</a></li>
+<li class="chapter" data-level="28" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>28</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="29" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>29</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -174,15 +176,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>By using the <code>apply</code>, <code>apply_pair</code> or <code>apply_chunks</code> methods, you can run custom
 methods on the dataframes in your PyRanges. The <code>apply</code> and <code>apply_chunks</code> methods
 takes a single dataframe, while <code>apply_pair</code> takes a pair of dataframes.</p>
-<div class="sourceCode" id="cb165"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb165-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb165-2" data-line-number="2">chipseq <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb165-3" data-line-number="3">chipseq_background <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb165-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb165-5" data-line-number="5"><span class="kw">def</span> print_strands(df1, df2):</a>
-<a class="sourceLine" id="cb165-6" data-line-number="6">    <span class="bu">print</span>(df1.Chromosome.iloc[<span class="dv">0</span>], df1.Strand.iloc[<span class="dv">0</span>], df2.Strand.iloc[<span class="dv">0</span>])</a>
-<a class="sourceLine" id="cb165-7" data-line-number="7">    <span class="cf">return</span> df1.head(<span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb165-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb165-9" data-line-number="9">result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_strands, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb152-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb152-2" data-line-number="2">chipseq <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb152-3" data-line-number="3">chipseq_background <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb152-4" data-line-number="4"><span class="kw">def</span> print_strands(df1, df2):</a>
+<a class="sourceLine" id="cb152-5" data-line-number="5">    <span class="bu">print</span>(df1.Chromosome.iloc[<span class="dv">0</span>], df1.Strand.iloc[<span class="dv">0</span>], df2.Strand.iloc[<span class="dv">0</span>])</a>
+<a class="sourceLine" id="cb152-6" data-line-number="6">    <span class="cf">return</span> df1.head(<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb152-7" data-line-number="7">result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_strands, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>)</a></code></pre></div>
 <pre><code>## chr1 + -
 ## chr1 - +
 ## chr2 + -
@@ -231,7 +231,7 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## chrX - +
 ## chrY + -
 ## chrY - +</code></pre>
-<div class="sourceCode" id="cb167"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb167-1" data-line-number="1"><span class="bu">print</span>(result)</a></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb154-1" data-line-number="1"><span class="bu">print</span>(result)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -248,11 +248,10 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 240 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb169"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb169-1" data-line-number="1"><span class="kw">def</span> set_start_to_zero(df):</a>
-<a class="sourceLine" id="cb169-2" data-line-number="2">    df.Start <span class="op">=</span> <span class="dv">0</span></a>
-<a class="sourceLine" id="cb169-3" data-line-number="3">    <span class="cf">return</span> df</a>
-<a class="sourceLine" id="cb169-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb169-5" data-line-number="5"><span class="bu">print</span>(chipseq.<span class="bu">apply</span>(set_start_to_zero))</a></code></pre></div>
+<div class="sourceCode" id="cb156"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb156-1" data-line-number="1"><span class="kw">def</span> set_start_to_zero(df):</a>
+<a class="sourceLine" id="cb156-2" data-line-number="2">    df.Start <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb156-3" data-line-number="3">    <span class="cf">return</span> df</a>
+<a class="sourceLine" id="cb156-4" data-line-number="4"><span class="bu">print</span>(chipseq.<span class="bu">apply</span>(set_start_to_zero))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int64)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -270,11 +269,10 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Keyword arguments can be sent to the function:</p>
-<div class="sourceCode" id="cb171"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb171-1" data-line-number="1"><span class="kw">def</span> _print(df, kwargs):</a>
-<a class="sourceLine" id="cb171-2" data-line-number="2">    <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))</a>
-<a class="sourceLine" id="cb171-3" data-line-number="3">    <span class="cf">return</span> df</a>
-<a class="sourceLine" id="cb171-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb171-5" data-line-number="5">chipseq.<span class="bu">apply</span>(_print, value<span class="op">=</span><span class="dv">123</span>, whatever<span class="op">=</span><span class="st">&quot;hi there!&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb158-1" data-line-number="1"><span class="kw">def</span> _print(df, kwargs):</a>
+<a class="sourceLine" id="cb158-2" data-line-number="2">    <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))</a>
+<a class="sourceLine" id="cb158-3" data-line-number="3">    <span class="cf">return</span> df</a>
+<a class="sourceLine" id="cb158-4" data-line-number="4">chipseq.<span class="bu">apply</span>(_print, value<span class="op">=</span><span class="dv">123</span>, whatever<span class="op">=</span><span class="st">&quot;hi there!&quot;</span>)</a></code></pre></div>
 <pre><code>## My keyword arguments were: 123 and hi there!
 ## My keyword arguments were: 123 and hi there!
 ## My keyword arguments were: 123 and hi there!
@@ -322,23 +320,7 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## My keyword arguments were: 123 and hi there!
 ## My keyword arguments were: 123 and hi there!
 ## My keyword arguments were: 123 and hi there!
-## My keyword arguments were: 123 and hi there!
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int64)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 0         | 212609559 | U0         | 0         | +            |
-## | chr1         | 0         | 169887554 | U0         | 0         | +            |
-## | chr1         | 0         | 216711036 | U0         | 0         | +            |
-## | chr1         | 0         | 144227104 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 0         | 15224260  | U0         | 0         | -            |
-## | chrY         | 0         | 13517917  | U0         | 0         | -            |
-## | chrY         | 0         | 8010976   | U0         | 0         | -            |
-## | chrY         | 0         | 7405401   | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+## My keyword arguments were: 123 and hi there!</code></pre>
 <p>They were printed 24 times since the function was applied once per chromosome.</p>
 <p>apply_chunks splits each chromosome into <code>nb_cpu</code> chunks and runs each chunk in
 parallel, which is useful for slow row-based operations (like fisher exact, for
@@ -371,7 +353,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -381,10 +363,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

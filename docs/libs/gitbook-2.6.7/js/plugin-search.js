@@ -1,8 +1,8 @@
 gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
     var index = null;
-    var $searchInput, $searchLabel, $searchForm;
-    var $highlighted = [], hi, hiOpts = { className: 'search-highlight' };
-    var collapse = false, toc_visible = [];
+    var $searchInput, $searchForm;
+    var $highlighted, hi = 0, hiOpts = { className: 'search-highlight' };
+    var collapse = false;
 
     // Use a specific index
     function loadIndex(data) {
@@ -49,35 +49,25 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
         .value();
 
         // [Yihui] Highlight the search keyword on current page
-        $highlighted = results.length === 0 ? [] : $('.page-inner')
+        hi = 0;
+        $highlighted = results.length === 0 ? undefined : $('.page-inner')
           .unhighlight(hiOpts).highlight(q, hiOpts).find('span.search-highlight');
-        scrollToHighlighted(0);
+        scrollToHighlighted();
+        toggleTOC(results.length > 0);
 
         return results;
     }
 
     // [Yihui] Scroll the chapter body to the i-th highlighted string
-    function scrollToHighlighted(d) {
+    function scrollToHighlighted() {
+      if (!$highlighted) return;
       var n = $highlighted.length;
-      hi = hi === undefined ? 0 : hi + d;
-      // navignate to the previous/next page in the search results if reached the top/bottom
-      var b = hi < 0;
-      if (d !== 0 && (b || hi >= n)) {
-        var path = currentPath(), n2 = toc_visible.length;
-        if (n2 === 0) return;
-        for (var i = b ? 0 : n2; (b && i < n2) || (!b && i >= 0); i += b ? 1 : -1) {
-          if (toc_visible.eq(i).data('path') === path) break;
-        }
-        i += b ? -1 : 1;
-        if (i < 0) i = n2 - 1;
-        if (i >= n2) i = 0;
-        var lnk = toc_visible.eq(i).find('a[href$=".html"]');
-        if (lnk.length) lnk[0].click();
-        return;
-      }
       if (n === 0) return;
-      var $p = $highlighted.eq(hi);
-      $p[0].scrollIntoView();
+      var $p = $highlighted.eq(hi), p = $p[0], rect = p.getBoundingClientRect();
+      if (rect.top < 0 || rect.bottom > $(window).height()) {
+        ($(window).width() >= 1240 ? $('.body-inner') : $('.book-body'))
+          .scrollTop(p.offsetTop - 100);
+      }
       $highlighted.css('background-color', '');
       // an orange background color on the current item and removed later
       $p.css('background-color', 'orange');
@@ -86,16 +76,22 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
       }, 2000);
     }
 
-    function currentPath() {
+    // [Yihui] Expand/collapse TOC
+    function toggleTOC(show) {
+      if (!collapse) return;
+      var toc_sub = $('ul.summary').children('li[data-level]').children('ul');
+      if (show) return toc_sub.show();
       var href = window.location.pathname;
       href = href.substr(href.lastIndexOf('/') + 1);
-      return href === '' ? 'index.html' : href;
+      if (href === '') href = 'index.html';
+      var li = $('a[href^="' + href + location.hash + '"]').parent('li.chapter').first();
+      toc_sub.hide().parent().has(li).children('ul').show();
+      li.children('ul').show();
     }
 
     // Create search form
     function createForm(value) {
         if ($searchForm) $searchForm.remove();
-        if ($searchLabel) $searchLabel.remove();
         if ($searchInput) $searchInput.remove();
 
         $searchForm = $('<div>', {
@@ -103,23 +99,13 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
             'role': 'search'
         });
 
-        $searchLabel = $('<label>', {
-            'for': 'search-box',
-            'aria-hidden': 'false',
-            'hidden': ''
-        });
-
         $searchInput = $('<input>', {
-            'id': 'search-box',
             'type': 'search',
             'class': 'form-control',
             'val': value,
-            'placeholder': 'Type to search (Enter for navigation)',
-            'title': 'Use Enter or the <Down> key to navigate to the next match, or the <Up> key to the previous match'
+            'placeholder': 'Type to search'
         });
 
-        $searchLabel.append("Type to search");
-        $searchLabel.appendTo($searchForm);
         $searchInput.appendTo($searchForm);
         $searchForm.prependTo(gitbook.state.$book.find('.book-summary'));
     }
@@ -146,12 +132,8 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
             gitbook.storage.remove("keyword");
             gitbook.sidebar.filter(null);
             $('.page-inner').unhighlight(hiOpts);
+            toggleTOC(false);
         }
-    }
-
-    function sidebarFilter(results) {
-        gitbook.sidebar.filter(_.pluck(results, "path"));
-        toc_visible = $('ul.summary').find('li:visible');
     }
 
     // Recover current search when page changed
@@ -164,7 +146,7 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
             if(!isSearchOpen()) {
                 toggleSearch(true); // [Yihui] open the search box
             }
-            sidebarFilter(search(keyword));
+            gitbook.sidebar.filter(_.pluck(search(keyword), "path"));
         }
     }
 
@@ -184,14 +166,18 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
         // Type in search bar
         $(document).on("keyup", ".book-search input", function(e) {
             var key = (e.keyCode ? e.keyCode : e.which);
-            // [Yihui] Escape -> close search box; Up/Down/Enter: previous/next highlighted
+            // [Yihui] Escape -> close search box; Up/Down: previous/next highlighted
             if (key == 27) {
                 e.preventDefault();
                 toggleSearch(false);
             } else if (key == 38) {
-              scrollToHighlighted(-1);
-            } else if (key == 40 || key == 13) {
-              scrollToHighlighted(1);
+              if (hi <= 0 && $highlighted) hi = $highlighted.length;
+              hi--;
+              scrollToHighlighted();
+            } else if (key == 40) {
+              hi++;
+              if ($highlighted && hi >= $highlighted.length) hi = 0;
+              scrollToHighlighted();
             }
         }).on("input", ".book-search input", function(e) {
             var q = $(this).val().trim();
@@ -199,9 +185,12 @@ gitbook.require(["gitbook", "lodash", "jQuery"], function(gitbook, _, $) {
                 gitbook.sidebar.filter(null);
                 gitbook.storage.remove("keyword");
                 $('.page-inner').unhighlight(hiOpts);
+                toggleTOC(false);
             } else {
                 var results = search(q);
-                sidebarFilter(results);
+                gitbook.sidebar.filter(
+                    _.pluck(results, "path")
+                );
                 gitbook.storage.set("keyword", q);
             }
         });
