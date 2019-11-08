@@ -10,7 +10,7 @@ def _intersection(scdf, ocdf, kwargs):
     if ocdf.empty or scdf.empty:
         return None
 
-    assert how in "containment first".split() + [False, None]
+    assert how in "containment first last".split() + [False, None]
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values
@@ -27,6 +27,9 @@ def _intersection(scdf, ocdf, kwargs):
             starts, ends, indexes)
     elif how == "first":
         _self_indexes, _other_indexes = oncls.first_overlap_both(
+            starts, ends, indexes)
+    elif how == "last":
+        _self_indexes, _other_indexes = oncls.last_overlap_both(
             starts, ends, indexes)
 
     _self_indexes = _self_indexes

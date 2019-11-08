@@ -1,7 +1,13 @@
 import numpy as np
 import pandas as pd
 
-from sorted_nearest import nearest_previous_nonoverlapping, nearest_next_nonoverlapping
+from time import time
+
+from sorted_nearest import k_nearest_previous_nonoverlapping, k_nearest_next_nonoverlapping, get_all_ties
+
+"""You should remove duplicates after merging, right?
+
+"""
 
 try:
     dummy = profile
@@ -9,41 +15,106 @@ except NameError:
     profile = lambda x: x
 
 
+# def remove_duplicates(df, ties):
 
+#     return df
+    # k_dfs = []
+    # k_grpby = df.groupby("k", sort=False)
+
+    # xdf = pd.DataFrame(columns=df.columns)
+
+    # if ties in "first last".split():
+    #     for k, kdf in k_grpby:
+    #         k_dfs.append(kdf.groupby("LX", sort=False).head(k))
+    #     if k_dfs:
+    #         xdf = pd.concat(k_dfs)
+    # elif ties in [False, None]:
+
+    #     df = df.sort_values(["LX", "D"])
+    #     for k, kdf in k_grpby:
+    #         print(kdf)
+    #         kdf.index = range(kdf.shape[0])
+    #         lx = get_all_ties(kdf.index.values, kdf.LX.values, kdf.D.astype(np.int64).values, k)
+    #         kdf = kdf.reindex(lx)
+    #         k_dfs.append(kdf)
+    #     if k_dfs:
+    #         xdf = pd.concat(k_dfs)
+    # else:
+    #     xdf = df
+
+    # return xdf
+
+
+# def remove_duplicates_single(df, ties):
+#     return df
+    # k_dfs = []
+    # k_grpby = df.groupby("__k__", sort=False)
+
+
+    # print("in\n" * 10)
+    # print(df)
+    # xdf = pd.DataFrame(columns=df.columns)
+
+    # if ties in "first last".split():
+    #     for k, kdf in k_grpby:
+    #         k_dfs.append(kdf.groupby("__IX__", sort=False).head(k))
+    #     if k_dfs:
+    #         xdf = pd.concat(k_dfs)
+    # elif ties in [False, None]:
+    #     df = df.sort_values(["__IX__", "Distance"])
+    #     for k, kdf in k_grpby:
+    #         kdf.index = range(kdf.shape[0])
+    #         lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
+    #         kdf = kdf.reindex(lx)
+    #         k_dfs.append(kdf)
+    #     if k_dfs:
+    #         xdf = pd.concat(k_dfs)
+    # else:
+    #     xdf = df
+
+    # print("out\n" * 10)
+    # print(df)
+
+    # return xdf
+
+# @profile
 def nearest_previous_idx(d1, d2, k, ties=None):
 
-    d1 = d1.sort_values("Start")
-    d2 = d2.sort_values("End")
-
-    d1s = d1.Start
-    d2e = d2.End
+    d1s = d1.Start.sort_values()
+    d2e = d2.End.sort_values()
 
     # ix where d1s could be inserted into d2e to preserve order of d2e
+    # start = time()
     ix = np.searchsorted(d2e, d1s, side="right") - 1
+    # end = time()
+    # print("np previous", end - start)
 
     valid = ix >= 0
     ix = ix[valid]
 
     d1s = d1s.iloc[valid]
 
-    lidx, ridx_pos, dist = nearest_previous_nonoverlapping(
+    lidx, ridx_pos, dist = k_nearest_previous_nonoverlapping(
         d1s.values, d2e.values, d1s.index.values, ix, k, ties)
+
+    dist += 1
 
     ridx = d2e.iloc[ridx_pos].index
 
     return lidx, ridx, dist
 
 
+# @profile
 def nearest_next_idx(d1, d2, k, ties=None):
 
-    d1 = d1.sort_values("End")
-    d2 = d2.sort_values("Start")
-
-    d1e = d1.End
-    d2s = d2.Start
+    d1e = d1.End.sort_values()
+    d2s = d2.Start.sort_values()
 
     # ix where d1e could be inserted into d2s to preserve order of d2s
+    # start = time()
     ix = np.searchsorted(d2s, d1e, side="left")
+    # end = time()
+    # print("np next", end - start)
 
     #- print(ix)
     valid = ix < len(d2s)
@@ -51,8 +122,10 @@ def nearest_next_idx(d1, d2, k, ties=None):
 
     d1e = d1e.iloc[valid]
 
-    lidx, ridx_pos, dist = nearest_next_nonoverlapping(
+    lidx, ridx_pos, dist = k_nearest_next_nonoverlapping(
         d1e.values, d2s.values, d1e.index.values, ix, k, ties)
+
+    dist += 1
 
     ridx = d2s.iloc[ridx_pos].index
 
@@ -64,28 +137,25 @@ def nearest(d1, d2, kwargs):
     suffix = kwargs.get("suffix", "_b")
     ties = kwargs.get("ties", None)
 
-    # print(f"{ties=}")
-    # print("ties", ties)
-
     plidx, pridx, pdist = nearest_previous_idx(d1, d2, d1.__k__.values, ties)
     nlidx, nridx, ndist = nearest_next_idx(d1, d2, d1.__k__.values, ties)
 
     pk = d1.__k__.reindex(plidx)
     nk = d1.__k__.reindex(nlidx)
+    # px = d1.__IX__.reindex(plidx)
+    # nx = d1.__IX__.reindex(nlidx)
 
     p = pd.DataFrame({"LX": plidx, "RX": pridx, "D": pdist, "PN": "P", "k": pk})
     n = pd.DataFrame({"LX": nlidx, "RX": nridx, "D": ndist, "PN": "N", "k": nk})
 
     df = pd.concat([p, n]).sort_values(["LX", "D"])
+    # print(df)
+    # raise
 
-    k_dfs = []
-    k_grpby = df.groupby("k", sort=False)
-    if not ties == "different":
-        for k, kdf in k_grpby:
-            k_dfs.append(kdf.groupby("LX", sort=False).head(k))
-        xdf = pd.concat(k_dfs)
-    else:
-        xdf = df
+    if df.empty:
+        return None
+
+    xdf = df
 
     # row_indexer = xdf.PN == "P"
     # xdf.loc[row_indexer, "D"] = -xdf[row_indexer].D
@@ -120,8 +190,11 @@ def nearest_previous(d1, d2, kwargs):
 
     d2 = d2.drop("Chromosome", 1)
     df = d1.join(d2, rsuffix=suffix)
-    df.insert(df.shape[1], "Distance", -dist)
+    df.insert(df.shape[1], "Distance", dist)
 
+    # df = remove_duplicates_single(df, ties)
+
+    # df.loc[:, "Distance"] = - df.Distance
     # to_drop = [c for c in df.columns if "__k__" in c]
     # df = df.drop(to_drop, axis=1)
 
@@ -143,13 +216,11 @@ def nearest_next(d1, d2, kwargs):
     df = d1.join(d2, rsuffix=suffix)
     df.insert(df.shape[1], "Distance", dist)
 
-    # to_drop = [c for c in df.columns if "__k__" in c]
-    # df = df.drop(to_drop, axis=1)
 
     return df
 
 
-@profile
+# @profile
 def _nearest(d1, d2, kwargs):
 
     if d1.empty or d2.empty:
@@ -157,8 +228,15 @@ def _nearest(d1, d2, kwargs):
 
     how = kwargs["how"]
 
+    # if kwargs.get("strandedness") == "opposite":
+    #     strand_dict = {"+": "-", "-": "+"}
+    # else:
+    #     strand_dict = {"+": "+", "-": "-"}
+
     if how in ["upstream", "downstream"] and kwargs["stranded"]:
         strand = d1.Strand.iloc[0]
+        # strand = strand_dict[strand]
+
         __nearest = {("+", "upstream"): nearest_previous,
                      ("-", "upstream"): nearest_next,
                      ("+", "downstream"): nearest_next,
@@ -180,7 +258,7 @@ if __name__ == "__main__":
     np.random.seed(0)
     chrM = pr.data.chromsizes()
     # chrM = chrM[chrM.Chromosome == "chrM"]
-    size = int(1e6)
+    size = int(1e5)
     print(np.log10(size))
     half_size = int(size / 2)
     strand = True
@@ -203,5 +281,5 @@ if __name__ == "__main__":
 
     result.msp()
     vc = result.ID.value_counts()
-    print(vc[vc > 2])
-    print(result[result.ID.isin(vc[vc > 2].index)])
+    # print(vc[vc > 2])
+    # print(result[result.ID.isin(vc[vc > 2].index)])

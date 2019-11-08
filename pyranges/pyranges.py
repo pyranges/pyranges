@@ -165,9 +165,11 @@ class PyRanges():
         return PyRanges(dfs)
 
 
+    # @profile
     def k_nearest(self, other, k=1, **kwargs):
 
         from pyranges.methods.k_nearest import _nearest
+        from sorted_nearest import get_all_ties, get_different_ties
 
         kwargs = fill_kwargs(kwargs)
         kwargs["stranded"] = self.stranded and other.stranded
@@ -175,82 +177,122 @@ class PyRanges():
         overlap = kwargs.get("overlap", True)
         ties = kwargs.get("ties", False)
 
-        self.__k__ = k
-        if overlap:
-            self.__IX__ = np.arange(len(self))
+        self = pr.PyRanges({k: v.copy() for k, v in self.dfs.items()})
 
-        from time import time
-        start = time()
+        self.__k__ = k
+        self.__IX__ = np.arange(len(self))
+
+
+        # from time import time
+        # start = time()
         dfs = pyrange_apply(_nearest, self, other, **kwargs)
-        end = time()
-        print("nearest", end - start)
+        # end = time()
+        # print("nearest", end - start)
 
         nearest = PyRanges(dfs)
+        # nearest.msp()
+        # raise
+        # print("nearest len", len(nearest))
 
         if not overlap:
-            self = self.drop(like="__k__")
-            nearest = nearest.drop(like="__k__")
-            return nearest
+            # self = self.drop(like="__k__|__IX__")
+            result = nearest#.drop(like="__k__|__IX__")
         else:
             from collections import defaultdict
             overlap_kwargs = {k: v for k, v in kwargs.items()}
-            overlap_kwargs["how"] = defaultdict(lambda: None, {"first": "first"})[kwargs.get("ties")]
-            start = time()
+            # print("kwargs ties:", kwargs.get("ties"))
+            overlap_kwargs["how"] = defaultdict(lambda: None, {"first": "first", "last": "last"})[kwargs.get("ties")]
+            # start = time()
             overlaps = self.join(other, **overlap_kwargs)
-            end = time()
-            print("overlaps", end - start)
+            # end = time()
+            # print("overlaps", end - start)
             overlaps.Distance = 0
+            # print("overlaps len", len(overlaps))
 
-        from time import time
-        start = time()
-        result = pr.concat([overlaps, nearest])
-        end = time()
-        print("concat", end - start)
+            result = pr.concat([overlaps, nearest])
 
-        start = time()
+        if not len(result):
+            return pr.PyRanges()
+        # print(result)
+        # print(overlaps.drop(like="__").df)
+        # raise
+
+        # start = time()
         new_result = {}
-        if ties in ["first", None, False]:
+        if ties in ["first", "last"]:
+            # method = "tail" if ties == "last" else "head"
+            # keep = "last" if ties == "last" else "first"
+
             for c, df in result:
+                # start = time()
                 # print(c)
+                # print(df)
+
                 df = df.sort_values(["__IX__", "Distance"])
                 grpby = df.groupby("__k__", sort=False)
                 dfs = []
                 for k, kdf in grpby:
-                    _df = kdf.groupby("__IX__", sort=False).head(k)
+                    # print("k", k)
+                    # print(kdf)
+                    # dist_bool = ~kdf.Distance.duplicated(keep=keep)
+                    # print(dist_bool)
+                    # kdf = kdf[dist_bool]
+                    grpby2 = kdf.groupby("__IX__", sort=False)
+                    # f = getattr(grpby2, method)
+                    _df = grpby2.head(k)
+                    # print(_df)
                     dfs.append(_df)
+                # raise
 
-                new_result[c] = pd.concat(dfs)
-
-        elif ties == "different":
+                if dfs:
+                    new_result[c] = pd.concat(dfs)
+                # print(new_result[c])
+        elif ties == "different" or not ties:
             for c, df in result:
+
                 # print(df)
+
                 if df.empty:
                     continue
+                dfs = []
 
                 df = df.sort_values(["__IX__", "Distance"])
                 grpby = df.groupby("__k__", sort=False)
 
-                dfs = []
-
+                # for each index
+                # want to keep until we have k
+                # then keep all with same distance
                 for k, kdf in grpby:
-                    equal = (~kdf.Distance.eq(kdf.Distance.shift()))
-                    kdf.insert(kdf.shape[1], "__EqualDist__", equal)
-                    ids = kdf.groupby("__IX__").__EqualDist__.cumsum()
-                    kdf.insert(kdf.shape[1], "__ID__", ids)
-                    kdf = kdf[kdf.__ID__.le(k)]
+                    # print("kdf " * 10)
+                    # print("k " * 5, k)
+                    # print(kdf["__IX__ Distance".split()])
+                    # print(kdf.dtypes)
+                    # print(kdf.index.dtypes)
+                    # if ties:
+                    if ties:
+                        lx = get_different_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
+                    else:
+                        lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
+                    # print(lx)
 
-                    kdf = kdf.drop("__EqualDist__ __ID__".split(), axis=1)
 
-                    dfs.append(kdf)
+                    # else:
+                    #     lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
+                    _df = kdf.reindex(lx)
+                    # print("_df", _df)
+                    dfs.append(_df)
 
-                new_result[c] = pd.concat(dfs)
-                # print(new_result[c])
+                if dfs:
+                    new_result[c] = pd.concat(dfs)
 
-        end = time()
-        print("remove too many", end - start)
+        result = pr.PyRanges(new_result)
 
-        result = pr.PyRanges(new_result).drop(like="__IX__|__k__")
-        self = self.drop(like="__k__")
+        if not result.__IX__.is_monotonic:
+            result = result.sort("__IX__")
+
+        result = result.drop(like="__IX__|__k__")
+
+        self = self.drop(like="__k__|__IX__")
 
         def prev_to_neg(df, kwargs):
             suffix = kwargs["suffix"]
@@ -258,7 +300,12 @@ class PyRanges():
             df.loc[bools, "Distance"] = -df.loc[bools, "Distance"]
             return df
 
+        # print(result)
         result = result.apply(prev_to_neg, suffix=kwargs["suffix"])
+        # print(result)
+
+        # end = time()
+        # print("final stuff", end - start)
 
         return result
 
