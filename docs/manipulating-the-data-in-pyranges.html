@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html >
+
 <head>
 
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>5 Manipulating the data in PyRanges | PyRanges documentation</title>
-  <meta name="description" content="5 Manipulating the data in PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="5 Manipulating the data in PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -16,26 +17,25 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="5 Manipulating the data in PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
 
-<meta name="author" content="Endre Bakken Stovner" />
+<meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-11-01" />
+<meta name="date" content="2019-11-08">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
 <link rel="prev" href="subsetting-pyranges.html">
 <link rel="next" href="concatenating-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -55,6 +55,7 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -141,17 +142,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
 <li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
 <li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
-<li class="chapter" data-level="18" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>18</b> Statistics: similarity between PyRanges</a></li>
-<li class="chapter" data-level="19" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="20" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
-<li class="chapter" data-level="21" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>21</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="22" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>22</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="23" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>23</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="24" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>24</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="25" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>25</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="26" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>26</b> Using multiple cores</a></li>
-<li class="chapter" data-level="27" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>27</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="28" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>28</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
+<li class="chapter" data-level="19" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: similarity between PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
+<li class="chapter" data-level="21" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>21</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="22" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>22</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="23" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>23</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="24" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>24</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="25" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>25</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="26" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>26</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="27" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>27</b> Using multiple cores</a></li>
+<li class="chapter" data-level="28" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>28</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="29" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>29</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -173,9 +175,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">5</span> Manipulating the data in PyRanges</h1>
 <p>PyRanges is a thin wrapper around genomic data contained in pandas dataframes.
 This dataframe is accessible with the df attribute of the PyRanges object.</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb71-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb71-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb71-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb63-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb63-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb63-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -192,7 +194,7 @@ This dataframe is accessible with the df attribute of the PyRanges object.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb73"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb73-1" data-line-number="1"><span class="bu">print</span>(gr.df.head(<span class="dv">5</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb65-1" data-line-number="1"><span class="bu">print</span>(gr.df.head(<span class="dv">5</span>))</a></code></pre></div>
 <pre><code>##   Chromosome      Start        End Name  Score Strand
 ## 0       chr1  212609534  212609559   U0      0      +
 ## 1       chr1  169887529  169887554   U0      0      +
@@ -201,7 +203,7 @@ This dataframe is accessible with the df attribute of the PyRanges object.</p>
 ## 4       chr1  148177825  148177850   U0      0      +</code></pre>
 <p>To access a column of this dataframe, you can ask for the name directly from the
 PyRanges object.</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="bu">print</span>(gr.Start.head())</a></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb67-1" data-line-number="1"><span class="bu">print</span>(gr.Start.head())</a></code></pre></div>
 <pre><code>## 18     212609534
 ## 70     169887529
 ## 129    216711011
@@ -209,8 +211,8 @@ PyRanges object.</p>
 ## 196    148177825
 ## Name: Start, dtype: int32</code></pre>
 <p>You can directly insert a column by setting the attribute on the PyRanges object:</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb77-1" data-line-number="1">gr.stupid_example <span class="op">=</span> <span class="st">&quot;Hi There!&quot;</span></a>
-<a class="sourceLine" id="cb77-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb69-1" data-line-number="1">gr.stupid_example <span class="op">=</span> <span class="st">&quot;Hi There!&quot;</span></a>
+<a class="sourceLine" id="cb69-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+------------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | stupid_example   |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)         |
@@ -227,8 +229,8 @@ PyRanges object.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+------------------+
 ## Stranded PyRanges object has 10,000 rows and 7 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb79"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb79-1" data-line-number="1">gr <span class="op">=</span> gr.drop(<span class="st">&quot;stupid_example&quot;</span>)</a>
-<a class="sourceLine" id="cb79-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb71-1" data-line-number="1">gr <span class="op">=</span> gr.drop(<span class="st">&quot;stupid_example&quot;</span>)</a>
+<a class="sourceLine" id="cb71-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -249,7 +251,7 @@ PyRanges object.</p>
 drop by itself removes all metadata-columns.</p>
 <p>To rename the columns you can use the set_columns() method.</p>
 <p>If you want to remove duplicates based on position, you can use drop_duplicate_positions:</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb81-1" data-line-number="1"><span class="bu">print</span>(gr.drop_duplicate_positions(strand<span class="op">=</span><span class="va">False</span>)) <span class="co"># defaults to True</span></a></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb73-1" data-line-number="1"><span class="bu">print</span>(gr.drop_duplicate_positions(strand<span class="op">=</span><span class="va">False</span>)) <span class="co"># defaults to True</span></a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -269,9 +271,9 @@ drop by itself removes all metadata-columns.</p>
 <p>All columns, including Chromosome, Start, End and Strand can be changed in any
 way you please and more metadata-columns can be added by setting it on the
 PyRanges object.</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb83-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb83-2" data-line-number="2">gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)</a>
-<a class="sourceLine" id="cb83-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb75-2" data-line-number="2">gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)</a>
+<a class="sourceLine" id="cb75-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -288,8 +290,8 @@ PyRanges object.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb85"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb85-1" data-line-number="1">gr.Strand <span class="op">=</span> <span class="st">&quot;.&quot;</span></a>
-<a class="sourceLine" id="cb85-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb77-1" data-line-number="1">gr.Strand <span class="op">=</span> <span class="st">&quot;.&quot;</span></a>
+<a class="sourceLine" id="cb77-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -335,7 +337,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapaper": false,
+"instapper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -345,10 +347,6 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": null,
-"text": null
-},
-"history": {
 "link": null,
 "text": null
 },

@@ -5,7 +5,7 @@ from ncls import NCLS
 
 def _both_indexes(scdf, ocdf, how=False):
 
-    assert (how in "containment first".split() + [False, None]) or isinstance(
+    assert (how in "containment first last".split() + [False, None]) or isinstance(
         how, int)
     starts = scdf.Start.values
     ends = scdf.End.values
@@ -19,16 +19,17 @@ def _both_indexes(scdf, ocdf, how=False):
     elif how == "containment":
         _self_indexes, _other_indexes = it.all_containments_both(
             starts, ends, indexes)
-    else:
+    elif how == "first":
         _self_indexes, _other_indexes = it.first_overlap_both(
+            starts, ends, indexes)
+    elif how == "last":
+        _self_indexes, _other_indexes = it.last_overlap_both(
             starts, ends, indexes)
 
     return _self_indexes, _other_indexes
 
 
 def _both_dfs(scdf, ocdf, how=False):
-
-    assert how in "containment first".split() + [False, None]
 
     _self_indexes, _other_indexes = _both_indexes(scdf, ocdf, how)
 

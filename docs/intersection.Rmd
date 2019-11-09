@@ -27,8 +27,9 @@ print(gr.set_intersect(gr2, strandedness="opposite"))
 [^2]: This is the same behavior as Bioconductor GenomicRanges intersect.
 
 The intersect method also takes a how argument, which currently accepts the
-option `"containment"`, which requires that the intervals in self be completely
-within the intervals in other.
+option `"containment"`, `"first"` or `"last"`. The former gives you the
+intervals in self be completely within the intervals in other, while first and
+last gives you the first and last overlap, respectively.
 
 ```{python tidy=FALSE}
 f1 = pr.data.f1()

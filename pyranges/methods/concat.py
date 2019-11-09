@@ -6,6 +6,9 @@ from collections import defaultdict
 
 def concat(pyranges, strand=False):
 
+    if not pyranges:
+        return None
+
     # from pydbg import dbg
     pyranges = [pr for pr in pyranges if not pr.empty]
     # dbg(pyranges)

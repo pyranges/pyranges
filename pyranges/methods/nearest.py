@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 from .join import _both_dfs
 from .sort import sort_one_by_one
 
@@ -125,6 +126,7 @@ def _nearest(scdf, ocdf, kwargs):
 
             r_idx, dist = nearest_nonoverlapping(previous_r_idx, previous_dist,
                                                  next_r_idx, next_dist)
+
 
         ocdf = ocdf.reindex(r_idx)
 
