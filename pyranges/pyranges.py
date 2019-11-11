@@ -114,6 +114,42 @@ class PyRanges():
 
         return iter(self.items())
 
+    def __add__(self, o):
+
+        self = self.copy()
+
+        if isinstance(o, (pd.Series, pd.DataFrame)):
+            assert len(o) == len(self), "Pandas Series or DataFrame must be same length as PyRanges!"
+
+            if isinstance(o, pd.Series):
+                if not o.name:
+                    i = 0
+                    while "Unnamed_" + str(i) in self:
+                        i += 1
+                    o.name = "Unnamed_" + str(i)
+
+                setattr(self, o.name, o)
+
+            # if isinstance(o, np.ndarray):
+            #     i = 0
+            #     name = "Unnamed_" + str(i)
+            #     while name in self:
+            #         i += 1
+            #         name = "Unnamed_" + str(i)
+
+            #     setattr(self, name, o)
+
+            if isinstance(o, pd.DataFrame):
+                for c in o:
+                    setattr(self, c, o[c])
+
+        return self
+
+
+    def copy(self):
+
+        return self.apply(lambda df: df.copy(deep=True))
+
     # def eval(self, eval_cmd, strand=True, as_pyranges=True, **kwargs):
 
     #     f = lambda df: eval(eval_cmd)

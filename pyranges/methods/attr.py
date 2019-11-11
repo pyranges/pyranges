@@ -8,8 +8,7 @@ def _setattr(self, column_name, column):
     if not len(self):
         return
 
-    isiterable = isinstance(column, list) or isinstance(
-        column, pd.Series) or isinstance(column, np.ndarray)
+    isiterable = isinstance(column, (list, pd.Series, np.ndarray))
     isdict = isinstance(column, dict)
 
     if isiterable:
@@ -18,6 +17,8 @@ def _setattr(self, column_name, column):
 
     already_exists = column_name in self.columns
 
+    if isinstance(column, pd.Series):
+        column = column.values
 
     if already_exists:
         pos = list(self.values()[0].columns).index(column_name)
