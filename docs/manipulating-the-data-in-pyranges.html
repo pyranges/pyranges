@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-11-08">
+<meta name="date" content="2019-11-11">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -145,15 +145,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
 <li class="chapter" data-level="19" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: similarity between PyRanges</a></li>
 <li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="21" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>21</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
-<li class="chapter" data-level="22" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>22</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="23" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>23</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="24" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>24</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="25" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>25</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="26" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>26</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="27" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>27</b> Using multiple cores</a></li>
-<li class="chapter" data-level="28" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>28</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="29" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>29</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="21" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>21</b> Statistics: compute Fisher exact</a></li>
+<li class="chapter" data-level="22" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>22</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="23" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>23</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="24" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>24</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="25" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>25</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="26" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>26</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="27" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>27</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="28" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>28</b> Using multiple cores</a></li>
+<li class="chapter" data-level="29" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>29</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="30" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>30</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -249,9 +250,35 @@ PyRanges object.</p>
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>And as you can see, you can drop columns from the PyRanges using drop. Using
 drop by itself removes all metadata-columns.</p>
+<p>To insert a dataframe into a PyRanges object, you can use the + operator:</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb73-1" data-line-number="1">df <span class="op">=</span> pd.DataFrame({<span class="st">&quot;A1&quot;</span>: [<span class="dv">1</span>, <span class="dv">2</span>] <span class="op">*</span> <span class="dv">5000</span>, <span class="st">&quot;A2&quot;</span>: [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>] <span class="op">*</span> <span class="dv">2500</span>})</a>
+<a class="sourceLine" id="cb73-2" data-line-number="2"><span class="bu">print</span>(df.head())</a></code></pre></div>
+<pre><code>##    A1  A2
+## 0   1   3
+## 1   2   4
+## 2   1   5
+## 3   2   6
+## 4   1   3</code></pre>
+<div class="sourceCode" id="cb75"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="bu">print</span>(gr <span class="op">+</span> df)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | A1        | A2        |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int64)   | (int64)   |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            | 1         | 3         |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            | 2         | 4         |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            | 1         | 5         |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            | 2         | 6         |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...       | ...       |
+## | chrY         | 15224235  | 15224260  | U0         | 0         | -            | 1         | 3         |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            | 2         | 4         |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | 1         | 5         |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | 2         | 6         |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+
+## Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>To rename the columns you can use the set_columns() method.</p>
 <p>If you want to remove duplicates based on position, you can use drop_duplicate_positions:</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb73-1" data-line-number="1"><span class="bu">print</span>(gr.drop_duplicate_positions(strand<span class="op">=</span><span class="va">False</span>)) <span class="co"># defaults to True</span></a></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb77-1" data-line-number="1"><span class="bu">print</span>(gr.drop_duplicate_positions(strand<span class="op">=</span><span class="va">False</span>)) <span class="co"># defaults to True</span></a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -271,9 +298,9 @@ drop by itself removes all metadata-columns.</p>
 <p>All columns, including Chromosome, Start, End and Strand can be changed in any
 way you please and more metadata-columns can be added by setting it on the
 PyRanges object.</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb75-2" data-line-number="2">gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)</a>
-<a class="sourceLine" id="cb75-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb79-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb79-2" data-line-number="2">gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)</a>
+<a class="sourceLine" id="cb79-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -290,8 +317,8 @@ PyRanges object.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb77"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb77-1" data-line-number="1">gr.Strand <span class="op">=</span> <span class="st">&quot;.&quot;</span></a>
-<a class="sourceLine" id="cb77-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb81-1" data-line-number="1">gr.Strand <span class="op">=</span> <span class="st">&quot;.&quot;</span></a>
+<a class="sourceLine" id="cb81-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |

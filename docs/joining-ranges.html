@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2019-11-08">
+<meta name="date" content="2019-11-11">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -145,15 +145,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
 <li class="chapter" data-level="19" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: similarity between PyRanges</a></li>
 <li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="21" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>21</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
-<li class="chapter" data-level="22" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>22</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="23" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>23</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="24" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>24</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="25" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>25</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="26" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>26</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="27" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>27</b> Using multiple cores</a></li>
-<li class="chapter" data-level="28" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>28</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="29" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>29</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="21" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>21</b> Statistics: compute Fisher exact</a></li>
+<li class="chapter" data-level="22" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>22</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="23" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>23</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="24" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>24</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="25" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>25</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="26" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>26</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="27" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>27</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="28" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>28</b> Using multiple cores</a></li>
+<li class="chapter" data-level="29" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>29</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="30" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>30</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -175,10 +176,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">16</span> Joining Ranges</h1>
 <p>You can combine all the intervals that overlap in two PyRanges objects with the join method.
 If you do not use a suffix, the default <code>_b</code> is chosen.</p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb176-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb176-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
-<a class="sourceLine" id="cb176-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
-<a class="sourceLine" id="cb176-4" data-line-number="4"><span class="bu">print</span>(gr.join(gr2, suffix<span class="op">=</span><span class="st">&quot;_2&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb180-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb180-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
+<a class="sourceLine" id="cb180-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
+<a class="sourceLine" id="cb180-4" data-line-number="4"><span class="bu">print</span>(gr.join(gr2, suffix<span class="op">=</span><span class="st">&quot;_2&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_2   | End_2     | Name_2     | Score_2   | Strand_2     |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -196,7 +197,7 @@ If you do not use a suffix, the default <code>_b</code> is chosen.</p>
 ## Stranded PyRanges object has 49 rows and 11 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb178-1" data-line-number="1"><span class="bu">print</span>(gr.join(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb182"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb182-1" data-line-number="1"><span class="bu">print</span>(gr.join(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_b   | End_b     | Name_b     | Score_b   | Strand_b     |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -213,12 +214,14 @@ If you do not use a suffix, the default <code>_b</code> is chosen.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 22 rows and 11 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<p>The join method also takes a how argument, which currently accepts the
-option <code>&quot;containment&quot;</code>, which requires that the intervals in self be
-completely within the intervals in other.</p>
-<div class="sourceCode" id="cb180"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb180-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
-<a class="sourceLine" id="cb180-2" data-line-number="2">f2 <span class="op">=</span> pr.data.f2()</a>
-<a class="sourceLine" id="cb180-3" data-line-number="3"><span class="bu">print</span>(f2.join(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>))</a></code></pre></div>
+<p>The join method also takes a how argument, which currently accepts the option
+<code>&quot;containment&quot;</code>, <code>&quot;inner&quot;</code> (default), <code>&quot;outer&quot;</code>, <code>&quot;left&quot;</code> and “<code>right</code>”.
+Containment requires that the intervals in self be completely within the
+intervals in other. The others are similar to SQL-style inner, outer, left and
+right joins.</p>
+<div class="sourceCode" id="cb184"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb184-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb184-2" data-line-number="2">f2 <span class="op">=</span> pr.data.f2()</a>
+<a class="sourceLine" id="cb184-3" data-line-number="3"><span class="bu">print</span>(f2.join(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -227,12 +230,26 @@ completely within the intervals in other.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 1 rows and 11 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb186"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb186-1" data-line-number="1"><span class="bu">print</span>(f1.join(f2, how<span class="op">=</span><span class="st">&quot;outer&quot;</span>))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         |         3 |         6 | interval1  |         0 | +            |        -1 |        -1 | -1         |        -1 | +            |
+## | chr1         |         8 |         9 | interval3  |         0 | +            |        -1 |        -1 | -1         |        -1 | +            |
+## | chr1         |        -1 |        -1 | -1         |        -1 | +            |         1 |         2 | a          |         0 | +            |
+## | chr1         |        -1 |        -1 | -1         |        -1 | +            |         6 |         7 | b          |         0 | -            |
+## | chr1         |         5 |         7 | interval2  |         0 | -            |         6 |         7 | b          |         0 | -            |
+## | chr1         |        -1 |        -1 | -1         |        -1 | -            |         1 |         2 | a          |         0 | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 6 rows and 11 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>After joining, you can use the method new_position() to find the union or
 intersection of the joined ranges. The default suffixes are <code>[&quot;_a&quot;, &quot;_b&quot;]</code>, but
 a suffixes argument overrides this.</p>
 <p>Positions with the second suffix should exist in the PyRanges already. The first
 suffix is used to rename the old Starts and Ends so they are kept.</p>
-<div class="sourceCode" id="cb182"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb182-1" data-line-number="1"><span class="bu">print</span>(f2.join(f1).new_position(<span class="st">&quot;intersection&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb188"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb188-1" data-line-number="1"><span class="bu">print</span>(f2.join(f1).new_position(<span class="st">&quot;intersection&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
 ## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -246,9 +263,9 @@ the swap argument.</p>
 <p>In this case, the suffixes should be the suffixes of the columns you want to
 swap. So if the columns are named “Start”, “End”, “Start_b” and “End_b”, you
 should give the suffixes [&quot;“,”_b&quot;]</p>
-<div class="sourceCode" id="cb184"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb184-1" data-line-number="1">gr1, gr2 <span class="op">=</span> pr.data.chipseq(), pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb184-2" data-line-number="2">j <span class="op">=</span> gr1.join(gr2)</a>
-<a class="sourceLine" id="cb184-3" data-line-number="3"><span class="bu">print</span>(j)</a></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb190-1" data-line-number="1">gr1, gr2 <span class="op">=</span> pr.data.chipseq(), pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb190-2" data-line-number="2">j <span class="op">=</span> gr1.join(gr2)</a>
+<a class="sourceLine" id="cb190-3" data-line-number="3"><span class="bu">print</span>(j)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -259,8 +276,8 @@ should give the suffixes [&quot;“,”_b&quot;]</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 11 columns from 3 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb186"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb186-1" data-line-number="1">j2 <span class="op">=</span> j.new_position(<span class="st">&quot;intersection&quot;</span>)</a>
-<a class="sourceLine" id="cb186-2" data-line-number="2"><span class="bu">print</span>(j2)</a></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb192-1" data-line-number="1">j2 <span class="op">=</span> j.new_position(<span class="st">&quot;intersection&quot;</span>)</a>
+<a class="sourceLine" id="cb192-2" data-line-number="2"><span class="bu">print</span>(j2)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
 ## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -271,7 +288,7 @@ should give the suffixes [&quot;“,”_b&quot;]</p>
 ## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 13 columns from 3 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb188"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb188-1" data-line-number="1"><span class="bu">print</span>(j2.new_position(<span class="st">&quot;swap&quot;</span>, suffixes<span class="op">=</span>[<span class="st">&quot;&quot;</span>, <span class="st">&quot;_b&quot;</span>]))</a></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb194-1" data-line-number="1"><span class="bu">print</span>(j2.new_position(<span class="st">&quot;swap&quot;</span>, suffixes<span class="op">=</span>[<span class="st">&quot;&quot;</span>, <span class="st">&quot;_b&quot;</span>]))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
 ## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -282,7 +299,7 @@ should give the suffixes [&quot;“,”_b&quot;]</p>
 ## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 13 columns from 3 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb190"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb190-1" data-line-number="1"><span class="bu">print</span>(j2.new_position(<span class="st">&quot;swap&quot;</span>, suffixes<span class="op">=</span>[<span class="st">&quot;_a&quot;</span>, <span class="st">&quot;_b&quot;</span>]))</a></code></pre></div>
+<div class="sourceCode" id="cb196"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb196-1" data-line-number="1"><span class="bu">print</span>(j2.new_position(<span class="st">&quot;swap&quot;</span>, suffixes<span class="op">=</span>[<span class="st">&quot;_a&quot;</span>, <span class="st">&quot;_b&quot;</span>]))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+-----------+------------+-----------+--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End |   Start_a |     End_a | Name       |     Score | Strand       |   Start_b |     End_b | Name_b     |   Score_b | Strand_b     |
 ## | (category)   |   (int32) |   (int32) |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
