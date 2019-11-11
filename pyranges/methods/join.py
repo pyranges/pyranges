@@ -5,7 +5,7 @@ from ncls import NCLS
 
 def _both_indexes(scdf, ocdf, how=False):
 
-    assert (how in "containment first last".split() + [False, None]) or isinstance(
+    assert (how in "containment first last outer right left".split() + [False, None]) or isinstance(
         how, int)
     starts = scdf.Start.values
     ends = scdf.End.values
@@ -25,6 +25,28 @@ def _both_indexes(scdf, ocdf, how=False):
     elif how == "last":
         _self_indexes, _other_indexes = it.last_overlap_both(
             starts, ends, indexes)
+        six = scdf.index
+        oix = ocdf.index
+    elif how in ["outer", "left", "right"]:
+
+        _self_indexes, _other_indexes = it.all_overlaps_both(
+            starts, ends, indexes)
+
+        missing_in_s = scdf.index.difference(_self_indexes)
+        missing_in_o = ocdf.index.difference(_other_indexes)
+
+        filler_s = np.ones(len(missing_in_o), dtype=int) * -1
+        filler_o = np.ones(len(missing_in_s), dtype=int) * -1
+
+        if how == "outer":
+            _self_indexes = np.concatenate([_self_indexes, missing_in_s, filler_s])
+            _other_indexes = np.concatenate([_other_indexes, filler_o, missing_in_o])
+        elif how == "left":
+            _self_indexes = np.concatenate([_self_indexes, missing_in_s])
+            _other_indexes = np.concatenate([_other_indexes, filler_o])
+        elif how == "right":
+            _self_indexes = np.concatenate([_self_indexes, filler_s])
+            _other_indexes = np.concatenate([_other_indexes, missing_in_o])
 
     return _self_indexes, _other_indexes
 
@@ -33,8 +55,51 @@ def _both_dfs(scdf, ocdf, how=False):
 
     _self_indexes, _other_indexes = _both_indexes(scdf, ocdf, how)
 
-    scdf = scdf.reindex(_self_indexes)
-    ocdf = ocdf.reindex(_other_indexes)
+    if how in ["outer", "left", "right"]:
+
+        def null_types(h):
+            h2 = h.copy()
+            for n, d in zip(h, h.dtypes):
+                # print("n", n, "d", d)
+                if n in ["Chromosome", "Strand"]:
+                    continue
+                d = str(d)
+
+                if "int" in d or "float" in d:
+                    null = -1
+                elif d == "str" or d == "object":
+                    null = "-1"
+                elif d == "category":
+                    h2.loc[:, n] = h2[:, n].cat.add_categories("-1")
+                    null = "-1"
+
+                h2.loc[:, n] = null
+
+            return h2
+
+        sh = null_types(scdf.head(1))
+        oh = null_types(ocdf.head(1))
+        sh.index = [-1]
+        oh.index = [-1]
+
+        scdf = scdf.append(sh)
+        ocdf = ocdf.append(oh)
+
+        scdf = scdf.reindex(_self_indexes)
+        ocdf = ocdf.reindex(_other_indexes)
+
+        if "Strand" in scdf and "Strand" in ocdf:
+
+            if how == "left":
+                x = ocdf.index.values == -1
+                ocdf.loc[x, "Strand"] = scdf[x].Strand.values
+            elif how == "right":
+                x = scdf.index.values == -1
+                scdf.loc[x, "Strand"] = ocdf[x].Strand.values
+
+    else:
+        scdf = scdf.reindex(_self_indexes)
+        ocdf = ocdf.reindex(_other_indexes)
 
     return scdf, ocdf
 
@@ -61,3 +126,4 @@ def _write_both(scdf, ocdf, kwargs):
     df = scdf.join(ocdf, rsuffix=suffix)
 
     return df
+
