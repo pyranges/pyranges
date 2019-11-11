@@ -6,6 +6,31 @@ from pyranges.multithreaded import pyrange_apply
 
 from pyranges.methods.statistics import _relative_distance
 
+import numpy as np
+
+def fisher_exact(n1, d1, n2, d2, **kwargs):
+    try:
+        from fisher import pvalue_npy
+    except:
+        import sys
+        print("fisher needs to be installed to use fisher exact. pip install fisher or conda install -c bioconda fisher.")
+        sys.exit(-1)
+
+    pseudocount = kwargs.get("pseudocount", 0)
+
+    n1 = n1.astype(np.uint) + pseudocount
+    n2 = n2.astype(np.uint) + pseudocount
+    d1 = d1.astype(np.uint) + pseudocount
+    d2 = n2.astype(np.uint) + pseudocount
+
+    left, right, twosided = pvalue_npy(n1, d1, n2, d2)
+
+    OR = (n1 / d2) / (n2 / d1)
+
+    df = pd.DataFrame({"OR": OR, "Left": left, "Right": right, "Twosided": twosided})
+
+    return df
+
 
 class StatisticsMethods():
 
@@ -14,6 +39,7 @@ class StatisticsMethods():
     def __init__(self, pr):
 
         self.pr = pr
+
 
     def jaccard(self, other, **kwargs):
 
