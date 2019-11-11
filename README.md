@@ -165,6 +165,9 @@ pybigwig: write bigwigs # pip install pybigwig or conda install -c bioconda pybi
 bamread: read bam files # pip install bamread or conda install -c bioconda bamread
 ```
 
+Since these are not needed for 99.9% percent of the pyranges functionality, they
+are kept separate to prevent the possibility of the pyranges-install failing due
+to dependencies that fail installation.
 
 ## Paper/Cite
 

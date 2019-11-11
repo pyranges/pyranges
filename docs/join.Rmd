@@ -16,14 +16,17 @@ Both methods also take a strandedness option, which can either be `"same"`, `"op
 print(gr.join(gr2, strandedness="opposite"))
 ```
 
-The join method also takes a how argument, which currently accepts the
-option `"containment"`, which requires that the intervals in self be
-completely within the intervals in other.
+The join method also takes a how argument, which currently accepts the option
+`"containment"`, `"inner"` (default), `"outer"`, `"left"` and "`right`".
+Containment requires that the intervals in self be completely within the
+intervals in other. The others are similar to SQL-style inner, outer, left and
+right joins.
 
 ```{python tidy=FALSE}
 f1 = pr.data.f1()
 f2 = pr.data.f2()
 print(f2.join(f1, how="containment"))
+print(f1.join(f2, how="outer"))
 ```
 
 After joining, you can use the method new_position() to find the union or

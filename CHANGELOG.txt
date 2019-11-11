@@ -1,4 +1,8 @@
 # 0.0.60 (unreleased)
+# 0.0.61 (11.11.19)
+- add outer, inner and left join
+# 0.0.60 (10.11.19)
+- add k-nearest
 - ensure that start/end have the same dtype after calling slack
 - breaking change: new_position takes no default arg
 - new_position takes an argument swap
