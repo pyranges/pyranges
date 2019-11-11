@@ -163,6 +163,7 @@ you require their functionality:
 ray: multicpu # pip install -U ray
 pybigwig: write bigwigs # pip install pybigwig or conda install -c bioconda pybigwig
 bamread: read bam files # pip install bamread or conda install -c bioconda bamread
+fisher: fast fisher exact # pip install fisher or conda install -c bioconda fisher
 ```
 
 Since these are not needed for 99.9% percent of the pyranges functionality, they
