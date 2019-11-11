@@ -18,10 +18,10 @@ def fisher_exact(n1, d1, n2, d2, **kwargs):
 
     pseudocount = kwargs.get("pseudocount", 0)
 
-    n1 = n1.astype(np.uint) + pseudocount
-    n2 = n2.astype(np.uint) + pseudocount
-    d1 = d1.astype(np.uint) + pseudocount
-    d2 = n2.astype(np.uint) + pseudocount
+    n1 = np.array(n1, dtype=np.uint) + pseudocount
+    n2 = np.array(n2, dtype=np.uint) + pseudocount
+    d1 = np.array(d1, dtype=np.uint) + pseudocount
+    d2 = np.array(n2, dtype=np.uint) + pseudocount
 
     left, right, twosided = pvalue_npy(n1, d1, n2, d2)
 

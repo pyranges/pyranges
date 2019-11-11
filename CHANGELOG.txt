@@ -1,3 +1,6 @@
+# 0.0.62 (11.11.19)
+- fix fisher exact when given pd.Series
+
 # 0.0.61 (11.11.19)
 - add outer, inner and left join
 - add fisher exact
