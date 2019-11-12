@@ -16,18 +16,33 @@ def fisher_exact(n1, d1, n2, d2, **kwargs):
         print("fisher needs to be installed to use fisher exact. pip install fisher or conda install -c bioconda fisher.")
         sys.exit(-1)
 
-    pseudocount = kwargs.get("pseudocount", 0)
+    from scipy.stats import rankdata
 
-    n1 = np.array(n1, dtype=np.uint) + pseudocount
-    n2 = np.array(n2, dtype=np.uint) + pseudocount
-    d1 = np.array(d1, dtype=np.uint) + pseudocount
-    d2 = np.array(n2, dtype=np.uint) + pseudocount
+    pseudocount = kwargs.get("pseudocount", 0)
+    fe_type = kwargs.get("alternative", "twosided")
+
+    n1 = np.array(n1, dtype=np.uint)
+    n2 = np.array(n2, dtype=np.uint)
+    d1 = np.array(d1, dtype=np.uint)
+    d2 = np.array(d2, dtype=np.uint)
 
     left, right, twosided = pvalue_npy(n1, d1, n2, d2)
 
-    OR = (n1 / d2) / (n2 / d1)
+    if fe_type == "twosided":
+        p_vals = twosided
+    elif fe_type == "left":
+        p_vals = left
+    elif fe_type == "right":
+        p_vals = right
+    else:
+        raise Exception("fe_type must be twosided, left or right")
 
-    df = pd.DataFrame({"OR": OR, "Left": left, "Right": right, "Twosided": twosided})
+    ranked_p_values = rankdata(p_vals)
+    fdr = p_vals * len(p_vals) / ranked_p_values
+
+    OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))
+
+    df = pd.DataFrame({"OR": OR, "P": p_vals, "FDR": fdr})
 
     return df
 
