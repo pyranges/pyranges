@@ -1,5 +1,6 @@
 # 0.0.63 (unreleased)
 - ignore index when inserting Series
+- able to add dictionary of dfs to a pyranges
 
 # 0.0.62 (11.11.19)
 - fix fisher exact when given pd.Series
