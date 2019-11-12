@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>21 Statistics: compute Fisher exact | PyRanges documentation</title>
+  <meta name="description" content="21 Statistics: compute Fisher exact | PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="21 Statistics: compute Fisher exact | PyRanges documentation" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="21 Statistics: compute Fisher exact | PyRanges documentation" />
+  
+  
+  
+
+<meta name="author" content="Endre Bakken Stovner" />
+
+
+<meta name="date" content="2019-11-12" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="statistics-spatial-correlations-between-pyranges.html">
+<link rel="next" href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to PyRanges</a></li>
+<li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
+<li class="chapter" data-level="3" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>3</b> Writing PyRanges to disk</a></li>
+<li class="chapter" data-level="4" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>4</b> Subsetting PyRanges</a></li>
+<li class="chapter" data-level="5" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>5</b> Manipulating the data in PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>6</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="piping-pyranges.html"><a href="piping-pyranges.html"><i class="fa fa-check"></i><b>7</b> Piping PyRanges</a></li>
+<li class="chapter" data-level="8" data-path="printing-pyranges.html"><a href="printing-pyranges.html"><i class="fa fa-check"></i><b>8</b> Printing PyRanges</a></li>
+<li class="chapter" data-level="9" data-path="iterating-over-pyranges.html"><a href="iterating-over-pyranges.html"><i class="fa fa-check"></i><b>9</b> Iterating over PyRanges</a></li>
+<li class="chapter" data-level="10" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>10</b> Sorting PyRanges</a></li>
+<li class="chapter" data-level="11" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>11</b> Summarizing PyRanges</a></li>
+<li class="chapter" data-level="12" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>12</b> Methods for manipulating single PyRanges</a></li>
+<li class="chapter" data-level="13" data-path="applying-custom-methods-to-pairs-of-pyranges.html"><a href="applying-custom-methods-to-pairs-of-pyranges.html"><i class="fa fa-check"></i><b>13</b> Applying custom methods to pairs of PyRanges</a></li>
+<li class="chapter" data-level="14" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>14</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
+<li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
+<li class="chapter" data-level="19" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: similarity between PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
+<li class="chapter" data-level="21" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>21</b> Statistics: compute Fisher exact</a></li>
+<li class="chapter" data-level="22" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>22</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="23" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>23</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="24" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>24</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="25" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>25</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="26" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>26</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="27" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>27</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="28" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>28</b> Using multiple cores</a></li>
+<li class="chapter" data-level="29" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>29</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="30" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>30</b> Fetching gene tracks as PyRanges</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">PyRanges documentation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="statistics-compute-fisher-exact" class="section level1">
+<h1><span class="header-section-number">21</span> Statistics: compute Fisher exact</h1>
+<p>You can use pyranges to compute Fisher Exact quickly. To do so you need to have
+the package fisher installed.</p>
+<div class="sourceCode" id="cb235"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb235-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb235-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb235-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb235-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb235-5" data-line-number="5">n1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb235-6" data-line-number="6">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb235-7" data-line-number="7">n2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb235-8" data-line-number="8">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb235-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb235-10" data-line-number="10">fe <span class="op">=</span> pr.stats.fisher_exact(n1, n2, d1, d2).head()</a></code></pre></div>
+<pre><code>## /home/endrebak/code/pyranges/pyranges/statistics.py:49: RuntimeWarning: divide by zero encountered in true_divide
+##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))
+## /home/endrebak/code/pyranges/pyranges/statistics.py:49: RuntimeWarning: invalid value encountered in true_divide
+##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))</code></pre>
+<div class="sourceCode" id="cb237"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb237-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
+<pre><code>##           OR         P
+## 0   0.388889  0.142644
+## 1  14.000000  0.232683
+## 2   2.000000  0.205452
+## 3        inf  0.005797
+## 4        inf  0.000061</code></pre>
+<p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
+<div class="sourceCode" id="cb239"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb239-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
+<pre><code>## 0    0.237740
+## 1    0.232683
+## 2    0.256815
+## 3    0.014493
+## 4    0.000306
+## Name: P, dtype: float64</code></pre>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="statistics-spatial-correlations-between-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -13,5 +13,12 @@ d2 = np.random.randint(0, high=20, size=1000)
 n2 = np.random.randint(0, high=20, size=1000)
 d1 = np.random.randint(0, high=20, size=1000)
 
-print(pr.stats.fisher_exact(n1, n2, d1, d2).head())
+fe = pr.stats.fisher_exact(n1, n2, d1, d2).head()
+print(fe)
+```
+
+You can get the false-discovery rate corrected fdr with `pyranges.stats.fdr`:
+
+```{python tidy=FALSE}
+print(pr.stats.fdr(fe.P))
 ```

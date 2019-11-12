@@ -8,6 +8,17 @@ from pyranges.methods.statistics import _relative_distance
 
 import numpy as np
 
+
+def fdr(p_vals):
+
+    from scipy.stats import rankdata
+    ranked_p_values = rankdata(p_vals)
+    fdr = p_vals * len(p_vals) / ranked_p_values
+    fdr[fdr > 1] = 1
+
+    return fdr
+
+
 def fisher_exact(n1, d1, n2, d2, **kwargs):
     try:
         from fisher import pvalue_npy
@@ -15,8 +26,6 @@ def fisher_exact(n1, d1, n2, d2, **kwargs):
         import sys
         print("fisher needs to be installed to use fisher exact. pip install fisher or conda install -c bioconda fisher.")
         sys.exit(-1)
-
-    from scipy.stats import rankdata
 
     pseudocount = kwargs.get("pseudocount", 0)
     fe_type = kwargs.get("alternative", "twosided")
@@ -35,14 +44,12 @@ def fisher_exact(n1, d1, n2, d2, **kwargs):
     elif fe_type == "right":
         p_vals = right
     else:
-        raise Exception("fe_type must be twosided, left or right")
+        raise Exception("alternative must be twosided, left or right")
 
-    ranked_p_values = rankdata(p_vals)
-    fdr = p_vals * len(p_vals) / ranked_p_values
 
     OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))
 
-    df = pd.DataFrame({"OR": OR, "P": p_vals, "FDR": fdr})
+    df = pd.DataFrame({"OR": OR, "P": p_vals})
 
     return df
 
@@ -203,4 +210,3 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False):
     df = pd.DataFrame.from_dict(rowdicts).sort_values(["T", "F"])
 
     return df
-
