@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>23 Turning Ranges into RLEs | PyRanges documentation</title>
+  <meta name="description" content="23 Turning Ranges into RLEs | PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:title" content="23 Turning Ranges into RLEs | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,25 +16,26 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PyRanges documentation" />
+  <meta name="twitter:title" content="23 Turning Ranges into RLEs | PyRanges documentation" />
   
   
   
 
-<meta name="author" content="Endre Bakken Stovner">
+<meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-11">
+<meta name="date" content="2019-11-12" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 <link rel="prev" href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html">
 <link rel="next" href="an-introduction-to-rles.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -55,7 +55,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -175,9 +174,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="turning-ranges-into-rles" class="section level1">
 <h1><span class="header-section-number">23</span> Turning Ranges into RLEs</h1>
 <p>Ranges can be turned into dicts of run length encodings with the to_rle function:</p>
-<div class="sourceCode" id="cb228"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb228-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb228-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
-<a class="sourceLine" id="cb228-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb245"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb245-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb245-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
+<a class="sourceLine" id="cb245-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -194,7 +193,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb230"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb230-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle())</a></code></pre></div>
+<div class="sourceCode" id="cb247"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb247-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle())</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
@@ -213,7 +212,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb232"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb232-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb249-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
@@ -232,7 +231,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb234"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb234-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb251-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+-------------------+--------------------+-------------------+--------------------+-------------------+------+-------------------+---------+-------------------+
@@ -253,7 +252,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
 <p>To get the RPM-normalized coverage, use the rpm argument.</p>
 <p>You can also create coverage for an any numeric value in your PyRanges:</p>
-<div class="sourceCode" id="cb236"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb236-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(<span class="st">&quot;Score&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb253-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(<span class="st">&quot;Score&quot;</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
@@ -300,7 +299,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -310,6 +309,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PyRanges documentation</title>
-  <meta name="description" content="PyRanges documentation">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>24 An introduction to RLEs | PyRanges documentation</title>
+  <meta name="description" content="24 An introduction to RLEs | PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="PyRanges documentation" />
+  <meta property="og:title" content="24 An introduction to RLEs | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,25 +16,26 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PyRanges documentation" />
+  <meta name="twitter:title" content="24 An introduction to RLEs | PyRanges documentation" />
   
   
   
 
-<meta name="author" content="Endre Bakken Stovner">
+<meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-11">
+<meta name="date" content="2019-11-12" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 <link rel="prev" href="turning-ranges-into-rles.html">
 <link rel="next" href="run-length-encoding-dicts.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -55,7 +55,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -177,54 +176,57 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Rles are runlengths - a datastructure that can compactly describe the coverage
 of a genome (or some other score that is associated with each nucleotide). It is
 used for efficient genomewide arithmetic operations on these scores.</p>
-<div class="sourceCode" id="cb238"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb238-1" data-line-number="1"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
-<a class="sourceLine" id="cb238-2" data-line-number="2">runs <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>]</a>
-<a class="sourceLine" id="cb238-3" data-line-number="3">values <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>]</a>
-<a class="sourceLine" id="cb238-4" data-line-number="4">r1 <span class="op">=</span> Rle(runs, values)</a>
-<a class="sourceLine" id="cb238-5" data-line-number="5"><span class="bu">print</span>(r1)</a></code></pre></div>
+<div class="sourceCode" id="cb255"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb255-1" data-line-number="1"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
+<a class="sourceLine" id="cb255-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb255-3" data-line-number="3">runs <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>]</a>
+<a class="sourceLine" id="cb255-4" data-line-number="4">values <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>]</a>
+<a class="sourceLine" id="cb255-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb255-6" data-line-number="6">r1 <span class="op">=</span> Rle(runs, values)</a>
+<a class="sourceLine" id="cb255-7" data-line-number="7"><span class="bu">print</span>(r1)</a></code></pre></div>
 <pre><code>## +--------+------+------+------+
 ## | Runs   | 10   | 10   | 20   |
 ## |--------+------+------+------|
 ## | Values | 0.0  | 1.0  | 0.0  |
 ## +--------+------+------+------+
 ## Rle of length 40 containing 3 elements</code></pre>
-<div class="sourceCode" id="cb240"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb240-1" data-line-number="1">runs2 <span class="op">=</span> [<span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">20</span>]</a>
-<a class="sourceLine" id="cb240-2" data-line-number="2">values2 <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">100</span>]</a>
-<a class="sourceLine" id="cb240-3" data-line-number="3">r2 <span class="op">=</span> Rle(runs2, values2)</a>
-<a class="sourceLine" id="cb240-4" data-line-number="4"><span class="bu">print</span>(r2)</a></code></pre></div>
+<div class="sourceCode" id="cb257"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb257-1" data-line-number="1">runs2 <span class="op">=</span> [<span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">20</span>]</a>
+<a class="sourceLine" id="cb257-2" data-line-number="2">values2 <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">100</span>]</a>
+<a class="sourceLine" id="cb257-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb257-4" data-line-number="4">r2 <span class="op">=</span> Rle(runs2, values2)</a>
+<a class="sourceLine" id="cb257-5" data-line-number="5"><span class="bu">print</span>(r2)</a></code></pre></div>
 <pre><code>## +--------+-------+-----+-------+
 ## | Runs   | 11    | 9   | 20    |
 ## |--------+-------+-----+-------|
 ## | Values | 100.0 | 0.0 | 100.0 |
 ## +--------+-------+-----+-------+
 ## Rle of length 40 containing 3 elements</code></pre>
-<div class="sourceCode" id="cb242"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb242-1" data-line-number="1"><span class="bu">print</span>(r1 <span class="op">+</span> r2)</a></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb259-1" data-line-number="1"><span class="bu">print</span>(r1 <span class="op">+</span> r2)</a></code></pre></div>
 <pre><code>## +--------+-------+-------+-----+-------+
 ## | Runs   | 10    | 1     | 9   | 20    |
 ## |--------+-------+-------+-----+-------|
 ## | Values | 100.0 | 101.0 | 1.0 | 100.0 |
 ## +--------+-------+-------+-----+-------+
 ## Rle of length 40 containing 4 elements</code></pre>
-<div class="sourceCode" id="cb244"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb244-1" data-line-number="1"><span class="bu">print</span>(r1 <span class="op">*</span> r2)</a></code></pre></div>
+<div class="sourceCode" id="cb261"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb261-1" data-line-number="1"><span class="bu">print</span>(r1 <span class="op">*</span> r2)</a></code></pre></div>
 <pre><code>## +--------+------+-------+------+
 ## | Runs   | 10   | 1     | 29   |
 ## |--------+------+-------+------|
 ## | Values | 0.0  | 100.0 | 0.0  |
 ## +--------+------+-------+------+
 ## Rle of length 40 containing 3 elements</code></pre>
-<div class="sourceCode" id="cb246"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb246-1" data-line-number="1"><span class="bu">print</span>(r1.runs)</a></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb263-1" data-line-number="1"><span class="bu">print</span>(r1.runs)</a></code></pre></div>
 <pre><code>## [10 10 20]</code></pre>
-<div class="sourceCode" id="cb248"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb248-1" data-line-number="1"><span class="bu">print</span>(r1.values)</a></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb265-1" data-line-number="1"><span class="bu">print</span>(r1.values)</a></code></pre></div>
 <pre><code>## [0. 1. 0.]</code></pre>
-<div class="sourceCode" id="cb250"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb250-1" data-line-number="1">r1 <span class="op">=</span> r1 <span class="op">+</span> <span class="dv">5</span></a>
-<a class="sourceLine" id="cb250-2" data-line-number="2"><span class="bu">print</span>(r1)</a></code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb267-1" data-line-number="1">r1 <span class="op">=</span> r1 <span class="op">+</span> <span class="dv">5</span></a>
+<a class="sourceLine" id="cb267-2" data-line-number="2"><span class="bu">print</span>(r1)</a></code></pre></div>
 <pre><code>## +--------+------+------+------+
 ## | Runs   | 10   | 10   | 20   |
 ## |--------+------+------+------|
 ## | Values | 5.0  | 6.0  | 5.0  |
 ## +--------+------+------+------+
 ## Rle of length 40 containing 3 elements</code></pre>
-<div class="sourceCode" id="cb252"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb252-1" data-line-number="1"><span class="bu">print</span>(r2 <span class="op">/</span> r1)</a></code></pre></div>
+<div class="sourceCode" id="cb269"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb269-1" data-line-number="1"><span class="bu">print</span>(r2 <span class="op">/</span> r1)</a></code></pre></div>
 <pre><code>## +--------+------+--------------------+-----+------+
 ## | Runs   | 10   | 1                  | 9   | 20   |
 ## |--------+------+--------------------+-----+------|
@@ -235,20 +237,20 @@ used for efficient genomewide arithmetic operations on these scores.</p>
 replaces NaN with zero and infinity with large finite numbers, while the latter
 merges consecutive runs of duplicate values in the Rle (which might occur when
 manually manipulating the values vector).</p>
-<div class="sourceCode" id="cb254"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb254-1" data-line-number="1"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb254-2" data-line-number="2"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
-<a class="sourceLine" id="cb254-3" data-line-number="3">runs2 <span class="op">=</span> [<span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">20</span>]</a>
-<a class="sourceLine" id="cb254-4" data-line-number="4">values2 <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">100</span>]</a>
-<a class="sourceLine" id="cb254-5" data-line-number="5">r2 <span class="op">=</span> Rle(runs2, values2)</a>
-<a class="sourceLine" id="cb254-6" data-line-number="6">r2.values <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>], dtype<span class="op">=</span>np.double)</a>
-<a class="sourceLine" id="cb254-7" data-line-number="7"><span class="bu">print</span>(r2)</a></code></pre></div>
+<div class="sourceCode" id="cb271"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb271-1" data-line-number="1"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb271-2" data-line-number="2"><span class="im">from</span> pyrle <span class="im">import</span> Rle</a>
+<a class="sourceLine" id="cb271-3" data-line-number="3">runs2 <span class="op">=</span> [<span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">20</span>]</a>
+<a class="sourceLine" id="cb271-4" data-line-number="4">values2 <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">100</span>]</a>
+<a class="sourceLine" id="cb271-5" data-line-number="5">r2 <span class="op">=</span> Rle(runs2, values2)</a>
+<a class="sourceLine" id="cb271-6" data-line-number="6">r2.values <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>], dtype<span class="op">=</span>np.double)</a>
+<a class="sourceLine" id="cb271-7" data-line-number="7"><span class="bu">print</span>(r2)</a></code></pre></div>
 <pre><code>## +--------+------+-----+------+
 ## | Runs   | 11   | 9   | 20   |
 ## |--------+------+-----+------|
 ## | Values | 1.0  | 1.0 | 1.0  |
 ## +--------+------+-----+------+
 ## Rle of length 40 containing 3 elements</code></pre>
-<div class="sourceCode" id="cb256"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb256-1" data-line-number="1"><span class="bu">print</span>(r2.defragment())</a></code></pre></div>
+<div class="sourceCode" id="cb273"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb273-1" data-line-number="1"><span class="bu">print</span>(r2.defragment())</a></code></pre></div>
 <pre><code>## +--------+------+
 ## | Runs   | 40   |
 ## |--------+------|
@@ -283,7 +285,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -293,6 +295,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

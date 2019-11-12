@@ -8,7 +8,6 @@ from pyranges.methods.statistics import _relative_distance
 
 import numpy as np
 
-
 def fdr(p_vals):
 
     from scipy.stats import rankdata
