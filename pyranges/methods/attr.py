@@ -38,7 +38,12 @@ def _setattr(self, column_name, column):
         if isiterable:
             df.insert(pos, column_name, column[start_length:end_length])
         elif isdict:
-            df.insert(pos, column_name, column[k])
+            if isinstance(column[k], pd.Series):
+                _column = column[k].values
+            else:
+                _column = column[k]
+
+            df.insert(pos, column_name, _column)
         else:
             df.insert(pos, column_name, column)
 

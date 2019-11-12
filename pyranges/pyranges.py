@@ -130,18 +130,20 @@ class PyRanges():
 
                 setattr(self, o.name, o)
 
-            # if isinstance(o, np.ndarray):
-            #     i = 0
-            #     name = "Unnamed_" + str(i)
-            #     while name in self:
-            #         i += 1
-            #         name = "Unnamed_" + str(i)
-
-            #     setattr(self, name, o)
-
             if isinstance(o, pd.DataFrame):
                 for c in o:
                     setattr(self, c, o[c])
+
+        elif isinstance(o, dict) and o:
+
+            columns = next(iter(o.values())).columns
+
+            ds = []
+            for c in columns:
+                ds.append({k: v[c] for k, v in o.items()})
+
+            for c, d in zip(columns, ds):
+                setattr(self, c, d)
 
         return self
 
@@ -679,6 +681,7 @@ class PyRanges():
         else:
             return PyRanges(result)
 
+
     def apply_chunks(self, f, as_pyranges=True, **kwargs):
 
         kwargs = fill_kwargs(kwargs)
@@ -689,6 +692,7 @@ class PyRanges():
             return result
         else:
             return PyRanges(result)
+
 
     def apply_pair(self,
                    other,
