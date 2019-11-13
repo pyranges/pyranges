@@ -2,6 +2,7 @@
 - ignore index when inserting Series
 - able to add dictionary of dfs to a pyranges
 - remove FDR from fisher_exact, but add fdr as own method in stats
+- make stats.mcc faster
 
 # 0.0.62 (11.11.19)
 - fix fisher exact when given pd.Series
