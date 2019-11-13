@@ -234,8 +234,8 @@ def read_gtf_restricted(f,
 def to_rows_gff3(anno):
     rowdicts = []
     for l in list(anno):
-        l = l.replace(";", " ").replace("=", " ").split()
-        rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
+        l = ( it.split("=") for it in l.split(";") )
+        rowdicts.append({k: v for k, v in l})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
