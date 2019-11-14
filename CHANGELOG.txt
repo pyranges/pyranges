@@ -3,6 +3,7 @@
 - able to add dictionary of dfs to a pyranges
 - remove FDR from fisher_exact, but add fdr as own method in stats
 - make stats.mcc faster
+- make stats.mcc work without a genome
 
 # 0.0.62 (11.11.19)
 - fix fisher exact when given pd.Series
