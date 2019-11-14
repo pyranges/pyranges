@@ -1,4 +1,4 @@
-# 0.0.63 (unreleased)
+# 0.0.63 (14.11.19)
 - ignore index when inserting Series
 - able to add dictionary of dfs to a pyranges
 - remove FDR from fisher_exact, but add fdr as own method in stats
