@@ -117,14 +117,8 @@ def _mcc(tp, fp, tn, fn):
     return ((tp * tn) - (fp * fn)) / sqrt(x)
 
 
-def mcc(grs, genome, labels=None, strand=False, verbose=False):
+def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
     import sys
-
-    try:
-        genome_length = int(genome)
-    except (TypeError, ValueError):
-        genome_length = int(genome.End.sum())
-
     from itertools import combinations_with_replacement, chain
 
     if labels is None:
@@ -134,30 +128,41 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False):
         assert len(labels) == len(grs)
         _labels = combinations_with_replacement(labels, r=2)
 
-
-
-    if verbose:
-        # check that genome definition does not have many more
-        # chromosomes than datafiles
-        gr_cs = set(chain(*[gr.chromosomes for gr in grs]))
-
-        g_cs = set(genome.chromosomes)
-        surplus = g_cs - gr_cs
-        if len(surplus):
-            print("The following chromosomes are in the genome, but not the PyRanges:", ", ".join(surplus), file=sys.stderr)
-
     # remove all non-loc columns before computation
     grs = [gr.merge(strand=strand) for gr in grs]
 
-    if strand:
-        def make_stranded(df):
-            df = df.copy()
-            df2 = df.copy()
-            df.insert(df.shape[1], "Strand", "+")
-            df2.insert(df2.shape[1], "Strand", "-")
-            return pd.concat([df, df2])
+    if genome is not None:
+        try:
+            genome_length = int(genome)
+        except (TypeError, ValueError):
+            genome_length = int(genome.End.sum())
+
+        if verbose:
+            # check that genome definition does not have many more
+            # chromosomes than datafiles
+            gr_cs = set(chain(*[gr.chromosomes for gr in grs]))
+
+            g_cs = set(genome.chromosomes)
+            surplus = g_cs - gr_cs
+            if len(surplus):
+                print("The following chromosomes are in the genome, but not the PyRanges:", ", ".join(surplus), file=sys.stderr)
+
+
+        if strand:
+            def make_stranded(df):
+                df = df.copy()
+                df2 = df.copy()
+                df.insert(df.shape[1], "Strand", "+")
+                df2.insert(df2.shape[1], "Strand", "-")
+                return pd.concat([df, df2])
 
         genome = genome.apply(make_stranded)
+        genome_length = genome.length
+    else:
+        if len(grs) == 2:
+            print("If you do not have a genome and the number of compared pyranges is two, mcc will not give any true negatives.", file=sys.stderr)
+        genome_length = pr.concat(grs).merge().length
+
 
     strandedness = "same" if strand else None
 
@@ -171,7 +176,7 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False):
             if not strand:
                 tp = t.length
                 fn = 0
-                tn = genome.length - tp
+                tn = genome_length - tp
                 fp = 0
                 rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1})
             else:
