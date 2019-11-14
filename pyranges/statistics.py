@@ -184,7 +184,6 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False):
             continue
 
         else:
-            c = pr.concat([t, f]).merge(strand=strand)
             j = t.join(f, strandedness=strandedness)
             tp_gr = j.new_position("intersection").merge(strand=strand)
             if strand:
@@ -192,7 +191,7 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False):
                     tp = tp_gr[strand].length
                     fp = f[strand].length - tp
                     fn = t[strand].length - tp
-                    tn = genome_length - c[strand].length
+                    tn = genome_length - (tp + fp + fn)
                     mcc = _mcc(tp, fp, tn, fn)
                     rowdicts.append({"T": lt, "F": lf, "Strand": strand, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
                     rowdicts.append({"T": lf, "F": lt, "Strand": strand, "TP": tp, "FP": fn, "TN": tn, "FN": fp, "MCC": mcc})
@@ -200,7 +199,7 @@ def mcc(grs, genome, labels=None, strand=False, verbose=False):
                 tp = tp_gr.length
                 fp = f.length - tp
                 fn = t.length - tp
-                tn = genome_length - c.length
+                tn = genome_length - (tp + fp + fn)
                 mcc = _mcc(tp, fp, tn, fn)
 
                 rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
