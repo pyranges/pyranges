@@ -4,6 +4,7 @@
 - remove FDR from fisher_exact, but add fdr as own method in stats
 - make stats.mcc faster
 - make stats.mcc work without a genome
+- fix gff3 reading when metadata contains spaces
 
 # 0.0.62 (11.11.19)
 - fix fisher exact when given pd.Series
