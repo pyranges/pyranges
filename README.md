@@ -168,7 +168,7 @@ fisher: fast fisher exact # pip install fisher or conda install -c bioconda fish
 
 Since these are not needed for 99.9% percent of the pyranges functionality, they
 are kept separate to prevent the possibility of the pyranges-install failing due
-to dependencies that fail installation.
+to dependencies that fail installation or conflicting dependencies.
 
 ## Paper/Cite
 
