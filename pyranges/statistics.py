@@ -6,7 +6,88 @@ from pyranges.multithreaded import pyrange_apply
 
 from pyranges.methods.statistics import _relative_distance
 
-import numpy as np
+
+
+def rowbased_spearman(x, y):
+
+    x = np.asarray(x)
+    y = np.asarray(y)
+
+    rx = rowbased_rankdata(x)
+    ry = rowbased_rankdata(y)
+
+    return rowbased_pearson(rx, ry)
+
+def rowbased_pearson(x, y):
+
+    # Thanks to https://github.com/dengemann
+
+    def ss(a, axis):
+        return np.sum(a * a, axis=axis)
+
+    x = np.asarray(x)
+    y = np.asarray(y)
+
+    mx = x.mean(axis=-1)
+    my = y.mean(axis=-1)
+
+    xm, ym = x - mx[..., None], y - my[..., None]
+
+    r_num = np.add.reduce(xm * ym, axis=-1)
+    r_den = np.sqrt(ss(xm, axis=-1) * ss(ym, axis=-1))
+
+    with np.errstate(divide='ignore', invalid="ignore"):
+
+        r = r_num / r_den
+
+    return r
+
+
+def rowbased_rankdata(data):
+
+    """Row-based rankdata using method=mean"""
+
+    dc = np.asarray(data).copy()
+    sorter = np.apply_along_axis(np.argsort, 1, data)
+
+    inv = np.empty(data.shape, np.intp)
+
+    ranks = np.tile(np.arange(data.shape[1]), (len(data), 1))
+
+    np.put_along_axis(inv, sorter, ranks, axis=1)
+
+    dc = np.take_along_axis(dc, sorter, 1)
+
+    res = np.apply_along_axis(lambda r: r[1:] != r[:-1], 1, dc)
+
+    obs = np.column_stack([np.ones(len(res), dtype=bool), res])
+
+    dense = np.take_along_axis(np.apply_along_axis(np.cumsum, 1, obs), inv, 1)
+
+    len_r = obs.shape[1]
+
+    nonzero = np.count_nonzero(obs, axis=1)
+    obs = pd.DataFrame(obs)
+    nonzero = pd.Series(nonzero)
+    dense = pd.DataFrame(dense)
+
+    ranks = []
+    for _nonzero, nzdf in obs.groupby(nonzero, sort=False):
+
+        nz = np.apply_along_axis(lambda r: np.nonzero(r)[0], 1, nzdf)
+
+        _count = np.column_stack([nz, np.ones(len(nz)) * len_r])
+        _dense = dense.reindex(nzdf.index).values
+
+        _result = 0.5 * (np.take_along_axis(_count, _dense, 1) + np.take_along_axis(_count, _dense - 1, 1) + 1)
+
+        result = pd.DataFrame(_result, index=nzdf.index)
+        ranks.append(result)
+
+    final = pd.concat(ranks).sort_index(kind="mergesort")
+
+    return final
+
 
 def fdr(p_vals):
 

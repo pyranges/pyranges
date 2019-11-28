@@ -136,7 +136,7 @@ def build_header(columns_dtypes):
 
     header = []
     for c, d in columns_dtypes.items():
-        cd = "".join([c, "\n(", d, ")"])
+        cd = "".join([str(c), "\n(", d, ")"])
         header.append(cd)
 
     return header
