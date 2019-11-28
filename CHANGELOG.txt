@@ -1,5 +1,7 @@
-# 0.0.64 (unreleased)
+# 0.0.64 (28.11.19)
 - add missing example data (ending with gz) to pyranges
+- add rowbased_spearman, rowbased_pearson and rowbased_rankdata to pyranges.stats
+- pyranges now accept columns with integer names, like pandas
 
 # 0.0.63 (14.11.19)
 - ignore index when inserting Series
