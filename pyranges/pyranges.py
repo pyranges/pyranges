@@ -847,7 +847,7 @@ class PyRanges():
     def unstrand(self):
 
         if not self.stranded:
-            return self
+            return self.apply(lambda df: df.drop("Strand", errors="ignore"))
 
         gr = pr.concat([self["+"], self["-"]])
 
@@ -1044,7 +1044,4 @@ class PyRanges():
         return self
 
     def __getstate__(self):
-        return self.dfs
-
-    def __setstate__(self, d):
-        self.__dict__["dfs"] = d
+        return self
