@@ -1044,4 +1044,4 @@ class PyRanges():
         return self
 
     def __getstate__(self):
-        return self
+        return self.
