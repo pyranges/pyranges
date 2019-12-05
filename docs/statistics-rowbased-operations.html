@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>23 Statistics: rowbased operations | PyRanges documentation</title>
+  <meta name="description" content="23 Statistics: rowbased operations | PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="23 Statistics: rowbased operations | PyRanges documentation" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="23 Statistics: rowbased operations | PyRanges documentation" />
+  
+  
+  
+
+<meta name="author" content="Endre Bakken Stovner" />
+
+
+<meta name="date" content="2019-11-28" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html">
+<link rel="next" href="turning-ranges-into-rles.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to PyRanges</a></li>
+<li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
+<li class="chapter" data-level="3" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>3</b> Writing PyRanges to disk</a></li>
+<li class="chapter" data-level="4" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>4</b> Subsetting PyRanges</a></li>
+<li class="chapter" data-level="5" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>5</b> Manipulating the data in PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>6</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="piping-pyranges.html"><a href="piping-pyranges.html"><i class="fa fa-check"></i><b>7</b> Piping PyRanges</a></li>
+<li class="chapter" data-level="8" data-path="printing-pyranges.html"><a href="printing-pyranges.html"><i class="fa fa-check"></i><b>8</b> Printing PyRanges</a></li>
+<li class="chapter" data-level="9" data-path="iterating-over-pyranges.html"><a href="iterating-over-pyranges.html"><i class="fa fa-check"></i><b>9</b> Iterating over PyRanges</a></li>
+<li class="chapter" data-level="10" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>10</b> Sorting PyRanges</a></li>
+<li class="chapter" data-level="11" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>11</b> Summarizing PyRanges</a></li>
+<li class="chapter" data-level="12" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>12</b> Methods for manipulating single PyRanges</a></li>
+<li class="chapter" data-level="13" data-path="applying-custom-methods-to-pairs-of-pyranges.html"><a href="applying-custom-methods-to-pairs-of-pyranges.html"><i class="fa fa-check"></i><b>13</b> Applying custom methods to pairs of PyRanges</a></li>
+<li class="chapter" data-level="14" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>14</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
+<li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
+<li class="chapter" data-level="19" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>19</b> Statistics: similarity between PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
+<li class="chapter" data-level="21" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>21</b> Statistics: compute Fisher exact</a></li>
+<li class="chapter" data-level="22" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>22</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="23" data-path="statistics-rowbased-operations.html"><a href="statistics-rowbased-operations.html"><i class="fa fa-check"></i><b>23</b> Statistics: rowbased operations</a></li>
+<li class="chapter" data-level="24" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>24</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="25" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>25</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="26" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>26</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="27" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>27</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="28" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>28</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="29" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>29</b> Using multiple cores</a></li>
+<li class="chapter" data-level="30" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>30</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="31" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>31</b> Fetching gene tracks as PyRanges</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">PyRanges documentation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="statistics-rowbased-operations" class="section level1">
+<h1><span class="header-section-number">23</span> Statistics: rowbased operations</h1>
+<p>pyranges includes fast rowbased Pearson and Spearman correlations, including a
+fast row-based version of rankdata.</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb245-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb245-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb245-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb245-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb245-5" data-line-number="5">size <span class="op">=</span> (<span class="bu">int</span>(<span class="fl">1e3</span>), <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb245-6" data-line-number="6">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span>size)</a>
+<a class="sourceLine" id="cb245-7" data-line-number="7">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span>size)</a>
+<a class="sourceLine" id="cb245-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb245-9" data-line-number="9">spearman <span class="op">=</span> pr.stats.rowbased_spearman(d1, d2) <span class="co"># or rowbased_pearson(d1, d2)</span></a>
+<a class="sourceLine" id="cb245-10" data-line-number="10"><span class="bu">print</span>(spearman)</a></code></pre></div>
+<pre><code>## [-0.20519567  0.30779351  0.41039134 -0.6        -0.1        -0.1
+##   0.41039134  0.21081851 -0.15789474  0.97467943 -0.35909242  0.15389675
+##  -0.66688593 -0.6        -0.05129892  0.9        -0.35909242  0.57894737
+##   0.39473684 -0.30779351 -0.8        -0.41039134 -0.7         0.20519567
+##  -0.4         0.82078268 -0.26315789  0.35909242  0.3         0.78947368
+##   0.35909242  0.56428809 -0.8720816   0.41039134  0.97467943  0.46169026
+##  -0.6         0.15389675  0.6         0.35909242 -0.89442719  0.46169026
+##  -0.6        -0.05129892 -0.4        -0.4472136   0.20519567 -0.05129892
+##   0.6        -0.5         0.66688593  0.52631579  0.10259784 -0.1
+##  -0.8         0.52631579  0.2         0.6         0.8         0.6
+##  -0.41039134 -0.71818485  0.71818485  0.68421053 -0.15789474 -0.8720816
+##   0.30779351  0.52631579  0.3441236   0.05129892  0.          0.7
+##   0.97467943 -0.9        -0.60526316  0.1        -0.1        -0.34210526
+##   0.3         0.15811388 -0.3        -0.9486833   0.8         0.56428809
+##   0.56428809  0.6        -0.5        -0.15811388 -0.61558701  0.35909242
+##   0.1        -0.2         0.26352314  0.1        -0.5         0.76315789
+##  -0.66688593 -0.41039134 -0.52631579 -0.2        -0.63157895 -0.35909242
+##   0.39473684 -0.7         0.41039134  0.02631579 -0.5        -0.79056942
+##   0.05129892 -0.71818485 -0.58333333  0.46169026  0.05129892  0.20519567
+##   0.71818485  0.35909242  0.55263158 -0.7         0.8        -0.15389675
+##   0.71818485 -0.2         0.1         0.56428809 -0.46169026 -0.5
+##   0.6        -0.52704628  0.         -0.23684211 -0.7         0.82078268
+##  -0.7        -0.56428809  0.3         0.15389675 -0.1         0.
+##  -0.66688593  0.7        -0.46169026 -0.56428809  0.6         0.55263158
+##   0.15789474  0.2236068   0.97467943  0.39473684 -0.05129892  0.1
+##   0.8720816  -0.10259784  0.66688593 -0.9         0.05129892 -0.61558701
+##  -0.6         0.          0.63245553  0.1         0.71818485  0.5
+##  -0.28676967  0.3         0.20519567 -0.56428809  0.20519567 -0.05129892
+##   0.2236068   0.         -0.55263158 -0.2236068   0.07894737  0.
+##   0.15389675 -0.4         0.10259784 -0.20519567 -0.35909242 -0.5
+##  -0.26315789 -0.26315789  0.61558701 -0.1        -0.1        -0.46169026
+##   0.65789474 -0.3         0.1         0.3        -0.3         0.05129892
+##  -0.71818485  0.20519567 -0.10259784  0.7         0.20519567  0.07894737
+##  -0.2        -0.10259784  0.10259784 -0.41039134  0.28947368 -0.9
+##   0.1         0.46169026 -0.10259784  0.15389675  0.1        -0.7
+##  -0.63245553 -0.4        -1.          0.63157895  0.88388348 -0.66688593
+##  -0.20519567  0.30779351 -0.2         0.4472136  -0.71818485 -0.1
+##  -0.71052632  0.7         0.3         0.1         0.4         0.71818485
+##   0.10259784  0.20519567 -0.2        -0.4         0.35909242 -0.28947368
+##  -0.8         0.56428809  0.20519567  0.39473684 -0.55263158 -0.61558701
+##  -0.9486833  -0.35909242 -0.4        -0.15389675 -0.7         0.21081851
+##  -0.26315789 -0.05129892  0.35909242 -0.41039134  0.1        -0.20519567
+##  -0.1         0.10259784 -0.35909242  0.4        -0.6        -0.61558701
+##  -0.6        -1.         -0.5         0.05129892 -0.94736842  0.71052632
+##  -0.1        -0.28947368  0.57894737 -0.52631579 -0.3         0.05129892
+##  -0.20519567 -0.1         0.1        -0.56428809  0.76315789  0.46169026
+##   0.15389675  0.8        -0.66688593  0.63245553  0.4         0.35909242
+##   0.8720816   0.2         0.05129892 -0.2         0.9        -0.8720816
+##  -0.52704628 -0.15389675 -0.10259784  0.02631579  0.8        -0.3
+##   0.1        -0.92105263  0.41039134 -0.56428809 -0.15389675  0.05129892
+##   0.          0.41039134  0.35909242 -0.3441236  -0.73786479  0.13157895
+##  -0.15389675 -0.61558701 -0.10814761  0.30779351  0.35147975 -0.2
+##  -0.02631579 -0.4         0.6         0.3         0.7         0.5
+##  -0.66688593  0.56428809 -0.4        -0.3        -0.15389675  0.5
+##  -0.8720816   0.05129892  0.20519567  0.46169026  0.7         0.30779351
+##   0.5        -0.82078268  0.28947368 -0.22941573 -0.05270463 -0.35909242
+##   0.          0.05129892  0.71818485  0.1        -0.5         0.8720816
+##  -0.82495791  0.15389675  0.79056942  0.79056942  0.89442719  0.35909242
+##   0.1         0.54073807  0.66688593  0.15389675  0.35909242  0.66688593
+##  -0.71818485 -0.20519567  0.66688593 -0.1118034   0.56428809 -0.05129892
+##   0.28947368  0.1        -0.35909242  0.5         0.66688593 -0.1
+##  -0.54073807 -0.8720816  -0.61558701  0.6         0.          0.66688593
+##  -0.1        -0.56428809  0.8720816  -0.9         0.1         0.10259784
+##  -0.4        -0.52631579 -0.15389675 -0.66688593 -0.5        -0.4
+##  -0.3        -0.61558701 -0.10259784 -0.20519567  0.3         0.10259784
+##   0.3        -0.05129892 -0.05129892  0.28947368 -0.5        -0.46169026
+##   0.2         0.89221782 -0.10259784  0.7         0.63157895 -0.6
+##   0.81578947  0.36842105  0.8720816  -0.8720816  -0.41039134 -0.20519567
+##  -0.61558701 -0.3         0.1        -0.5        -0.56428809  0.3
+##   0.3        -0.2         0.9         0.35909242  0.3         0.35909242
+##   0.05129892  0.76315789 -0.41039134 -0.30779351 -0.10259784  0.10259784
+##  -0.20519567  0.         -0.3        -0.64888568 -0.02631579  0.15811388
+##  -0.15811388  0.07894737  0.          0.82078268  0.66688593 -0.5
+##  -0.6         0.5         0.63157895  0.3         0.56428809  0.7
+##   0.10526316 -0.4472136   0.07894737  0.34210526 -0.92105263 -0.05129892
+##  -0.26352314 -0.39473684  0.8        -0.6        -0.41039134 -0.46169026
+##   0.          0.7         0.         -0.66688593  0.2236068   0.15389675
+##   0.56428809 -0.10259784 -0.3        -0.20519567 -0.68421053 -0.4472136
+##   0.20519567  0.15389675 -0.97332853 -0.56428809  0.6        -0.05129892
+##  -0.41039134 -0.66688593 -0.6        -0.68421053 -0.05129892  0.46169026
+##  -0.52631579 -0.2         0.02631579 -0.41039134 -0.5        -0.5
+##  -0.8720816   0.10259784  0.4         0.15789474  0.79056942 -0.56428809
+##  -0.3        -0.1         0.28867513 -0.82078268 -0.41039134 -0.7
+##   0.          0.41039134 -0.41039134 -0.7        -0.15389675 -0.1
+##  -0.05270463  0.41039134  0.9486833   0.4        -0.94736842 -0.3
+##  -0.1         0.          0.41039134  0.15389675  0.10259784 -0.10259784
+##  -0.10540926 -0.1        -0.5        -0.66688593  0.20519567  0.07894737
+##   0.3        -0.4472136   0.          0.4        -0.6         0.8720816
+##   0.66688593 -0.05129892  0.5797509   0.66688593 -0.2         0.46169026
+##   0.35909242  0.7        -0.23684211 -0.28947368  0.81578947 -0.55263158
+##   0.56428809  0.63245553 -0.7         0.          0.41039134  0.3
+##   0.21081851 -0.9        -0.36893239  0.8720816   0.66688593 -0.7
+##   0.1         0.56428809  0.6         0.3         0.71818485  0.2
+##   0.4472136   0.05129892 -0.15389675 -0.89442719 -0.56428809 -0.5
+##  -0.9         0.          0.          0.30779351  0.7         0.2
+##  -0.1        -0.26315789  0.41039134 -0.6         0.46169026 -0.5
+##   0.7         0.         -0.3        -0.82078268 -0.1         0.20519567
+##  -0.1         0.35909242 -0.63157895  0.05129892 -1.          0.56428809
+##  -0.8         0.89442719  0.26352314 -0.3441236  -0.8720816  -0.6
+##   0.02631579  0.26352314  0.3         0.66688593 -0.76315789  0.15811388
+##   0.56428809 -0.71818485  0.66688593  0.89442719 -0.28947368 -0.1
+##  -0.67082039  0.15389675  0.55263158 -0.1        -0.8         0.15389675
+##   0.2         0.40555355  0.61558701 -0.6        -0.82495791 -0.35909242
+##  -0.20519567 -0.7         0.7         0.26352314  0.2        -0.05129892
+##   0.1        -0.56428809 -0.71818485  0.7         0.3        -0.05129892
+##   0.20519567  0.61558701 -0.7         0.8         0.67082039 -0.55263158
+##  -0.82078268  0.05129892  0.15389675  0.2        -0.15811388  0.1
+##   0.20519567  0.28947368 -0.1        -0.2         0.4472136  -0.52631579
+##   0.23684211  0.20519567 -0.02631579  0.52704628 -0.08111071  0.56428809
+##  -0.97467943 -0.73786479  0.3         0.20519567  0.20519567 -0.2
+##   0.5        -0.97467943  0.66688593 -0.20519567 -0.52704628 -0.41039134
+##  -0.63157895  0.5         1.          0.39473684 -0.15811388  0.41039134
+##   0.6        -0.10259784  0.41039134  0.1         0.66688593 -0.07894737
+##  -0.2        -0.10259784 -0.35909242 -0.3        -0.6         0.4
+##  -0.6         0.7        -0.56428809  0.6         0.3        -0.8720816
+##  -0.02631579  0.1118034   0.3        -0.66688593  0.05129892  0.
+##  -0.07894737  0.41039134  0.36842105 -0.7        -0.05263158  0.02777778
+##  -0.6         0.02631579 -0.7        -0.78262379 -0.82078268  0.35909242
+##   0.7299964   0.1         0.6        -0.05129892  0.71052632 -0.46169026
+##  -0.9486833   0.6         0.15389675 -0.8         0.23684211 -0.28947368
+##  -0.1         0.8720816   0.6         0.1        -0.66688593  0.71818485
+##  -0.66688593 -0.20519567  0.6         0.15389675  0.1        -0.5797509
+##   0.89221782 -0.8         0.8         0.         -0.64888568 -0.13518452
+##  -0.20519567  0.97467943 -0.6         0.61558701 -0.10259784 -0.6
+##   0.3354102  -0.35909242  0.61558701  0.13518452  0.1         0.82078268
+##   0.15389675  0.26315789  0.05129892 -0.7        -0.71818485  0.63157895
+##   0.6        -0.36842105 -0.9         0.41039134 -0.8720816   0.15389675
+##   0.5         0.7         0.05129892  0.56428809  0.1         0.05407381
+##   0.6        -0.26315789 -0.3        -0.6         0.7        -0.66688593
+##  -0.41039134 -0.3         0.35909242  0.07894737 -0.20519567  0.8720816
+##   0.20519567 -0.55263158  0.9         0.20519567  0.1         0.66688593
+##  -0.28947368  0.9        -0.1        -0.4        -0.20519567  0.
+##   0.66688593 -0.68421053 -0.5         0.46169026 -0.1         0.4472136
+##  -0.05129892 -0.57353933 -0.82078268  0.82078268  0.5         0.36842105
+##  -0.13157895  0.05129892  0.1767767   0.2        -0.56428809  0.20519567
+##  -0.94736842 -0.20519567  0.46169026 -0.1        -0.89442719  0.30779351
+##  -0.6         0.2         0.66688593  0.66688593  0.61558701  0.8720816
+##   0.1         0.66688593  0.35909242 -0.6         0.3354102  -0.20519567
+##  -0.26352314 -0.8720816  -0.15389675 -0.5         0.48666426 -0.5
+##   0.35909242 -0.9         0.9        -0.20519567  0.1        -0.56428809
+##  -0.71818485 -0.23684211  0.9         0.46169026  0.5         0.15389675
+##   0.89442719  0.46169026 -0.15789474 -0.05263158 -0.4         0.94736842
+##   0.2        -0.1        -0.35909242  0.05129892 -0.20519567 -0.10259784
+##   0.35909242  0.          0.7         0.57735027  0.56428809  0.1
+##   0.92105263  0.36893239 -0.14808722  0.         -0.3         0.2
+##  -0.6         0.4        -0.7        -0.35909242  0.35909242  0.2
+##  -0.71818485  0.3         0.3        -0.26315789 -0.8720816   0.15389675
+##   0.4        -0.7        -0.20519567  0.2        -0.76315789 -0.97467943
+##   0.94736842 -0.70710678 -0.66688593 -0.3        -0.76315789 -0.4
+##   0.3        -0.6         0.15389675 -0.76315789  0.3        -0.82078268
+##  -0.2        -0.2        -0.30779351  0.5        -0.3         0.2
+##  -0.68421053  0.5        -0.05129892  0.1         0.2        -0.4
+##   0.3         0.56428809  0.35909242 -0.52704628  0.52631579 -0.05129892
+##   0.3        -0.6         0.5        -0.4        -0.7         0.05129892
+##   0.5        -0.82078268 -0.1        -0.64888568  0.78947368 -0.5797509
+##   0.3        -0.20519567  0.8         0.20519567 -0.35909242 -0.82078268
+##  -0.05129892 -0.05129892 -0.7        -0.56428809  0.55263158 -0.5
+##  -0.13157895 -0.30779351 -0.10259784  0.05129892  0.30779351  0.6
+##   0.35909242  0.9        -0.3        -0.35909242  0.3        -0.46169026
+##  -0.67082039  0.43259046  0.         -0.3        -0.02631579 -0.15389675
+##   0.2236068  -0.71818485  0.8720816   0.15789474  0.5         0.05263158
+##  -0.5         0.52704628 -0.2        -0.7        -0.20519567 -0.55263158
+##   0.64888568  0.61558701  0.52631579 -0.66688593 -0.66688593 -0.35909242
+##  -0.32444284  0.88388348  0.3        -0.30779351  0.30779351  0.41039134
+##  -0.9        -0.8720816   0.2         0.3         0.46169026  0.56428809
+##  -0.15389675 -0.56428809  0.56428809  0.46169026 -0.5        -0.3
+##  -0.7        -0.41039134  0.66688593 -0.5       ]</code></pre>
+<div class="sourceCode" id="cb247"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb247-1" data-line-number="1">ranks <span class="op">=</span> pr.stats.rowbased_rankdata(d1) <span class="co"># similar to scipy.stats.rankdata</span></a>
+<a class="sourceLine" id="cb247-2" data-line-number="2"><span class="bu">print</span>(ranks)</a></code></pre></div>
+<pre><code>##        0    1    2    3    4
+## 0    3.0  4.0  2.0  5.0  1.0
+## 1    5.0  1.0  2.5  2.5  4.0
+## 2    5.0  3.0  1.5  1.5  4.0
+## 3    2.0  1.0  5.0  4.0  3.0
+## 4    2.0  5.0  1.0  4.0  3.0
+## ..   ...  ...  ...  ...  ...
+## 995  5.0  3.0  4.0  1.0  2.0
+## 996  2.0  5.0  3.0  1.0  4.0
+## 997  4.0  1.0  3.0  5.0  2.0
+## 998  5.0  3.0  4.0  1.5  1.5
+## 999  4.0  2.0  3.0  1.0  5.0
+## 
+## [1000 rows x 5 columns]</code></pre>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="turning-ranges-into-rles.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

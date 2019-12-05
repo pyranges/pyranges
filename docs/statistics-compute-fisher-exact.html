@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-12" />
+<meta name="date" content="2019-11-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -146,14 +146,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
 <li class="chapter" data-level="21" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>21</b> Statistics: compute Fisher exact</a></li>
 <li class="chapter" data-level="22" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>22</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
-<li class="chapter" data-level="23" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>23</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="24" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>24</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="25" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>25</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="26" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>26</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="27" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>27</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="28" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>28</b> Using multiple cores</a></li>
-<li class="chapter" data-level="29" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>29</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="30" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>30</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="23" data-path="statistics-rowbased-operations.html"><a href="statistics-rowbased-operations.html"><i class="fa fa-check"></i><b>23</b> Statistics: rowbased operations</a></li>
+<li class="chapter" data-level="24" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>24</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="25" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>25</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="26" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>26</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="27" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>27</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="28" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>28</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="29" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>29</b> Using multiple cores</a></li>
+<li class="chapter" data-level="30" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>30</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="31" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>31</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -185,24 +186,24 @@ the package fisher installed.</p>
 <a class="sourceLine" id="cb235-8" data-line-number="8">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
 <a class="sourceLine" id="cb235-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb235-10" data-line-number="10">fe <span class="op">=</span> pr.stats.fisher_exact(n1, n2, d1, d2).head()</a></code></pre></div>
-<pre><code>## /home/endrebak/code/pyranges/pyranges/statistics.py:49: RuntimeWarning: divide by zero encountered in true_divide
+<pre><code>## /home/endrebak/code/pyranges/pyranges/statistics.py:130: RuntimeWarning: divide by zero encountered in true_divide
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))
-## /home/endrebak/code/pyranges/pyranges/statistics.py:49: RuntimeWarning: invalid value encountered in true_divide
+## /home/endrebak/code/pyranges/pyranges/statistics.py:130: RuntimeWarning: invalid value encountered in true_divide
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))</code></pre>
 <div class="sourceCode" id="cb237"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb237-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
 <pre><code>##           OR         P
-## 0   0.388889  0.142644
-## 1  14.000000  0.232683
-## 2   2.000000  0.205452
-## 3        inf  0.005797
-## 4        inf  0.000061</code></pre>
+## 0   0.933333  0.003848
+## 1   0.000000  0.000547
+## 2  19.090909  0.029850
+## 3   0.444444  1.000000
+## 4   0.000000  0.096377</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
 <div class="sourceCode" id="cb239"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb239-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
-<pre><code>## 0    0.237740
-## 1    0.232683
-## 2    0.256815
-## 3    0.014493
-## 4    0.000306
+<pre><code>## 0    0.009619
+## 1    0.002734
+## 2    0.049751
+## 3    1.000000
+## 4    0.120472
 ## Name: P, dtype: float64</code></pre>
 
 </div>

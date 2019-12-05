@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>28 Using multiple cores | PyRanges documentation</title>
-  <meta name="description" content="28 Using multiple cores | PyRanges documentation" />
+  <title>29 Using multiple cores | PyRanges documentation</title>
+  <meta name="description" content="29 Using multiple cores | PyRanges documentation" />
   <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="28 Using multiple cores | PyRanges documentation" />
+  <meta property="og:title" content="29 Using multiple cores | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="28 Using multiple cores | PyRanges documentation" />
+  <meta name="twitter:title" content="29 Using multiple cores | PyRanges documentation" />
   
   
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-12" />
+<meta name="date" content="2019-11-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -146,14 +146,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="20" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: spatial correlations between PyRanges</a></li>
 <li class="chapter" data-level="21" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>21</b> Statistics: compute Fisher exact</a></li>
 <li class="chapter" data-level="22" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>22</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
-<li class="chapter" data-level="23" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>23</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="24" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>24</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="25" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>25</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="26" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>26</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="27" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>27</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="28" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>28</b> Using multiple cores</a></li>
-<li class="chapter" data-level="29" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>29</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="30" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>30</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="23" data-path="statistics-rowbased-operations.html"><a href="statistics-rowbased-operations.html"><i class="fa fa-check"></i><b>23</b> Statistics: rowbased operations</a></li>
+<li class="chapter" data-level="24" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>24</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="25" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>25</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="26" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>26</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="27" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>27</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="28" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>28</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="29" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>29</b> Using multiple cores</a></li>
+<li class="chapter" data-level="30" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>30</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="31" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>31</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -172,7 +173,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="using-multiple-cores" class="section level1">
-<h1><span class="header-section-number">28</span> Using multiple cores</h1>
+<h1><span class="header-section-number">29</span> Using multiple cores</h1>
 <p>Most PyRanges and PyRle-operations can be run in parallel. Even user-made
 functions can be run in parallel using the apply, apply_pair or apply_chunks
 methods.</p>
