@@ -3,6 +3,7 @@
 - genomicfeatures: add tss/tes-methods
 - remove Strand column with unstrand() even if PyRanges is not stranded
 
+
 # 0.0.64 (28.11.19)
 - add missing example data (ending with gz) to pyranges
 - add rowbased_spearman, rowbased_pearson and rowbased_rankdata to pyranges.stats
