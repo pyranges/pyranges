@@ -1,4 +1,5 @@
 # 0.0.65 (unreleased)
+- fix column names after read_gtf so they work with GenomicFeatures
 - remove Strand column with unstrand() even if PyRanges is not stranded
 
 # 0.0.64 (28.11.19)
