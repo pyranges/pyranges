@@ -1,5 +1,7 @@
 # 0.0.65 (unreleased)
+- add flag chain, make False by default to to_* methods
 - remove Strand column with unstrand() even if PyRanges is not stranded
+
 
 # 0.0.64 (28.11.19)
 - add missing example data (ending with gz) to pyranges

@@ -26,6 +26,12 @@ gr.to_csv("chipseq.csv", sep="\t", header=True)
 print(gr[:10000].to_csv(sep="|", header=True))
 ```
 
+All to-methods except `to_bigwig` takes an argument chain which can be set to
+True if you want the method to return the PyRanges it wrote. It is useful for
+storing the intermediate results of long call chains.
+
+`pr.data().f1().to_csv("bla", chain=True).merge()...`
+
 The pyranges library can also create bigwigs, but it needs the library pybigwig
 which is not installed by default. Use `conda install -c bioconda pybigwig` or
 `pip install pybigwig` to install it.
