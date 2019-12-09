@@ -13,6 +13,16 @@ print(gr)
 print(gr.features.introns(by="transcript")) # default is by gene
 ```
 
+`tes/tss` can be used to find the starts and ends of transcripts:
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.ucsc_bed()
+print(gr[gr.Feature == "transcript"])
+print(gr.features.tes()) # default is by gene
+```
+
+
 `tile_genome` splits a PyRanges of chromosome sizes into a tiled genome.
 
 ```{python tidy=FALSE}
@@ -42,6 +52,7 @@ print(cs)
 print(pr.gf.genome_bounds(gr, cs, clip=True))
 print(pr.gf.genome_bounds(gr, cs))
 ```
+
 
 `random` creates a random PyRanges from the PyRanges of chromosome sizes given:
 
