@@ -413,10 +413,7 @@ class PyRanges():
         strandedness = kwargs["strandedness"]
 
         strand = True if strandedness else False
-        if not kwargs.get("no_merge", False):
-            other_clusters = other.merge(strand=strand, **kwargs)
-        else:
-            other_clusters = other
+        other_clusters = other.merge(strand=strand, **kwargs)
 
         result = pyrange_apply(_subtraction, self, other_clusters, **kwargs)
 
