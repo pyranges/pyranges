@@ -898,41 +898,41 @@ class PyRanges():
 
         return _summary(self)
 
-    def to_csv(self, path=None, sep=",", header=True, compression="infer"):
+    def to_csv(self, path=None, sep=",", header=True, compression="infer", chain=False):
         from pyranges.out import _to_csv
         result = _to_csv(
             self, path, sep=sep, header=header, compression=compression)
-        if path:
+        if path and chain:
             return self
         else:
             return result
 
-    def to_bed(self, path=None, keep=True, compression="infer"):
+    def to_bed(self, path=None, keep=True, compression="infer", chain=False):
         from pyranges.out import _to_bed
 
         result = _to_bed(self, path, keep=keep, compression=compression)
 
-        if path:
+        if path and chain:
             return self
         else:
             return result
 
-    def to_gtf(self, path=None, compression="infer"):
+    def to_gtf(self, path=None, compression="infer", chain=False):
         from pyranges.out import _to_gtf
 
         result = _to_gtf(self, path, compression=compression)
 
-        if path:
+        if path and chain:
             return self
         else:
             return result
 
-    def to_gff3(self, path=None, compression="infer"):
+    def to_gff3(self, path=None, compression="infer", chain=False):
         from pyranges.out import _to_gff3
 
         result = _to_gff3(self, path, compression=compression)
 
-        if path:
+        if path and chain:
             return self
         else:
             return result
