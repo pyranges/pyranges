@@ -110,29 +110,13 @@ def _keep_transcript_with_most_exons(df):
     return pd.concat(transcripts_with_most_exons).reset_index(drop=True)
 
 
-def tss_or_tes(df, which, slack=0):
-
-    assert which in "tes tss".split()
-
-    if "Feature" not in df:
-        raise Exception("No Feature information in object.")
-
-    _df = df[df.Feature == "transcript"]
-
-    if which == "tss":
-        _df = _tss(_df, slack)
-    elif which == "tes":
-        _df = _tes(_df, slack)
-
-    return _df
-
 
 def filter_transcripts(df, keep="most_exons"):
 
     return _keep_transcript_with_most_exons(df)
 
 
-def _tss(df, slack=0, drop_duplicates=True):
+def _tss(df, slack=0):
 
     tss_pos = df.loc[df.Strand == "+"]
 
@@ -148,15 +132,12 @@ def _tss(df, slack=0, drop_duplicates=True):
     tss.Start = tss.Start - slack
     tss.loc[tss.Start < 0, "Start"] = 0
 
-    if drop_duplicates:
-        tss = tss.drop_duplicates("Chromosome Start End".split())
-
     tss.index = range(len(tss))
 
     return tss
 
 
-def _tes(df, slack=0, drop_duplicates=True):
+def _tes(df, slack=0):
 
     # df = self.df
 
@@ -173,9 +154,6 @@ def _tes(df, slack=0, drop_duplicates=True):
     tes.End = tes.End + 1 + slack
     tes.Start = tes.Start - slack
     tes.loc[tes.Start < 0, "Start"] = 0
-
-    if drop_duplicates:
-        tes = tes.drop_duplicates("Chromosome Start End".split())
 
     tes.index = range(len(tes))
 
@@ -283,44 +261,38 @@ class GenomicFeaturesMethods():
 
         self.pr = pr
 
-    def tss(self, drop_duplicate_tss=True, slack=0):
+    def tss(self, slack=0):
 
         pr = self.pr
-
-        df = pr.df
 
         if not pr.stranded:
             raise Exception(
                 "Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?"
             )
-        df = tss_or_tes(df, "tss", slack)
 
-        if drop_duplicate_tss:
-            df = df.drop_duplicates("Chromosome Start End".split())
+        pr = pr[pr.Feature == "transcript"]
+        pr = pr.apply(lambda df: _tss(df, slack))
 
-        df = df.drop(["ExonNumber", "ExonID"], 1)
+        pr.Feature = "tss"
 
-        return df
+        return pr
 
-    def tes(self, drop_duplicate_tss=True, slack=0):
+    def tes(self, slack=0):
 
         pr = self.pr
-
-        df = pr.df
-        df = df.drop("ExonNumber", 1)
 
         if not pr.stranded:
             raise Exception(
                 "Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?"
             )
-        df = tss_or_tes(df, "tes", slack)
 
-        if drop_duplicate_tss:
-            df = df.drop_duplicates("Chromosome Start End".split())
+        pr = pr[pr.Feature == "transcript"]
+        pr = pr.apply(lambda df: _tes(df, slack))
 
-        df = df.drop(["ExonNumber", "ExonID"], 1)
+        pr.Feature = "tes"
 
-        return df
+        return pr
+
 
     def introns(self, by="gene"):
 

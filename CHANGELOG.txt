@@ -1,6 +1,7 @@
 # 0.0.65 (unreleased)
 - fix column names after read_gtf so they work with GenomicFeatures
 - add flag chain, make False by default to to_* methods
+- genomicfeatures: add tss/tes-methods
 - remove Strand column with unstrand() even if PyRanges is not stranded
 
 
