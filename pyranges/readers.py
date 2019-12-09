@@ -114,9 +114,13 @@ def read_gtf(f, full=True, annotation=None, output_df=False, nrows=None):
     _skiprows = skiprows(f)
 
     if full:
-        return read_gtf_full(f, annotation, output_df, nrows, _skiprows)
+        gr = read_gtf_full(f, annotation, output_df, nrows, _skiprows)
     else:
-        return read_gtf_restricted(f, annotation, output_df, nrows, _skiprows)
+        gr = read_gtf_restricted(f, annotation, output_df, nrows, _skiprows)
+
+    gr = gr.apply(lambda df: df.rename(columns={"gene_id": "GeneID", "transcript_id": "TranscriptID", "exon_number": "ExonNumber", "exon_id": "ExonID"}))
+
+    return gr
 
 
 def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
