@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-28" />
+<meta name="date" content="2019-12-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -175,9 +175,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="turning-ranges-into-rles" class="section level1">
 <h1><span class="header-section-number">24</span> Turning Ranges into RLEs</h1>
 <p>Ranges can be turned into dicts of run length encodings with the to_rle function:</p>
-<div class="sourceCode" id="cb249"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb249-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb249-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
-<a class="sourceLine" id="cb249-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb245"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb245-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb245-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
+<a class="sourceLine" id="cb245-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -194,7 +194,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb251"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb251-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle())</a></code></pre></div>
+<div class="sourceCode" id="cb247"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb247-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle())</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
@@ -213,7 +213,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb253"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb253-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb249-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
@@ -232,7 +232,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb255"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb255-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb251-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+-------------------+--------------------+-------------------+--------------------+-------------------+------+-------------------+---------+-------------------+
@@ -253,7 +253,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
 <p>To get the RPM-normalized coverage, use the rpm argument.</p>
 <p>You can also create coverage for an any numeric value in your PyRanges:</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb257-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(<span class="st">&quot;Score&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb253-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(<span class="st">&quot;Score&quot;</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
 ## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+

@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-28" />
+<meta name="date" content="2019-12-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -176,34 +176,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">21</span> Statistics: compute Fisher exact</h1>
 <p>You can use pyranges to compute Fisher Exact quickly. To do so you need to have
 the package fisher installed.</p>
-<div class="sourceCode" id="cb235"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb235-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb235-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb235-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb235-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb235-5" data-line-number="5">n1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb235-6" data-line-number="6">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb235-7" data-line-number="7">n2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb235-8" data-line-number="8">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb235-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb235-10" data-line-number="10">fe <span class="op">=</span> pr.stats.fisher_exact(n1, n2, d1, d2).head()</a></code></pre></div>
+<div class="sourceCode" id="cb231"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb231-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb231-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb231-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb231-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb231-5" data-line-number="5">n1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb231-6" data-line-number="6">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb231-7" data-line-number="7">n2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb231-8" data-line-number="8">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb231-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb231-10" data-line-number="10">fe <span class="op">=</span> pr.stats.fisher_exact(n1, n2, d1, d2).head()</a></code></pre></div>
 <pre><code>## /home/endrebak/code/pyranges/pyranges/statistics.py:130: RuntimeWarning: divide by zero encountered in true_divide
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))
 ## /home/endrebak/code/pyranges/pyranges/statistics.py:130: RuntimeWarning: invalid value encountered in true_divide
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))</code></pre>
-<div class="sourceCode" id="cb237"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb237-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
+<div class="sourceCode" id="cb233"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb233-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
 <pre><code>##           OR         P
-## 0   0.933333  0.003848
-## 1   0.000000  0.000547
-## 2  19.090909  0.029850
-## 3   0.444444  1.000000
-## 4   0.000000  0.096377</code></pre>
+## 0        NaN  1.000000
+## 1  22.800000  0.001853
+## 2   1.259259  0.613411
+## 3   0.200000  0.003302
+## 4   0.041667  1.000000</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
-<div class="sourceCode" id="cb239"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb239-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
-<pre><code>## 0    0.009619
-## 1    0.002734
-## 2    0.049751
-## 3    1.000000
-## 4    0.120472
+<div class="sourceCode" id="cb235"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb235-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
+<pre><code>## 0    1.000000
+## 1    0.009266
+## 2    1.000000
+## 3    0.008255
+## 4    1.000000
 ## Name: P, dtype: float64</code></pre>
 
 </div>

@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-28" />
+<meta name="date" content="2019-12-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -174,25 +174,82 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="fetching-gene-tracks-as-pyranges" class="section level1">
 <h1><span class="header-section-number">31</span> Fetching gene tracks as PyRanges</h1>
-<p>PyRanges can fetch data from UCSC, GENCODE and Ensembl through the pyranges_db add-on package.
-It can be installed with <code>pip install pyranges_db</code>.</p>
+<p>PyRanges can fetch data from UCSC, GENCODE, Ensembl and the GWAS catalog through
+the pyranges_db add-on package. It can be installed with <code>pip install pyranges_db</code>.</p>
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and
 Ensembl also has the method chromosome_sizes.</p>
 <p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few thousand rows of data.</p>
-<pre><code># commented out since the UCSC server was down when generating these docs :)
-# import pyranges_db as pr_db
-#
-# genomes = pr_db.ucsc.genomes()
-#
-# print(genomes.head())
-#
-# chr_sizes = pr_db.ucsc.chromosome_sizes(&quot;hg38&quot;)
-#
-# print(chr_sizes)
-#
-# genes = pr_db.ucsc.genes(&quot;hg38&quot;, head=True)
-#
-# print(genes)</code></pre>
+<div class="sourceCode" id="cb334"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb334-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
+<a class="sourceLine" id="cb334-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb334-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
+<a class="sourceLine" id="cb334-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb334-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
+<pre><code>##     Genome
+## 0  acaChl1
+## 1  ailMel1
+## 2  allMis1
+## 3  allSin1
+## 4  amaVit1</code></pre>
+<div class="sourceCode" id="cb336"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb336-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
+<a class="sourceLine" id="cb336-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb336-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
+<pre><code>## +------------------------+-----------+-----------+
+## | Chromosome             | Start     | End       |
+## | (category)             | (int32)   | (int32)   |
+## |------------------------+-----------+-----------|
+## | chr1                   | 0         | 248956422 |
+## | chr1_GL383518v1_alt    | 0         | 182439    |
+## | chr1_GL383519v1_alt    | 0         | 110268    |
+## | chr1_GL383520v2_alt    | 0         | 366580    |
+## | ...                    | ...       | ...       |
+## | chrY_KZ208924v1_fix    | 0         | 209722    |
+## | chrY_KZ208923v1_fix    | 0         | 48370     |
+## | chrY_KN196487v1_fix    | 0         | 101150    |
+## | chrY_KI270740v1_random | 0         | 37240     |
+## +------------------------+-----------+-----------+
+## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
+<div class="sourceCode" id="cb338"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb338-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb338-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb338-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
+## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | exon_number   | transcript_name   |
+## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)     | (category)        |
+## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------|
+## | chr1         | 43933800  | 43937240  | gene         | ARTN         | nan             | +            | nan           | nan               |
+## | chr1         | 7669729   | 7769706   | gene         | CAMTA1       | nan             | +            | nan           | nan               |
+## | chr1         | 145719498 | 145739288 | gene         | CD160        | nan             | +            | nan           | nan               |
+## | chr1         | 11806095  | 11843144  | gene         | CLCN6        | nan             | +            | nan           | nan               |
+## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...           | ...               |
+## | chrY         | 2738199   | 2738256   | exon         | CD99         | 289.0           | +            | 7.0           | NM_001321370      |
+## | chrY         | 2738202   | 2738256   | exon         | CD99         | 287.0           | +            | 8.0           | NM_001321368      |
+## | chrY         | 2740778   | 2741309   | exon         | CD99         | 287.0           | +            | 9.0           | NM_001321368      |
+## | chrY         | 2740778   | 2741309   | exon         | CD99         | 289.0           | +            | 8.0           | NM_001321370      |
+## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
+## Stranded PyRanges object has 5,884 rows and 9 columns from 55 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb340"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb340-1" data-line-number="1">gwas <span class="op">=</span> pr_db.gwas_catalog.gwas_catalog()</a>
+<a class="sourceLine" id="cb340-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb340-3" data-line-number="3"><span class="bu">print</span>(gwas)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------------+------------+--------------+-------------------------+-------+
+## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS    | P-VALUE    | OR or BETA   | MAPPED_GENE             | +31   |
+## | (category)   | (int32)   | (int32)   | (object)   | (object)        | (object)   | (object)     | (object)                | ...   |
+## |--------------+-----------+-----------+------------+-----------------+------------+--------------+-------------------------+-------|
+## | 1            | 11804529  | 11804530  | 1p36.22    | ENSG00000177000 | 5E-18      | nan          | MTHFR                   | ...   |
+## | 1            | 11905735  | 11905736  | 1p36.22    | nan             | 3E-9       | nan          | AL021155.1 - AL021155.2 | ...   |
+## | 1            | 165745179 | 165745180 | 1q24.1     | ENSG00000143183 | 4E-51      | 1.3760265    | TMCO1                   | ...   |
+## | 1            | 165767643 | 165767644 | 1q24.1     | ENSG00000143183 | 2E-52      | 1.369863     | TMCO1                   | ...   |
+## | ...          | ...       | ...       | ...        | ...             | ...        | ...          | ...                     | ...   |
+## | Y            | 14692972  | 14692973  | Yq11.221   | ENSG00000165246 | 9E-7       | nan          | NLGN4Y                  | ...   |
+## | Y            | 14692972  | 14692973  | Yq11.221   | ENSG00000165246 | 1E-6       | nan          | NLGN4Y                  | ...   |
+## | X            | 71634424  | 71634425  | Xq13.1     | nan             | 8E-9       | 0.015622699  | CXCR3 - BX276092.7      | ...   |
+## | X            | 77216412  | 77216413  | Xq21.1     | nan             | 1E-42      | 0.041131224  | RNA5SP509 - SPRYD7P1    | ...   |
+## | X            | 57322090  | 57322091  | Xp11.21    | ENSG00000165591 | 2E-29      | 0.03290996   | FAAH2                   | ...   |
+## | X            | 134549560 | 134549561 | Xq26.3     | nan             | 1E-14      | 0.02647431   | MIR424 - LINC00629      | ...   |
+## +--------------+-----------+-----------+------------+-----------------+------------+--------------+-------------------------+-------+
+## Unstranded PyRanges object has 168,516 rows and 39 columns from 24 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome.
+## 31 hidden columns: MAPPED_TRAIT, DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, JOURNAL, LINK, STUDY, DISEASE/TRAIT, INITIAL SAMPLE SIZE, ... (+ 21 more.)</code></pre>
 
 </div>
 
