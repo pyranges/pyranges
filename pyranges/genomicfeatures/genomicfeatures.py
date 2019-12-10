@@ -98,10 +98,10 @@ def _keep_transcript_with_most_exons(df):
 
     transcripts_with_most_exons = []
 
-    for _, gdf in df.groupby("GeneID"):
+    for _, gdf in df.groupby("gene_id"):
 
-        max_exon = gdf.ExonNumber.max()
-        max_transcript = gdf.loc[gdf.ExonNumber == max_exon].Transcript.iloc[0]
+        max_exon = gdf.exon_number.max()
+        max_transcript = gdf.loc[gdf.exon_number == max_exon].Transcript.iloc[0]
 
         max_rows = gdf.loc[gdf.Transcript == max_transcript]
 
