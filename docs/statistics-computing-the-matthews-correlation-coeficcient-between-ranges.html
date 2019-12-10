@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-28" />
+<meta name="date" content="2019-12-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -180,12 +180,12 @@ well when you want to compare the correlation between two ranges.</p>
 <p>If you want to compute the MCC between two or more ranges, you can use
 <code>pr.stat.mcc</code>. You need to give the chromosome sizes as a pyrange. You can get
 these using pyranges_db.</p>
-<div class="sourceCode" id="cb241"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb241-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb241-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb241-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb241-4" data-line-number="4">chromsizes <span class="op">=</span> pr.data.chromsizes()</a>
-<a class="sourceLine" id="cb241-5" data-line-number="5">mcc <span class="op">=</span> pr.stats.mcc([gr, gr2], labels<span class="op">=</span><span class="st">&quot;chip input&quot;</span>.split(), genome<span class="op">=</span>chromsizes, strand<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb241-6" data-line-number="6"><span class="bu">print</span>(mcc)</a></code></pre></div>
+<div class="sourceCode" id="cb237"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb237-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb237-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb237-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb237-4" data-line-number="4">chromsizes <span class="op">=</span> pr.data.chromsizes()</a>
+<a class="sourceLine" id="cb237-5" data-line-number="5">mcc <span class="op">=</span> pr.stats.mcc([gr, gr2], labels<span class="op">=</span><span class="st">&quot;chip input&quot;</span>.split(), genome<span class="op">=</span>chromsizes, strand<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb237-6" data-line-number="6"><span class="bu">print</span>(mcc)</a></code></pre></div>
 <pre><code>##        T      F Strand      TP      FP          TN      FN       MCC
 ## 0   chip   chip      +  125235       0  6191262731       0  1.000000
 ## 1   chip   chip      -  122745       0  6191265221       0  1.000000
@@ -196,8 +196,8 @@ these using pyranges_db.</p>
 ## 6  input  input      +  114579       0  6191273387       0  1.000000
 ## 7  input  input      -  118126       0  6191269840       0  1.000000</code></pre>
 <p>If you want to create a symmetric matrix from the result:</p>
-<div class="sourceCode" id="cb243"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb243-1" data-line-number="1"><span class="bu">print</span>(<span class="bu">print</span>(mcc.set_index([<span class="st">&quot;Strand&quot;</span>, <span class="st">&quot;T&quot;</span>, <span class="st">&quot;F&quot;</span>]).MCC.unstack()))</a>
-<a class="sourceLine" id="cb243-2" data-line-number="2"><span class="co"># or just mcc.set_index([&quot;T&quot;, &quot;F&quot;]).MCC.unstack() in the unstranded case</span></a></code></pre></div>
+<div class="sourceCode" id="cb239"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb239-1" data-line-number="1"><span class="bu">print</span>(<span class="bu">print</span>(mcc.set_index([<span class="st">&quot;Strand&quot;</span>, <span class="st">&quot;T&quot;</span>, <span class="st">&quot;F&quot;</span>]).MCC.unstack()))</a>
+<a class="sourceLine" id="cb239-2" data-line-number="2"><span class="co"># or just mcc.set_index([&quot;T&quot;, &quot;F&quot;]).MCC.unstack() in the unstranded case</span></a></code></pre></div>
 <pre><code>## F                 chip     input
 ## Strand T                        
 ## +      chip   1.000000  0.000006

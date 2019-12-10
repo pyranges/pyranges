@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-28" />
+<meta name="date" content="2019-12-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -183,51 +183,25 @@ chains.</p>
 <a class="sourceLine" id="cb34-2" data-line-number="2"><span class="co"># import pyranges_db as pr_db</span></a>
 <a class="sourceLine" id="cb34-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
 <a class="sourceLine" id="cb34-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">gr.to_gtf(<span class="st">&quot;chipseq.gtf&quot;</span>)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gtf())</a></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gff3())</a></code></pre></div>
+<a class="sourceLine" id="cb34-5" data-line-number="5">gr.to_gtf(<span class="st">&quot;chipseq.gtf&quot;</span>)</a>
+<a class="sourceLine" id="cb34-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb34-7" data-line-number="7"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gtf())</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gff3())</a></code></pre></div>
 <p>The to_csv method takes the arguments header and sep.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb38-1" data-line-number="1">gr.to_csv(<span class="st">&quot;chipseq.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, header<span class="op">=</span><span class="va">True</span>)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
-## | ...          | ...       | ...       | ...        | ...       | ...          |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
-## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_csv(sep<span class="op">=</span><span class="st">&quot;|&quot;</span>, header<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb36-1" data-line-number="1">gr.to_csv(<span class="st">&quot;chipseq.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, header<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb36-3" data-line-number="3"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_csv(sep<span class="op">=</span><span class="st">&quot;|&quot;</span>, header<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<p>All to-methods except <code>to_bigwig</code> takes an argument chain which can be set to
+True if you want the method to return the PyRanges it wrote. It is useful for
+storing the intermediate results of long call chains.</p>
+<p><code>pr.data().f1().to_csv(&quot;bla&quot;, chain=True).merge()...</code></p>
 <p>The pyranges library can also create bigwigs, but it needs the library pybigwig
 which is not installed by default. Use <code>conda install -c bioconda pybigwig</code> or
 <code>pip install pybigwig</code> to install it.</p>
 <p>The bigwig writer needs to know the chromosome sizes. You can fetch these using
 the pyranges database functions.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb41-1" data-line-number="1">chromsizes <span class="op">=</span> pr.data.chromsizes() <span class="co"># hg19, can also use pr_db.ucsc.chromosome_sizes(&quot;hg19&quot;)</span></a>
-<a class="sourceLine" id="cb41-2" data-line-number="2">gr.to_bigwig(<span class="st">&quot;chipseq.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb37-1" data-line-number="1">chromsizes <span class="op">=</span> pr.data.chromsizes() <span class="co"># hg19, can also use pr_db.ucsc.chromosome_sizes(&quot;hg19&quot;)</span></a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">gr.to_bigwig(<span class="st">&quot;chipseq.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -245,7 +219,7 @@ the pyranges database functions.</p>
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>If you want to write one bigwig for each strand, you need to do it manually.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb43-1" data-line-number="1">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_plus.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb39-1" data-line-number="1">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_plus.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -262,7 +236,7 @@ the pyranges database functions.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 5,050 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb45-1" data-line-number="1">gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_minus.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb41-1" data-line-number="1">gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_minus.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |

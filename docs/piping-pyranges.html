@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-11-28" />
+<meta name="date" content="2019-12-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -176,14 +176,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">7</span> Piping PyRanges</h1>
 <p>The PyRanges API supports chaining operations out of the box.</p>
 <p>To set a new column in a PyRanges you would use the <code>assign</code> method and for subsetting you would use the <code>subset</code> method.</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb97-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb97-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb97-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb97-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb97-5" data-line-number="5">exons <span class="op">=</span> pr.data.exons()</a>
-<a class="sourceLine" id="cb97-6" data-line-number="6">cpg <span class="op">=</span> pr.data.cpg()</a>
-<a class="sourceLine" id="cb97-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb97-8" data-line-number="8">cpg.join(exons.unstrand()).subset(<span class="kw">lambda</span> df: df.CpG <span class="op">&gt;</span> <span class="dv">25</span>)[[<span class="st">&quot;CpG&quot;</span>]].assign(<span class="st">&quot;CpGDecile&quot;</span>, <span class="kw">lambda</span> df: df.CpG <span class="op">%</span> <span class="dv">10</span>)[<span class="st">&quot;chrX&quot;</span>].slack(<span class="dv">500</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb93-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb93-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb93-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb93-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb93-5" data-line-number="5">exons <span class="op">=</span> pr.data.exons()</a>
+<a class="sourceLine" id="cb93-6" data-line-number="6">cpg <span class="op">=</span> pr.data.cpg()</a>
+<a class="sourceLine" id="cb93-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb93-8" data-line-number="8">cpg.join(exons.unstrand()).subset(<span class="kw">lambda</span> df: df.CpG <span class="op">&gt;</span> <span class="dv">25</span>)[[<span class="st">&quot;CpG&quot;</span>]].assign(<span class="st">&quot;CpGDecile&quot;</span>, <span class="kw">lambda</span> df: df.CpG <span class="op">%</span> <span class="dv">10</span>)[<span class="st">&quot;chrX&quot;</span>].slack(<span class="dv">500</span>)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+-------------+
 ## | Chromosome   | Start     | End       | CpG       | CpGDecile   |
 ## | (category)   | (int32)   | (int32)   | (int64)   | (int64)     |
