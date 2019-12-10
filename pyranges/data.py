@@ -76,7 +76,7 @@ def ucsc_bed():
 
     full_path = get_example_path("ucsc_human.bed.gz")
 
-    names = "Chromosome Start End Feature gene_id transcript_id Strand ExonNumber transcript_name".split()
+    names = "Chromosome Start End Feature gene_id transcript_id Strand exon_number transcript_name".split()
     df = pd.read_csv(full_path, sep="\t", names=names)
 
     return pr.PyRanges(df)

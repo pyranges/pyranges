@@ -73,18 +73,16 @@ def _fetch_gene_transcript_exon_id(attribute, annotation):
         "gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?",
         expand=True)  # .iloc[:, [1, 2, 3]]
 
-    df.columns = "GeneID TranscriptID ExonNumber ExonID".split()
-
-    # df.loc[:, "ExonNumber"] = df.ExonNumber.astype(int)
+    df.columns = "gene_id transcript_id exon_number exon_id".split()
 
     if annotation == "ensembl":
         newdf = []
-        for c in "GeneID TranscriptID ExonID".split():
+        for c in "gene_id transcript_id exon_id".split():
             r = df[c].astype(str).str.extract('(\d+)').astype(float)
             newdf.append(r)
 
         newdf = pd.concat(newdf, axis=1)
-        newdf.insert(2, "ExonNumber", df["ExonNumber"])
+        newdf.insert(2, "exon_number", df["exon_number"])
         df = newdf
 
     return df
@@ -117,8 +115,6 @@ def read_gtf(f, full=True, annotation=None, output_df=False, nrows=None):
         gr = read_gtf_full(f, annotation, output_df, nrows, _skiprows)
     else:
         gr = read_gtf_restricted(f, annotation, output_df, nrows, _skiprows)
-
-    gr = gr.apply(lambda df: df.rename(columns={"gene_id": "GeneID", "transcript_id": "TranscriptID", "exon_number": "ExonNumber", "exon_id": "ExonID"}))
 
     return gr
 
@@ -219,9 +215,9 @@ def read_gtf_restricted(f,
             )
 
         extract = _fetch_gene_transcript_exon_id(df.Attribute, annotation)
-        extract.columns = "GeneID TranscriptID ExonNumber ExonID".split()
+        extract.columns = "gene_id transcript_id exon_number exon_id".split()
 
-        extract.ExonNumber = extract.ExonNumber.astype(float)
+        extract.exon_number = extract.exon_number.astype(float)
 
         df = pd.concat([df[cols_to_concat], extract], axis=1, sort=False)
 

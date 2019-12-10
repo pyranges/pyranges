@@ -3,6 +3,7 @@
 - genomicfeatures: add tss/tes-methods
 - fix column names after read_gtf so they work with GenomicFeatures
 - remove Strand column with unstrand() even if PyRanges is not stranded
+- reading gff and gtf now consistent and column names from attributes are in lower_snake_case
 
 
 # 0.0.64 (28.11.19)
