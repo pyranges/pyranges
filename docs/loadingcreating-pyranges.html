@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-12-10" />
+<meta name="date" content="2020-01-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -290,8 +290,10 @@ optional. Any other columns in the dataframe are treated as metadata.</p>
 ## For printing, the PyRanges was sorted on Chromosome and Strand.
 ## 17 hidden columns: gene_source, gene_biotype, transcript_id, transcript_version, transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, exon_number, ... (+ 7 more.)</code></pre>
 <p>To read bam files the optional bamread-library must be installed. Use <code>conda install -c bioconda bamread</code> or <code>pip install bamread</code> to install it.</p>
-<p><code>read_bam</code> takes the arguments <code>mapq</code>, <code>required_flag</code>, <code>filter_flag</code>, which
-have the default values 0, 0 and 1540, respectively.</p>
+<p><code>read_bam</code> takes the arguments <code>sparse</code>, <code>mapq</code>, <code>required_flag</code>, <code>filter_flag</code>,
+which have the default values True, 0, 0 and 1540, respectively. With sparse
+True, only the columns <code>['Chromosome', 'Start', 'End', 'Strand', 'Flag']</code> are
+fetched. Setting sparse to False additionally gives you the columns <code>['QueryStart', 'QueryEnd', 'Name', 'Cigar', 'Quality']</code>, but is more time and memory-consuming.</p>
 <p>All the reader functions also take the flag <code>as_df</code></p>
 <p>[^]: PyRanges uses the pysam library which requires that the bam file must have an index.</p>
 

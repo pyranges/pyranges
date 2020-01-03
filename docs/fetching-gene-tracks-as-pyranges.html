@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-12-10" />
+<meta name="date" content="2020-01-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -231,25 +231,25 @@ Ensembl also has the method chromosome_sizes.</p>
 <div class="sourceCode" id="cb340"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb340-1" data-line-number="1">gwas <span class="op">=</span> pr_db.gwas_catalog.gwas_catalog()</a>
 <a class="sourceLine" id="cb340-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb340-3" data-line-number="3"><span class="bu">print</span>(gwas)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------------+------------+--------------+-------------------------+-------+
-## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS    | P-VALUE    | OR or BETA   | MAPPED_GENE             | +31   |
-## | (category)   | (int32)   | (int32)   | (object)   | (object)        | (object)   | (object)     | (object)                | ...   |
-## |--------------+-----------+-----------+------------+-----------------+------------+--------------+-------------------------+-------|
-## | 1            | 11804529  | 11804530  | 1p36.22    | ENSG00000177000 | 5E-18      | nan          | MTHFR                   | ...   |
-## | 1            | 11905735  | 11905736  | 1p36.22    | nan             | 3E-9       | nan          | AL021155.1 - AL021155.2 | ...   |
-## | 1            | 165745179 | 165745180 | 1q24.1     | ENSG00000143183 | 4E-51      | 1.3760265    | TMCO1                   | ...   |
-## | 1            | 165767643 | 165767644 | 1q24.1     | ENSG00000143183 | 2E-52      | 1.369863     | TMCO1                   | ...   |
-## | ...          | ...       | ...       | ...        | ...             | ...        | ...          | ...                     | ...   |
-## | Y            | 14692972  | 14692973  | Yq11.221   | ENSG00000165246 | 9E-7       | nan          | NLGN4Y                  | ...   |
-## | Y            | 14692972  | 14692973  | Yq11.221   | ENSG00000165246 | 1E-6       | nan          | NLGN4Y                  | ...   |
-## | X            | 71634424  | 71634425  | Xq13.1     | nan             | 8E-9       | 0.015622699  | CXCR3 - BX276092.7      | ...   |
-## | X            | 77216412  | 77216413  | Xq21.1     | nan             | 1E-42      | 0.041131224  | RNA5SP509 - SPRYD7P1    | ...   |
-## | X            | 57322090  | 57322091  | Xp11.21    | ENSG00000165591 | 2E-29      | 0.03290996   | FAAH2                   | ...   |
-## | X            | 134549560 | 134549561 | Xq26.3     | nan             | 1E-14      | 0.02647431   | MIR424 - LINC00629      | ...   |
-## +--------------+-----------+-----------+------------+-----------------+------------+--------------+-------------------------+-------+
-## Unstranded PyRanges object has 168,516 rows and 39 columns from 24 chromosomes.
+<pre><code>## +--------------+-----------+-----------+------------+----------------------------------+------------+--------------+-------------------------+-------+
+## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS                     | P-VALUE    | OR or BETA   | MAPPED_GENE             | +31   |
+## | (category)   | (int32)   | (int32)   | (object)   | (object)                         | (object)   | (object)     | (object)                | ...   |
+## |--------------+-----------+-----------+------------+----------------------------------+------------+--------------+-------------------------+-------|
+## | 1            | 113834946 | 113834947 | 1p13.2     | ENSG00000134242, ENSG00000231128 | 2E-80      | 1.98         | PTPN22, AL137856.1      | ...   |
+## | 1            | 113761186 | 113761187 | 1p13.2     | nan                              | 8E-24      | 1.89         | PHTF1 - RSBN1           | ...   |
+## | 1            | 172929237 | 172929238 | 1q24.3     | ENSG00000224228                  | 2E-7       | 1.14         | AL031599.1              | ...   |
+## | 1            | 191590226 | 191590227 | 1q31.2     | nan                              | 3E-8       | 1.47         | LINC01680 - LINC02770   | ...   |
+## | ...          | ...       | ...       | ...        | ...                              | ...        | ...          | ...                     | ...   |
+## | Y            | 14692972  | 14692973  | Yq11.221   | ENSG00000165246                  | 9E-7       | nan          | NLGN4Y                  | ...   |
+## | Y            | 14692972  | 14692973  | Yq11.221   | ENSG00000165246                  | 1E-6       | nan          | NLGN4Y                  | ...   |
+## | X            | 67407598  | 67407599  | Xq12       | nan                              | 1E-320     | 0.8          | AL049641.1 - AL049564.1 | ...   |
+## | X            | 137873245 | 137873246 | Xq26.3     | ENSG00000283692                  | 7E-9       | 0.09         | Z96074.1                | ...   |
+## | X            | 147813602 | 147813603 | Xq27.3     | nan                              | 3E-10      | 8.1          | AC016925.2 - RNU6-382P  | ...   |
+## | X            | 43982844  | 43982845  | Xp11.3     | nan                              | 4E-54      | 0.027613     | NDP - AL034370.1        | ...   |
+## +--------------+-----------+-----------+------------+----------------------------------+------------+--------------+-------------------------+-------+
+## Unstranded PyRanges object has 169,418 rows and 39 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome.
-## 31 hidden columns: MAPPED_TRAIT, DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, JOURNAL, LINK, STUDY, DISEASE/TRAIT, INITIAL SAMPLE SIZE, ... (+ 21 more.)</code></pre>
+## 31 hidden columns: MAPPED_TRAIT, DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, JOURNAL, LINK, STUDY, DISEASE/TRAIT, INITIAL SAMPLE SIZE, REPLICATION SAMPLE SIZE, ... (+ 20 more.)</code></pre>
 
 </div>
 

@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-12-10" />
+<meta name="date" content="2020-01-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -181,74 +181,74 @@ a PyRanges-object are found in the <code>gr.features</code> namespace.</p>
 <div class="sourceCode" id="cb312"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb312-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
 <a class="sourceLine" id="cb312-2" data-line-number="2">gr <span class="op">=</span> pr.data.ucsc_bed()</a>
 <a class="sourceLine" id="cb312-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+------------+-----------------+--------------+--------------+-------------------+
-## | Chromosome   | Start     | End       | Feature    | gene_id    | transcript_id   | Strand       | ExonNumber   | transcript_name   |
-## | (category)   | (int32)   | (int32)   | (object)   | (object)   | (float64)       | (category)   | (float64)    | (object)          |
-## |--------------+-----------+-----------+------------+------------+-----------------+--------------+--------------+-------------------|
-## | chr1         | 12776117  | 12788726  | gene       | AADACL3    | nan             | +            | nan          | nan               |
-## | chr1         | 169075927 | 169101957 | gene       | ATP1B1     | nan             | +            | nan          | nan               |
-## | chr1         | 6845383   | 7829766   | gene       | CAMTA1     | nan             | +            | nan          | nan               |
-## | chr1         | 20915589  | 20945396  | gene       | CDA        | nan             | +            | nan          | nan               |
-## | ...          | ...       | ...       | ...        | ...        | ...             | ...          | ...          | ...               |
-## | chrX         | 152661096 | 152663330 | exon       | PNMA6E     | 260.0           | -            | 0.0          | NM_001351293      |
-## | chrX         | 152661096 | 152666808 | transcript | PNMA6E     | 260.0           | -            | nan          | NM_001351293      |
-## | chrX         | 152664164 | 152664378 | exon       | PNMA6E     | 260.0           | -            | 1.0          | NM_001351293      |
-## | chrX         | 152666701 | 152666808 | exon       | PNMA6E     | 260.0           | -            | 2.0          | NM_001351293      |
-## +--------------+-----------+-----------+------------+------------+-----------------+--------------+--------------+-------------------+
+<pre><code>## +--------------+-----------+-----------+------------+------------+-----------------+--------------+---------------+-------------------+
+## | Chromosome   | Start     | End       | Feature    | gene_id    | transcript_id   | Strand       | exon_number   | transcript_name   |
+## | (category)   | (int32)   | (int32)   | (object)   | (object)   | (float64)       | (category)   | (float64)     | (object)          |
+## |--------------+-----------+-----------+------------+------------+-----------------+--------------+---------------+-------------------|
+## | chr1         | 12776117  | 12788726  | gene       | AADACL3    | nan             | +            | nan           | nan               |
+## | chr1         | 169075927 | 169101957 | gene       | ATP1B1     | nan             | +            | nan           | nan               |
+## | chr1         | 6845383   | 7829766   | gene       | CAMTA1     | nan             | +            | nan           | nan               |
+## | chr1         | 20915589  | 20945396  | gene       | CDA        | nan             | +            | nan           | nan               |
+## | ...          | ...       | ...       | ...        | ...        | ...             | ...          | ...           | ...               |
+## | chrX         | 152661096 | 152663330 | exon       | PNMA6E     | 260.0           | -            | 0.0           | NM_001351293      |
+## | chrX         | 152661096 | 152666808 | transcript | PNMA6E     | 260.0           | -            | nan           | NM_001351293      |
+## | chrX         | 152664164 | 152664378 | exon       | PNMA6E     | 260.0           | -            | 1.0           | NM_001351293      |
+## | chrX         | 152666701 | 152666808 | exon       | PNMA6E     | 260.0           | -            | 2.0           | NM_001351293      |
+## +--------------+-----------+-----------+------------+------------+-----------------+--------------+---------------+-------------------+
 ## Stranded PyRanges object has 5,519 rows and 9 columns from 30 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb314"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb314-1" data-line-number="1"><span class="bu">print</span>(gr.features.introns(by<span class="op">=</span><span class="st">&quot;transcript&quot;</span>)) <span class="co"># default is by gene</span></a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-------------+-----------------+--------------+--------------+-------------------+
-## | Chromosome   | Start     | End       | Feature    | gene_id     | transcript_id   | Strand       | ExonNumber   | transcript_name   |
-## | (object)     | (int32)   | (int32)   | (object)   | (float64)   | (float64)       | (category)   | (float64)    | (object)          |
-## |--------------+-----------+-----------+------------+-------------+-----------------+--------------+--------------+-------------------|
-## | chr1         | 12227     | 12612     | intron     | 0.0         | 0.0             | +            | nan          | NR_148357         |
-## | chr1         | 12721     | 13220     | intron     | 0.0         | 0.0             | +            | nan          | NR_148357         |
-## | chr1         | 12227     | 12612     | intron     | 1.0         | 1.0             | +            | nan          | NR_046018         |
-## | chr1         | 12721     | 13220     | intron     | 1.0         | 1.0             | +            | nan          | NR_046018         |
-## | ...          | ...       | ...       | ...        | ...         | ...             | ...          | ...          | ...               |
-## | chrX         | 9714193   | 9716613   | intron     | 361.0       | 361.0           | -            | nan          | NM_000273         |
-## | chrX         | 9716706   | 9727371   | intron     | 361.0       | 361.0           | -            | nan          | NM_000273         |
-## | chrX         | 9727466   | 9728756   | intron     | 361.0       | 361.0           | -            | nan          | NM_000273         |
-## | chrX         | 9728866   | 9733607   | intron     | 361.0       | 361.0           | -            | nan          | NM_000273         |
-## +--------------+-----------+-----------+------------+-------------+-----------------+--------------+--------------+-------------------+
+<pre><code>## +--------------+-----------+-----------+------------+-------------+-----------------+--------------+---------------+-------------------+
+## | Chromosome   | Start     | End       | Feature    | gene_id     | transcript_id   | Strand       | exon_number   | transcript_name   |
+## | (object)     | (int32)   | (int32)   | (object)   | (float64)   | (float64)       | (category)   | (float64)     | (object)          |
+## |--------------+-----------+-----------+------------+-------------+-----------------+--------------+---------------+-------------------|
+## | chr1         | 12227     | 12612     | intron     | 0.0         | 0.0             | +            | nan           | NR_148357         |
+## | chr1         | 12721     | 13220     | intron     | 0.0         | 0.0             | +            | nan           | NR_148357         |
+## | chr1         | 12227     | 12612     | intron     | 1.0         | 1.0             | +            | nan           | NR_046018         |
+## | chr1         | 12721     | 13220     | intron     | 1.0         | 1.0             | +            | nan           | NR_046018         |
+## | ...          | ...       | ...       | ...        | ...         | ...             | ...          | ...           | ...               |
+## | chrX         | 9714193   | 9716613   | intron     | 361.0       | 361.0           | -            | nan           | NM_000273         |
+## | chrX         | 9716706   | 9727371   | intron     | 361.0       | 361.0           | -            | nan           | NM_000273         |
+## | chrX         | 9727466   | 9728756   | intron     | 361.0       | 361.0           | -            | nan           | NM_000273         |
+## | chrX         | 9728866   | 9733607   | intron     | 361.0       | 361.0           | -            | nan           | NM_000273         |
+## +--------------+-----------+-----------+------------+-------------+-----------------+--------------+---------------+-------------------+
 ## Stranded PyRanges object has 4,128 rows and 9 columns from 30 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p><code>tes/tss</code> can be used to find the starts and ends of transcripts:</p>
 <div class="sourceCode" id="cb316"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb316-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
 <a class="sourceLine" id="cb316-2" data-line-number="2">gr <span class="op">=</span> pr.data.ucsc_bed()</a>
 <a class="sourceLine" id="cb316-3" data-line-number="3"><span class="bu">print</span>(gr[gr.Feature <span class="op">==</span> <span class="st">&quot;transcript&quot;</span>])</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+--------------+-------------------+
-## | Chromosome   | Start     | End       | Feature    | gene_id      | transcript_id   | Strand       | ExonNumber   | transcript_name   |
-## | (category)   | (int32)   | (int32)   | (object)   | (object)     | (float64)       | (category)   | (float64)    | (object)          |
-## |--------------+-----------+-----------+------------+--------------+-----------------+--------------+--------------+-------------------|
-## | chr1         | 11868     | 14362     | transcript | LOC102725121 | 0.0             | +            | nan          | NR_148357         |
-## | chr1         | 11873     | 14409     | transcript | DDX11L1      | 1.0             | +            | nan          | NR_046018         |
-## | chr1         | 30365     | 30503     | transcript | MIR1302-2    | 7.0             | +            | nan          | NR_036051         |
-## | chr1         | 30365     | 30503     | transcript | MIR1302-9    | 8.0             | +            | nan          | NR_036266         |
-## | ...          | ...       | ...       | ...        | ...          | ...             | ...          | ...          | ...               |
-## | chrX         | 131337052 | 131352061 | transcript | RAP2C        | 155.0           | -            | nan          | NM_021183         |
-## | chrX         | 134021661 | 134049287 | transcript | MOSPD1       | 156.0           | -            | nan          | NM_001306188      |
-## | chrX         | 152157367 | 152160757 | transcript | PNMA5        | 259.0           | -            | nan          | NM_052926         |
-## | chrX         | 152661096 | 152666808 | transcript | PNMA6E       | 260.0           | -            | nan          | NM_001351293      |
-## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+--------------+-------------------+
+<pre><code>## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+---------------+-------------------+
+## | Chromosome   | Start     | End       | Feature    | gene_id      | transcript_id   | Strand       | exon_number   | transcript_name   |
+## | (category)   | (int32)   | (int32)   | (object)   | (object)     | (float64)       | (category)   | (float64)     | (object)          |
+## |--------------+-----------+-----------+------------+--------------+-----------------+--------------+---------------+-------------------|
+## | chr1         | 11868     | 14362     | transcript | LOC102725121 | 0.0             | +            | nan           | NR_148357         |
+## | chr1         | 11873     | 14409     | transcript | DDX11L1      | 1.0             | +            | nan           | NR_046018         |
+## | chr1         | 30365     | 30503     | transcript | MIR1302-2    | 7.0             | +            | nan           | NR_036051         |
+## | chr1         | 30365     | 30503     | transcript | MIR1302-9    | 8.0             | +            | nan           | NR_036266         |
+## | ...          | ...       | ...       | ...        | ...          | ...             | ...          | ...           | ...               |
+## | chrX         | 131337052 | 131352061 | transcript | RAP2C        | 155.0           | -            | nan           | NM_021183         |
+## | chrX         | 134021661 | 134049287 | transcript | MOSPD1       | 156.0           | -            | nan           | NM_001306188      |
+## | chrX         | 152157367 | 152160757 | transcript | PNMA5        | 259.0           | -            | nan           | NM_052926         |
+## | chrX         | 152661096 | 152666808 | transcript | PNMA6E       | 260.0           | -            | nan           | NM_001351293      |
+## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+---------------+-------------------+
 ## Stranded PyRanges object has 500 rows and 9 columns from 30 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb318"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb318-1" data-line-number="1"><span class="bu">print</span>(gr.features.tes()) <span class="co"># default is by gene</span></a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+--------------+-------------------+
-## | Chromosome   | Start     | End       | Feature    | gene_id      | transcript_id   | Strand       | ExonNumber   | transcript_name   |
-## | (category)   | (int32)   | (int32)   | (object)   | (object)     | (float64)       | (category)   | (float64)    | (object)          |
-## |--------------+-----------+-----------+------------+--------------+-----------------+--------------+--------------+-------------------|
-## | chr1         | 14362     | 14363     | tes        | LOC102725121 | 0.0             | +            | nan          | NR_148357         |
-## | chr1         | 14409     | 14410     | tes        | DDX11L1      | 1.0             | +            | nan          | NR_046018         |
-## | chr1         | 30503     | 30504     | tes        | MIR1302-2    | 7.0             | +            | nan          | NR_036051         |
-## | chr1         | 30503     | 30504     | tes        | MIR1302-9    | 8.0             | +            | nan          | NR_036266         |
-## | ...          | ...       | ...       | ...        | ...          | ...             | ...          | ...          | ...               |
-## | chrX         | 131352061 | 131352062 | tes        | RAP2C        | 155.0           | -            | nan          | NM_021183         |
-## | chrX         | 134049287 | 134049288 | tes        | MOSPD1       | 156.0           | -            | nan          | NM_001306188      |
-## | chrX         | 152160757 | 152160758 | tes        | PNMA5        | 259.0           | -            | nan          | NM_052926         |
-## | chrX         | 152666808 | 152666809 | tes        | PNMA6E       | 260.0           | -            | nan          | NM_001351293      |
-## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+--------------+-------------------+
+<pre><code>## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+---------------+-------------------+
+## | Chromosome   | Start     | End       | Feature    | gene_id      | transcript_id   | Strand       | exon_number   | transcript_name   |
+## | (category)   | (int32)   | (int32)   | (object)   | (object)     | (float64)       | (category)   | (float64)     | (object)          |
+## |--------------+-----------+-----------+------------+--------------+-----------------+--------------+---------------+-------------------|
+## | chr1         | 14362     | 14363     | tes        | LOC102725121 | 0.0             | +            | nan           | NR_148357         |
+## | chr1         | 14409     | 14410     | tes        | DDX11L1      | 1.0             | +            | nan           | NR_046018         |
+## | chr1         | 30503     | 30504     | tes        | MIR1302-2    | 7.0             | +            | nan           | NR_036051         |
+## | chr1         | 30503     | 30504     | tes        | MIR1302-9    | 8.0             | +            | nan           | NR_036266         |
+## | ...          | ...       | ...       | ...        | ...          | ...             | ...          | ...           | ...               |
+## | chrX         | 131352061 | 131352062 | tes        | RAP2C        | 155.0           | -            | nan           | NM_021183         |
+## | chrX         | 134049287 | 134049288 | tes        | MOSPD1       | 156.0           | -            | nan           | NM_001306188      |
+## | chrX         | 152160757 | 152160758 | tes        | PNMA5        | 259.0           | -            | nan           | NM_052926         |
+## | chrX         | 152666808 | 152666809 | tes        | PNMA6E       | 260.0           | -            | nan           | NM_001351293      |
+## +--------------+-----------+-----------+------------+--------------+-----------------+--------------+---------------+-------------------+
 ## Stranded PyRanges object has 500 rows and 9 columns from 30 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p><code>tile_genome</code> splits a PyRanges of chromosome sizes into a tiled genome.</p>
@@ -375,15 +375,15 @@ inside the boundaries are kept.</p>
 ## | Chromosome   | Start     | End       | Strand       |
 ## | (category)   | (int32)   | (int32)   | (category)   |
 ## |--------------+-----------+-----------+--------------|
-## | chr1         | 131902952 | 131903052 | +            |
-## | chr1         | 174636955 | 174637055 | +            |
-## | chr1         | 86859543  | 86859643  | +            |
-## | chr1         | 114866373 | 114866473 | +            |
+## | chr1         | 214173112 | 214173212 | +            |
+## | chr1         | 242945863 | 242945963 | +            |
+## | chr1         | 81177802  | 81177902  | +            |
+## | chr1         | 161471637 | 161471737 | +            |
 ## | ...          | ...       | ...       | ...          |
-## | chrY         | 37076315  | 37076415  | -            |
-## | chrY         | 6915282   | 6915382   | -            |
-## | chrY         | 56652355  | 56652455  | -            |
-## | chrY         | 37576571  | 37576671  | -            |
+## | chrY         | 29509881  | 29509981  | -            |
+## | chrY         | 41523318  | 41523418  | -            |
+## | chrY         | 12495282  | 12495382  | -            |
+## | chrY         | 52861068  | 52861168  | -            |
 ## +--------------+-----------+-----------+--------------+
 ## Stranded PyRanges object has 1,000 rows and 4 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>

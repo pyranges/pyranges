@@ -46,23 +46,29 @@ def read_bed(f, output_df=False, nrows=None):
         return df
 
 
-def read_bam(f, output_df=False, mapq=0, required_flag=0, filter_flag=1540):
+def read_bam(f, sparse=True, output_df=False, mapq=0, required_flag=0, filter_flag=1540):
 
     try:
         import bamread
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
         print("bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it.")
         sys.exit(1)
 
+    if sparse:
+        df = bamread.read_bam(f, mapq, required_flag, filter_flag)
+    else:
+        try:
+            df = bamread.read_bam_full(f, mapq, required_flag, filter_flag)
+        except AttributeError:
+            print("bamread version 0.0.6 or higher is required to read bam non-sparsely.")
 
-    df = bamread.read_bam(f, mapq, required_flag, filter_flag)
 
     if output_df:
         return df
     else:
         return PyRanges(df)
 
-    return bamread.read_bam(f, mapq, required_flag, filter_flag)
+    # return bamread.read_bam(f, mapq, required_flag, filter_flag)
 
 
 def _fetch_gene_transcript_exon_id(attribute, annotation):
