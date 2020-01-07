@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2019-12-10" />
+<meta name="date" content="2020-01-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -192,17 +192,17 @@ the package fisher installed.</p>
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))</code></pre>
 <div class="sourceCode" id="cb233"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb233-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
 <pre><code>##           OR         P
-## 0        NaN  1.000000
-## 1  22.800000  0.001853
-## 2   1.259259  0.613411
-## 3   0.200000  0.003302
-## 4   0.041667  1.000000</code></pre>
+## 0   2.075630  0.032434
+## 1   7.285714  0.038189
+## 2   0.166667  1.000000
+## 3   0.714286  0.736472
+## 4  20.800000  0.627850</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
 <div class="sourceCode" id="cb235"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb235-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
-<pre><code>## 0    1.000000
-## 1    0.009266
+<pre><code>## 0    0.162170
+## 1    0.095471
 ## 2    1.000000
-## 3    0.008255
+## 3    0.920590
 ## 4    1.000000
 ## Name: P, dtype: float64</code></pre>
 
