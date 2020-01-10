@@ -24,7 +24,7 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-01-03" />
+<meta name="date" content="2020-01-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -294,6 +294,24 @@ stranded PyRle is automatically demoted to an unstranded PyRle.</p>
 ## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
 ## Rle of length 22210662 containing 32 elements
 ## PyRles object with 48 chromosomes/strand pairs.</code></pre>
+<p>You can subset an Rledict with a pyranges:</p>
+<div class="sourceCode" id="cb287"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb287-1" data-line-number="1"><span class="bu">print</span>(bg[gr_bg])</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+-------------+------------+
+## | Chromosome   | Start     | End       | Run       | Value       | Strand     |
+## | (object)     | (int64)   | (int64)   | (int64)   | (float64)   | (object)   |
+## |--------------+-----------+-----------+-----------+-------------+------------|
+## | chr1         | 39036822  | 39036847  | 25        | 1.0         | +          |
+## | chr1         | 224145989 | 224146014 | 25        | 1.0         | +          |
+## | chr1         | 167802964 | 167802989 | 25        | 1.0         | +          |
+## | chr1         | 69101066  | 69101091  | 25        | 1.0         | +          |
+## | ...          | ...       | ...       | ...       | ...         | ...        |
+## | chrY         | 11936866  | 11936891  | 25        | 1.0         | -          |
+## | chrY         | 10629111  | 10629136  | 25        | 1.0         | -          |
+## | chrY         | 10632456  | 10632481  | 25        | 1.0         | -          |
+## | chrY         | 11918814  | 11918839  | 25        | 1.0         | -          |
+## +--------------+-----------+-----------+-----------+-------------+------------+
+## Stranded PyRanges object has 10,004 rows and 6 columns from 25 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 
 </div>
             </section>

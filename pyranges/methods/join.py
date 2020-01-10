@@ -50,32 +50,32 @@ def _both_indexes(scdf, ocdf, how=False):
 
     return _self_indexes, _other_indexes
 
+def null_types(h):
+    h2 = h.copy()
+    for n, d in zip(h, h.dtypes):
+        if n in ["Chromosome", "Strand"]:
+            continue
+
+        d = str(d)
+
+        if "int" in d or "float" in d:
+            null = -1
+        elif d == "str" or d == "object":
+            null = "-1"
+        elif d == "category":
+            h2.loc[:, n] = h2[:, n].cat.add_categories("-1")
+            null = "-1"
+
+        h2.loc[:, n] = null
+
+    return h2
+
 
 def _both_dfs(scdf, ocdf, how=False):
 
     _self_indexes, _other_indexes = _both_indexes(scdf, ocdf, how)
 
     if how in ["outer", "left", "right"]:
-
-        def null_types(h):
-            h2 = h.copy()
-            for n, d in zip(h, h.dtypes):
-                # print("n", n, "d", d)
-                if n in ["Chromosome", "Strand"]:
-                    continue
-                d = str(d)
-
-                if "int" in d or "float" in d:
-                    null = -1
-                elif d == "str" or d == "object":
-                    null = "-1"
-                elif d == "category":
-                    h2.loc[:, n] = h2[:, n].cat.add_categories("-1")
-                    null = "-1"
-
-                h2.loc[:, n] = null
-
-            return h2
 
         sh = null_types(scdf.head(1))
         oh = null_types(ocdf.head(1))
@@ -106,8 +106,17 @@ def _both_dfs(scdf, ocdf, how=False):
 
 def _write_both(scdf, ocdf, kwargs):
 
+    how = kwargs["how"]
+
     if scdf.empty or ocdf.empty:
-        return None
+        if how in ["left", "outer"] and ocdf.empty:
+            ocdf = null_types(kwargs["example_header_other"])
+        elif how in ["right", "outer"] and scdf.empty:
+            scdf = null_types(kwargs["example_header_self"])
+        # elif how == "outer":
+        #     if scdf.empty:
+        else:
+            return None
 
     if not kwargs.get("new_pos"):
         suffix = kwargs.get("suffix", "_b")

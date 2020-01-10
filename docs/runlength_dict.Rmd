@@ -39,3 +39,9 @@ Like Rles, PyGRles supports arithmetic operations with numbers.
 
 print((0.67 + cs) * 5)
 ```
+
+You can subset an Rledict with a pyranges:
+
+```{python tidy=FALSE}
+print(bg[gr_bg])
+```
