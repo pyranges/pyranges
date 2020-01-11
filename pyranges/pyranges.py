@@ -443,6 +443,18 @@ class PyRanges():
                 assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
                 assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
 
+        # def get_items_dtypes(s):
+
+        #     columns = s.columns
+        #     dtypes = (s.dfs.values())
+        how = kwargs.get("how")
+
+        if how in ["left", "outer"]:
+            kwargs["example_header_other"] = other.head(1).df
+        if how in ["right", "outer"]:
+            kwargs["example_header_self"] = self.head(1).df
+
+
         dfs = pyrange_apply(_write_both, self, other, **kwargs)
 
         gr = PyRanges(dfs)
@@ -775,6 +787,15 @@ class PyRanges():
             return columns[0]
         else:
             return []
+
+    @property
+    def dtypes(self):
+        """Return the dtypes."""
+
+        df = next(iter(self.dfs.values()))
+
+        return df.dtypes
+
 
     def set_columns(self, value):
         assert len(value) == len(
