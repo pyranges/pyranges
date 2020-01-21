@@ -118,6 +118,8 @@ def filter_transcripts(df, keep="most_exons"):
 
 def _tss(df, slack=0):
 
+    intype = df.Start.dtype
+
     tss_pos = df.loc[df.Strand == "+"]
 
     tss_neg = df.loc[df.Strand == "-"].copy()
@@ -134,11 +136,14 @@ def _tss(df, slack=0):
 
     tss.index = range(len(tss))
 
+    tss[["Start", "End"]] = tss[["Start", "End"]].astype(intype)
+
     return tss
 
 
 def _tes(df, slack=0):
 
+    intype = df.Start.dtype
     # df = self.df
 
     tes_pos = df.loc[df.Strand == "+"]
@@ -156,6 +161,8 @@ def _tes(df, slack=0):
     tes.loc[tes.Start < 0, "Start"] = 0
 
     tes.index = range(len(tes))
+
+    tes[["Start", "End"]] = tes[["Start", "End"]].astype(intype)
 
     return tes
 
