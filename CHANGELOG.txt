@@ -1,3 +1,6 @@
+# 0.0.68 (21.01.19)
+- fix regression: slack changes dtype from int32 to int64
+
 # 0.0.67 (10.01.19)
 - add dtypes attribute to pyranges
 - fix left and right join when chromosomes missing
