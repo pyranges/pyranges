@@ -959,10 +959,10 @@ class PyRanges():
             return result
 
 
-    def to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None):
+    def to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None, value_col=None):
         from pyranges.out import _to_bigwig
 
-        _to_bigwig(self, path, chromosome_sizes, rpm, divide_by)
+        _to_bigwig(self, path, chromosome_sizes, rpm, divide_by, value_col)
 
         return self
 
