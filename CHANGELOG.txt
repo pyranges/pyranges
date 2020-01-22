@@ -1,3 +1,6 @@
+# 0.0.69 (22.01.19)
+- add value col argument to to_bigwig (thanks https://github.com/liyao001)
+
 # 0.0.68 (21.01.19)
 - fix regression: slack changes dtype from int32 to int64
 
