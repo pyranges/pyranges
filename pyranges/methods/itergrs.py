@@ -3,7 +3,7 @@ import pandas as pd
 from collections import defaultdict
 
 
-def itergrs(prs, strand=None):
+def itergrs(prs, strand=None, keys=False):
 
     if strand is None:
         strand = all([gr.stranded for gr in prs])
@@ -22,4 +22,7 @@ def itergrs(prs, strand=None):
             df = gr.dfs.get(k, empty)
             grs_per_chromosome[k].append(df)
 
-    return iter(grs_per_chromosome.values())
+    if not keys:
+        return iter(grs_per_chromosome.values())
+    else:
+        return iter(grs_per_chromosome.items())
