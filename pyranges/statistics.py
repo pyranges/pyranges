@@ -7,6 +7,29 @@ from pyranges.multithreaded import pyrange_apply
 from pyranges.methods.statistics import _relative_distance
 
 
+def simes(df, groupby, pcol):
+
+    if isinstance(groupby, str):
+        groupby = [groupby]
+
+    sorter = groupby + [pcol]
+
+    sdf = df[sorter].sort_values(sorter)
+    g = sdf.groupby(groupby)
+
+    ranks = g.cumcount().values + 1
+    size = g.size().values
+    size = np.repeat(size, size)
+    multiplied = (sdf[pcol].values * size)
+
+    simes = multiplied / ranks
+
+    sdf.insert(sdf.shape[1], "Simes", simes)
+
+    simes = sdf.groupby(groupby).Simes.min().reset_index()
+
+    return simes
+
 
 def rowbased_spearman(x, y):
 

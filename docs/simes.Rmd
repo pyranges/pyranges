@@ -1,0 +1,16 @@
+# Statistics: Simes method
+
+Simes method lets you combine dependent p-values into one. The function takes
+three arguments: a dataframe, the columns identifying the rows to merge and the
+column containing the p-values.
+
+```{python tidy=FALSE}
+import numpy as np
+import pyranges as pr
+gr = pr.random()
+gr.P = np.random.random(len(gr))
+gr.Cluster = np.random.randint(20, size=len(gr))
+print(gr)
+print(pr.stats.simes(gr.df, "Cluster", "P"))
+print(pr.stats.simes(gr.df, ["Cluster", "Strand"], "P"))
+```
