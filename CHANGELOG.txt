@@ -1,5 +1,6 @@
 # 0.0.70 (unreleased)
 - add Simes method to pr.stats
+- add keys argument to pr.iter
 
 # 0.0.69 (22.01.19)
 - add value col argument to to_bigwig (thanks https://github.com/liyao001)
