@@ -62,6 +62,7 @@ def _intersection(scdf, ocdf, kwargs):
 def _overlap(scdf, ocdf, kwargs):
 
     invert = kwargs["invert"]
+    return_indexes = kwargs.get("return_indexes", False)
 
     if scdf.empty or ocdf.empty:
         return None
@@ -84,6 +85,9 @@ def _overlap(scdf, ocdf, kwargs):
 
     if invert:
         _indexes = scdf.index.difference(_indexes)
+
+    if return_indexes:
+        return _indexes
 
     return scdf.reindex(_indexes)
 
