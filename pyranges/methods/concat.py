@@ -4,7 +4,7 @@ import pandas as pd
 from collections import defaultdict
 
 
-def concat(pyranges, strand=False):
+def concat(pyranges, strand=None):
 
     if not pyranges:
         return None
@@ -14,6 +14,9 @@ def concat(pyranges, strand=False):
     # dbg(pyranges)
     # dbg([p.df.dtypes for p in pyranges])
     grs_per_chromosome = defaultdict(list)
+
+    if strand is None:
+        strand = all([gr.stranded for gr in pyranges])
 
     if strand:
         assert all([

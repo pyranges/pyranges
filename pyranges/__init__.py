@@ -1,5 +1,11 @@
 from __future__ import print_function
 
+try:
+    import mkl
+    mkl.set_num_threads(1)
+except (ImportError, ModuleNotFoundError):
+    pass
+
 import pandas as pd
 import numpy as np
 
@@ -24,6 +30,8 @@ random = gf.random
 
 from pyranges.methods.itergrs import itergrs
 iter = itergrs
+
+from pyranges.methods.multioverlap import count_overlaps#, interval_split
 
 from pyranges import statistics
 stats = statistics

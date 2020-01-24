@@ -24,7 +24,7 @@ genes = pr_db.ucsc.genes("hg38", head=True)
 
 print(genes)
 
-gwas = pr_db.gwas_catalog.gwas_catalog()
+gwas = pr_db.gwas_catalog.gwas_catalog(nrows=500)
 
 print(gwas)
 ```

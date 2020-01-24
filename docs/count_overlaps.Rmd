@@ -1,0 +1,35 @@
+# Create count-matrix from multiple PyRanges
+
+If you have multiple pyranges you want to create a count-matrix from, you can
+use `count_overlaps(grs, features=None, how=None, nb_cpu=1, strandedness=None)`.
+grs is a dictionary of pyranges, features is the pyrange you want to count
+overlaps in. If no features-arguments is provided, one is created from the grs.
+
+```{python tidy=FALSE}
+from io import StringIO
+import pyranges as pr
+import pandas as pd
+
+a = """Chromosome Start End
+chr1    6    12
+chr1    10    20
+chr1    22    27
+chr1    24    30"""
+
+b = """Chromosome Start End
+chr1    12    32
+chr1    14    30"""
+
+c = """Chromosome Start End
+chr1    8    15
+chr1    10    14
+chr1    32    34"""
+
+grs = [pr.PyRanges(pd.read_table(StringIO(x), sep="\s+")) for x in [a, b, c]]
+grs = {k: v for k, v in zip("abc", grs)}
+
+features = pr.concat(grs.values()).split()
+print(features)
+print(pr.count_overlaps(grs, features))
+print(pr.count_overlaps(grs))
+```

@@ -143,7 +143,7 @@ class PyRanges():
                 ds.append({k: v[c] for k, v in o.items()})
 
             for c, d in zip(columns, ds):
-                setattr(self, c, d)
+                setattr(self, str(c), d)
 
         return self
 
@@ -172,7 +172,10 @@ class PyRanges():
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
-        return PyRanges(dfs)
+        # if kwargs.get("return_indexes"):
+        #     return dfs
+        # else:
+        return pr.PyRanges(dfs)
 
     # # TODO: use subtract code here instead, easier
     # def no_overlap(self, other, **kwargs):
@@ -506,6 +509,19 @@ class PyRanges():
     #     dfs = pyrange_apply(_insert, self, other, **kwargs)
 
     #     return PyRanges(dfs)
+
+    def split(self, strand=None, **kwargs):
+
+        if strand is None:
+            strand = self.stranded
+
+        kwargs = fill_kwargs(kwargs)
+
+        from pyranges.methods.split import _split
+        df = pyrange_apply_single(_split, self, strand, kwargs)
+
+        return pr.PyRanges(df)
+
 
     def cluster(self, strand=None, by=None, **kwargs):
 
