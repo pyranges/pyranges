@@ -92,6 +92,24 @@ def _overlap(scdf, ocdf, kwargs):
     return scdf.reindex(_indexes)
 
 
+def _count_overlaps(scdf, ocdf, kwargs):
+
+    kwargs["return_indexes"] = True
+    idx = _overlap(scdf, ocdf, kwargs)
+
+    sx = pd.DataFrame(np.zeros(len(scdf)), index=scdf.index)
+    if idx is None:
+        return sx
+
+    vc = pd.Series(idx).value_counts(sort=False)
+
+    sx.iloc[vc.index, 0] = vc.values
+
+    sx.columns = ["__0__"]
+
+    return sx
+
+
 # def _first_df(scdf, ocdf, kwargs):
 
 #     if scdf.empty or ocdf.empty:

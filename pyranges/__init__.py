@@ -25,5 +25,7 @@ random = gf.random
 from pyranges.methods.itergrs import itergrs
 iter = itergrs
 
+from pyranges.methods.multioverlap import count_overlaps#, interval_split
+
 from pyranges import statistics
 stats = statistics
