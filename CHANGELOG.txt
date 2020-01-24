@@ -1,21 +1,21 @@
-# 0.0.70 (unreleased)
+# 0.0.70 (24.01.20)
 - add Simes method to pr.stats
 - add keys argument to pr.iter
 - make strand=None default arg for concat
 - gr.split() does opposite of merge
 - pr.count_overlaps(grs, features=None) like bedtools multiintersect added
 
-# 0.0.69 (22.01.19)
+# 0.0.69 (22.01.20)
 - add value col argument to to_bigwig (thanks https://github.com/liyao001)
 
-# 0.0.68 (21.01.19)
+# 0.0.68 (21.01.20)
 - fix regression: slack changes dtype from int32 to int64
 
-# 0.0.67 (10.01.19)
+# 0.0.67 (10.01.20)
 - add dtypes attribute to pyranges
 - fix left and right join when chromosomes missing
 
-# 0.0.66 (03.01.19)
+# 0.0.66 (03.01.20)
 - add argument sparse to read_bam. Setting it to False fetches more columns.
 
 # 0.0.65 (10.12.19)
