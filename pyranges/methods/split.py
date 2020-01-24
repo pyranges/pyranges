@@ -17,6 +17,6 @@ def _split(df):
 
     features.insert(0, "Chromosome", df.Chromosome.iloc[0])
     if "Strand" in df:
-        features.insert(features.shape[1], "Strand", df["Strand"])
+        features.insert(features.shape[1], "Strand", df["Strand"].iloc[0])
 
     return features

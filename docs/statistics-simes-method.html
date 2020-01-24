@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>33 Fetching gene tracks as PyRanges | PyRanges documentation</title>
-  <meta name="description" content="33 Fetching gene tracks as PyRanges | PyRanges documentation" />
+  <title>22 Statistics: Simes method | PyRanges documentation</title>
+  <meta name="description" content="22 Statistics: Simes method | PyRanges documentation" />
   <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="33 Fetching gene tracks as PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="22 Statistics: Simes method | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="33 Fetching gene tracks as PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="22 Statistics: Simes method | PyRanges documentation" />
   
   
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="genomicfeatures-methods-using-genomic-context.html">
-
+<link rel="prev" href="statistics-spatial-correlations-between-pyranges.html">
+<link rel="next" href="statistics-compute-fisher-exact.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -174,98 +174,106 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="fetching-gene-tracks-as-pyranges" class="section level1">
-<h1><span class="header-section-number">33</span> Fetching gene tracks as PyRanges</h1>
-<p>PyRanges can fetch data from UCSC, GENCODE, Ensembl and the GWAS catalog through
-the pyranges_db add-on package. It can be installed with <code>pip install pyranges_db</code>.</p>
-<p>Each database contains at least two methods, namely genes and genomes. UCSC and
-Ensembl also has the method chromosome_sizes.</p>
-<p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few thousand rows of data.</p>
-<div class="sourceCode" id="cb352"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb352-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
-<a class="sourceLine" id="cb352-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb352-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
-<a class="sourceLine" id="cb352-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb352-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
-<pre><code>##     Genome
-## 0  acaChl1
-## 1  ailMel1
-## 2  allMis1
-## 3  allSin1
-## 4  amaVit1</code></pre>
-<div class="sourceCode" id="cb354"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb354-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
-<a class="sourceLine" id="cb354-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb354-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
-<pre><code>## +------------------------+-----------+-----------+
-## | Chromosome             | Start     | End       |
-## | (category)             | (int32)   | (int32)   |
-## |------------------------+-----------+-----------|
-## | chr1                   | 0         | 248956422 |
-## | chr1_GL383518v1_alt    | 0         | 182439    |
-## | chr1_GL383519v1_alt    | 0         | 110268    |
-## | chr1_GL383520v2_alt    | 0         | 366580    |
-## | ...                    | ...       | ...       |
-## | chrY_KZ208924v1_fix    | 0         | 209722    |
-## | chrY_KZ208923v1_fix    | 0         | 48370     |
-## | chrY_KN196487v1_fix    | 0         | 101150    |
-## | chrY_KI270740v1_random | 0         | 37240     |
-## +------------------------+-----------+-----------+
-## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome.</code></pre>
-<div class="sourceCode" id="cb356"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb356-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb356-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb356-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
-## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | exon_number   | transcript_name   |
-## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)     | (category)        |
-## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------|
-## | chr1         | 43933800  | 43937240  | gene         | ARTN         | nan             | +            | nan           | nan               |
-## | chr1         | 7669729   | 7769706   | gene         | CAMTA1       | nan             | +            | nan           | nan               |
-## | chr1         | 145719498 | 145739288 | gene         | CD160        | nan             | +            | nan           | nan               |
-## | chr1         | 11806095  | 11843144  | gene         | CLCN6        | nan             | +            | nan           | nan               |
-## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...           | ...               |
-## | chrY         | 2738199   | 2738256   | exon         | CD99         | 289.0           | +            | 7.0           | NM_001321370      |
-## | chrY         | 2738202   | 2738256   | exon         | CD99         | 287.0           | +            | 8.0           | NM_001321368      |
-## | chrY         | 2740778   | 2741309   | exon         | CD99         | 287.0           | +            | 9.0           | NM_001321368      |
-## | chrY         | 2740778   | 2741309   | exon         | CD99         | 289.0           | +            | 8.0           | NM_001321370      |
-## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
-## Stranded PyRanges object has 5,884 rows and 9 columns from 55 chromosomes.
+<div id="statistics-simes-method" class="section level1">
+<h1><span class="header-section-number">22</span> Statistics: Simes method</h1>
+<p>Simes method lets you combine dependent p-values into one. The function takes
+three arguments: a dataframe, the columns identifying the rows to merge and the
+column containing the p-values.</p>
+<div class="sourceCode" id="cb241"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb241-1" data-line-number="1"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb241-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb241-3" data-line-number="3">gr <span class="op">=</span> pr.random()</a>
+<a class="sourceLine" id="cb241-4" data-line-number="4">gr.P <span class="op">=</span> np.random.random(<span class="bu">len</span>(gr))</a>
+<a class="sourceLine" id="cb241-5" data-line-number="5">gr.Cluster <span class="op">=</span> np.random.randint(<span class="dv">20</span>, size<span class="op">=</span><span class="bu">len</span>(gr))</a>
+<a class="sourceLine" id="cb241-6" data-line-number="6"><span class="bu">print</span>(gr)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+--------------+---------------------+-----------+
+## | Chromosome   | Start     | End       | Strand       | P                   | Cluster   |
+## | (category)   | (int32)   | (int32)   | (category)   | (float64)           | (int64)   |
+## |--------------+-----------+-----------+--------------+---------------------+-----------|
+## | chr1         | 65411188  | 65411288  | +            | 0.23027635817107284 | 10        |
+## | chr1         | 70647540  | 70647640  | +            | 0.9716787362506899  | 11        |
+## | chr1         | 15571820  | 15571920  | +            | 0.09800457228590043 | 16        |
+## | chr1         | 151460779 | 151460879 | +            | 0.21193635746278527 | 4         |
+## | ...          | ...       | ...       | ...          | ...                 | ...       |
+## | chrY         | 6070884   | 6070984   | -            | 0.251139625483353   | 17        |
+## | chrY         | 26864666  | 26864766  | -            | 0.8251748497781314  | 13        |
+## | chrY         | 44852040  | 44852140  | -            | 0.35674393196060616 | 0         |
+## | chrY         | 57291298  | 57291398  | -            | 0.39032356453306016 | 5         |
+## +--------------+-----------+-----------+--------------+---------------------+-----------+
+## Stranded PyRanges object has 1,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb358"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb358-1" data-line-number="1">gwas <span class="op">=</span> pr_db.gwas_catalog.gwas_catalog(nrows<span class="op">=</span><span class="dv">500</span>)</a>
-<a class="sourceLine" id="cb358-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb358-3" data-line-number="3"><span class="bu">print</span>(gwas)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------------+-------------+----------------------+--------------------+--------------------------+-------+
-## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS    | P-VALUE     | OR or BETA           | MAPPED_GENE        | MAPPED_TRAIT             | +30   |
-## | (category)   | (int32)   | (int32)   | (object)   | (object)        | (float64)   | (float64)            | (object)           | (object)                 | ...   |
-## |--------------+-----------+-----------+------------+-----------------+-------------+----------------------+--------------------+--------------------------+-------|
-## | 1            | 153685821 | 153685822 | 1q21.3     | ENSG00000169418 | 9e-06       | 1.167                | NPR1               | diastolic blood pressure | ...   |
-## | 1            | 10736809  | 10736810  | 1p36.22    | ENSG00000130940 | 6e-16       | 0.0269               | CASZ1              | diastolic blood pressure | ...   |
-## | 1            | 112555912 | 112555913 | 1p13.2     | ENSG00000007341 | 1e-09       | 0.0238               | ST7L               | diastolic blood pressure | ...   |
-## | 1            | 11802721  | 11802722  | 1p36.22    | ENSG00000177000 | 8e-17       | 0.0408               | MTHFR              | systolic blood pressure  | ...   |
-## | ...          | ...       | ...       | ...        | ...             | ...         | ...                  | ...                | ...                      | ...   |
-## | X            | 8911833   | 8911834   | Xp22.31    | ENSG00000285896 | 3e-08       | 0.021480000000000003 | AC074281.2         | hematocrit               | ...   |
-## | X            | 150167578 | 150167579 | Xq28       | ENSG00000235703 | 4e-08       | 0.07492              | LINC00894          | hematocrit               | ...   |
-## | X            | 55552777  | 55552778  | Xp11.21    | nan             | 3e-08       | 0.0219               | AL590410.1 - Y_RNA | mean corpuscular volume  | ...   |
-## | X            | 70853309  | 70853310  | Xq13.1     | ENSG00000120498 | 3e-08       | 0.021269999999999997 | TEX11              | mean corpuscular volume  | ...   |
-## +--------------+-----------+-----------+------------+-----------------+-------------+----------------------+--------------------+--------------------------+-------+
-## Unstranded PyRanges object has 499 rows and 39 columns from 23 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome.
-## 30 hidden columns: DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, JOURNAL, LINK, STUDY, DISEASE/TRAIT, INITIAL SAMPLE SIZE, REPLICATION SAMPLE SIZE, REPORTED GENE(S), ... (+ 19 more.)</code></pre>
+<div class="sourceCode" id="cb243"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb243-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, <span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
+<pre><code>##     Cluster     Simes
+## 0         0  0.314627
+## 1         1  0.384919
+## 2         2  0.166017
+## 3         3  0.922435
+## 4         4  0.836973
+## 5         5  0.342973
+## 6         6  0.023751
+## 7         7  0.399547
+## 8         8  0.079331
+## 9         9  0.109558
+## 10       10  0.960122
+## 11       11  0.491499
+## 12       12  0.118231
+## 13       13  0.204304
+## 14       14  0.436244
+## 15       15  0.919812
+## 16       16  0.464204
+## 17       17  0.761489
+## 18       18  0.018973
+## 19       19  0.866080</code></pre>
+<div class="sourceCode" id="cb245"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb245-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, [<span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;Strand&quot;</span>], <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
+<pre><code>##     Cluster Strand     Simes
+## 0         0      +  0.969248
+## 1         0      -  0.186446
+## 2         1      +  0.611114
+## 3         1      -  0.185331
+## 4         2      +  0.082531
+## 5         2      -  0.169707
+## 6         3      +  0.866997
+## 7         3      -  0.627185
+## 8         4      +  0.828362
+## 9         4      -  0.639887
+## 10        5      +  0.141663
+## 11        5      -  0.712486
+## 12        6      +  0.014437
+## 13        6      -  0.906980
+## 14        7      +  0.168230
+## 15        7      -  0.990831
+## 16        8      +  0.053885
+## 17        8      -  0.628565
+## 18        9      +  0.062335
+## 19        9      -  0.172359
+## 20       10      +  0.633260
+## 21       10      -  0.940362
+## 22       11      +  0.307110
+## 23       11      -  0.412311
+## 24       12      +  0.122778
+## 25       12      -  0.074072
+## 26       13      +  0.161293
+## 27       13      -  0.158365
+## 28       14      +  0.571703
+## 29       14      -  0.213360
+## 30       15      +  0.681727
+## 31       15      -  0.610013
+## 32       16      +  0.587414
+## 33       16      -  0.232102
+## 34       17      +  0.676233
+## 35       17      -  0.769890
+## 36       18      +  0.974361
+## 37       18      -  0.008301
+## 38       19      +  0.786398
+## 39       19      -  0.510395</code></pre>
 
 </div>
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="genomicfeatures-methods-using-genomic-context.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="statistics-spatial-correlations-between-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="statistics-compute-fisher-exact.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

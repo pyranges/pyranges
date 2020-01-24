@@ -37,6 +37,14 @@ print(gr)
 print(gr.cluster(by="gene_id"))
 ```
 
+If you want to split a pyrange on the overlapping intervals, you can use split:
+
+```{python tidy=FALSE}
+import pyranges as pr
+f1 = pr.data.f1()
+print(f1)
+print(f1.split())
+```
 
 `five_end` finds the starts of the regions (taking direction of transcription
 into account).

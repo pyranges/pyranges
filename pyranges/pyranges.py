@@ -520,7 +520,7 @@ class PyRanges():
         from pyranges.methods.split import _split
         df = pyrange_apply_single(_split, self, strand, kwargs)
 
-        return pr.PyRanges(out)
+        return pr.PyRanges(df)
 
 
     def cluster(self, strand=None, by=None, **kwargs):

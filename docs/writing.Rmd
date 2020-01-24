@@ -44,6 +44,8 @@ chromsizes = pr.data.chromsizes() # hg19, can also use pr_db.ucsc.chromosome_siz
 gr.to_bigwig("chipseq.bw", chromsizes)
 ```
 
+To create a bigwig from an arbitrary value column, use the `value_col` argument.
+
 If you want to write one bigwig for each strand, you need to do it manually.
 
 ```{python tidy=FALSE}
