@@ -1,5 +1,11 @@
 from __future__ import print_function
 
+try:
+    import mkl
+    mkl.set_num_threads(1)
+except (ImportError, ModuleNotFoundError):
+    pass
+
 import pandas as pd
 import numpy as np
 

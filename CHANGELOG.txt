@@ -4,6 +4,7 @@
 - make strand=None default arg for concat
 - gr.split() does opposite of merge
 - pr.count_overlaps(grs, features=None) like bedtools multiintersect added
+- set mkl.set_num_threads to 1 in __init__
 
 # 0.0.69 (22.01.20)
 - add value col argument to to_bigwig (thanks https://github.com/liyao001)
