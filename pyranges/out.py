@@ -45,6 +45,10 @@ def _gtf(df):
     )
     columns = list(df.columns)
 
+    df = df.copy()
+
+    df.loc[:, "Start"] = df.Start + 1
+
     outdf = _fill_missing(df, all_columns)
 
     # gotten all needed columns, need to join the rest
@@ -226,17 +230,25 @@ def _gff3(df):
     )
     columns = list(df.columns)
 
+    df = df.copy()
+
+    df.loc[:, "Start"] = df.Start + 1
+
     outdf = _fill_missing(df, all_columns)
 
     # gotten all needed columns, need to join the rest
     rest = set(df.columns) - set(all_columns)
     rest = sorted(rest, key=columns.index)
     rest_df = df.get(rest).copy()
-    for c in rest_df:
+    total_cols = rest_df.shape[1]
+    for i, c in enumerate(rest_df, 1):
         col = rest_df[c]
         isnull = col.isnull()
         col = col.astype(str).str.replace("nan", "")
-        new_val = c + '=' + col + ';'
+        if i != total_cols:
+            new_val = c + '=' + col + ';'
+        else:
+            new_val = c + '=' + col 
         rest_df.loc[:, c] = rest_df[c].astype(str)
         rest_df.loc[~isnull, c] = new_val
         rest_df.loc[isnull, c] = ""

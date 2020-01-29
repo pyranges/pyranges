@@ -162,6 +162,7 @@ def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
         dfs.append(ndf)
 
     df = pd.concat(dfs, sort=False)
+    df.loc[:, "Start"] = df.Start - 1
 
     if not output_df:
         return PyRanges(df)
@@ -231,6 +232,7 @@ def read_gtf_restricted(f,
 
     df = pd.concat(dfs, sort=False)
 
+    df.loc[:, "Start"] = df.Start - 1
 
     if not output_df:
         return PyRanges(df)
@@ -239,8 +241,11 @@ def read_gtf_restricted(f,
 
 def to_rows_gff3(anno):
     rowdicts = []
+
+    # anno = anno.str.replace(";$", "")
+
     for l in list(anno):
-        l = ( it.split("=") for it in l.split(";") )
+        l = (it.split("=") for it in l.split(";"))
         rowdicts.append({k: v for k, v in l})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
@@ -278,6 +283,7 @@ attributes - A semicolon-separated list of tag-value pairs, providing additional
         skiprows=skiprows,
         nrows=nrows)
 
+
     dfs = []
     for df in df_iter:
         extra = to_rows_gff3(df.Attribute.astype(str))
@@ -286,6 +292,8 @@ attributes - A semicolon-separated list of tag-value pairs, providing additional
         dfs.append(ndf)
 
     df = pd.concat(dfs, sort=False)
+
+    df.loc[:, "Start"] = df.Start - 1
 
     if not output_df:
         return PyRanges(df)
