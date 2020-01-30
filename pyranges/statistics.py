@@ -260,7 +260,8 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                 df2.insert(df2.shape[1], "Strand", "-")
                 return pd.concat([df, df2])
 
-        genome = genome.apply(make_stranded)
+            genome = genome.apply(make_stranded)
+
         genome_length = genome.length
     else:
         if len(grs) == 2:

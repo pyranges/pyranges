@@ -3,7 +3,7 @@ from __future__ import print_function
 try:
     import mkl
     mkl.set_num_threads(1)
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     pass
 
 import pandas as pd

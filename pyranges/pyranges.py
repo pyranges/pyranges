@@ -168,6 +168,7 @@ class PyRanges():
     def overlap(self, other, **kwargs):
 
         kwargs["sparse"] = {"self": False, "other": True}
+        kwargs["how"] = "first"
         kwargs = fill_kwargs(kwargs)
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
