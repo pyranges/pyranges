@@ -163,7 +163,7 @@ def test_set_union(gr, gr2, strandedness):
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
 def test_overlap(gr, gr2, strandedness):
 
-    overlap_command = "bedtools intersect -wa {strand} -a {f1} -b {f2}"
+    overlap_command = "bedtools intersect -u {strand} -a {f1} -b {f2}"
 
     bedtools_result = run_bedtools(overlap_command, gr, gr2, strandedness)
 
