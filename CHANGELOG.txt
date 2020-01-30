@@ -1,3 +1,6 @@
+# 0.0.71 (unreleased)
+- fix various issues with reading and writing gtf/gff3 (1-indexing, removed final ";" in gff3 attribute col when writing)
+
 # 0.0.70 (24.01.20)
 - add Simes method to pr.stats
 - add keys argument to pr.iter
