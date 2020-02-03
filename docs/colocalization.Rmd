@@ -1,0 +1,33 @@
+# Statistics: colocalization and co-occurence measures
+
+PyRanges can compute a normalized Jaccard-statistic (ranging from 0 to 1) to
+compute the similarities between two ranges.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.chipseq()
+gr2 = pr.data.chipseq_background()
+print(gr.stats.jaccard(gr2, strandedness="same"))
+```
+
+To compute the similarities between two sets of ranges which do not necessarily
+overlap much, we can use the relative distance function. It describes the
+relative distances between each interval in one set and the two closest intervals
+in another. Any deviance from a uniform distribution is an indication of spatial
+correlation.
+
+```{python tidy=FALSE}
+print(gr.stats.relative_distance(gr2, strandedness="same"))
+```
+
+PyRanges also contains yet another method (which is still in beta-mode) for
+computing colocalization statistics, the Forbes coefficient:
+
+```
+print(gr.stats.forbes(gr2, strandedness="same"))
+```
+
+Please report any issues you encounter using it :)
+
+See this paper for a discussion of `jaccard` and `forbes`:
+https://doi.org/10.1093/bib/bbz083

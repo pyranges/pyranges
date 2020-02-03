@@ -157,6 +157,17 @@ def fisher_exact(n1, d1, n2, d2, **kwargs):
     return df
 
 
+def chromsizes_as_int(chromsizes):
+        if isinstance(chromsizes, int):
+            pass
+        elif isinstance(chromsizes, dict):
+            chromsizes = sum(chromsizes.values())
+        elif isinstance(chromsizes, (pd.DataFrame, pr.PyRanges)):
+            chromsizes = chromsizes.End.sum()
+
+        return chromsizes
+
+
 class StatisticsMethods():
 
     pr = None
@@ -166,14 +177,64 @@ class StatisticsMethods():
         self.pr = pr
 
 
+    # def __tetrachoric(self, other, chromsizes, **kwargs):
+
+    #     self = self.pr
+
+    #     chromsizes = chromsizes_as_int(chromsizes)
+
+    #     kwargs["new_pos"] = "intersection"
+    #     strand = True if kwargs.get("strandedness") else False
+
+    #     ss = self.merge(strand=strand)
+    #     so = other.merge(strand=strand)
+    #     a = ss.intersect(so, **kwargs).length
+    #     b = ss.subtract(so, **kwargs).length
+    #     c = so.subtract(ss, **kwargs).length
+
+    #     m = pr.concat([ss, so]).merge(strand=strand).length
+
+    #     d = chromsizes - m
+
+    #     from math import cos, sqrt
+
+    #     _tetrachoric = cos(180/(1 + sqrt((b * c) / (a * d))))
+
+    #     return _tetrachoric
+
+
+    def forbes(self, other, chromsizes, **kwargs):
+
+        chromsizes = chromsizes_as_int(chromsizes)
+
+        self = self.pr
+
+        kwargs["sparse"] = {"self": True, "other": True}
+        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        strand = True if kwargs.get("strandedness") else False
+        kwargs["new_pos"] = "intersection"
+
+        reference_length = self.merge(strand=strand).length
+        query_length = other.merge(strand=strand).length
+
+        intersection_sum = sum(
+            v.sum()
+            for v in self.set_intersect(other, **kwargs).lengths(as_dict=True).values())
+
+        forbes = chromsizes * intersection_sum / (reference_length * query_length)
+
+        return forbes
+
+
     def jaccard(self, other, **kwargs):
 
         self = self.pr
 
         kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges.fill_kwargs(kwargs)
-        strand = True if kwargs["strandedness"] else False
+        strand = True if kwargs.get("strandedness") else False
 
+        kwargs["new_pos"] = "intersection"
         intersection_sum = sum(
             v.sum()
             for v in self.set_intersect(other, **kwargs).lengths(as_dict=True).values())

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>33 Fetching gene tracks as PyRanges | PyRanges documentation</title>
-  <meta name="description" content="33 Fetching gene tracks as PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <title>32 Fetching gene tracks as PyRanges | PyRanges documentation</title>
+  <meta name="description" content="32 Fetching gene tracks as PyRanges | PyRanges documentation" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="33 Fetching gene tracks as PyRanges | PyRanges documentation" />
+  <meta property="og:title" content="32 Fetching gene tracks as PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="33 Fetching gene tracks as PyRanges | PyRanges documentation" />
+  <meta name="twitter:title" content="32 Fetching gene tracks as PyRanges | PyRanges documentation" />
   
   
   
@@ -24,14 +24,14 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-01-24" />
+<meta name="date" content="2020-02-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="genomicfeatures-methods-using-genomic-context.html">
+<link rel="prev" href="genomicfeatures-methods-using-genomic-context.html"/>
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -143,20 +146,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
 <li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
 <li class="chapter" data-level="19" data-path="create-count-matrix-from-multiple-pyranges.html"><a href="create-count-matrix-from-multiple-pyranges.html"><i class="fa fa-check"></i><b>19</b> Create count-matrix from multiple PyRanges</a></li>
-<li class="chapter" data-level="20" data-path="statistics-similarity-between-pyranges.html"><a href="statistics-similarity-between-pyranges.html"><i class="fa fa-check"></i><b>20</b> Statistics: similarity between PyRanges</a></li>
-<li class="chapter" data-level="21" data-path="statistics-spatial-correlations-between-pyranges.html"><a href="statistics-spatial-correlations-between-pyranges.html"><i class="fa fa-check"></i><b>21</b> Statistics: spatial correlations between PyRanges</a></li>
-<li class="chapter" data-level="22" data-path="statistics-simes-method.html"><a href="statistics-simes-method.html"><i class="fa fa-check"></i><b>22</b> Statistics: Simes method</a></li>
-<li class="chapter" data-level="23" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>23</b> Statistics: compute Fisher exact</a></li>
-<li class="chapter" data-level="24" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>24</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
-<li class="chapter" data-level="25" data-path="statistics-rowbased-operations.html"><a href="statistics-rowbased-operations.html"><i class="fa fa-check"></i><b>25</b> Statistics: rowbased operations</a></li>
-<li class="chapter" data-level="26" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>26</b> Turning Ranges into RLEs</a></li>
-<li class="chapter" data-level="27" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>27</b> An introduction to RLEs</a></li>
-<li class="chapter" data-level="28" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>28</b> Run Length Encoding dicts</a></li>
-<li class="chapter" data-level="29" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>29</b> Subsetting Rles</a></li>
-<li class="chapter" data-level="30" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>30</b> Subsetting PyRles</a></li>
-<li class="chapter" data-level="31" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>31</b> Using multiple cores</a></li>
-<li class="chapter" data-level="32" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>32</b> GenomicFeatures: methods using genomic context</a></li>
-<li class="chapter" data-level="33" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>33</b> Fetching gene tracks as PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-colocalization-and-co-occurence-measures.html"><a href="statistics-colocalization-and-co-occurence-measures.html"><i class="fa fa-check"></i><b>20</b> Statistics: colocalization and co-occurence measures</a></li>
+<li class="chapter" data-level="21" data-path="statistics-simes-method.html"><a href="statistics-simes-method.html"><i class="fa fa-check"></i><b>21</b> Statistics: Simes method</a></li>
+<li class="chapter" data-level="22" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>22</b> Statistics: compute Fisher exact</a></li>
+<li class="chapter" data-level="23" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>23</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="24" data-path="statistics-rowbased-operations.html"><a href="statistics-rowbased-operations.html"><i class="fa fa-check"></i><b>24</b> Statistics: rowbased operations</a></li>
+<li class="chapter" data-level="25" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>25</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="26" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>26</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="27" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>27</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="28" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>28</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="29" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>29</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="30" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>30</b> Using multiple cores</a></li>
+<li class="chapter" data-level="31" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>31</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="32" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>32</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -175,26 +177,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="fetching-gene-tracks-as-pyranges" class="section level1">
-<h1><span class="header-section-number">33</span> Fetching gene tracks as PyRanges</h1>
+<h1><span class="header-section-number">32</span> Fetching gene tracks as PyRanges</h1>
 <p>PyRanges can fetch data from UCSC, GENCODE, Ensembl and the GWAS catalog through
 the pyranges_db add-on package. It can be installed with <code>pip install pyranges_db</code>.</p>
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and
 Ensembl also has the method chromosome_sizes.</p>
 <p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few thousand rows of data.</p>
-<div class="sourceCode" id="cb352"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb352-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
-<a class="sourceLine" id="cb352-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb352-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
-<a class="sourceLine" id="cb352-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb352-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
+<div class="sourceCode" id="cb355"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb355-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
+<a class="sourceLine" id="cb355-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb355-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
+<a class="sourceLine" id="cb355-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb355-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
 <pre><code>##     Genome
 ## 0  acaChl1
 ## 1  ailMel1
 ## 2  allMis1
 ## 3  allSin1
 ## 4  amaVit1</code></pre>
-<div class="sourceCode" id="cb354"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb354-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
-<a class="sourceLine" id="cb354-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb354-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
+<div class="sourceCode" id="cb357"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb357-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
+<a class="sourceLine" id="cb357-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb357-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
 <pre><code>## +------------------------+-----------+-----------+
 ## | Chromosome             | Start     | End       |
 ## | (category)             | (int32)   | (int32)   |
@@ -211,45 +213,46 @@ Ensembl also has the method chromosome_sizes.</p>
 ## +------------------------+-----------+-----------+
 ## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome.</code></pre>
-<div class="sourceCode" id="cb356"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb356-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb356-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb356-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
-## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | exon_number   | transcript_name   |
-## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)     | (category)        |
-## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------|
-## | chr1         | 43933800  | 43937240  | gene         | ARTN         | nan             | +            | nan           | nan               |
-## | chr1         | 7669729   | 7769706   | gene         | CAMTA1       | nan             | +            | nan           | nan               |
-## | chr1         | 145719498 | 145739288 | gene         | CD160        | nan             | +            | nan           | nan               |
-## | chr1         | 11806095  | 11843144  | gene         | CLCN6        | nan             | +            | nan           | nan               |
-## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...           | ...               |
-## | chrY         | 2738199   | 2738256   | exon         | CD99         | 289.0           | +            | 7.0           | NM_001321370      |
-## | chrY         | 2738202   | 2738256   | exon         | CD99         | 287.0           | +            | 8.0           | NM_001321368      |
-## | chrY         | 2740778   | 2741309   | exon         | CD99         | 287.0           | +            | 9.0           | NM_001321368      |
-## | chrY         | 2740778   | 2741309   | exon         | CD99         | 289.0           | +            | 8.0           | NM_001321370      |
-## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
+<div class="sourceCode" id="cb359"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb359-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb359-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb359-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------+
+## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | exon_number   | +1    |
+## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)     | ...   |
+## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------|
+## | chr1         | 43933800  | 43937240  | gene         | ARTN         | nan             | +            | nan           | ...   |
+## | chr1         | 7669729   | 7769706   | gene         | CAMTA1       | nan             | +            | nan           | ...   |
+## | chr1         | 145719498 | 145739288 | gene         | CD160        | nan             | +            | nan           | ...   |
+## | chr1         | 11806095  | 11843144  | gene         | CLCN6        | nan             | +            | nan           | ...   |
+## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...           | ...   |
+## | chrY         | 2738199   | 2738256   | exon         | CD99         | 289.0           | +            | 7.0           | ...   |
+## | chrY         | 2738202   | 2738256   | exon         | CD99         | 287.0           | +            | 8.0           | ...   |
+## | chrY         | 2740778   | 2741309   | exon         | CD99         | 287.0           | +            | 9.0           | ...   |
+## | chrY         | 2740778   | 2741309   | exon         | CD99         | 289.0           | +            | 8.0           | ...   |
+## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------+
 ## Stranded PyRanges object has 5,884 rows and 9 columns from 55 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb358"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb358-1" data-line-number="1">gwas <span class="op">=</span> pr_db.gwas_catalog.gwas_catalog(nrows<span class="op">=</span><span class="dv">500</span>)</a>
-<a class="sourceLine" id="cb358-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb358-3" data-line-number="3"><span class="bu">print</span>(gwas)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------------+-------------+----------------------+--------------------+--------------------------+-------+
-## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS    | P-VALUE     | OR or BETA           | MAPPED_GENE        | MAPPED_TRAIT             | +30   |
-## | (category)   | (int32)   | (int32)   | (object)   | (object)        | (float64)   | (float64)            | (object)           | (object)                 | ...   |
-## |--------------+-----------+-----------+------------+-----------------+-------------+----------------------+--------------------+--------------------------+-------|
-## | 1            | 153685821 | 153685822 | 1q21.3     | ENSG00000169418 | 9e-06       | 1.167                | NPR1               | diastolic blood pressure | ...   |
-## | 1            | 10736809  | 10736810  | 1p36.22    | ENSG00000130940 | 6e-16       | 0.0269               | CASZ1              | diastolic blood pressure | ...   |
-## | 1            | 112555912 | 112555913 | 1p13.2     | ENSG00000007341 | 1e-09       | 0.0238               | ST7L               | diastolic blood pressure | ...   |
-## | 1            | 11802721  | 11802722  | 1p36.22    | ENSG00000177000 | 8e-17       | 0.0408               | MTHFR              | systolic blood pressure  | ...   |
-## | ...          | ...       | ...       | ...        | ...             | ...         | ...                  | ...                | ...                      | ...   |
-## | X            | 8911833   | 8911834   | Xp22.31    | ENSG00000285896 | 3e-08       | 0.021480000000000003 | AC074281.2         | hematocrit               | ...   |
-## | X            | 150167578 | 150167579 | Xq28       | ENSG00000235703 | 4e-08       | 0.07492              | LINC00894          | hematocrit               | ...   |
-## | X            | 55552777  | 55552778  | Xp11.21    | nan             | 3e-08       | 0.0219               | AL590410.1 - Y_RNA | mean corpuscular volume  | ...   |
-## | X            | 70853309  | 70853310  | Xq13.1     | ENSG00000120498 | 3e-08       | 0.021269999999999997 | TEX11              | mean corpuscular volume  | ...   |
-## +--------------+-----------+-----------+------------+-----------------+-------------+----------------------+--------------------+--------------------------+-------+
-## Unstranded PyRanges object has 499 rows and 39 columns from 23 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.
+## 1 hidden columns: transcript_name</code></pre>
+<div class="sourceCode" id="cb361"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb361-1" data-line-number="1">gwas <span class="op">=</span> pr_db.gwas_catalog.gwas_catalog(nrows<span class="op">=</span><span class="dv">500</span>)</a>
+<a class="sourceLine" id="cb361-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb361-3" data-line-number="3"><span class="bu">print</span>(gwas)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+---------------------------------------------------+-------+
+## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS                                      | +34   |
+## | (category)   | (int32)   | (int32)   | (object)   | (object)                                          | ...   |
+## |--------------+-----------+-----------+------------+---------------------------------------------------+-------|
+## | 1.0          | 10736809  | 10736810  | 1p36.22    | ENSG00000130940                                   | ...   |
+## | 1.0          | 112481358 | 112481359 | 1p13.2     | ENSG00000134245                                   | ...   |
+## | 1.0          | 230713613 | 230713614 | 1q42.2     | ENSG00000135744, ENSG00000244137                  | ...   |
+## | 1.0          | 53502546  | 53502547  | 1p32.3     | nan                                               | ...   |
+## | ...          | ...       | ...       | ...        | ...                                               | ...   |
+## | 22.0         | 30009162  | 30009163  | 22q12.2    | ENSG00000100330, ENSG00000279159, ENSG00000227117 | ...   |
+## | 22.0         | 31602626  | 31602627  | 22q12.2    | ENSG00000198089                                   | ...   |
+## | 22.0         | 19811887  | 19811888  | 22q11.21   | ENSG00000185838                                   | ...   |
+## | 22.0         | 29990369  | 29990370  | 22q12.2    | ENSG00000100330, ENSG00000279159                  | ...   |
+## +--------------+-----------+-----------+------------+---------------------------------------------------+-------+
+## Unstranded PyRanges object has 494 rows and 39 columns from 22 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome.
-## 30 hidden columns: DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, JOURNAL, LINK, STUDY, DISEASE/TRAIT, INITIAL SAMPLE SIZE, REPLICATION SAMPLE SIZE, REPORTED GENE(S), ... (+ 19 more.)</code></pre>
+## 34 hidden columns: P-VALUE, OR or BETA, MAPPED_GENE, MAPPED_TRAIT, DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, ... (+ 26 more.)</code></pre>
 
 </div>
 
@@ -270,11 +273,13 @@ Ensembl also has the method chromosome_sizes.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -282,12 +287,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -299,6 +303,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

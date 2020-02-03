@@ -37,7 +37,6 @@ def genome_bounds(gr, chromsizes, clip=False):
 
 def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
 
-    print(chromsizes)
     if chromsizes is None:
         chromsizes = pr.data.chromsizes()
         df = chromsizes.df
