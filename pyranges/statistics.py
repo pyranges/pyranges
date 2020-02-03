@@ -177,30 +177,30 @@ class StatisticsMethods():
         self.pr = pr
 
 
-    def tetrachoric(self, other, chromsizes, **kwargs):
+    # def __tetrachoric(self, other, chromsizes, **kwargs):
 
-        self = self.pr
+    #     self = self.pr
 
-        chromsizes = chromsizes_as_int(chromsizes)
+    #     chromsizes = chromsizes_as_int(chromsizes)
 
-        kwargs["new_pos"] = "intersection"
-        strand = True if kwargs.get("strandedness") else False
+    #     kwargs["new_pos"] = "intersection"
+    #     strand = True if kwargs.get("strandedness") else False
 
-        ss = self.merge(strand=strand)
-        so = other.merge(strand=strand)
-        a = ss.intersect(so, **kwargs).length
-        b = ss.subtract(so, **kwargs).length
-        c = so.subtract(ss, **kwargs).length
+    #     ss = self.merge(strand=strand)
+    #     so = other.merge(strand=strand)
+    #     a = ss.intersect(so, **kwargs).length
+    #     b = ss.subtract(so, **kwargs).length
+    #     c = so.subtract(ss, **kwargs).length
 
-        m = pr.concat([ss, so]).merge(strand=strand).length
+    #     m = pr.concat([ss, so]).merge(strand=strand).length
 
-        d = chromsizes - m
+    #     d = chromsizes - m
 
-        from math import cos, sqrt
+    #     from math import cos, sqrt
 
-        _tetrachoric = cos(180/(1 + sqrt((b * c) / (a * d))))
+    #     _tetrachoric = cos(180/(1 + sqrt((b * c) / (a * d))))
 
-        return _tetrachoric
+    #     return _tetrachoric
 
 
     def forbes(self, other, chromsizes, **kwargs):

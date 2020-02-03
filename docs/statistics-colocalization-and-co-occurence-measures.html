@@ -242,11 +242,12 @@ correlation.</p>
 ## 47     0.47    184   9930  0.018530
 ## 48     0.48    183   9930  0.018429
 ## 49     0.49    201   9930  0.020242</code></pre>
-<p>PyRanges also contains two methods (which are still in beta-mode) for computing
-colocalization statistics: Forbes coefficient and the tetrachoric correlation:</p>
-<pre><code>print(gr.stats.tetrachoric(gr2, strandedness=&quot;same&quot;))
-print(gr.stats.forbes(gr2, strandedness=&quot;same&quot;))</code></pre>
-<p>Please report any issues you encounter using them :)</p>
+<p>PyRanges also contains yet another method (which is still in beta-mode) for
+computing colocalization statistics, the Forbes coefficient:</p>
+<pre><code>print(gr.stats.forbes(gr2, strandedness=&quot;same&quot;))</code></pre>
+<p>Please report any issues you encounter using it :)</p>
+<p>See this paper for a discussion of <code>jaccard</code> and <code>forbes</code>:
+<a href="https://doi.org/10.1093/bib/bbz083" class="uri">https://doi.org/10.1093/bib/bbz083</a></p>
 
 </div>
             </section>

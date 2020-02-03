@@ -196,18 +196,18 @@ the package fisher installed.</p>
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))</code></pre>
 <div class="sourceCode" id="cb252"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb252-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
 <pre><code>##          OR         P
-## 0  0.701299  0.140555
-## 1  0.000000  0.086687
-## 2  1.500000  0.081255
-## 3  0.886667  0.024523
-## 4  0.633333  0.000172</code></pre>
+## 0  0.327273  0.055096
+## 1  0.600000  0.438437
+## 2  0.666667  0.565123
+## 3  1.200000  1.000000
+## 4  0.346749  0.278792</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
 <div class="sourceCode" id="cb254"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb254-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
-<pre><code>## 0    0.140555
-## 1    0.108359
-## 2    0.135425
-## 3    0.061306
-## 4    0.000860
+<pre><code>## 0    0.275478
+## 1    0.730729
+## 2    0.706404
+## 3    1.000000
+## 4    0.696979
 ## Name: P, dtype: float64</code></pre>
 
 </div>

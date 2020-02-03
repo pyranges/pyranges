@@ -20,12 +20,14 @@ correlation.
 print(gr.stats.relative_distance(gr2, strandedness="same"))
 ```
 
-PyRanges also contains two methods (which are still in beta-mode) for computing
-colocalization statistics: Forbes coefficient and the tetrachoric correlation:
+PyRanges also contains yet another method (which is still in beta-mode) for
+computing colocalization statistics, the Forbes coefficient:
 
 ```
-print(gr.stats.tetrachoric(gr2, strandedness="same"))
 print(gr.stats.forbes(gr2, strandedness="same"))
 ```
 
-Please report any issues you encounter using them :)
+Please report any issues you encounter using it :)
+
+See this paper for a discussion of `jaccard` and `forbes`:
+https://doi.org/10.1093/bib/bbz083
