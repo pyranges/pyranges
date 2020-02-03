@@ -420,36 +420,26 @@ def test_join(gr, gr2, strandedness):
     print_blob=True,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min2(), gr2=dfs_min2())  # pylint: disable=no-value-for-parameter
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEQihghLDBJCMjXJiBAQABIwAM')
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwhgBDNBIkDMxAAHAAEIAAs=')
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIxhghIoAMRNCFAAA8AAK')
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIxhgRBNhZAAAALIACA==')
-# above were working
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIiBmArPAgBFGMCLEgAwAAXUADQ==')
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIiBmYoACRpAIWBQhAgABMAAM')
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwhgBDMRIkCKGUQDAAD7AAw=')
-# above were working
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIiBmYgADRjCCEDA2BAAAAWcADA==')
-# @reproduce_failure('4.5.7', b'AXicY2RgYGCEIQYmBihghAszILEAAU4ADA==')
-#
-# @reproduce_failure('4.5.7', b'AXicY2RgYGAEIwhgBDNBIkDMhJBgAhEAAVYADg==')
-#
-# @reproduce_failure('4.5.7', b'AXicY2RgYGCEITBghBEgMSBmgvCYoNIMAAGdAA8=')
+# @reproduce_failure('4.43.5', b'AXicY2RgYGAEIxhgxBABAACwAAc=')
 def test_reldist(gr, gr2):
 
     reldist_command = "bedtools reldist -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
     bedtools_result = run_bedtools(reldist_command, gr, gr2, False)
     bedtools_result = pd.read_csv(StringIO(bedtools_result), sep="\t")
-    print(bedtools_result)
+
+    print("bedtools_result")
+    print(bedtools_result.reldist)
 
     result = gr.stats.relative_distance(gr2)
-    print(result)
+    print("result")
+    print(result.reldist)
+
 
     # bug in bedtools, therefore not testing this properly
     # https://github.com/arq5x/bedtools2/issues/711
 
-    assert 1
+    assert np.all(bedtools_result.reldist == result.reldist)
 
 
 new_pos = ["union"]  # ["intersection", "union"]

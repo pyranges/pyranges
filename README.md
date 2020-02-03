@@ -11,7 +11,7 @@ GenomicRanges and genomic Rle-objects for Python.
 ## Release
 
 PyRanges is in a beta state until any possible issues with the move to pandas
-1.0 has been ironed out. We are extremely responsive to bug-reports, so if you
+1.0 have been ironed out. We are extremely responsive to bug-reports, so if you
 have problems or come across unexpected behavior, please create an issue.
 
 ## Asking for help
@@ -127,13 +127,6 @@ cpg_rle
 
 ```
 
-## Supporting pyranges
-
-- most importantly, cite pyranges if you use it. It is the only metric the people paying me care about :)
-- use PyRanges in Stack Overflow/biostars questions and answers
-- star the repo (possibly important for github visibility and as a proxy for project popularity)
-- if you are a business using pyranges, please give to one of the charities listed at https://www.givewell.org/
-
 ## Features
 
   - fast (also in single-core mode)
@@ -143,6 +136,13 @@ cpg_rle
   - pythonic/pandastic
   - supports chaining with a terse syntax
   - uses Pandas DataFrames, so the whole Python data science stack works on PyRanges.
+
+## Supporting pyranges
+
+- most importantly, cite pyranges if you use it. It is the main metric funding sources care about.
+- use pyranges in Stack Overflow/biostars questions and answers
+- star the repo (possibly important for github visibility and as a proxy for project popularity)
+- if you are a business using pyranges, please give to one of the charities listed at https://www.givewell.org/
 
 ## Documentation
 

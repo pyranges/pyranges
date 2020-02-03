@@ -1,3 +1,7 @@
+# 0.0.72 (03.02.20)
+- random also takes dict as chromsizes argument (like {"chr1": 249, "chr2": 242})
+- fix reldist bug when grs have different chromosomes
+
 # 0.0.71 (30.01.20)
 - fix various issues with reading and writing gtf/gff3 (1-indexing, removed final ";" in gff3 attribute col when writing)
 - remove ModuleNotFoundException in __init__.py (3.5 < only)
