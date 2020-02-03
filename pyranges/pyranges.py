@@ -395,16 +395,9 @@ class PyRanges():
             self = self.unstrand()
             other = other.unstrand()
 
-        # from pydbg import dbg
-        # dbg(self)
-        # dbg(other)
         gr = pr.concat([self, other], strand)
 
-        # from pydbg import dbg
-        # dbg(gr)
-
         gr = gr.merge(strand=strand, **kwargs)
-        # dbg(gr)
 
         return gr
 

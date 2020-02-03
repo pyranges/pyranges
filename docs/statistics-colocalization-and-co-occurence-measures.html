@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>21 Statistics: Simes method | PyRanges documentation</title>
-  <meta name="description" content="21 Statistics: Simes method | PyRanges documentation" />
+  <title>20 Statistics: colocalization and co-occurence measures | PyRanges documentation</title>
+  <meta name="description" content="20 Statistics: colocalization and co-occurence measures | PyRanges documentation" />
   <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="21 Statistics: Simes method | PyRanges documentation" />
+  <meta property="og:title" content="20 Statistics: colocalization and co-occurence measures | PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="21 Statistics: Simes method | PyRanges documentation" />
+  <meta name="twitter:title" content="20 Statistics: colocalization and co-occurence measures | PyRanges documentation" />
   
   
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="statistics-colocalization-and-co-occurence-measures.html"/>
-<link rel="next" href="statistics-compute-fisher-exact.html"/>
+<link rel="prev" href="create-count-matrix-from-multiple-pyranges.html"/>
+<link rel="next" href="statistics-simes-method.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -176,97 +176,77 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="statistics-simes-method" class="section level1">
-<h1><span class="header-section-number">21</span> Statistics: Simes method</h1>
-<p>Simes method lets you combine dependent p-values into one. The function takes
-three arguments: a dataframe, the columns identifying the rows to merge and the
-column containing the p-values.</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb244-1" data-line-number="1"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb244-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb244-3" data-line-number="3">gr <span class="op">=</span> pr.random()</a>
-<a class="sourceLine" id="cb244-4" data-line-number="4">gr.P <span class="op">=</span> np.random.random(<span class="bu">len</span>(gr))</a>
-<a class="sourceLine" id="cb244-5" data-line-number="5">gr.Cluster <span class="op">=</span> np.random.randint(<span class="dv">20</span>, size<span class="op">=</span><span class="bu">len</span>(gr))</a>
-<a class="sourceLine" id="cb244-6" data-line-number="6"><span class="bu">print</span>(gr)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+---------------------+-----------+
-## | Chromosome   | Start     | End       | Strand       | P                   | Cluster   |
-## | (category)   | (int32)   | (int32)   | (category)   | (float64)           | (int64)   |
-## |--------------+-----------+-----------+--------------+---------------------+-----------|
-## | chr1         | 202406781 | 202406881 | +            | 0.8798656698136958  | 17        |
-## | chr1         | 165656067 | 165656167 | +            | 0.11498999629281392 | 5         |
-## | chr1         | 126891692 | 126891792 | +            | 0.24286457002663298 | 16        |
-## | chr1         | 54318596  | 54318696  | +            | 0.9358456328366336  | 11        |
-## | ...          | ...       | ...       | ...          | ...                 | ...       |
-## | chrY         | 42875760  | 42875860  | -            | 0.14079358469333147 | 13        |
-## | chrY         | 9958407   | 9958507   | -            | 0.2530084431551426  | 15        |
-## | chrY         | 35992172  | 35992272  | -            | 0.6219434456431714  | 3         |
-## | chrY         | 3164590   | 3164690   | -            | 0.1745552334710886  | 14        |
-## +--------------+-----------+-----------+--------------+---------------------+-----------+
-## Stranded PyRanges object has 1,000 rows and 6 columns from 24 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb246"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb246-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, <span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
-<pre><code>##     Cluster     Simes
-## 0         0  0.752585
-## 1         1  0.715315
-## 2         2  0.897503
-## 3         3  0.028948
-## 4         4  0.906280
-## 5         5  0.596296
-## 6         6  0.923500
-## 7         7  0.300527
-## 8         8  0.950938
-## 9         9  0.990482
-## 10       10  0.374736
-## 11       11  0.702549
-## 12       12  0.390461
-## 13       13  0.098459
-## 14       14  0.882571
-## 15       15  0.529762
-## 16       16  0.870912
-## 17       17  0.003983
-## 18       18  0.490695
-## 19       19  0.799280</code></pre>
-<div class="sourceCode" id="cb248"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb248-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, [<span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;Strand&quot;</span>], <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
-<pre><code>##     Cluster Strand     Simes
-## 0         0      +  0.655813
-## 1         0      -  0.749272
-## 2         1      +  0.394351
-## 3         1      -  0.727971
-## 4         2      +  0.819061
-## 5         2      -  0.938299
-## 6         3      +  0.014770
-## 7         3      -  0.089483
-## 8         4      +  0.953417
-## 9         4      -  0.774211
-## 10        5      +  0.414444
-## 11        5      -  0.550427
-## 12        6      +  0.494412
-## 13        6      -  0.874895
-## 14        7      +  0.208276
-## 15        7      -  0.231517
-## 16        8      +  0.953028
-## 17        8      -  0.779322
-## 18        9      +  0.670674
-## 19        9      -  0.990482
-## 20       10      +  0.359726
-## 21       10      -  0.349753
-## 22       11      +  0.432054
-## 23       11      -  0.716325
-## 24       12      +  0.305249
-## 25       12      -  0.420497
-## 26       13      +  0.104250
-## 27       13      -  0.092639
-## 28       14      +  0.700173
-## 29       14      -  0.763482
-## 30       15      +  0.334905
-## 31       15      -  0.480671
-## 32       16      +  0.862137
-## 33       16      -  0.819682
-## 34       17      +  0.580491
-## 35       17      -  0.001931
-## 36       18      +  0.520372
-## 37       18      -  0.253008
-## 38       19      +  0.640394
-## 39       19      -  0.574468</code></pre>
+<div id="statistics-colocalization-and-co-occurence-measures" class="section level1">
+<h1><span class="header-section-number">20</span> Statistics: colocalization and co-occurence measures</h1>
+<p>PyRanges can compute a normalized Jaccard-statistic (ranging from 0 to 1) to
+compute the similarities between two ranges.</p>
+<div class="sourceCode" id="cb239"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb239-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb239-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb239-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb239-4" data-line-number="4"><span class="bu">print</span>(gr.stats.jaccard(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
+<pre><code>## 6.241132391061034e-06</code></pre>
+<p>To compute the similarities between two sets of ranges which do not necessarily
+overlap much, we can use the relative distance function. It describes the
+relative distances between each interval in one set and the two closest intervals
+in another. Any deviance from a uniform distribution is an indication of spatial
+correlation.</p>
+<div class="sourceCode" id="cb241"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb241-1" data-line-number="1"><span class="bu">print</span>(gr.stats.relative_distance(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
+<pre><code>##     reldist  count  total  fraction
+## 0      0.00    254   9930  0.025579
+## 1      0.01    210   9930  0.021148
+## 2      0.02    222   9930  0.022356
+## 3      0.03    240   9930  0.024169
+## 4      0.04    212   9930  0.021349
+## 5      0.05    191   9930  0.019235
+## 6      0.06    192   9930  0.019335
+## 7      0.07    205   9930  0.020645
+## 8      0.08    162   9930  0.016314
+## 9      0.09    189   9930  0.019033
+## 10     0.10    186   9930  0.018731
+## 11     0.11    212   9930  0.021349
+## 12     0.12    209   9930  0.021047
+## 13     0.13    189   9930  0.019033
+## 14     0.14    201   9930  0.020242
+## 15     0.15    178   9930  0.017925
+## 16     0.16    203   9930  0.020443
+## 17     0.17    224   9930  0.022558
+## 18     0.18    196   9930  0.019738
+## 19     0.19    212   9930  0.021349
+## 20     0.20    208   9930  0.020947
+## 21     0.21    196   9930  0.019738
+## 22     0.22    203   9930  0.020443
+## 23     0.23    198   9930  0.019940
+## 24     0.24    223   9930  0.022457
+## 25     0.25    186   9930  0.018731
+## 26     0.26    189   9930  0.019033
+## 27     0.27    192   9930  0.019335
+## 28     0.28    163   9930  0.016415
+## 29     0.29    204   9930  0.020544
+## 30     0.30    210   9930  0.021148
+## 31     0.31    202   9930  0.020342
+## 32     0.32    211   9930  0.021249
+## 33     0.33    195   9930  0.019637
+## 34     0.34    197   9930  0.019839
+## 35     0.35    175   9930  0.017623
+## 36     0.36    214   9930  0.021551
+## 37     0.37    178   9930  0.017925
+## 38     0.38    176   9930  0.017724
+## 39     0.39    193   9930  0.019436
+## 40     0.40    192   9930  0.019335
+## 41     0.41    179   9930  0.018026
+## 42     0.42    209   9930  0.021047
+## 43     0.43    184   9930  0.018530
+## 44     0.44    198   9930  0.019940
+## 45     0.45    208   9930  0.020947
+## 46     0.46    192   9930  0.019335
+## 47     0.47    184   9930  0.018530
+## 48     0.48    183   9930  0.018429
+## 49     0.49    201   9930  0.020242</code></pre>
+<p>PyRanges also contains two methods (which are still in beta-mode) for computing
+colocalization statistics: Forbes coefficient and the tetrachoric correlation:</p>
+<pre><code>print(gr.stats.tetrachoric(gr2, strandedness=&quot;same&quot;))
+print(gr.stats.forbes(gr2, strandedness=&quot;same&quot;))</code></pre>
+<p>Please report any issues you encounter using them :)</p>
 
 </div>
             </section>
@@ -274,8 +254,8 @@ column containing the p-values.</p>
           </div>
         </div>
       </div>
-<a href="statistics-colocalization-and-co-occurence-measures.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="statistics-compute-fisher-exact.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="create-count-matrix-from-multiple-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="statistics-simes-method.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

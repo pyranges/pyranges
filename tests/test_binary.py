@@ -359,21 +359,25 @@ def test_nearest(gr, gr2, nearest_how, overlap, strandedness):
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
 # @reproduce_failure('4.15.0', b'AXicY2RAA4wQzAjETDA+C4gHAmARBgABhwAR')
+# @reproduce_failure('4.43.5', b'AXicY2QAA0Y4xYgiAAQAAI4ABg==')
 def test_jaccard(gr, gr2, strandedness):
 
-    # jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
+    jaccard_command = "bedtools jaccard {strand}  -a <(sort -k1,1 -k2,2n {f1}) -b <(sort -k1,1 -k2,2n {f2})"
 
-    # bedtools_result = run_bedtools(jaccard_command, gr, gr2, strandedness)
+    bedtools_result = run_bedtools(jaccard_command, gr, gr2, strandedness)
     # print(bedtools_result)
 
-    # bedtools_jaccard = float(bedtools_result.split("\n")[1].split()[2])
+    bedtools_jaccard = float(bedtools_result.split("\n")[1].split()[2])
     # print(bedtools_jaccard)
 
     # https://github.com/arq5x/bedtools2/issues/645
     # will make tests proper when bedtools is fixed
     result = gr.stats.jaccard(gr2, strandedness=strandedness)
 
-    # assert abs(result - bedtools_jaccard) < 0.001
+    print("bedtools", bedtools_jaccard)
+    print("pyranges", result)
+
+    assert abs(result - bedtools_jaccard) < 0.001
 
     assert 0 <= result <= 1
 
