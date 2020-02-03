@@ -1,7 +1,7 @@
 # 0.0.73 (unreleased)
 - fix small bug in jaccard
 - remove leftover debug-print in pr.random()
-- add experimental gr.stats.tetrachoric and gr.stats.forbes
+- add experimental gr.stats.forbes
 
 # 0.0.72 (03.02.20)
 - random also takes dict as chromsizes argument (like {"chr1": 249, "chr2": 242})
