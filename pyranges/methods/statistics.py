@@ -3,6 +3,9 @@ import numpy as np
 
 def _relative_distance(scdf, ocdf, kwargs):
 
+    if scdf.empty or ocdf.empty:
+        return np.array([])
+
     midpoints_self = (
         (scdf.Start + scdf.End) / 2).astype(int).sort_values().values
     midpoints_other = (
@@ -27,6 +30,9 @@ def _relative_distance(scdf, ocdf, kwargs):
 
     with np.errstate(divide="ignore", invalid="ignore"):
         result = np.minimum(left_distance, right_distance) / (right - left)
+
+    result[np.isnan(result)] = 0
+
     result = result[~np.isinf(result)]
 
     return result
