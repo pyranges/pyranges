@@ -127,13 +127,6 @@ cpg_rle
 
 ```
 
-## Supporting pyranges
-
-- most importantly, cite pyranges if you use it. It is the main metric funding sources care about.
-- use pyranges in Stack Overflow/biostars questions and answers
-- star the repo (possibly important for github visibility and as a proxy for project popularity)
-- if you are a business using pyranges, please give to one of the charities listed at https://www.givewell.org/
-
 ## Features
 
   - fast (also in single-core mode)
@@ -143,6 +136,13 @@ cpg_rle
   - pythonic/pandastic
   - supports chaining with a terse syntax
   - uses Pandas DataFrames, so the whole Python data science stack works on PyRanges.
+
+## Supporting pyranges
+
+- most importantly, cite pyranges if you use it. It is the main metric funding sources care about.
+- use pyranges in Stack Overflow/biostars questions and answers
+- star the repo (possibly important for github visibility and as a proxy for project popularity)
+- if you are a business using pyranges, please give to one of the charities listed at https://www.givewell.org/
 
 ## Documentation
 
