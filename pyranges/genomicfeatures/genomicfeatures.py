@@ -343,8 +343,11 @@ class GenomicFeaturesMethods():
         stop_codons = gr.subset(lambda df: df.Feature == "stop_codon")
 
         j = exons.join(stop_codons, suffix="_stop")
+
+        # ensure that we are not mixing exons/stop codons from different "bys"
         j = j.subset(lambda df: df[id_column] == df[id_column + "_stop"])
 
+        # first: check that exon ends are above stop_codon ends
         j = j.subset(lambda df: df.End > df.End_stop)
 
         def get_utr(df):
@@ -354,9 +357,9 @@ class GenomicFeaturesMethods():
             df.loc[:, "Start"] = new_starts.values
             return df
 
+        # then: utr is max(stop_codon_end, exon_start) to exon_end
         utrs = j.apply(get_utr)
 
         utrs.Feature = "utr"
 
-        # first: check that exon ends are above stop_codon ends
-        # then: utr is max(stop_codon_end, exon_start) to exon_end
+        return utrs
