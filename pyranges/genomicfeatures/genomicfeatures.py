@@ -325,3 +325,38 @@ class GenomicFeaturesMethods():
         result = pyrange_apply(_introns2, by_gr, exons, **kwargs)
 
         return pr.PyRanges(result)
+
+    def utrs(self, by="gene"):
+
+        kwargs = {"by": by}
+        kwargs = pr.pyranges.fill_kwargs(kwargs)
+
+        assert by in ["gene", "transcript"]
+
+        id_column = by_to_id[by]
+        gr = self.pr.sort([id_column, "Start"])
+
+        if not len(gr):
+            return pr.PyRanges()
+
+        exons = gr.subset(lambda df: df.Feature == "exon")
+        stop_codons = gr.subset(lambda df: df.Feature == "stop_codon")
+
+        j = exons.join(stop_codons, suffix="_stop")
+        j = j.subset(lambda df: df[id_column] == df[id_column + "_stop"])
+
+        j = j.subset(lambda df: df.End > df.End_stop)
+
+        def get_utr(df):
+
+            import numpy as np
+            new_starts = np.maximum(df.End_stop, df.Start)
+            df.loc[:, "Start"] = new_starts.values
+            return df
+
+        utrs = j.apply(get_utr)
+
+        utrs.Feature = "utr"
+
+        # first: check that exon ends are above stop_codon ends
+        # then: utr is max(stop_codon_end, exon_start) to exon_end

@@ -1,4 +1,7 @@
-# 0.0.73 (unreleased)
+# 0.0.74 (unreleased)
+- started on computing utrs in genomicfeatures
+
+# 0.0.73 (03.02.20)
 - fix small bug in jaccard
 - remove leftover debug-print in pr.random()
 - add experimental gr.stats.forbes
