@@ -62,7 +62,6 @@ def read_bam(f, sparse=True, output_df=False, mapq=0, required_flag=0, filter_fl
         except AttributeError:
             print("bamread version 0.0.6 or higher is required to read bam non-sparsely.")
 
-
     if output_df:
         return df
     else:
@@ -174,7 +173,14 @@ def to_rows(anno):
     rowdicts = []
     for l in anno:
         l = l.replace('"', '').replace(";", "").split()
-        rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
+
+        row = dict()
+        for k, v in zip(*([iter(l)] * 2)):
+            if k in row:
+                row[k] = [row[k], v]
+            else:
+                row[k] = v
+        rowdicts.append(row)
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -239,6 +245,7 @@ def read_gtf_restricted(f,
     else:
         return df
 
+
 def to_rows_gff3(anno):
     rowdicts = []
 
@@ -252,7 +259,6 @@ def to_rows_gff3(anno):
 
 
 def read_gff3(f, annotation=None, output_df=False, nrows=None, skiprows=0):
-
     """seqid - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seq ID must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
 source - name of the program that generated this feature, or the data source (database or project name)
 type - type of feature. Must be a term or accession from the SOFA sequence ontology
@@ -282,7 +288,6 @@ attributes - A semicolon-separated list of tag-value pairs, providing additional
         chunksize=int(1e5),
         skiprows=skiprows,
         nrows=nrows)
-
 
     dfs = []
     for df in df_iter:
