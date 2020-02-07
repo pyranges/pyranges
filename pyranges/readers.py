@@ -112,19 +112,20 @@ def skiprows(f):
     return i
 
 
-def read_gtf(f, full=True, annotation=None, output_df=False, nrows=None):
+def read_gtf(f, full=True, annotation=None, output_df=False, nrows=None, duplicate_attr=False):
 
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(f, annotation, output_df, nrows, _skiprows)
+        gr = read_gtf_full(f, annotation, output_df, nrows, _skiprows,
+                           duplicate_attr=duplicate_attr)
     else:
         gr = read_gtf_restricted(f, annotation, output_df, nrows, _skiprows)
 
     return gr
 
 
-def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
+def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0, duplicate_attr=False):
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
     feature - feature type name, e.g. Gene, Variation, Similarity
@@ -153,9 +154,11 @@ def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
         skiprows=skiprows,
         nrows=nrows)
 
+    _to_rows = to_rows_keep_duplicates if duplicate_attr else to_rows
+
     dfs = []
     for df in df_iter:
-        extra = to_rows(df.Attribute)
+        extra = _to_rows(df.Attribute)
         df = df.drop("Attribute", axis=1)
         ndf = pd.concat([df, extra], axis=1, sort=False)
         dfs.append(ndf)
@@ -173,14 +176,28 @@ def to_rows(anno):
     rowdicts = []
     for l in anno:
         l = l.replace('"', '').replace(";", "").split()
+        rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
 
-        row = dict()
+    return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
+
+
+def to_rows_keep_duplicates(anno):
+    rowdicts = []
+    for l in anno:
+        rowdict = {}
+        l = l.replace('"', '').replace(";", "").split()
         for k, v in zip(*([iter(l)] * 2)):
-            if k in row:
-                row[k] = [row[k], v]
+            if k not in rowdict:
+                rowdict[k] = v
+            elif k in rowdict and isinstance(rowdict[k], list):
+                rowdict[k].append(v)
             else:
-                row[k] = v
-        rowdicts.append(row)
+                rowdict[k] = [rowdict[k], v]
+
+        rowdicts.append({
+            k: ','.join(v) if isinstance(v, list) else v
+            for k, v in rowdict.items()
+        })
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
