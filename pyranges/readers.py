@@ -62,7 +62,6 @@ def read_bam(f, sparse=True, output_df=False, mapq=0, required_flag=0, filter_fl
         except AttributeError:
             print("bamread version 0.0.6 or higher is required to read bam non-sparsely.")
 
-
     if output_df:
         return df
     else:
@@ -113,19 +112,20 @@ def skiprows(f):
     return i
 
 
-def read_gtf(f, full=True, annotation=None, output_df=False, nrows=None):
+def read_gtf(f, full=True, annotation=None, output_df=False, nrows=None, duplicate_attr=False):
 
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(f, annotation, output_df, nrows, _skiprows)
+        gr = read_gtf_full(f, annotation, output_df, nrows, _skiprows,
+                           duplicate_attr=duplicate_attr)
     else:
         gr = read_gtf_restricted(f, annotation, output_df, nrows, _skiprows)
 
     return gr
 
 
-def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
+def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0, duplicate_attr=False):
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
     feature - feature type name, e.g. Gene, Variation, Similarity
@@ -154,9 +154,11 @@ def read_gtf_full(f, annotation=None, output_df=False, nrows=None, skiprows=0):
         skiprows=skiprows,
         nrows=nrows)
 
+    _to_rows = to_rows_keep_duplicates if duplicate_attr else to_rows
+
     dfs = []
     for df in df_iter:
-        extra = to_rows(df.Attribute)
+        extra = _to_rows(df.Attribute)
         df = df.drop("Attribute", axis=1)
         ndf = pd.concat([df, extra], axis=1, sort=False)
         dfs.append(ndf)
@@ -175,6 +177,27 @@ def to_rows(anno):
     for l in anno:
         l = l.replace('"', '').replace(";", "").split()
         rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
+
+    return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
+
+
+def to_rows_keep_duplicates(anno):
+    rowdicts = []
+    for l in anno:
+        rowdict = {}
+        l = l.replace('"', '').replace(";", "").split()
+        for k, v in zip(*([iter(l)] * 2)):
+            if k not in rowdict:
+                rowdict[k] = v
+            elif k in rowdict and isinstance(rowdict[k], list):
+                rowdict[k].append(v)
+            else:
+                rowdict[k] = [rowdict[k], v]
+
+        rowdicts.append({
+            k: ','.join(v) if isinstance(v, list) else v
+            for k, v in rowdict.items()
+        })
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -239,6 +262,7 @@ def read_gtf_restricted(f,
     else:
         return df
 
+
 def to_rows_gff3(anno):
     rowdicts = []
 
@@ -252,7 +276,6 @@ def to_rows_gff3(anno):
 
 
 def read_gff3(f, annotation=None, output_df=False, nrows=None, skiprows=0):
-
     """seqid - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seq ID must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
 source - name of the program that generated this feature, or the data source (database or project name)
 type - type of feature. Must be a term or accession from the SOFA sequence ontology
@@ -282,7 +305,6 @@ attributes - A semicolon-separated list of tag-value pairs, providing additional
         chunksize=int(1e5),
         skiprows=skiprows,
         nrows=nrows)
-
 
     dfs = []
     for df in df_iter:

@@ -10,6 +10,23 @@ def test_read_gtf():
     gr = pr.read_gtf("tests/test_data/ensembl.gtf", full=True)
     assert len(gr.columns) == 28
 
+    df = gr.df
+    transcript = df.iloc[1]
+    assert transcript['tag'] == 'basic'
+
+    exon = df[df['exon_id'] == 'ENSE00003812156'].iloc[0]
+    assert exon['tag'] == 'basic'
+
+    gr = pr.read_gtf("tests/test_data/ensembl.gtf",
+                     full=True, duplicate_attr=True)
+    assert len(gr.columns) == 28
+
+    df = gr.df
+    transcript = df.iloc[1]
+    assert transcript['tag'] == 'basic'
+
+    exon = df[df['exon_id'] == 'ENSE00003812156'].iloc[0]
+    assert exon['tag'] == 'CCDS,basic'
     # assert list(gr.df.columns[:4]) == "Chromosome Start End Strand".split()
 
 
