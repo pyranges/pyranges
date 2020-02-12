@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>21 Statistics: Simes method | PyRanges documentation</title>
   <meta name="description" content="21 Statistics: Simes method | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="21 Statistics: Simes method | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="statistics-colocalization-and-co-occurence-measures.html"/>
-<link rel="next" href="statistics-compute-fisher-exact.html"/>
+<link rel="prev" href="statistics-colocalization-and-co-occurence-measures.html">
+<link rel="next" href="statistics-compute-fisher-exact.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -181,92 +178,92 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Simes method lets you combine dependent p-values into one. The function takes
 three arguments: a dataframe, the columns identifying the rows to merge and the
 column containing the p-values.</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb244-1" data-line-number="1"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb244-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb244-3" data-line-number="3">gr <span class="op">=</span> pr.random()</a>
-<a class="sourceLine" id="cb244-4" data-line-number="4">gr.P <span class="op">=</span> np.random.random(<span class="bu">len</span>(gr))</a>
-<a class="sourceLine" id="cb244-5" data-line-number="5">gr.Cluster <span class="op">=</span> np.random.randint(<span class="dv">20</span>, size<span class="op">=</span><span class="bu">len</span>(gr))</a>
-<a class="sourceLine" id="cb244-6" data-line-number="6"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb246"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb246-1" data-line-number="1"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb246-2" data-line-number="2"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb246-3" data-line-number="3">gr <span class="op">=</span> pr.random()</a>
+<a class="sourceLine" id="cb246-4" data-line-number="4">gr.P <span class="op">=</span> np.random.random(<span class="bu">len</span>(gr))</a>
+<a class="sourceLine" id="cb246-5" data-line-number="5">gr.Cluster <span class="op">=</span> np.random.randint(<span class="dv">20</span>, size<span class="op">=</span><span class="bu">len</span>(gr))</a>
+<a class="sourceLine" id="cb246-6" data-line-number="6"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+---------------------+-----------+
 ## | Chromosome   | Start     | End       | Strand       | P                   | Cluster   |
 ## | (category)   | (int32)   | (int32)   | (category)   | (float64)           | (int64)   |
 ## |--------------+-----------+-----------+--------------+---------------------+-----------|
-## | chr1         | 131894854 | 131894954 | +            | 0.237100985408917   | 10        |
-## | chr1         | 232975302 | 232975402 | +            | 0.8840517274236611  | 11        |
-## | chr1         | 152653607 | 152653707 | +            | 0.9140748199383016  | 9         |
-## | chr1         | 82732823  | 82732923  | +            | 0.7869296040477514  | 17        |
+## | chr1         | 155362743 | 155362843 | +            | 0.49314463263155695 | 3         |
+## | chr1         | 164092095 | 164092195 | +            | 0.3979617792860727  | 1         |
+## | chr1         | 202113001 | 202113101 | +            | 0.2669932029861086  | 8         |
+## | chr1         | 31639518  | 31639618  | +            | 0.31243910573838385 | 11        |
 ## | ...          | ...       | ...       | ...          | ...                 | ...       |
-## | chrY         | 32672103  | 32672203  | -            | 0.5817493506516177  | 13        |
-## | chrY         | 35722739  | 35722839  | -            | 0.04207820279929875 | 4         |
-## | chrY         | 27517612  | 27517712  | -            | 0.4397488994721708  | 18        |
-## | chrY         | 56750803  | 56750903  | -            | 0.3176019194123667  | 10        |
+## | chrY         | 8851062   | 8851162   | -            | 0.4662139699908735  | 18        |
+## | chrY         | 7896994   | 7897094   | -            | 0.3451390885893787  | 13        |
+## | chrY         | 20670156  | 20670256  | -            | 0.6777146483648295  | 12        |
+## | chrY         | 9296900   | 9297000   | -            | 0.6466086736664324  | 3         |
 ## +--------------+-----------+-----------+--------------+---------------------+-----------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb246"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb246-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, <span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb248"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb248-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, <span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
 <pre><code>##     Cluster     Simes
-## 0         0  0.518197
-## 1         1  0.632495
-## 2         2  0.496789
-## 3         3  0.786365
-## 4         4  0.853165
-## 5         5  0.675346
-## 6         6  0.829303
-## 7         7  0.841701
-## 8         8  0.183294
-## 9         9  0.426481
-## 10       10  0.548209
-## 11       11  0.783798
-## 12       12  0.932399
-## 13       13  0.243747
-## 14       14  0.210434
-## 15       15  0.104263
-## 16       16  0.829384
-## 17       17  0.816703
-## 18       18  0.918060
-## 19       19  0.846566</code></pre>
-<div class="sourceCode" id="cb248"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb248-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, [<span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;Strand&quot;</span>], <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
+## 0         0  0.664506
+## 1         1  0.502879
+## 2         2  0.085699
+## 3         3  0.211001
+## 4         4  0.885131
+## 5         5  0.760701
+## 6         6  0.121460
+## 7         7  0.681541
+## 8         8  0.184719
+## 9         9  0.182215
+## 10       10  0.407751
+## 11       11  0.144597
+## 12       12  0.302072
+## 13       13  0.098725
+## 14       14  0.397576
+## 15       15  0.926446
+## 16       16  0.739157
+## 17       17  0.245887
+## 18       18  0.907156
+## 19       19  0.844078</code></pre>
+<div class="sourceCode" id="cb250"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb250-1" data-line-number="1"><span class="bu">print</span>(pr.stats.simes(gr.df, [<span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;Strand&quot;</span>], <span class="st">&quot;P&quot;</span>))</a></code></pre></div>
 <pre><code>##     Cluster Strand     Simes
-## 0         0      +  0.719019
-## 1         0      -  0.395883
-## 2         1      +  0.563124
-## 3         1      -  0.330622
-## 4         2      +  0.274090
-## 5         2      -  0.387189
-## 6         3      +  0.633667
-## 7         3      -  0.938217
-## 8         4      +  0.923099
-## 9         4      -  0.435697
-## 10        5      +  0.460824
-## 11        5      -  0.734995
-## 12        6      +  0.838416
-## 13        6      -  0.671080
-## 14        7      +  0.742533
-## 15        7      -  0.836918
-## 16        8      +  0.533836
-## 17        8      -  0.116321
-## 18        9      +  0.909150
-## 19        9      -  0.254249
-## 20       10      +  0.777204
-## 21       10      -  0.229251
-## 22       11      +  0.423251
-## 23       11      -  0.956102
-## 24       12      +  0.492550
-## 25       12      -  0.970270
-## 26       13      +  0.709053
-## 27       13      -  0.134309
-## 28       14      +  0.318531
-## 29       14      -  0.097423
-## 30       15      +  0.058648
-## 31       15      -  0.952076
-## 32       16      +  0.921805
-## 33       16      -  0.423515
-## 34       17      +  0.352303
-## 35       17      -  0.892496
-## 36       18      +  0.511706
-## 37       18      -  0.988136
-## 38       19      +  0.958376
-## 39       19      -  0.765183</code></pre>
+## 0         0      +  0.662130
+## 1         0      -  0.464664
+## 2         1      +  0.277097
+## 3         1      -  0.807815
+## 4         2      +  0.050785
+## 5         2      -  0.842028
+## 6         3      +  0.116724
+## 7         3      -  0.787321
+## 8         4      +  0.730814
+## 9         4      -  0.792127
+## 10        5      +  0.710010
+## 11        5      -  0.600358
+## 12        6      +  0.067737
+## 13        6      -  0.319812
+## 14        7      +  0.403447
+## 15        7      -  0.734435
+## 16        8      +  0.074484
+## 17        8      -  0.565126
+## 18        9      +  0.098116
+## 19        9      -  0.531885
+## 20       10      +  0.177928
+## 21       10      -  0.551712
+## 22       11      +  0.091480
+## 23       11      -  0.604653
+## 24       12      +  0.159274
+## 25       12      -  0.921607
+## 26       13      +  0.098725
+## 27       13      -  0.050910
+## 28       14      +  0.164710
+## 29       14      -  0.876780
+## 30       15      +  0.847332
+## 31       15      -  0.878472
+## 32       16      +  0.391318
+## 33       16      -  0.918349
+## 34       17      +  0.314069
+## 35       17      -  0.209563
+## 36       18      +  0.722456
+## 37       18      -  0.986540
+## 38       19      +  0.778577
+## 39       19      -  0.692283</code></pre>
 
 </div>
             </section>
@@ -280,13 +277,11 @@ column containing the p-values.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -294,11 +289,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -310,10 +306,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

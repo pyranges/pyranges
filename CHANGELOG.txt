@@ -1,8 +1,13 @@
-# 0.0.73 (unreleased)
+# 0.0.74 (12.02.20)
+- support for multiple (repeating) attributes in gtf reading
+- fix handling of kwargs in apply, apply_pair, apply_chunks
+- add to_example(nrows=10) to get a copy-paste friendly representation of a PyRanges
+- add pr.from_dict() to create a PyRanges from a dict (like the ones produced with to_example)
+
+# 0.0.73 (03.02.20)
 - fix small bug in jaccard
 - remove leftover debug-print in pr.random()
 - add experimental gr.stats.forbes
-- support for multiple (repeating) attributes in gtf reading
 
 # 0.0.72 (03.02.20)
 - random also takes dict as chromsizes argument (like {"chr1": 249, "chr2": 242})

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>18 Finding the k closest intervals | PyRanges documentation</title>
   <meta name="description" content="18 Finding the k closest intervals | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="18 Finding the k closest intervals | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="finding-the-closest-intervals.html"/>
-<link rel="next" href="create-count-matrix-from-multiple-pyranges.html"/>
+<link rel="prev" href="finding-the-closest-intervals.html">
+<link rel="next" href="create-count-matrix-from-multiple-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -180,47 +177,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">18</span> Finding the k closest intervals</h1>
 <p>With the k_nearest-method, you can search for the k nearest intervals in other that is
 nearest the ones in self.</p>
-<div class="sourceCode" id="cb225"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb225-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb225-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb225-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb225-4" data-line-number="4"><span class="bu">print</span>(gr.k_nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | +4    |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | ...   |
-## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            | 212612028     | 212612053   | ...   |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            | 169956702     | 169956727   | ...   |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            | 216953225     | 216953250   | ...   |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            | 144250645     | 144250670   | ...   |
-## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...   |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            | 11936866      | 11936891    | ...   |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            | 11936866      | 11936891    | ...   |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | 10629111      | 10629136    | ...   |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | 10629111      | 10629136    | ...   |
-## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------+
+<div class="sourceCode" id="cb229"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb229-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb229-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb229-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb229-4" data-line-number="4"><span class="bu">print</span>(gr.k_nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | (object)     | (int64)       | (category)     | (int64)    |
+## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            | 212612028     | 212612053   | U0           | 0             | +              | 2470       |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            | 169956702     | 169956727   | U0           | 0             | +              | 69149      |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            | 216953225     | 216953250   | U0           | 0             | +              | 242190     |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            | 144250645     | 144250670   | U0           | 0             | +              | 23542      |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...          | ...           | ...            | ...        |
+## | chrY         | 15224235  | 15224260  | U0         | 0         | -            | 11936866      | 11936891    | U0           | 0             | -              | 3287345    |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            | 11936866      | 11936891    | U0           | 0             | -              | 1581002    |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | 10629111      | 10629136    | U0           | 0             | -              | -2618136   |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | 10629111      | 10629136    | U0           | 0             | -              | -3223711   |
+## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## Stranded PyRanges object has 10,708 rows and 12 columns from 24 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 4 hidden columns: Name_Input, Score_Input, Strand_Input, Distance</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>The nearest method takes a strandedness option, which can either be
 <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode" id="cb227"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb227-1" data-line-number="1"><span class="bu">print</span>(gr.nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | +4    |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | ...   |
-## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------|
-## | chr1         | 226987592 | 226987617 | U0         | 0         | +            | 226987603     | 226987628   | ...   |
-## | chr1         | 1541598   | 1541623   | U0         | 0         | +            | 1770383       | 1770408     | ...   |
-## | chr1         | 1599121   | 1599146   | U0         | 0         | +            | 1770383       | 1770408     | ...   |
-## | chr1         | 3504032   | 3504057   | U0         | 0         | +            | 3449677       | 3449702     | ...   |
-## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...   |
-## | chrY         | 21751211  | 21751236  | U0         | 0         | -            | 20557165      | 20557190    | ...   |
-## | chrY         | 21910706  | 21910731  | U0         | 0         | -            | 20557165      | 20557190    | ...   |
-## | chrY         | 22054002  | 22054027  | U0         | 0         | -            | 20557165      | 20557190    | ...   |
-## | chrY         | 22210637  | 22210662  | U0         | 0         | -            | 20557165      | 20557190    | ...   |
-## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------+
+<div class="sourceCode" id="cb231"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb231-1" data-line-number="1"><span class="bu">print</span>(gr.nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | (object)     | (int64)       | (category)     | (int64)    |
+## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------|
+## | chr1         | 226987592 | 226987617 | U0         | 0         | +            | 226987603     | 226987628   | U0           | 0             | -              | 0          |
+## | chr1         | 1541598   | 1541623   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 228761     |
+## | chr1         | 1599121   | 1599146   | U0         | 0         | +            | 1770383       | 1770408     | U0           | 0             | -              | 171238     |
+## | chr1         | 3504032   | 3504057   | U0         | 0         | +            | 3449677       | 3449702     | U0           | 0             | -              | 54331      |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...          | ...           | ...            | ...        |
+## | chrY         | 21751211  | 21751236  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1194022    |
+## | chrY         | 21910706  | 21910731  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1353517    |
+## | chrY         | 22054002  | 22054027  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1496813    |
+## | chrY         | 22210637  | 22210662  | U0         | 0         | -            | 20557165      | 20557190    | U0           | 0             | +              | 1653448    |
+## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## Stranded PyRanges object has 10,000 rows and 12 columns from 24 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 4 hidden columns: Name_Input, Score_Input, Strand_Input, Distance</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>The nearest method takes four further options, namely how, overlap, ties and k.
 How can take the values <code>None</code>, <code>&quot;upstream&quot;</code>, <code>&quot;downstream&quot;.</code>“upstream”<code>and</code>“downstream”<code>are always in reference to the PyRange the method is called on. The default is</code>None`, which means that PyRanges looks in both directions. The
 overlap argument is a bool which indicates whether you want to include overlaps
@@ -232,27 +227,26 @@ last interval for each separate distance. The option “different” gives you a
 nearest intervals from k different distances. k is the number of different
 intervals you want to find. It can be a vector with the length of the query
 vector.</p>
-<div class="sourceCode" id="cb229"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb229-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb229-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb229-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb229-4" data-line-number="4">gr.k_nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>, ks<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">2</span>] <span class="op">*</span> <span class="dv">5000</span>).<span class="bu">print</span>()</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------+
-## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | +4    |
-## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | ...   |
-## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------|
-## | chr1         | 212609534 | 212609559 | U0         | 0         | +            | 212612028     | 212612053   | ...   |
-## | chr1         | 169887529 | 169887554 | U0         | 0         | +            | 169956702     | 169956727   | ...   |
-## | chr1         | 216711011 | 216711036 | U0         | 0         | +            | 216953225     | 216953250   | ...   |
-## | chr1         | 144227079 | 144227104 | U0         | 0         | +            | 144250645     | 144250670   | ...   |
-## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...   |
-## | chrY         | 15224235  | 15224260  | U0         | 0         | -            | 11936866      | 11936891    | ...   |
-## | chrY         | 13517892  | 13517917  | U0         | 0         | -            | 11936866      | 11936891    | ...   |
-## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | 10629111      | 10629136    | ...   |
-## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | 10629111      | 10629136    | ...   |
-## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+-------+
+<div class="sourceCode" id="cb233"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb233-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb233-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb233-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb233-4" data-line-number="4">gr.k_nearest(gr2, suffix<span class="op">=</span><span class="st">&quot;_Input&quot;</span>, ks<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">2</span>] <span class="op">*</span> <span class="dv">5000</span>).<span class="bu">print</span>()</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       | Start_Input   | End_Input   | Name_Input   | Score_Input   | Strand_Input   | Distance   |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int32)       | (int32)     | (object)     | (int64)       | (category)     | (int64)    |
+## |--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            | 212612028     | 212612053   | U0           | 0             | +              | 2470       |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            | 169956702     | 169956727   | U0           | 0             | +              | 69149      |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            | 216953225     | 216953250   | U0           | 0             | +              | 242190     |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            | 144250645     | 144250670   | U0           | 0             | +              | 23542      |
+## | ...          | ...       | ...       | ...        | ...       | ...          | ...           | ...         | ...          | ...           | ...            | ...        |
+## | chrY         | 15224235  | 15224260  | U0         | 0         | -            | 11936866      | 11936891    | U0           | 0             | -              | 3287345    |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            | 11936866      | 11936891    | U0           | 0             | -              | 1581002    |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            | 10629111      | 10629136    | U0           | 0             | -              | -2618136   |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            | 10629111      | 10629136    | U0           | 0             | -              | -3223711   |
+## +--------------+-----------+-----------+------------+-----------+--------------+---------------+-------------+--------------+---------------+----------------+------------+
 ## Stranded PyRanges object has 10,708 rows and 12 columns from 24 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 4 hidden columns: Name_Input, Score_Input, Strand_Input, Distance</code></pre>
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Note that nearest intervals that are upstream of the query interval have a
 negative distance.</p>
 
@@ -268,13 +262,11 @@ negative distance.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -282,11 +274,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -298,10 +291,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

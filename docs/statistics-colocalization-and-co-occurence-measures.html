@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>20 Statistics: colocalization and co-occurence measures | PyRanges documentation</title>
   <meta name="description" content="20 Statistics: colocalization and co-occurence measures | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="20 Statistics: colocalization and co-occurence measures | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="create-count-matrix-from-multiple-pyranges.html"/>
-<link rel="next" href="statistics-simes-method.html"/>
+<link rel="prev" href="create-count-matrix-from-multiple-pyranges.html">
+<link rel="next" href="statistics-simes-method.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -180,17 +177,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">20</span> Statistics: colocalization and co-occurence measures</h1>
 <p>PyRanges can compute a normalized Jaccard-statistic (ranging from 0 to 1) to
 compute the similarities between two ranges.</p>
-<div class="sourceCode" id="cb239"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb239-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb239-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb239-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb239-4" data-line-number="4"><span class="bu">print</span>(gr.stats.jaccard(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb241"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb241-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb241-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb241-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb241-4" data-line-number="4"><span class="bu">print</span>(gr.stats.jaccard(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
 <pre><code>## 6.241132391061034e-06</code></pre>
 <p>To compute the similarities between two sets of ranges which do not necessarily
 overlap much, we can use the relative distance function. It describes the
 relative distances between each interval in one set and the two closest intervals
 in another. Any deviance from a uniform distribution is an indication of spatial
 correlation.</p>
-<div class="sourceCode" id="cb241"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb241-1" data-line-number="1"><span class="bu">print</span>(gr.stats.relative_distance(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb243"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb243-1" data-line-number="1"><span class="bu">print</span>(gr.stats.relative_distance(gr2, strandedness<span class="op">=</span><span class="st">&quot;same&quot;</span>))</a></code></pre></div>
 <pre><code>##     reldist  count  total  fraction
 ## 0      0.00    254   9930  0.025579
 ## 1      0.01    210   9930  0.021148
@@ -261,13 +258,11 @@ computing colocalization statistics, the Forbes coefficient:</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -275,11 +270,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -291,10 +287,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

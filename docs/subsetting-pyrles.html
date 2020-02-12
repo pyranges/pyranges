@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>29 Subsetting PyRles | PyRanges documentation</title>
   <meta name="description" content="29 Subsetting PyRles | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="29 Subsetting PyRles | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="subsetting-rles.html"/>
-<link rel="next" href="using-multiple-cores.html"/>
+<link rel="prev" href="subsetting-rles.html">
+<link rel="next" href="using-multiple-cores.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -179,57 +176,57 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="subsetting-pyrles" class="section level1">
 <h1><span class="header-section-number">29</span> Subsetting PyRles</h1>
 <p>Rles can be subsetted on Chromosome, Strand or Chromosome/Strand pairs</p>
-<div class="sourceCode" id="cb320"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb320-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb320-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb320-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb320-4" data-line-number="4">c <span class="op">=</span> gr.to_rle()</a>
-<a class="sourceLine" id="cb320-5" data-line-number="5"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb322"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb322-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb322-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb322-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb322-4" data-line-number="4">c <span class="op">=</span> gr.to_rle()</a>
+<a class="sourceLine" id="cb322-5" data-line-number="5"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>])</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
-## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
-## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   |  ...    | 25   | 2952580   | 25   | 1156833   | 25   |
-## |--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------|
-## | Values | 0.0       | 1.0  | 0.0     | 1.0  | 0.0       | ...     | 1.0  | 0.0       | 1.0  | 0.0       | 1.0  |
-## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
+## +--------+-----------+------+---------+------+-----------+-------+------+-----------+------+-----------+------+
+## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   | ...   | 25   | 2952580   | 25   | 1156833   | 25   |
+## |--------+-----------+------+---------+------+-----------+-------+------+-----------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0     | 1.0  | 0.0       | ...   | 1.0  | 0.0       | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+---------+------+-----------+-------+------+-----------+------+-----------+------+
 ## Rle of length 247134924 containing 894 elements
 ## 
 ## chr1 -
 ## --
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
-## | Runs   | 1325303   | 25   | 494957   | 25   | 628012   |  ...    | 25   | 438610   | 25   | 962494   | 25   |
-## |--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------|
-## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0      | 1.0  |
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
+## +--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------+
+## | Runs   | 1325303   | 25   | 494957   | 25   | 628012   | ...   | 25   | 438610   | 25   | 962494   | 25   |
+## |--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...   | 1.0  | 0.0      | 1.0  | 0.0      | 1.0  |
+## +--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------+
 ## Rle of length 246145556 containing 868 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb322"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb322-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;+&quot;</span>])</a></code></pre></div>
-<pre><code>## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
-## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   |  ...    | 25   | 2952580   | 25   | 1156833   | 25   |
-## |--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------|
-## | Values | 0.0       | 1.0  | 0.0     | 1.0  | 0.0       | ...     | 1.0  | 0.0       | 1.0  | 0.0       | 1.0  |
-## +--------+-----------+------+---------+------+-----------+---------+------+-----------+------+-----------+------+
+<div class="sourceCode" id="cb324"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb324-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;+&quot;</span>])</a></code></pre></div>
+<pre><code>## +--------+-----------+------+---------+------+-----------+-------+------+-----------+------+-----------+------+
+## | Runs   | 1541598   | 25   | 57498   | 25   | 1904886   | ...   | 25   | 2952580   | 25   | 1156833   | 25   |
+## |--------+-----------+------+---------+------+-----------+-------+------+-----------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0     | 1.0  | 0.0       | ...   | 1.0  | 0.0       | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+---------+------+-----------+-------+------+-----------+------+-----------+------+
 ## Rle of length 247134924 containing 894 elements</code></pre>
-<div class="sourceCode" id="cb324"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb324-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;-&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb326"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb326-1" data-line-number="1"><span class="bu">print</span>(c[<span class="st">&quot;-&quot;</span>])</a></code></pre></div>
 <pre><code>## chr1 -
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
-## | Runs   | 1325303   | 25   | 494957   | 25   | 628012   |  ...    | 25   | 438610   | 25   | 962494   | 25   |
-## |--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------|
-## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0      | 1.0  |
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
+## +--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------+
+## | Runs   | 1325303   | 25   | 494957   | 25   | 628012   | ...   | 25   | 438610   | 25   | 962494   | 25   |
+## |--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...   | 1.0  | 0.0      | 1.0  | 0.0      | 1.0  |
+## +--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------+
 ## Rle of length 246145556 containing 868 elements
 ## ...
 ## chrY -
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
-## | Runs   | 7046809   | 25   | 358542   | 25   | 296582   |  ...    | 25   | 143271   | 25   | 156610   | 25   |
-## |--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------|
-## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...     | 1.0  | 0.0      | 1.0  | 0.0      | 1.0  |
-## +--------+-----------+------+----------+------+----------+---------+------+----------+------+----------+------+
+## +--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------+
+## | Runs   | 7046809   | 25   | 358542   | 25   | 296582   | ...   | 25   | 143271   | 25   | 156610   | 25   |
+## |--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | 1.0  | 0.0      | ...   | 1.0  | 0.0      | 1.0  | 0.0      | 1.0  |
+## +--------+-----------+------+----------+------+----------+-------+------+----------+------+----------+------+
 ## Rle of length 22210662 containing 32 elements
 ## PyRles object with 24 chromosomes/strand pairs.</code></pre>
 <p>To get the coverage of one or more intervals, you can use a PyRanges-object to subset the PyRles</p>
-<div class="sourceCode" id="cb326"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb326-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb326-2" data-line-number="2">f1 <span class="op">=</span> pr.data.f1()</a>
-<a class="sourceLine" id="cb326-3" data-line-number="3"><span class="bu">print</span>(f1)</a></code></pre></div>
+<div class="sourceCode" id="cb328"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb328-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb328-2" data-line-number="2">f1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb328-3" data-line-number="3"><span class="bu">print</span>(f1)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -240,28 +237,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb328"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb328-1" data-line-number="1">f1_c <span class="op">=</span> f1.to_rle()</a>
-<a class="sourceLine" id="cb328-2" data-line-number="2"><span class="bu">print</span>(f1_c)</a></code></pre></div>
+<div class="sourceCode" id="cb330"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb330-1" data-line-number="1">f1_c <span class="op">=</span> f1.to_rle()</a>
+<a class="sourceLine" id="cb330-2" data-line-number="2"><span class="bu">print</span>(f1_c)</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
-## +--------+-----+-----+-----+-----+
-## | Runs   | 3   | 3   | 2   | 1   |
-## |--------+-----+-----+-----+-----|
-## | Values | 0.0 | 1.0 | 0.0 | 1.0 |
-## +--------+-----+-----+-----+-----+
+## +--------+-----+-----+-------+-----+-----+
+## | Runs   | 3   | 3   | ...   | 2   | 1   |
+## |--------+-----+-----+-------+-----+-----|
+## | Values | 0.0 | 1.0 | ...   | 0.0 | 1.0 |
+## +--------+-----+-----+-------+-----+-----+
 ## Rle of length 9 containing 4 elements
 ## 
 ## chr1 -
 ## --
-## +--------+-----+-----+
-## | Runs   | 5   | 2   |
-## |--------+-----+-----|
-## | Values | 0.0 | 1.0 |
-## +--------+-----+-----+
+## +--------+-----+-------+-----+
+## | Runs   | 5   | ...   | 2   |
+## |--------+-----+-------+-----|
+## | Values | 0.0 | ...   | 1.0 |
+## +--------+-----+-------+-----+
 ## Rle of length 7 containing 2 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb330"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb330-1" data-line-number="1"><span class="bu">print</span>(f1_c[f1])</a></code></pre></div>
-<pre><code>## {(&#39;chr1&#39;, &#39;+&#39;): [(array([3]), array([1.])), (array([1]), array([1.]))], (&#39;chr1&#39;, &#39;-&#39;): [(array([2]), array([1.]))]}</code></pre>
+<div class="sourceCode" id="cb332"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb332-1" data-line-number="1"><span class="bu">print</span>(f1_c[f1])</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+-------------+------------+
+## | Chromosome   |     Start |       End |       Run |       Value | Strand     |
+## | (object)     |   (int64) |   (int64) |   (int64) |   (float64) | (object)   |
+## |--------------+-----------+-----------+-----------+-------------+------------|
+## | chr1         |         3 |         6 |         3 |           1 | +          |
+## | chr1         |         8 |         9 |         1 |           1 | +          |
+## | chr1         |         5 |         7 |         2 |           1 | -          |
+## +--------------+-----------+-----------+-----------+-------------+------------+
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 
 </div>
             </section>
@@ -275,13 +281,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -289,11 +293,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -305,10 +310,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },
