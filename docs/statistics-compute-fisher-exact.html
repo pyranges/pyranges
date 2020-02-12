@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>22 Statistics: compute Fisher exact | PyRanges documentation</title>
   <meta name="description" content="22 Statistics: compute Fisher exact | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="22 Statistics: compute Fisher exact | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="statistics-simes-method.html"/>
-<link rel="next" href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"/>
+<link rel="prev" href="statistics-simes-method.html">
+<link rel="next" href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -180,34 +177,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">22</span> Statistics: compute Fisher exact</h1>
 <p>You can use pyranges to compute Fisher Exact quickly. To do so you need to have
 the package fisher installed.</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb250-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb250-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb250-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb250-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb250-5" data-line-number="5">n1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb250-6" data-line-number="6">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb250-7" data-line-number="7">n2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb250-8" data-line-number="8">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb250-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb250-10" data-line-number="10">fe <span class="op">=</span> pr.stats.fisher_exact(n1, n2, d1, d2).head()</a></code></pre></div>
-<pre><code>## /Users/endrebakkenstovner/code/pyranges/pyranges/statistics.py:153: RuntimeWarning: divide by zero encountered in true_divide
+<div class="sourceCode" id="cb252"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb252-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb252-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb252-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb252-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb252-5" data-line-number="5">n1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb252-6" data-line-number="6">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb252-7" data-line-number="7">n2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb252-8" data-line-number="8">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb252-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb252-10" data-line-number="10">fe <span class="op">=</span> pr.stats.fisher_exact(n1, n2, d1, d2).head()</a></code></pre></div>
+<pre><code>## /home/endrebak/code/pyranges/pyranges/statistics.py:153: RuntimeWarning: divide by zero encountered in true_divide
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))
-## /Users/endrebakkenstovner/code/pyranges/pyranges/statistics.py:153: RuntimeWarning: invalid value encountered in true_divide
+## /home/endrebak/code/pyranges/pyranges/statistics.py:153: RuntimeWarning: invalid value encountered in true_divide
 ##   OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))</code></pre>
-<div class="sourceCode" id="cb252"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb252-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
-<pre><code>##          OR         P
-## 0  0.327273  0.055096
-## 1  0.600000  0.438437
-## 2  0.666667  0.565123
-## 3  1.200000  1.000000
-## 4  0.346749  0.278792</code></pre>
+<div class="sourceCode" id="cb254"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb254-1" data-line-number="1"><span class="bu">print</span>(fe)</a></code></pre></div>
+<pre><code>##           OR         P
+## 0   0.171053  0.000917
+## 1  21.000000  0.582043
+## 2   3.250000  0.082220
+## 3   2.410714  0.739704
+## 4   2.666667  0.291096</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
-<div class="sourceCode" id="cb254"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb254-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
-<pre><code>## 0    0.275478
-## 1    0.730729
-## 2    0.706404
-## 3    1.000000
-## 4    0.696979
+<div class="sourceCode" id="cb256"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb256-1" data-line-number="1"><span class="bu">print</span>(pr.stats.fdr(fe.P))</a></code></pre></div>
+<pre><code>## 0    0.004584
+## 1    0.727554
+## 2    0.205551
+## 3    0.739704
+## 4    0.485160
 ## Name: P, dtype: float64</code></pre>
 
 </div>
@@ -222,13 +219,11 @@ the package fisher installed.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -236,11 +231,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -252,10 +248,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

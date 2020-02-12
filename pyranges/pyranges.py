@@ -676,6 +676,21 @@ class PyRanges():
 
         return new_self
 
+    def to_example(self, nrows=10):
+
+        nrows_half = int(min(nrows, len(self))/2)
+
+        if nrows < len(self):
+            first = self.head(nrows_half)
+            last = self.tail(nrows_half)
+            example = pr.concat([first, last])
+        else:
+            example = self
+
+        d = {c: list(getattr(example, c)) for c in example.columns}
+
+        return d
+
     def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
 
         if strand is None:
@@ -691,6 +706,7 @@ class PyRanges():
             strand = self.stranded
 
         kwargs.update({"strand": strand})
+        kwargs.update(kwargs.get("kwargs", {}))
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply_single(f, self, strand, kwargs)
@@ -703,6 +719,7 @@ class PyRanges():
 
     def apply_chunks(self, f, as_pyranges=True, **kwargs):
 
+        kwargs.update(kwargs.get("kwargs", {}))
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply_chunks(f, self, as_pyranges, kwargs)
@@ -721,6 +738,7 @@ class PyRanges():
                    **kwargs):
 
         kwargs.update({"strandedness": strandedness})
+        kwargs.update(kwargs.get("kwargs", {}))
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply(f, self, other, **kwargs)

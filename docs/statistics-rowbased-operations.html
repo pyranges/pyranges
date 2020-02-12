@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>24 Statistics: rowbased operations | PyRanges documentation</title>
   <meta name="description" content="24 Statistics: rowbased operations | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="24 Statistics: rowbased operations | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"/>
-<link rel="next" href="turning-ranges-into-rles.html"/>
+<link rel="prev" href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html">
+<link rel="next" href="turning-ranges-into-rles.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -180,81 +177,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">24</span> Statistics: rowbased operations</h1>
 <p>pyranges includes fast rowbased Pearson and Spearman correlations, including a
 fast row-based version of rankdata.</p>
-<div class="sourceCode" id="cb260"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb260-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb260-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb260-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb260-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb260-5" data-line-number="5">size <span class="op">=</span> (<span class="bu">int</span>(<span class="fl">1e3</span>), <span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb260-6" data-line-number="6">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span>size)</a>
-<a class="sourceLine" id="cb260-7" data-line-number="7">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span>size)</a>
-<a class="sourceLine" id="cb260-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb260-9" data-line-number="9">spearman <span class="op">=</span> pr.stats.rowbased_spearman(d1, d2) <span class="co"># or rowbased_pearson(d1, d2)</span></a>
-<a class="sourceLine" id="cb260-10" data-line-number="10"><span class="bu">print</span>(spearman[:<span class="dv">5</span>])</a></code></pre></div>
-<pre><code>## [-0.2        -0.4         0.8        -0.66688593  0.61558701]</code></pre>
-<div class="sourceCode" id="cb262"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb262-1" data-line-number="1">ranks <span class="op">=</span> pr.stats.rowbased_rankdata(d1) <span class="co"># similar to scipy.stats.rankdata</span></a>
-<a class="sourceLine" id="cb262-2" data-line-number="2"><span class="bu">print</span>(ranks)</a></code></pre></div>
+<div class="sourceCode" id="cb262"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb262-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb262-2" data-line-number="2">gr <span class="op">=</span> pr.random(<span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb262-3" data-line-number="3"><span class="im">import</span> numpy <span class="im">as</span> np</a>
+<a class="sourceLine" id="cb262-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb262-5" data-line-number="5">size <span class="op">=</span> (<span class="bu">int</span>(<span class="fl">1e3</span>), <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb262-6" data-line-number="6">d1 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span>size)</a>
+<a class="sourceLine" id="cb262-7" data-line-number="7">d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span>size)</a>
+<a class="sourceLine" id="cb262-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb262-9" data-line-number="9">spearman <span class="op">=</span> pr.stats.rowbased_spearman(d1, d2) <span class="co"># or rowbased_pearson(d1, d2)</span></a>
+<a class="sourceLine" id="cb262-10" data-line-number="10"><span class="bu">print</span>(spearman[:<span class="dv">5</span>])</a></code></pre></div>
+<pre><code>## [-0.56428809  0.71818485 -0.20519567  0.31622777 -0.05129892]</code></pre>
+<div class="sourceCode" id="cb264"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb264-1" data-line-number="1">ranks <span class="op">=</span> pr.stats.rowbased_rankdata(d1) <span class="co"># similar to scipy.stats.rankdata</span></a>
+<a class="sourceLine" id="cb264-2" data-line-number="2"><span class="bu">print</span>(ranks)</a></code></pre></div>
 <pre><code>##        0    1    2    3    4
-## 0    1.0  2.0  4.0  5.0  3.0
-## 1    3.0  5.0  1.0  4.0  2.0
-## 2    2.0  1.0  5.0  4.0  3.0
-## 3    1.5  3.0  1.5  5.0  4.0
-## 4    4.0  3.0  2.0  1.0  5.0
-## 5    1.0  2.5  4.5  2.5  4.5
-## 6    5.0  1.5  1.5  3.5  3.5
-## 7    5.0  2.0  3.0  4.0  1.0
-## 8    5.0  3.5  3.5  1.0  2.0
-## 9    4.0  2.5  2.5  1.0  5.0
-## 10   4.0  1.0  5.0  3.0  2.0
-## 11   4.0  3.0  5.0  2.0  1.0
-## 12   4.0  1.0  3.0  5.0  2.0
-## 13   4.0  5.0  2.0  1.0  3.0
-## 14   3.5  1.0  5.0  3.5  2.0
-## 15   3.0  5.0  1.0  4.0  2.0
-## 16   3.0  4.0  1.0  2.0  5.0
-## 17   2.5  4.0  2.5  1.0  5.0
-## 18   2.0  1.0  4.0  5.0  3.0
-## 19   5.0  2.5  4.0  2.5  1.0
-## 20   2.0  4.0  1.0  3.0  5.0
-## 21   4.5  2.0  1.0  3.0  4.5
-## 22   1.0  5.0  2.0  4.0  3.0
-## 23   1.5  3.0  4.0  1.5  5.0
-## 24   4.0  1.0  5.0  2.0  3.0
-## 25   1.0  5.0  2.0  3.0  4.0
-## 26   2.0  4.5  3.0  1.0  4.5
-## 27   4.0  5.0  2.0  1.0  3.0
-## 28   2.5  2.5  4.0  5.0  1.0
-## 29   1.5  5.0  3.0  1.5  4.0
+## 0    5.0  1.0  3.0  2.0  4.0
+## 1    3.0  2.0  1.0  4.0  5.0
+## 2    4.0  3.0  2.0  5.0  1.0
+## 3    2.0  5.0  1.0  3.0  4.0
+## 4    1.0  2.0  3.0  5.0  4.0
 ## ..   ...  ...  ...  ...  ...
-## 970  3.5  1.0  2.0  3.5  5.0
-## 971  5.0  4.0  2.5  1.0  2.5
-## 972  2.0  4.0  5.0  3.0  1.0
-## 973  5.0  3.0  4.0  1.0  2.0
-## 974  3.5  3.5  2.0  5.0  1.0
-## 975  1.5  4.0  1.5  5.0  3.0
-## 976  1.0  4.0  2.0  3.0  5.0
-## 977  1.5  5.0  3.0  1.5  4.0
-## 978  1.0  4.0  3.0  2.0  5.0
-## 979  3.0  4.0  1.0  5.0  2.0
-## 980  3.0  4.0  5.0  2.0  1.0
-## 981  3.0  1.0  4.0  2.0  5.0
-## 982  3.5  3.5  2.0  1.0  5.0
-## 983  3.0  1.0  4.0  5.0  2.0
-## 984  2.0  1.0  3.0  5.0  4.0
-## 985  1.0  4.0  5.0  3.0  2.0
-## 986  4.5  4.5  3.0  2.0  1.0
-## 987  1.0  2.0  5.0  3.0  4.0
-## 988  1.5  1.5  4.0  5.0  3.0
-## 989  4.0  4.0  1.0  2.0  4.0
-## 990  2.5  5.0  1.0  4.0  2.5
-## 991  5.0  2.5  1.0  4.0  2.5
-## 992  1.0  5.0  2.0  4.0  3.0
-## 993  5.0  2.0  4.0  1.0  3.0
-## 994  3.0  1.0  2.0  4.0  5.0
-## 995  1.0  5.0  3.0  4.0  2.0
-## 996  1.0  3.5  5.0  2.0  3.5
-## 997  1.0  4.0  5.0  2.0  3.0
-## 998  3.0  5.0  4.0  1.5  1.5
-## 999  4.5  2.0  1.0  4.5  3.0
+## 995  3.5  5.0  1.0  2.0  3.5
+## 996  5.0  2.0  4.0  1.0  3.0
+## 997  1.0  5.0  3.0  4.0  2.0
+## 998  2.0  4.0  3.0  5.0  1.0
+## 999  4.0  2.5  5.0  2.5  1.0
 ## 
 ## [1000 rows x 5 columns]</code></pre>
 
@@ -270,13 +217,11 @@ fast row-based version of rankdata.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -284,11 +229,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -300,10 +246,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

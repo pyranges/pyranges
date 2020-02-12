@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>5 Manipulating the data in PyRanges | PyRanges documentation</title>
   <meta name="description" content="5 Manipulating the data in PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="5 Manipulating the data in PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="subsetting-pyranges.html"/>
-<link rel="next" href="concatenating-pyranges.html"/>
+<link rel="prev" href="subsetting-pyranges.html">
+<link rel="next" href="concatenating-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -180,9 +177,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">5</span> Manipulating the data in PyRanges</h1>
 <p>PyRanges is a thin wrapper around genomic data contained in pandas dataframes.
 This dataframe is accessible with the df attribute of the PyRanges object.</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb67-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb67-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb67-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb71-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb71-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb71-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -199,7 +196,7 @@ This dataframe is accessible with the df attribute of the PyRanges object.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb69"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb69-1" data-line-number="1"><span class="bu">print</span>(gr.df.head(<span class="dv">5</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb73-1" data-line-number="1"><span class="bu">print</span>(gr.df.head(<span class="dv">5</span>))</a></code></pre></div>
 <pre><code>##   Chromosome      Start        End Name  Score Strand
 ## 0       chr1  212609534  212609559   U0      0      +
 ## 1       chr1  169887529  169887554   U0      0      +
@@ -208,7 +205,7 @@ This dataframe is accessible with the df attribute of the PyRanges object.</p>
 ## 4       chr1  148177825  148177850   U0      0      +</code></pre>
 <p>To access a column of this dataframe, you can ask for the name directly from the
 PyRanges object.</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb71-1" data-line-number="1"><span class="bu">print</span>(gr.Start.head())</a></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="bu">print</span>(gr.Start.head())</a></code></pre></div>
 <pre><code>## 18     212609534
 ## 70     169887529
 ## 129    216711011
@@ -216,8 +213,8 @@ PyRanges object.</p>
 ## 196    148177825
 ## Name: Start, dtype: int32</code></pre>
 <p>You can directly insert a column by setting the attribute on the PyRanges object:</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb73-1" data-line-number="1">gr.stupid_example <span class="op">=</span> <span class="st">&quot;Hi There!&quot;</span></a>
-<a class="sourceLine" id="cb73-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb77-1" data-line-number="1">gr.stupid_example <span class="op">=</span> <span class="st">&quot;Hi There!&quot;</span></a>
+<a class="sourceLine" id="cb77-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+------------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | stupid_example   |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)         |
@@ -234,8 +231,8 @@ PyRanges object.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+------------------+
 ## Stranded PyRanges object has 10,000 rows and 7 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb75"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb75-1" data-line-number="1">gr <span class="op">=</span> gr.drop(<span class="st">&quot;stupid_example&quot;</span>)</a>
-<a class="sourceLine" id="cb75-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb79-1" data-line-number="1">gr <span class="op">=</span> gr.drop(<span class="st">&quot;stupid_example&quot;</span>)</a>
+<a class="sourceLine" id="cb79-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -255,15 +252,15 @@ PyRanges object.</p>
 <p>And as you can see, you can drop columns from the PyRanges using drop. Using
 drop by itself removes all metadata-columns.</p>
 <p>To insert a dataframe into a PyRanges object, you can use the + operator:</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb77-1" data-line-number="1">df <span class="op">=</span> pd.DataFrame({<span class="st">&quot;A1&quot;</span>: [<span class="dv">1</span>, <span class="dv">2</span>] <span class="op">*</span> <span class="dv">5000</span>, <span class="st">&quot;A2&quot;</span>: [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>] <span class="op">*</span> <span class="dv">2500</span>})</a>
-<a class="sourceLine" id="cb77-2" data-line-number="2"><span class="bu">print</span>(df.head())</a></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb81-1" data-line-number="1">df <span class="op">=</span> pd.DataFrame({<span class="st">&quot;A1&quot;</span>: [<span class="dv">1</span>, <span class="dv">2</span>] <span class="op">*</span> <span class="dv">5000</span>, <span class="st">&quot;A2&quot;</span>: [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>] <span class="op">*</span> <span class="dv">2500</span>})</a>
+<a class="sourceLine" id="cb81-2" data-line-number="2"><span class="bu">print</span>(df.head())</a></code></pre></div>
 <pre><code>##    A1  A2
 ## 0   1   3
 ## 1   2   4
 ## 2   1   5
 ## 3   2   6
 ## 4   1   3</code></pre>
-<div class="sourceCode" id="cb79"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb79-1" data-line-number="1"><span class="bu">print</span>(gr <span class="op">+</span> df)</a></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb83-1" data-line-number="1"><span class="bu">print</span>(gr <span class="op">+</span> df)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+-----------+-----------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       | A1        | A2        |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (int64)   | (int64)   |
@@ -282,7 +279,7 @@ drop by itself removes all metadata-columns.</p>
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>To rename the columns you can use the set_columns() method.</p>
 <p>If you want to remove duplicates based on position, you can use drop_duplicate_positions:</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb81-1" data-line-number="1"><span class="bu">print</span>(gr.drop_duplicate_positions(strand<span class="op">=</span><span class="va">False</span>)) <span class="co"># defaults to True</span></a></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb85-1" data-line-number="1"><span class="bu">print</span>(gr.drop_duplicate_positions(strand<span class="op">=</span><span class="va">False</span>)) <span class="co"># defaults to True</span></a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -302,9 +299,9 @@ drop by itself removes all metadata-columns.</p>
 <p>All columns, including Chromosome, Start, End and Strand can be changed in any
 way you please and more metadata-columns can be added by setting it on the
 PyRanges object.</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb83-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb83-2" data-line-number="2">gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)</a>
-<a class="sourceLine" id="cb83-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb87-1" data-line-number="1"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb87-2" data-line-number="2">gr.Name <span class="op">=</span> gr.Chromosome.astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&quot;_&quot;</span> <span class="op">+</span> pd.Series(<span class="bu">range</span>(<span class="bu">len</span>(gr)), index<span class="op">=</span>gr.Chromosome.index).astype(<span class="bu">str</span>)</a>
+<a class="sourceLine" id="cb87-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -321,8 +318,8 @@ PyRanges object.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb85"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb85-1" data-line-number="1">gr.Strand <span class="op">=</span> <span class="st">&quot;.&quot;</span></a>
-<a class="sourceLine" id="cb85-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb89-1" data-line-number="1">gr.Strand <span class="op">=</span> <span class="st">&quot;.&quot;</span></a>
+<a class="sourceLine" id="cb89-2" data-line-number="2"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -353,13 +350,11 @@ PyRanges object.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -367,11 +362,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -383,10 +379,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

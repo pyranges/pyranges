@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>13 Applying custom methods to pairs of PyRanges | PyRanges documentation</title>
   <meta name="description" content="13 Applying custom methods to pairs of PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="13 Applying custom methods to pairs of PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="methods-for-manipulating-single-pyranges.html"/>
-<link rel="next" href="intersecting-ranges.html"/>
+<link rel="prev" href="methods-for-manipulating-single-pyranges.html">
+<link rel="next" href="intersecting-ranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -181,15 +178,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>By using the <code>apply</code>, <code>apply_pair</code> or <code>apply_chunks</code> methods, you can run custom
 methods on the dataframes in your PyRanges. The <code>apply</code> and <code>apply_chunks</code> methods
 takes a single dataframe, while <code>apply_pair</code> takes a pair of dataframes.</p>
-<div class="sourceCode" id="cb169"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb169-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb169-2" data-line-number="2">chipseq <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb169-3" data-line-number="3">chipseq_background <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb169-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb169-5" data-line-number="5"><span class="kw">def</span> print_strands(df1, df2):</a>
-<a class="sourceLine" id="cb169-6" data-line-number="6">    <span class="bu">print</span>(df1.Chromosome.iloc[<span class="dv">0</span>], df1.Strand.iloc[<span class="dv">0</span>], df2.Strand.iloc[<span class="dv">0</span>])</a>
-<a class="sourceLine" id="cb169-7" data-line-number="7">    <span class="cf">return</span> df1.head(<span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb169-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb169-9" data-line-number="9">result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_strands, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb173-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb173-2" data-line-number="2">chipseq <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb173-3" data-line-number="3">chipseq_background <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb173-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb173-5" data-line-number="5"><span class="kw">def</span> print_strands(df1, df2):</a>
+<a class="sourceLine" id="cb173-6" data-line-number="6">    <span class="bu">print</span>(df1.Chromosome.iloc[<span class="dv">0</span>], df1.Strand.iloc[<span class="dv">0</span>], df2.Strand.iloc[<span class="dv">0</span>])</a>
+<a class="sourceLine" id="cb173-7" data-line-number="7">    <span class="cf">return</span> df1.head(<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb173-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb173-9" data-line-number="9">result <span class="op">=</span> chipseq.apply_pair(chipseq_background, print_strands, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>)</a></code></pre></div>
 <pre><code>## chr1 + -
 ## chr1 - +
 ## chr2 + -
@@ -238,7 +235,7 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## chrX - +
 ## chrY + -
 ## chrY - +</code></pre>
-<div class="sourceCode" id="cb171"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb171-1" data-line-number="1"><span class="bu">print</span>(result)</a></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb175-1" data-line-number="1"><span class="bu">print</span>(result)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -255,11 +252,11 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 240 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb173"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb173-1" data-line-number="1"><span class="kw">def</span> set_start_to_zero(df):</a>
-<a class="sourceLine" id="cb173-2" data-line-number="2">    df.Start <span class="op">=</span> <span class="dv">0</span></a>
-<a class="sourceLine" id="cb173-3" data-line-number="3">    <span class="cf">return</span> df</a>
-<a class="sourceLine" id="cb173-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb173-5" data-line-number="5"><span class="bu">print</span>(chipseq.<span class="bu">apply</span>(set_start_to_zero))</a></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb177-1" data-line-number="1"><span class="kw">def</span> set_start_to_zero(df):</a>
+<a class="sourceLine" id="cb177-2" data-line-number="2">    df.Start <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb177-3" data-line-number="3">    <span class="cf">return</span> df</a>
+<a class="sourceLine" id="cb177-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb177-5" data-line-number="5"><span class="bu">print</span>(chipseq.<span class="bu">apply</span>(set_start_to_zero))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int64)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -277,11 +274,11 @@ takes a single dataframe, while <code>apply_pair</code> takes a pair of datafram
 ## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>Keyword arguments can be sent to the function:</p>
-<div class="sourceCode" id="cb175"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb175-1" data-line-number="1"><span class="kw">def</span> _print(df, kwargs):</a>
-<a class="sourceLine" id="cb175-2" data-line-number="2">    <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))</a>
-<a class="sourceLine" id="cb175-3" data-line-number="3">    <span class="cf">return</span> df</a>
-<a class="sourceLine" id="cb175-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb175-5" data-line-number="5">chipseq.<span class="bu">apply</span>(_print, value<span class="op">=</span><span class="dv">123</span>, whatever<span class="op">=</span><span class="st">&quot;hi there!&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb179-1" data-line-number="1"><span class="kw">def</span> _print(df, kwargs):</a>
+<a class="sourceLine" id="cb179-2" data-line-number="2">    <span class="bu">print</span>(<span class="st">&quot;My keyword arguments were:&quot;</span>, kwargs.get(<span class="st">&quot;value&quot;</span>), <span class="st">&quot;and&quot;</span>, kwargs.get(<span class="st">&quot;whatever&quot;</span>))</a>
+<a class="sourceLine" id="cb179-3" data-line-number="3">    <span class="cf">return</span> df</a>
+<a class="sourceLine" id="cb179-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb179-5" data-line-number="5">chipseq.<span class="bu">apply</span>(_print, value<span class="op">=</span><span class="dv">123</span>, whatever<span class="op">=</span><span class="st">&quot;hi there!&quot;</span>)</a></code></pre></div>
 <pre><code>## My keyword arguments were: 123 and hi there!
 ## My keyword arguments were: 123 and hi there!
 ## My keyword arguments were: 123 and hi there!
@@ -363,13 +360,11 @@ example).</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -377,11 +372,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -393,10 +389,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

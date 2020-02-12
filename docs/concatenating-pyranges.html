@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>6 Concatenating PyRanges | PyRanges documentation</title>
   <meta name="description" content="6 Concatenating PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="6 Concatenating PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="manipulating-the-data-in-pyranges.html"/>
-<link rel="next" href="piping-pyranges.html"/>
+<link rel="prev" href="manipulating-the-data-in-pyranges.html">
+<link rel="next" href="piping-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -179,14 +176,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="concatenating-pyranges" class="section level1">
 <h1><span class="header-section-number">6</span> Concatenating PyRanges</h1>
 <p>A list of PyRanges can be concatenated by using the concat function:</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb87-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb87-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb87-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb87-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb87-5" data-line-number="5">gr1 <span class="op">=</span> pr.data.f1()</a>
-<a class="sourceLine" id="cb87-6" data-line-number="6">gr2 <span class="op">=</span> pr.data.f2()</a>
-<a class="sourceLine" id="cb87-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb87-8" data-line-number="8"><span class="bu">print</span>(gr1)</a></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb91-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb91-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb91-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb91-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb91-5" data-line-number="5">gr1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb91-6" data-line-number="6">gr2 <span class="op">=</span> pr.data.f2()</a>
+<a class="sourceLine" id="cb91-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb91-8" data-line-number="8"><span class="bu">print</span>(gr1)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -197,7 +194,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb89"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb89-1" data-line-number="1"><span class="bu">print</span>(gr2)</a></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb93-1" data-line-number="1"><span class="bu">print</span>(gr2)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -207,9 +204,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb91"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb91-1" data-line-number="1">concatted <span class="op">=</span> pr.concat([gr1, gr2, gr1])</a>
-<a class="sourceLine" id="cb91-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb91-3" data-line-number="3"><span class="bu">print</span>(concatted)</a></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb95-1" data-line-number="1">concatted <span class="op">=</span> pr.concat([gr1, gr2, gr1])</a>
+<a class="sourceLine" id="cb95-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb95-3" data-line-number="3"><span class="bu">print</span>(concatted)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -238,13 +235,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -252,11 +247,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -268,10 +264,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

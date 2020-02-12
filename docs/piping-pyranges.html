@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>7 Piping PyRanges | PyRanges documentation</title>
   <meta name="description" content="7 Piping PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="7 Piping PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="concatenating-pyranges.html"/>
-<link rel="next" href="printing-pyranges.html"/>
+<link rel="prev" href="concatenating-pyranges.html">
+<link rel="next" href="printing-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -180,14 +177,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">7</span> Piping PyRanges</h1>
 <p>The PyRanges API supports chaining operations out of the box.</p>
 <p>To set a new column in a PyRanges you would use the <code>assign</code> method and for subsetting you would use the <code>subset</code> method.</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb93-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb93-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb93-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
-<a class="sourceLine" id="cb93-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb93-5" data-line-number="5">exons <span class="op">=</span> pr.data.exons()</a>
-<a class="sourceLine" id="cb93-6" data-line-number="6">cpg <span class="op">=</span> pr.data.cpg()</a>
-<a class="sourceLine" id="cb93-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb93-8" data-line-number="8">cpg.join(exons.unstrand()).subset(<span class="kw">lambda</span> df: df.CpG <span class="op">&gt;</span> <span class="dv">25</span>)[[<span class="st">&quot;CpG&quot;</span>]].assign(<span class="st">&quot;CpGDecile&quot;</span>, <span class="kw">lambda</span> df: df.CpG <span class="op">%</span> <span class="dv">10</span>)[<span class="st">&quot;chrX&quot;</span>].slack(<span class="dv">500</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb97-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb97-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb97-3" data-line-number="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
+<a class="sourceLine" id="cb97-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb97-5" data-line-number="5">exons <span class="op">=</span> pr.data.exons()</a>
+<a class="sourceLine" id="cb97-6" data-line-number="6">cpg <span class="op">=</span> pr.data.cpg()</a>
+<a class="sourceLine" id="cb97-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb97-8" data-line-number="8">cpg.join(exons.unstrand()).subset(<span class="kw">lambda</span> df: df.CpG <span class="op">&gt;</span> <span class="dv">25</span>)[[<span class="st">&quot;CpG&quot;</span>]].assign(<span class="st">&quot;CpGDecile&quot;</span>, <span class="kw">lambda</span> df: df.CpG <span class="op">%</span> <span class="dv">10</span>)[<span class="st">&quot;chrX&quot;</span>].slack(<span class="dv">500</span>)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+-----------+-------------+
 ## | Chromosome   | Start     | End       | CpG       | CpGDecile   |
 ## | (category)   | (int32)   | (int32)   | (int64)   | (int64)     |
@@ -217,13 +214,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -231,11 +226,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -247,10 +243,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

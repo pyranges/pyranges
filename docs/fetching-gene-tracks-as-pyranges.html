@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>32 Fetching gene tracks as PyRanges | PyRanges documentation</title>
   <meta name="description" content="32 Fetching gene tracks as PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="32 Fetching gene tracks as PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,14 +24,14 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="genomicfeatures-methods-using-genomic-context.html"/>
+<link rel="prev" href="genomicfeatures-methods-using-genomic-context.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -183,20 +180,20 @@ the pyranges_db add-on package. It can be installed with <code>pip install pyran
 <p>Each database contains at least two methods, namely genes and genomes. UCSC and
 Ensembl also has the method chromosome_sizes.</p>
 <p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few thousand rows of data.</p>
-<div class="sourceCode" id="cb355"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb355-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
-<a class="sourceLine" id="cb355-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb355-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
-<a class="sourceLine" id="cb355-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb355-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
+<div class="sourceCode" id="cb357"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb357-1" data-line-number="1"><span class="im">import</span> pyranges_db <span class="im">as</span> pr_db</a>
+<a class="sourceLine" id="cb357-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb357-3" data-line-number="3">genomes <span class="op">=</span> pr_db.ucsc.genomes()</a>
+<a class="sourceLine" id="cb357-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb357-5" data-line-number="5"><span class="bu">print</span>(genomes.head())</a></code></pre></div>
 <pre><code>##     Genome
 ## 0  acaChl1
 ## 1  ailMel1
 ## 2  allMis1
 ## 3  allSin1
 ## 4  amaVit1</code></pre>
-<div class="sourceCode" id="cb357"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb357-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
-<a class="sourceLine" id="cb357-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb357-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
+<div class="sourceCode" id="cb359"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb359-1" data-line-number="1">chr_sizes <span class="op">=</span> pr_db.ucsc.chromosome_sizes(<span class="st">&quot;hg38&quot;</span>)</a>
+<a class="sourceLine" id="cb359-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb359-3" data-line-number="3"><span class="bu">print</span>(chr_sizes)</a></code></pre></div>
 <pre><code>## +------------------------+-----------+-----------+
 ## | Chromosome             | Start     | End       |
 ## | (category)             | (int32)   | (int32)   |
@@ -213,46 +210,46 @@ Ensembl also has the method chromosome_sizes.</p>
 ## +------------------------+-----------+-----------+
 ## Unstranded PyRanges object has 595 rows and 3 columns from 595 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome.</code></pre>
-<div class="sourceCode" id="cb359"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb359-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb359-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb359-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------+
-## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | exon_number   | +1    |
-## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)     | ...   |
-## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------|
-## | chr1         | 43933800  | 43937240  | gene         | ARTN         | nan             | +            | nan           | ...   |
-## | chr1         | 7669729   | 7769706   | gene         | CAMTA1       | nan             | +            | nan           | ...   |
-## | chr1         | 145719498 | 145739288 | gene         | CD160        | nan             | +            | nan           | ...   |
-## | chr1         | 11806095  | 11843144  | gene         | CLCN6        | nan             | +            | nan           | ...   |
-## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...           | ...   |
-## | chrY         | 2738199   | 2738256   | exon         | CD99         | 289.0           | +            | 7.0           | ...   |
-## | chrY         | 2738202   | 2738256   | exon         | CD99         | 287.0           | +            | 8.0           | ...   |
-## | chrY         | 2740778   | 2741309   | exon         | CD99         | 287.0           | +            | 9.0           | ...   |
-## | chrY         | 2740778   | 2741309   | exon         | CD99         | 289.0           | +            | 8.0           | ...   |
-## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------+
-## Stranded PyRanges object has 5,884 rows and 9 columns from 55 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 1 hidden columns: transcript_name</code></pre>
-<div class="sourceCode" id="cb361"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb361-1" data-line-number="1">gwas <span class="op">=</span> pr_db.gwas_catalog.gwas_catalog(nrows<span class="op">=</span><span class="dv">500</span>)</a>
+<div class="sourceCode" id="cb361"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb361-1" data-line-number="1">genes <span class="op">=</span> pr_db.ucsc.genes(<span class="st">&quot;hg38&quot;</span>, head<span class="op">=</span><span class="va">True</span>)</a>
 <a class="sourceLine" id="cb361-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb361-3" data-line-number="3"><span class="bu">print</span>(gwas)</a></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+------------+---------------------------------------------------+-------+
-## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS                                      | +34   |
-## | (category)   | (int32)   | (int32)   | (object)   | (object)                                          | ...   |
-## |--------------+-----------+-----------+------------+---------------------------------------------------+-------|
-## | 1.0          | 10736809  | 10736810  | 1p36.22    | ENSG00000130940                                   | ...   |
-## | 1.0          | 112481358 | 112481359 | 1p13.2     | ENSG00000134245                                   | ...   |
-## | 1.0          | 230713613 | 230713614 | 1q42.2     | ENSG00000135744, ENSG00000244137                  | ...   |
-## | 1.0          | 53502546  | 53502547  | 1p32.3     | nan                                               | ...   |
-## | ...          | ...       | ...       | ...        | ...                                               | ...   |
-## | 22.0         | 30009162  | 30009163  | 22q12.2    | ENSG00000100330, ENSG00000279159, ENSG00000227117 | ...   |
-## | 22.0         | 31602626  | 31602627  | 22q12.2    | ENSG00000198089                                   | ...   |
-## | 22.0         | 19811887  | 19811888  | 22q11.21   | ENSG00000185838                                   | ...   |
-## | 22.0         | 29990369  | 29990370  | 22q12.2    | ENSG00000100330, ENSG00000279159                  | ...   |
-## +--------------+-----------+-----------+------------+---------------------------------------------------+-------+
-## Unstranded PyRanges object has 494 rows and 39 columns from 22 chromosomes.
+<a class="sourceLine" id="cb361-3" data-line-number="3"><span class="bu">print</span>(genes)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
+## | Chromosome   | Start     | End       | Feature      | gene_id      | transcript_id   | Strand       | exon_number   | transcript_name   |
+## | (category)   | (int32)   | (int32)   | (category)   | (category)   | (float64)       | (category)   | (float64)     | (category)        |
+## |--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------|
+## | chr1         | 43933800  | 43937240  | gene         | ARTN         | nan             | +            | nan           | nan               |
+## | chr1         | 7669729   | 7769706   | gene         | CAMTA1       | nan             | +            | nan           | nan               |
+## | chr1         | 145719498 | 145739288 | gene         | CD160        | nan             | +            | nan           | nan               |
+## | chr1         | 11806095  | 11843144  | gene         | CLCN6        | nan             | +            | nan           | nan               |
+## | ...          | ...       | ...       | ...          | ...          | ...             | ...          | ...           | ...               |
+## | chrY         | 2738199   | 2738256   | exon         | CD99         | 289.0           | +            | 7.0           | NM_001321370      |
+## | chrY         | 2738202   | 2738256   | exon         | CD99         | 287.0           | +            | 8.0           | NM_001321368      |
+## | chrY         | 2740778   | 2741309   | exon         | CD99         | 287.0           | +            | 9.0           | NM_001321368      |
+## | chrY         | 2740778   | 2741309   | exon         | CD99         | 289.0           | +            | 8.0           | NM_001321370      |
+## +--------------+-----------+-----------+--------------+--------------+-----------------+--------------+---------------+-------------------+
+## Stranded PyRanges object has 5,884 rows and 9 columns from 55 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb363"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb363-1" data-line-number="1">gwas <span class="op">=</span> pr_db.gwas_catalog.gwas_catalog(nrows<span class="op">=</span><span class="dv">500</span>)</a>
+<a class="sourceLine" id="cb363-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb363-3" data-line-number="3"><span class="bu">print</span>(gwas)</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+----------------------------------+------------------------+--------------+--------------------+-------+
+## | Chromosome   | Start     | End       | REGION     | SNP_GENE_IDS                     | P-VALUE                | OR or BETA   | MAPPED_GENE        | +31   |
+## | (category)   | (int32)   | (int32)   | (object)   | (object)                         | (float64)              | (float64)    | (object)           | ...   |
+## |--------------+-----------+-----------+------------+----------------------------------+------------------------+--------------+--------------------+-------|
+## | 1            | 113834946 | 113834947 | 1p13.2     | ENSG00000134242, ENSG00000231128 | 1.9999999999999995e-80 | 1.98         | PTPN22, AL137856.1 | ...   |
+## | 1            | 113761186 | 113761187 | 1p13.2     | nan                              | 8.000000000000001e-24  | 1.89         | PHTF1 - RSBN1      | ...   |
+## | 1            | 84845509  | 84845510  | 1p22.3     | ENSG00000171517                  | 2e-06                  | 1.2          | LPAR3              | ...   |
+## | 1            | 113834946 | 113834947 | 1p13.2     | ENSG00000134242, ENSG00000231128 | 1e-07                  | 1.8          | PTPN22, AL137856.1 | ...   |
+## | ...          | ...       | ...       | ...        | ...                              | ...                    | ...          | ...                | ...   |
+## | X            | 67722783  | 67722784  | Xq12       | ENSG00000169083                  | 2e-07                  | 0.3          | AR                 | ...   |
+## | 22           | 40256869  | 40256870  | 22q13.1    | ENSG00000100354                  | 2.9999999999999997e-12 | 1.23         | TNRC6B             | ...   |
+## | 22           | 21574352  | 21574353  | 22q11.21   | ENSG00000185651                  | 5e-16                  | 1.1          | UBE2L3             | ...   |
+## | 22           | 39263768  | 39263769  | 22q13.1    | ENSG00000284633                  | 1e-26                  | 1.23         | AL031590.1         | ...   |
+## | 22           | 30196498  | 30196499  | 22q12.2    | ENSG00000225676                  | 7e-12                  | 1.08         | AC002378.1         | ...   |
+## +--------------+-----------+-----------+------------+----------------------------------+------------------------+--------------+--------------------+-------+
+## Unstranded PyRanges object has 501 rows and 39 columns from 23 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome.
-## 34 hidden columns: P-VALUE, OR or BETA, MAPPED_GENE, MAPPED_TRAIT, DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, ... (+ 26 more.)</code></pre>
+## 31 hidden columns: MAPPED_TRAIT, DATE ADDED TO CATALOG, PUBMEDID, FIRST AUTHOR, DATE, JOURNAL, LINK, STUDY, DISEASE/TRAIT, INITIAL SAMPLE SIZE, REPLICATION SAMPLE SIZE, ... (+ 20 more.)</code></pre>
 
 </div>
 
@@ -273,13 +270,11 @@ Ensembl also has the method chromosome_sizes.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -287,11 +282,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -303,10 +299,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

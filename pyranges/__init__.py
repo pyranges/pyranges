@@ -24,6 +24,9 @@ get_example_path = data.get_example_path
 
 read_gff = read_gtf
 
+def from_dict(d):
+    return PyRanges(pd.DataFrame(d))
+
 import pyranges.genomicfeatures.genomicfeatures as gf
 
 random = gf.random

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>14 Intersecting Ranges | PyRanges documentation</title>
   <meta name="description" content="14 Intersecting Ranges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="14 Intersecting Ranges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="applying-custom-methods-to-pairs-of-pyranges.html"/>
-<link rel="next" href="overlapping-ranges.html"/>
+<link rel="prev" href="applying-custom-methods-to-pairs-of-pyranges.html">
+<link rel="next" href="overlapping-ranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -181,10 +178,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>PyRanges objects can be intersected with other PyRanges to find the subset of
 the genome that is contained in both. The regular intersect-method finds the
 intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
-<div class="sourceCode" id="cb177"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb177-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb177-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
-<a class="sourceLine" id="cb177-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
-<a class="sourceLine" id="cb177-4" data-line-number="4"><span class="bu">print</span>(gr.intersect(gr2))</a></code></pre></div>
+<div class="sourceCode" id="cb181"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb181-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb181-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
+<a class="sourceLine" id="cb181-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.aorta2()</a>
+<a class="sourceLine" id="cb181-4" data-line-number="4"><span class="bu">print</span>(gr.intersect(gr2))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -202,7 +199,7 @@ intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" 
 ## Stranded PyRanges object has 49 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>The set_intersect method merges the intervals before finding the intersect: <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<div class="sourceCode" id="cb179"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb179-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2))</a></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb183-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+
 ## | Chromosome   |     Start |       End |
 ## | (category)   |   (int32) |   (int32) |
@@ -212,7 +209,7 @@ intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" 
 ## Unstranded PyRanges object has 1 rows and 3 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome.</code></pre>
 <p>Both methods also take a strandedness option, which can either be <code>&quot;same&quot;</code>, <code>&quot;opposite&quot;</code> or <code>False</code>/<code>None</code></p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb181-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb185"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb185-1" data-line-number="1"><span class="bu">print</span>(gr.set_intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Strand       |
 ## | (category)   |   (int32) |   (int32) | (category)   |
@@ -228,8 +225,8 @@ intersection of all combinations of ranges: <a href="#fn1" class="footnote-ref" 
 option <code>&quot;containment&quot;</code>, <code>&quot;first&quot;</code> or <code>&quot;last&quot;</code>. The former gives you the
 intervals in self be completely within the intervals in other, while first and
 last gives you the first and last overlap, respectively.</p>
-<div class="sourceCode" id="cb183"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb183-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
-<a class="sourceLine" id="cb183-2" data-line-number="2"><span class="bu">print</span>(f1)</a></code></pre></div>
+<div class="sourceCode" id="cb187"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb187-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb187-2" data-line-number="2"><span class="bu">print</span>(f1)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -240,8 +237,8 @@ last gives you the first and last overlap, respectively.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb185"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb185-1" data-line-number="1">f2 <span class="op">=</span> pr.data.f2()</a>
-<a class="sourceLine" id="cb185-2" data-line-number="2"><span class="bu">print</span>(f2)</a></code></pre></div>
+<div class="sourceCode" id="cb189"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb189-1" data-line-number="1">f2 <span class="op">=</span> pr.data.f2()</a>
+<a class="sourceLine" id="cb189-2" data-line-number="2"><span class="bu">print</span>(f2)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -251,8 +248,8 @@ last gives you the first and last overlap, respectively.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb187"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb187-1" data-line-number="1">result <span class="op">=</span> f2.intersect(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>)</a>
-<a class="sourceLine" id="cb187-2" data-line-number="2"><span class="bu">print</span>(result)</a></code></pre></div>
+<div class="sourceCode" id="cb191"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb191-1" data-line-number="1">result <span class="op">=</span> f2.intersect(f1, how<span class="op">=</span><span class="st">&quot;containment&quot;</span>)</a>
+<a class="sourceLine" id="cb191-2" data-line-number="2"><span class="bu">print</span>(result)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -281,13 +278,11 @@ last gives you the first and last overlap, respectively.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -295,11 +290,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -311,10 +307,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

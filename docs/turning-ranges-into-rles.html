@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>25 Turning Ranges into RLEs | PyRanges documentation</title>
   <meta name="description" content="25 Turning Ranges into RLEs | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="25 Turning Ranges into RLEs | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="statistics-rowbased-operations.html"/>
-<link rel="next" href="an-introduction-to-rles.html"/>
+<link rel="prev" href="statistics-rowbased-operations.html">
+<link rel="next" href="an-introduction-to-rles.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -179,9 +176,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="turning-ranges-into-rles" class="section level1">
 <h1><span class="header-section-number">25</span> Turning Ranges into RLEs</h1>
 <p>Ranges can be turned into dicts of run length encodings with the to_rle function:</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb264-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb264-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
-<a class="sourceLine" id="cb264-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
+<div class="sourceCode" id="cb266"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb266-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb266-2" data-line-number="2">gr <span class="op">=</span> pr.data.aorta()</a>
+<a class="sourceLine" id="cb266-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -198,82 +195,82 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb266"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb266-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle())</a></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb268-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle())</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
-## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
-## | Runs   | 9939   | 14   | 71   | 114   | 14   | 71   | 23   | 199   | 99801   | 199   |
-## |--------+--------+------+------+-------+------+------+------+-------+---------+-------|
-## | Values | 0.0    | 1.0  | 2.0  | 3.0   | 2.0  | 1.0  | 0.0  | 1.0   | 0.0     | 1.0   |
-## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
+## +--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------+
+## | Runs   | 9939   | 14   | 71   | 114   | 14   | ...   | 71   | 23   | 199   | 99801   | 199   |
+## |--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------|
+## | Values | 0.0    | 1.0  | 2.0  | 3.0   | 2.0  | ...   | 1.0  | 0.0  | 1.0   | 0.0     | 1.0   |
+## +--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------+
 ## Rle of length 110445 containing 10 elements
 ## 
 ## chr1 -
 ## --
-## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
-## | Runs   | 9916   | 35   | 27   | 23   | 114   |  ...    | 27   | 23   | 41   | 85   | 114   |
-## |--------+--------+------+------+------+-------+---------+------+------+------+------+-------|
-## | Values | 0.0    | 1.0  | 2.0  | 3.0  | 4.0   | ...     | 3.0  | 2.0  | 1.0  | 2.0  | 1.0   |
-## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
+## +--------+--------+------+------+------+-------+-------+------+------+------+------+-------+
+## | Runs   | 9916   | 35   | 27   | 23   | 114   | ...   | 27   | 23   | 41   | 85   | 114   |
+## |--------+--------+------+------+------+-------+-------+------+------+------+------+-------|
+## | Values | 0.0    | 1.0  | 2.0  | 3.0  | 4.0   | ...   | 3.0  | 2.0  | 1.0  | 2.0  | 1.0   |
+## +--------+--------+------+------+------+-------+-------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb268"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb268-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb270-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
-## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
-## | Runs   | 9939   | 14   | 71   | 114   | 14   | 71   | 23   | 199   | 99801   | 199   |
-## |--------+--------+------+------+-------+------+------+------+-------+---------+-------|
-## | Values | 0.0    | 1.0  | 2.0  | 3.0   | 2.0  | 1.0  | 0.0  | 1.0   | 0.0     | 1.0   |
-## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
+## +--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------+
+## | Runs   | 9939   | 14   | 71   | 114   | 14   | ...   | 71   | 23   | 199   | 99801   | 199   |
+## |--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------|
+## | Values | 0.0    | 1.0  | 2.0  | 3.0   | 2.0  | ...   | 1.0  | 0.0  | 1.0   | 0.0     | 1.0   |
+## +--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------+
 ## Rle of length 110445 containing 10 elements
 ## 
 ## chr1 -
 ## --
-## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
-## | Runs   | 9916   | 35   | 27   | 23   | 114   |  ...    | 27   | 23   | 41   | 85   | 114   |
-## |--------+--------+------+------+------+-------+---------+------+------+------+------+-------|
-## | Values | 0.0    | 1.0  | 2.0  | 3.0  | 4.0   | ...     | 3.0  | 2.0  | 1.0  | 2.0  | 1.0   |
-## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
+## +--------+--------+------+------+------+-------+-------+------+------+------+------+-------+
+## | Runs   | 9916   | 35   | 27   | 23   | 114   | ...   | 27   | 23   | 41   | 85   | 114   |
+## |--------+--------+------+------+------+-------+-------+------+------+------+------+-------|
+## | Values | 0.0    | 1.0  | 2.0  | 3.0  | 4.0   | ...   | 3.0  | 2.0  | 1.0  | 2.0  | 1.0   |
+## +--------+--------+------+------+------+-------+-------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
-<div class="sourceCode" id="cb270"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb270-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb272-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(strand<span class="op">=</span><span class="va">True</span>, rpm<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
-## +--------+--------+-------------------+--------------------+-------------------+--------------------+-------------------+------+-------------------+---------+-------------------+
-## | Runs   | 9939   | 14                | 71                 | 114               | 14                 | 71                | 23   | 199               | 99801   | 199               |
-## |--------+--------+-------------------+--------------------+-------------------+--------------------+-------------------+------+-------------------+---------+-------------------|
-## | Values | 0.0    | 90909.09090909091 | 181818.18181818182 | 272727.2727272727 | 181818.18181818182 | 90909.09090909091 | 0.0  | 90909.09090909091 | 0.0     | 90909.09090909091 |
-## +--------+--------+-------------------+--------------------+-------------------+--------------------+-------------------+------+-------------------+---------+-------------------+
+## +--------+--------+-------------------+--------------------+-------------------+-------+------+-------------------+---------+-------------------+
+## | Runs   | 9939   | 14                | 71                 | 114               | ...   | 23   | 199               | 99801   | 199               |
+## |--------+--------+-------------------+--------------------+-------------------+-------+------+-------------------+---------+-------------------|
+## | Values | 0.0    | 90909.09090909091 | 181818.18181818182 | 272727.2727272727 | ...   | 0.0  | 90909.09090909091 | 0.0     | 90909.09090909091 |
+## +--------+--------+-------------------+--------------------+-------------------+-------+------+-------------------+---------+-------------------+
 ## Rle of length 110445 containing 10 elements
 ## 
 ## chr1 -
 ## --
-## +--------+--------+-------------------+--------------------+-------------------+--------------------+---------+-------------------+--------------------+-------------------+--------------------+-------------------+
-## | Runs   | 9916   | 35                | 27                 | 23                | 114                |  ...    | 27                | 23                 | 41                | 85                 | 114               |
-## |--------+--------+-------------------+--------------------+-------------------+--------------------+---------+-------------------+--------------------+-------------------+--------------------+-------------------|
-## | Values | 0.0    | 90909.09090909091 | 181818.18181818182 | 272727.2727272727 | 363636.36363636365 | ...     | 272727.2727272727 | 181818.18181818182 | 90909.09090909091 | 181818.18181818182 | 90909.09090909091 |
-## +--------+--------+-------------------+--------------------+-------------------+--------------------+---------+-------------------+--------------------+-------------------+--------------------+-------------------+
+## +--------+--------+-------------------+--------------------+-------------------+-------+--------------------+-------------------+--------------------+-------------------+
+## | Runs   | 9916   | 35                | 27                 | 23                | ...   | 23                 | 41                | 85                 | 114               |
+## |--------+--------+-------------------+--------------------+-------------------+-------+--------------------+-------------------+--------------------+-------------------|
+## | Values | 0.0    | 90909.09090909091 | 181818.18181818182 | 272727.2727272727 | ...   | 181818.18181818182 | 90909.09090909091 | 181818.18181818182 | 90909.09090909091 |
+## +--------+--------+-------------------+--------------------+-------------------+-------+--------------------+-------------------+--------------------+-------------------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
 <p>To get the RPM-normalized coverage, use the rpm argument.</p>
 <p>You can also create coverage for an any numeric value in your PyRanges:</p>
-<div class="sourceCode" id="cb272"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb272-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(<span class="st">&quot;Score&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb274-1" data-line-number="1"><span class="bu">print</span>(gr.to_rle(<span class="st">&quot;Score&quot;</span>))</a></code></pre></div>
 <pre><code>## chr1 +
 ## --
-## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
-## | Runs   | 9939   | 14   | 71   | 114   | 14   | 71   | 23   | 199   | 99801   | 199   |
-## |--------+--------+------+------+-------+------+------+------+-------+---------+-------|
-## | Values | 0.0    | 7.0  | 12.0 | 13.0  | 6.0  | 1.0  | 0.0  | 4.0   | 0.0     | 1.0   |
-## +--------+--------+------+------+-------+------+------+------+-------+---------+-------+
+## +--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------+
+## | Runs   | 9939   | 14   | 71   | 114   | 14   | ...   | 71   | 23   | 199   | 99801   | 199   |
+## |--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------|
+## | Values | 0.0    | 7.0  | 12.0 | 13.0  | 6.0  | ...   | 1.0  | 0.0  | 4.0   | 0.0     | 1.0   |
+## +--------+--------+------+------+-------+------+-------+------+------+-------+---------+-------+
 ## Rle of length 110445 containing 10 elements
 ## 
 ## chr1 -
 ## --
-## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
-## | Runs   | 9916   | 35   | 27   | 23   | 114   |  ...    | 27   | 23   | 41   | 85   | 114   |
-## |--------+--------+------+------+------+-------+---------+------+------+------+------+-------|
-## | Values | 0.0    | 5.0  | 13.0 | 20.0 | 25.0  | ...     | 13.0 | 6.0  | 1.0  | 7.0  | 6.0   |
-## +--------+--------+------+------+------+-------+---------+------+------+------+------+-------+
+## +--------+--------+------+------+------+-------+-------+------+------+------+------+-------+
+## | Runs   | 9916   | 35   | 27   | 23   | 114   | ...   | 27   | 23   | 41   | 85   | 114   |
+## |--------+--------+------+------+------+-------+-------+------+------+------+------+-------|
+## | Values | 0.0    | 5.0  | 13.0 | 20.0 | 25.0  | ...   | 13.0 | 6.0  | 1.0  | 7.0  | 6.0   |
+## +--------+--------+------+------+------+-------+-------+------+------+------+------+-------+
 ## Rle of length 10440 containing 12 elements
 ## PyRles object with 2 chromosomes/strand pairs.</code></pre>
 
@@ -289,13 +286,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -303,11 +298,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -319,10 +315,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

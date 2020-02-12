@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>3 Writing PyRanges to disk | PyRanges documentation</title>
   <meta name="description" content="3 Writing PyRanges to disk | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="3 Writing PyRanges to disk | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="loadingcreating-pyranges.html"/>
-<link rel="next" href="subsetting-pyranges.html"/>
+<link rel="prev" href="loadingcreating-pyranges.html">
+<link rel="next" href="subsetting-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -183,18 +180,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 (It may potentially be very large.) If a path is given, the return value is the
 object itself. This way the write methods can easily be inserted in method call
 chains.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="co"># import pyranges_db as pr_db</span></a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb34-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">gr.to_gtf(<span class="st">&quot;chipseq.gtf&quot;</span>)</a>
-<a class="sourceLine" id="cb34-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb34-7" data-line-number="7"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gtf())</a></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gff3())</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="co"># import pyranges_db as pr_db</span></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb38-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">gr.to_gtf(<span class="st">&quot;chipseq.gtf&quot;</span>)</a>
+<a class="sourceLine" id="cb38-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb38-7" data-line-number="7"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gtf())</a></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_gff3())</a></code></pre></div>
 <p>The to_csv method takes the arguments header and sep.</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb36-1" data-line-number="1">gr.to_csv(<span class="st">&quot;chipseq.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, header<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb36-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb36-3" data-line-number="3"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_csv(sep<span class="op">=</span><span class="st">&quot;|&quot;</span>, header<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb40-1" data-line-number="1">gr.to_csv(<span class="st">&quot;chipseq.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, header<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb40-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb40-3" data-line-number="3"><span class="bu">print</span>(gr[:<span class="dv">10000</span>].to_csv(sep<span class="op">=</span><span class="st">&quot;|&quot;</span>, header<span class="op">=</span><span class="va">True</span>))</a></code></pre></div>
 <p>All to-methods except <code>to_bigwig</code> takes an argument chain which can be set to
 True if you want the method to return the PyRanges it wrote. It is useful for
 storing the intermediate results of long call chains.</p>
@@ -204,8 +201,8 @@ which is not installed by default. Use <code>conda install -c bioconda pybigwig<
 <code>pip install pybigwig</code> to install it.</p>
 <p>The bigwig writer needs to know the chromosome sizes. You can fetch these using
 the pyranges database functions.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb37-1" data-line-number="1">chromsizes <span class="op">=</span> pr.data.chromsizes() <span class="co"># hg19, can also use pr_db.ucsc.chromosome_sizes(&quot;hg19&quot;)</span></a>
-<a class="sourceLine" id="cb37-2" data-line-number="2">gr.to_bigwig(<span class="st">&quot;chipseq.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb41-1" data-line-number="1">chromsizes <span class="op">=</span> pr.data.chromsizes() <span class="co"># hg19, can also use pr_db.ucsc.chromosome_sizes(&quot;hg19&quot;)</span></a>
+<a class="sourceLine" id="cb41-2" data-line-number="2">gr.to_bigwig(<span class="st">&quot;chipseq.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -224,7 +221,7 @@ the pyranges database functions.</p>
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>To create a bigwig from an arbitrary value column, use the <code>value_col</code> argument.</p>
 <p>If you want to write one bigwig for each strand, you need to do it manually.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb39-1" data-line-number="1">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_plus.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb43-1" data-line-number="1">gr[<span class="st">&quot;+&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_plus.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -241,7 +238,7 @@ the pyranges database functions.</p>
 ## +--------------+-----------+-----------+------------+-----------+--------------+
 ## Stranded PyRanges object has 5,050 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb41-1" data-line-number="1">gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_minus.bw&quot;</span>, chromsizes)</a></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb45-1" data-line-number="1">gr[<span class="st">&quot;-&quot;</span>].to_bigwig(<span class="st">&quot;chipseq_minus.bw&quot;</span>, chromsizes)</a></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
 ## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
 ## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -273,13 +270,11 @@ the pyranges database functions.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -287,11 +282,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -303,10 +299,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>23 Statistics: computing the Matthews correlation coeficcient between ranges | PyRanges documentation</title>
   <meta name="description" content="23 Statistics: computing the Matthews correlation coeficcient between ranges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="23 Statistics: computing the Matthews correlation coeficcient between ranges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="statistics-compute-fisher-exact.html"/>
-<link rel="next" href="statistics-rowbased-operations.html"/>
+<link rel="prev" href="statistics-compute-fisher-exact.html">
+<link rel="next" href="statistics-rowbased-operations.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -184,24 +181,24 @@ well when you want to compare the correlation between two ranges.</p>
 <p>If you want to compute the MCC between two or more ranges, you can use
 <code>pr.stat.mcc</code>. You need to give the chromosome sizes as a pyrange. You can get
 these using pyranges_db.</p>
-<div class="sourceCode" id="cb256"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb256-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
-<a class="sourceLine" id="cb256-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
-<a class="sourceLine" id="cb256-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
-<a class="sourceLine" id="cb256-4" data-line-number="4">chromsizes <span class="op">=</span> pr.data.chromsizes()</a>
-<a class="sourceLine" id="cb256-5" data-line-number="5">mcc <span class="op">=</span> pr.stats.mcc([gr, gr2], labels<span class="op">=</span><span class="st">&quot;chip input&quot;</span>.split(), genome<span class="op">=</span>chromsizes, strand<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb256-6" data-line-number="6"><span class="bu">print</span>(mcc)</a></code></pre></div>
-<pre><code>##        F      FN      FP       MCC Strand      T          TN      TP
-## 0   chip       0       0  1.000000      +   chip  6191262731  125235
-## 1   chip       0       0  1.000000      -   chip  6191265221  122745
-## 2  input  125232  114576  0.000006      +   chip  6191148155       3
-## 4  input  122745  118126 -0.000019      -   chip  6191147095       0
-## 3   chip  114576  125232  0.000006      +  input  6191148155       3
-## 5   chip  118126  122745 -0.000019      -  input  6191147095       0
-## 6  input       0       0  1.000000      +  input  6191273387  114579
-## 7  input       0       0  1.000000      -  input  6191269840  118126</code></pre>
+<div class="sourceCode" id="cb258"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb258-1" data-line-number="1"><span class="im">import</span> pyranges <span class="im">as</span> pr</a>
+<a class="sourceLine" id="cb258-2" data-line-number="2">gr <span class="op">=</span> pr.data.chipseq()</a>
+<a class="sourceLine" id="cb258-3" data-line-number="3">gr2 <span class="op">=</span> pr.data.chipseq_background()</a>
+<a class="sourceLine" id="cb258-4" data-line-number="4">chromsizes <span class="op">=</span> pr.data.chromsizes()</a>
+<a class="sourceLine" id="cb258-5" data-line-number="5">mcc <span class="op">=</span> pr.stats.mcc([gr, gr2], labels<span class="op">=</span><span class="st">&quot;chip input&quot;</span>.split(), genome<span class="op">=</span>chromsizes, strand<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb258-6" data-line-number="6"><span class="bu">print</span>(mcc)</a></code></pre></div>
+<pre><code>##        T      F Strand      TP      FP          TN      FN       MCC
+## 0   chip   chip      +  125235       0  6191262731       0  1.000000
+## 1   chip   chip      -  122745       0  6191265221       0  1.000000
+## 2   chip  input      +       3  114576  6191148155  125232  0.000006
+## 4   chip  input      -       0  118126  6191147095  122745 -0.000019
+## 3  input   chip      +       3  125232  6191148155  114576  0.000006
+## 5  input   chip      -       0  122745  6191147095  118126 -0.000019
+## 6  input  input      +  114579       0  6191273387       0  1.000000
+## 7  input  input      -  118126       0  6191269840       0  1.000000</code></pre>
 <p>If you want to create a symmetric matrix from the result:</p>
-<div class="sourceCode" id="cb258"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb258-1" data-line-number="1"><span class="bu">print</span>(<span class="bu">print</span>(mcc.set_index([<span class="st">&quot;Strand&quot;</span>, <span class="st">&quot;T&quot;</span>, <span class="st">&quot;F&quot;</span>]).MCC.unstack()))</a>
-<a class="sourceLine" id="cb258-2" data-line-number="2"><span class="co"># or just mcc.set_index([&quot;T&quot;, &quot;F&quot;]).MCC.unstack() in the unstranded case</span></a></code></pre></div>
+<div class="sourceCode" id="cb260"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb260-1" data-line-number="1"><span class="bu">print</span>(<span class="bu">print</span>(mcc.set_index([<span class="st">&quot;Strand&quot;</span>, <span class="st">&quot;T&quot;</span>, <span class="st">&quot;F&quot;</span>]).MCC.unstack()))</a>
+<a class="sourceLine" id="cb260-2" data-line-number="2"><span class="co"># or just mcc.set_index([&quot;T&quot;, &quot;F&quot;]).MCC.unstack() in the unstranded case</span></a></code></pre></div>
 <pre><code>## F                 chip     input
 ## Strand T                        
 ## +      chip   1.000000  0.000006
@@ -222,13 +219,11 @@ these using pyranges_db.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -236,11 +231,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -252,10 +248,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },

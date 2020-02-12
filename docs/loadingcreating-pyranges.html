@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>2 Loading/Creating PyRanges | PyRanges documentation</title>
   <meta name="description" content="2 Loading/Creating PyRanges | PyRanges documentation" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="2 Loading/Creating PyRanges | PyRanges documentation" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Endre Bakken Stovner" />
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="writing-pyranges-to-disk.html"/>
+<link rel="prev" href="index.html">
+<link rel="next" href="writing-pyranges-to-disk.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,9 +40,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
 
 
 
@@ -178,11 +175,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="loadingcreating-pyranges" class="section level1">
 <h1><span class="header-section-number">2</span> Loading/Creating PyRanges</h1>
-<p>A PyRanges object can be built in three ways:</p>
+<p>A PyRanges object can be built in four ways:</p>
 <ol style="list-style-type: decimal">
 <li>from a Pandas dataframe</li>
 <li>using the PyRanges constructor with the chromosomes, starts and ends (and optionally strands), individually.</li>
 <li>using one of the custom reader functions for genomic data (<code>read_bed</code>, <code>read_bam</code> or <code>read_gtf</code>, <code>read_gff3</code>)</li>
+<li>from a dict (like the ones produced with <code>to_example</code>)</li>
 </ol>
 <div id="using-a-dataframe" class="section level4 unnumbered">
 <h4>Using a DataFrame</h4>
@@ -276,29 +274,47 @@ optional. Any other columns in the dataframe are treated as metadata.</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb32-1" data-line-number="1">ensembl_path <span class="op">=</span> pr.get_example_path(<span class="st">&quot;ensembl.gtf&quot;</span>)</a>
 <a class="sourceLine" id="cb32-2" data-line-number="2">gr <span class="op">=</span> pr.read_gtf(ensembl_path)</a>
 <a class="sourceLine" id="cb32-3" data-line-number="3"><span class="bu">print</span>(gr)</a></code></pre></div>
-<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
-## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | +20   |
-## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |
-## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------|
-## | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ...   |
-## | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ...   |
-## | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | ...   |
-## | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | ...   |
-## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...   |
-## | 1            | ensembl    | transcript   | 120724    | 133723    | .          | -            | .          | ...   |
-## | 1            | ensembl    | exon         | 133373    | 133723    | .          | -            | .          | ...   |
-## | 1            | ensembl    | exon         | 129054    | 129223    | .          | -            | .          | ...   |
-## | 1            | ensembl    | exon         | 120873    | 120932    | .          | -            | .          | ...   |
-## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
+<pre><code>## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+-------+
+## | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | gene_name   | +17   |
+## | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | ...   |
+## |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+-------|
+## | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | ...   |
+## | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | ...   |
+## | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | ...   |
+## | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | ...   |
+## | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...             | ...            | ...         | ...   |
+## | 1            | ensembl    | transcript   | 120724    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ...   |
+## | 1            | ensembl    | exon         | 133373    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ...   |
+## | 1            | ensembl    | exon         | 129054    | 129223    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ...   |
+## | 1            | ensembl    | exon         | 120873    | 120932    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ...   |
+## +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+-------+
 ## Stranded PyRanges object has 95 rows and 28 columns from 1 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 20 hidden columns: (assigned, ccds_id, exon_id, exon_number, exon_version, gene_biotype, gene_id, gene_name, gene_source, ... (+ 11 more.)</code></pre>
+## 17 hidden columns: gene_source, gene_biotype, transcript_id, transcript_version, transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, exon_number, ... (+ 7 more.)</code></pre>
 <p>To read bam files the optional bamread-library must be installed. Use <code>conda install -c bioconda bamread</code> or <code>pip install bamread</code> to install it.</p>
 <p><code>read_bam</code> takes the arguments <code>sparse</code>, <code>mapq</code>, <code>required_flag</code>, <code>filter_flag</code>,
 which have the default values True, 0, 0 and 1540, respectively. With sparse
 True, only the columns <code>['Chromosome', 'Start', 'End', 'Strand', 'Flag']</code> are
 fetched. Setting sparse to False additionally gives you the columns <code>['QueryStart', 'QueryEnd', 'Name', 'Cigar', 'Quality']</code>, but is more time and memory-consuming.</p>
 <p>All the reader functions also take the flag <code>as_df</code></p>
+</div>
+<div id="using-from_dict" class="section level4">
+<h4><span class="header-section-number">2.0.0.1</span> Using <code>from_dict</code></h4>
+<div class="sourceCode" id="cb34"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb34-1" data-line-number="1">f1 <span class="op">=</span> pr.data.f1()</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">d <span class="op">=</span> f1.to_example(nrows<span class="op">=</span><span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3"><span class="bu">print</span>(d)</a></code></pre></div>
+<pre><code>## {&#39;Chromosome&#39;: [&#39;chr1&#39;, &#39;chr1&#39;, &#39;chr1&#39;], &#39;Start&#39;: [3, 8, 5], &#39;End&#39;: [6, 9, 7], &#39;Name&#39;: [&#39;interval1&#39;, &#39;interval3&#39;, &#39;interval2&#39;], &#39;Score&#39;: [0, 0, 0], &#39;Strand&#39;: [&#39;+&#39;, &#39;+&#39;, &#39;-&#39;]}</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="bu">print</span>(pr.from_dict(d))</a></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         |         3 |         6 | interval1  |         0 | +            |
+## | chr1         |         8 |         9 | interval3  |         0 | +            |
+## | chr1         |         5 |         7 | interval2  |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <p>[^]: PyRanges uses the pysam library which requires that the bam file must have an index.</p>
 
 </div>
@@ -314,13 +330,11 @@ fetched. Setting sparse to False additionally gives you the columns <code>['Quer
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -328,11 +342,12 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
+"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -344,10 +359,6 @@ gitbook.start({
 "text": null
 },
 "history": {
-"link": null,
-"text": null
-},
-"view": {
 "link": null,
 "text": null
 },
