@@ -392,6 +392,7 @@ def test_jaccard(gr, gr2, strandedness):
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     #     print("bedtools", bedtools_jaccard)
     #     print("pyranges", result)
 
@@ -399,11 +400,16 @@ def test_jaccard(gr, gr2, strandedness):
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     # print("bedtools", bedtools_jaccard)
     print("pyranges", result)
 
     # assert abs(result - bedtools_jaccard) < 0.001
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -478,6 +484,10 @@ def test_reldist(gr, gr2):
     assert 1
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+    # assert np.all(bedtools_result.reldist.fillna(0) == result.reldist)
+>>>>>>> Stashed changes
 =======
     # assert np.all(bedtools_result.reldist.fillna(0) == result.reldist)
 >>>>>>> Stashed changes
