@@ -156,6 +156,8 @@ def _init(self,
 
     if isinstance(df, pd.DataFrame):
 
+        df = df.reset_index(drop=True)
+
         stranded = check_strandedness(df)
 
         df = set_dtypes(df, int64)
@@ -208,4 +210,4 @@ def _init(self,
         self.__dict__["dfs"] = empty_removed
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
-    self.__dict__["stats"] = StatisticsMethods(self)
+    self.__di
