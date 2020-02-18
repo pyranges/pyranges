@@ -56,9 +56,6 @@ def create_df_dict(df, stranded):
 
     chrs = df.Chromosome.cat.remove_unused_categories()
 
-    # with Debug(locals()):
-    #     f = df.head(1).head(1)
-
     df["Chromosome"] = chrs
 
     if stranded:
@@ -162,10 +159,6 @@ def _init(self,
 
         df = set_dtypes(df, int64)
 
-        # below is not a good idea! then gr["chr1"] might change the dtypes of a gr!
-        # elif isinstance(df, dict):
-        #     df = {k: set_dtypes(v, extended) for k, v in df.items()}
-
         self.__dict__["dfs"] = create_df_dict(df, stranded)
 
     # df is actually dict of dfs
@@ -210,4 +203,4 @@ def _init(self,
         self.__dict__["dfs"] = empty_removed
 
     self.__dict__["features"] = GenomicFeaturesMethods(self)
-    self.__di
+    self.__dict__["stats"] = StatisticsMethods(self)
