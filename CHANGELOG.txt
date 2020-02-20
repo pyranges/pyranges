@@ -1,5 +1,10 @@
-# 0.0.75 (18.02.20)
+# 0.0.76 (20.02.20)
+-
+
+# 0.0.75 (-)
 - reset index when reading pyranges from df
+- ignore reinit error in ray
+- did not use copy_df in init
 
 # 0.0.74 (12.02.20)
 - support for multiple (repeating) attributes in gtf reading

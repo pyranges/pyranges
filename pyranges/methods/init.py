@@ -146,7 +146,8 @@ def _init(self,
         assert all(
             c in df for c in "Chromosome Start End".split()
         ), "The dataframe does not have all the columns Chromosome, Start and End."
-        df = df.copy()
+        if copy_df:
+            df = df.copy()
 
     if df is False or df is None:
         df = create_pyranges_df(chromosomes, starts, ends, strands)
