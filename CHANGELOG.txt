@@ -1,7 +1,7 @@
 # 0.0.76 (20.02.20)
--
+- fix leftover print in itergrs
 
-# 0.0.75 (-)
+# 0.0.75 (20.02.20)
 - reset index when reading pyranges from df
 - ignore reinit error in ray
 - did not use copy_df in init
