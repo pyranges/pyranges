@@ -190,7 +190,7 @@ def pyrange_apply(function, self, other, **kwargs):
     if nb_cpu > 1:
         import ray
         with suppress_stdout_stderr():
-            ray.init(num_cpus=nb_cpu)
+            ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
 
     function, get, _merge_dfs = get_multithreaded_funcs(
         function, nb_cpu=nb_cpu)
@@ -323,7 +323,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
     if nb_cpu > 1:
         import ray
         with suppress_stdout_stderr():
-            ray.init(num_cpus=nb_cpu)
+            ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
 
     function, get, _merge_dfs = get_multithreaded_funcs(
         function, nb_cpu=nb_cpu)
@@ -481,7 +481,7 @@ def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
     if nb_cpu > 1:
         import ray
         with suppress_stdout_stderr():
-            ray.init(num_cpus=nb_cpu)
+            ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
 
     function, get, _merge_dfs = get_multithreaded_funcs(
         function, nb_cpu=nb_cpu)

@@ -135,4 +135,3 @@ def _write_both(scdf, ocdf, kwargs):
     df = scdf.join(ocdf, rsuffix=suffix)
 
     return df
-

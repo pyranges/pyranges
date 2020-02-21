@@ -56,9 +56,6 @@ def create_df_dict(df, stranded):
 
     chrs = df.Chromosome.cat.remove_unused_categories()
 
-    # with Debug(locals()):
-    #     f = df.head(1).head(1)
-
     df["Chromosome"] = chrs
 
     if stranded:
@@ -149,20 +146,19 @@ def _init(self,
         assert all(
             c in df for c in "Chromosome Start End".split()
         ), "The dataframe does not have all the columns Chromosome, Start and End."
-        df = df.copy()
+        if copy_df:
+            df = df.copy()
 
     if df is False or df is None:
         df = create_pyranges_df(chromosomes, starts, ends, strands)
 
     if isinstance(df, pd.DataFrame):
 
+        df = df.reset_index(drop=True)
+
         stranded = check_strandedness(df)
 
         df = set_dtypes(df, int64)
-
-        # below is not a good idea! then gr["chr1"] might change the dtypes of a gr!
-        # elif isinstance(df, dict):
-        #     df = {k: set_dtypes(v, extended) for k, v in df.items()}
 
         self.__dict__["dfs"] = create_df_dict(df, stranded)
 

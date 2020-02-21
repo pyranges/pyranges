@@ -1,3 +1,11 @@
+# 0.0.76 (20.02.20)
+- fix leftover print in itergrs
+
+# 0.0.75 (20.02.20)
+- reset index when reading pyranges from df
+- ignore reinit error in ray
+- did not use copy_df in init
+
 # 0.0.74 (12.02.20)
 - support for multiple (repeating) attributes in gtf reading
 - fix handling of kwargs in apply, apply_pair, apply_chunks
@@ -8,6 +16,7 @@
 - fix small bug in jaccard
 - remove leftover debug-print in pr.random()
 - add experimental gr.stats.forbes
+- fix handling of kwargs in apply, apply_pair, apply_chunks
 
 # 0.0.72 (03.02.20)
 - random also takes dict as chromsizes argument (like {"chr1": 249, "chr2": 242})
