@@ -34,6 +34,94 @@ def fill_kwargs(kwargs):
 
 class PyRanges():
 
+    """Two-dimensional representation of genomic intervals and their annotations.
+
+    A PyRanges object must have the columns Chromosome, Start and End. These
+    describe the genomic position and function as implicit row labels. A Strand
+    column is optional and adds strand information to the intervals. Any other
+    columns are allowed and are considered metadata.
+
+    Operations between PyRanges align intervals based on their position.
+
+    If a PyRanges is built using the arguments chromosomes, starts, ends and
+    optionally strands, all non-scalars must be of the same length.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame or dict of pandas.DataFrame, default None
+        The data to be stored in the PyRanges.    
+
+    chromosomes : array-like or scalar value, default None
+        The chromosome(s) in the PyRanges.
+
+    starts : array-like, default None
+        The start postions in the PyRanges.
+
+    ends : array-like, default None
+        The end postions in the PyRanges.
+
+    strands : array-like or scalar value, default None
+        The strands in the PyRanges.
+
+    int64 : bool, default False
+        Use np.int64 to represent starts and ends
+
+    copy_df : bool, default True
+        Copy input pandas.DataFrame
+
+    
+    See Also
+    --------
+
+    pyranges.read_bed: read bed-file into PyRanges
+    pyranges.read_bam: read bam-file into PyRanges
+    pyranges.read_gff: read gff-file into PyRanges
+    pyranges.read_gtf: read gtf-file into PyRanges
+    pyranges.from_dict: create PyRanges from dict of columns 
+
+    Notes
+    -----
+
+    A PyRanges object is represented internally as a dictionary. The keys are
+    chromosomes or chromosome/strand tuples and the values are pandas
+    DataFrames.
+
+    Examples
+    --------
+
+    >>> pr.PyRanges()
+    Empty PyRanges
+
+    >>> pr.PyRanges(chromosomes="chr1", starts=(1, 5), ends=[3, 149],
+    ...             strands=("+", "-"), int64=True)
+    +--------------+-----------+-----------+--------------+
+    | Chromosome   |     Start |       End | Strand       |
+    | (category)   |   (int64) |   (int64) | (category)   |
+    |--------------+-----------+-----------+--------------|
+    | chr1         |         1 |         3 | +            |
+    | chr1         |         5 |       149 | -            |
+    +--------------+-----------+-----------+--------------+
+    Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+    >>> df = pd.DataFrame({"Chromosome": ["chr1", "chr2"], "Start": [100, 200],
+    ...                    "End": [150, 201]})
+    >>> df
+    Chromosome  Start  End
+    0       chr1    100  150
+    1       chr2    200  201
+    >>> pr.PyRanges(df)
+    +--------------+-----------+-----------+
+    | Chromosome   |     Start |       End |
+    | (category)   |   (int32) |   (int32) |
+    |--------------+-----------+-----------|
+    | chr1         |       100 |       150 |
+    | chr2         |       200 |       201 |
+    +--------------+-----------+-----------+
+    Unstranded PyRanges object has 2 rows and 3 columns from 2 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome.
+    """
+
     dfs = None
     gf = None
 
@@ -43,7 +131,7 @@ class PyRanges():
                  starts=None,
                  ends=None,
                  strands=None,
-                 int64=None,
+                 int64=False,
                  copy_df=True):
 
         from pyranges.methods.init import _init
@@ -54,10 +142,13 @@ class PyRanges():
         _init(self, df, chromosomes, starts, ends, strands, int64, copy_df)
 
     def __len__(self):
+        """Return the number of intervals in the PyRanges."""
         return sum([len(d) for d in self.values()])
 
     def __call__(self, f, col=None, strand=None, as_pyranges=True):
-        """Apply a function to each chromosome or chromosome/strand pair.
+        """Apply a function to the PyRanges.
+
+
 
         Example:
             # add 5 to the Score column
