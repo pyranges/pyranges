@@ -1,3 +1,5 @@
+"""Test docstring"""
+
 import pandas as pd
 import numpy as np
 
@@ -69,7 +71,6 @@ class PyRanges():
     copy_df : bool, default True
         Copy input pandas.DataFrame
 
-    
     See Also
     --------
 
