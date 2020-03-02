@@ -1,4 +1,4 @@
-"""Test docstring"""
+"""Data structure for genomic intervals and their annotation."""
 
 import pandas as pd
 import numpy as np
@@ -51,7 +51,7 @@ class PyRanges():
     Parameters
     ----------
     df : pandas.DataFrame or dict of pandas.DataFrame, default None
-        The data to be stored in the PyRanges.    
+        The data to be stored in the PyRanges.
 
     chromosomes : array-like or scalar value, default None
         The chromosome(s) in the PyRanges.
@@ -78,14 +78,13 @@ class PyRanges():
     pyranges.read_bam: read bam-file into PyRanges
     pyranges.read_gff: read gff-file into PyRanges
     pyranges.read_gtf: read gtf-file into PyRanges
-    pyranges.from_dict: create PyRanges from dict of columns 
+    pyranges.from_dict: create PyRanges from dict of columns
 
     Notes
     -----
 
-    A PyRanges object is represented internally as a dictionary. The keys are
-    chromosomes or chromosome/strand tuples and the values are pandas
-    DataFrames.
+    A PyRanges object is represented internally as a dictionary for efficiency. The keys are
+    chromosomes or chromosome/strand tuples and the values are pandas DataFrames.
 
     Examples
     --------
@@ -121,6 +120,7 @@ class PyRanges():
     +--------------+-----------+-----------+
     Unstranded PyRanges object has 2 rows and 3 columns from 2 chromosomes.
     For printing, the PyRanges was sorted on Chromosome.
+
     """
 
     dfs = None

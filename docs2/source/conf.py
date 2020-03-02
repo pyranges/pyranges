@@ -30,9 +30,12 @@ author = 'Endre Bakken Stovner'
 extensions = [
     'sphinxcontrib.napoleon',
     "sphinx.ext.autodoc",
+    # "autoapi.extension",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest"
 ]
+
+autoapi_dirs = ["../../pyranges/"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
