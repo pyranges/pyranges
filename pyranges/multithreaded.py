@@ -19,7 +19,7 @@ def get_n_args(f):
 def call_f(f, nparams, df, odf, kwargs):
 
     if nparams == 3:
-        return f.remote(df, odf, kwargs)
+        return f.remote(df, odf, **kwargs)
     else:
         return f.remote(df, odf)
 
@@ -27,7 +27,7 @@ def call_f(f, nparams, df, odf, kwargs):
 def call_f_single(f, nparams, df, kwargs):
 
     if nparams == 2:
-        return f.remote(df, kwargs)
+        return f.remote(df, **kwargs)
     else:
         return f.remote(df)
 

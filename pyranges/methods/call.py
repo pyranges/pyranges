@@ -29,7 +29,7 @@ def _handle_eval_return(self, result, col, as_pyranges, subset):
         return result
 
 
-def _call(self, f, col=None, strand=None, subset=True, as_pyranges=True):
+def _call(self, f, strand=None, as_pyranges=True, **kwargs):
 
     if strand is None:
         strand = self.stranded
@@ -37,8 +37,8 @@ def _call(self, f, col=None, strand=None, subset=True, as_pyranges=True):
     if self.stranded and not strand:
         self = self.unstrand()
 
-    result = self.apply(f, strand=strand, as_pyranges=False)
+    result = self.apply(f, strand=strand, as_pyranges=False, **kwargs)
 
-    result = _handle_eval_return(self, result, col, as_pyranges, subset)
+    # result = _handle_eval_return(self, result, col, as_pyranges, subset)
 
     return result

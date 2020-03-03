@@ -1,5 +1,5 @@
 pyranges documentation
-====================================
+======================
 
 pyranges is an open source, MIT-licensed library for high-performance, easy-to
 use genomics data structures and methods for the Python programming language. It

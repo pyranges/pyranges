@@ -30,7 +30,7 @@ author = 'Endre Bakken Stovner'
 extensions = [
     'sphinxcontrib.napoleon',
     "sphinx.ext.autodoc",
-    # "autoapi.extension",
+    "autoapi.extension",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest"
 ]
@@ -44,6 +44,8 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+
+doctest_global_setup = "import pyranges as pr; import pandas as pd"
 
 
 # -- Options for HTML output -------------------------------------------------

@@ -2,6 +2,7 @@ docs/chipseq.csv
 docs/chipseq.gtf
 docs/test.bed
 
+*.swp
 .snakemake/
 wheelhouse/
 .coverage
