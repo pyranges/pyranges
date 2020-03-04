@@ -85,7 +85,7 @@ class PyRanges():
     Notes
     -----
 
-    A PyRanges object is represented internally as a dictionary for efficiency. The keys are
+    A PyRanges object is represented internally as a dictionary efficiency. The keys are
     chromosomes or chromosome/strand tuples and the values are pandas DataFrames.
 
     Examples
@@ -122,6 +122,20 @@ class PyRanges():
     +--------------+-----------+-----------+
     Unstranded PyRanges object has 2 rows and 3 columns from 2 chromosomes.
     For printing, the PyRanges was sorted on Chromosome.
+
+
+    >>> gr = pr.from_dict({"Chromosome": [1, 1], "Strand": ["+", "-"], "Start": [1, 4], "End": [2, 27],
+    ...                    "TP": [0, 1], "FP": [12, 11], "TN": [10, 9], "FN": [2, 3]})
+    >>> gr
+    +--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------+
+    |   Chromosome | Strand       |     Start |       End |        TP |        FP |        TN |        FN |
+    |   (category) | (category)   |   (int32) |   (int32) |   (int64) |   (int64) |   (int64) |   (int64) |
+    |--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------|
+    |            1 | +            |         1 |         2 |         0 |        12 |        10 |         2 |
+    |            1 | -            |         4 |        27 |         1 |        11 |         9 |         3 |
+    +--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------+
+    Stranded PyRanges object has 2 rows and 8 columns from 1 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
     dfs = None
@@ -798,7 +812,7 @@ class PyRanges():
         See also
         --------
 
-        pyranges.PyRanges.apply: apply a function to a PyRanges
+        pyranges.PyRanges.apply_pair: apply a function to a pair of PyRanges
         pyranges.PyRanges.apply_chunks: apply a row-based function to a PyRanges in parallel
 
         Examples
@@ -857,17 +871,73 @@ class PyRanges():
             return PyRanges(result)
 
 
-    def apply_chunks(self, f, as_pyranges=True, **kwargs):
+    def apply_chunks(self, f, as_pyranges=False, nb_cpu=1, **kwargs):
+
+        """Apply a row-based function to arbitrary partitions of the PyRanges.
+
+        apply_chunks speeds up the application of functions where the result is not affected by
+        applying the function to ordered, non-overlapping splits of the data.
+
+        Parameters
+        ----------
+        f : function
+            Row-based or associative function to apply on the partitions.
+
+        as_pyranges : bool, default False
+
+            Whether to return as a PyRanges or dict. 
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. The data is split into nb_cpu partitions.
+
+        **kwargs
+            Additional keyword arguments to pass as keyword arguments to `f`
+
+        Returns
+        -------
+        dict of lists
+            Result of applying f to each partition of the DataFrames in the PyRanges.
+
+        See also
+        --------
+
+        pyranges.PyRanges.apply_pair: apply a function to a pair of PyRanges
+        pyranges.PyRanges.apply_chunks: apply a row-based function to a PyRanges in parallel
+
+        Note
+        ----
+
+        apply_chunks will only lead to speedups on large datasets or slow-running functions. Using
+        it with nb_cpu=1 is pointless; use apply instead.
+
+        Examples
+        --------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [2, 3, 5], "End": [9, 4, 6]})
+        >>> gr
+        +--------------+-----------+-----------+
+        |   Chromosome |     Start |       End |
+        |   (category) |   (int32) |   (int32) |
+        |--------------+-----------+-----------|
+        |            1 |         2 |         9 |
+        |            1 |         3 |         4 |
+        |            1 |         5 |         6 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.apply_chunks(
+        ... lambda df, **kwargs: list(df.End + kwargs["add"]), nb_cpu=1, add=1000)
+        {'1': [[1009, 1004, 1006]]}
+        """
 
         kwargs.update(kwargs.get("kwargs", {}))
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply_chunks(f, self, as_pyranges, kwargs)
 
-        if not as_pyranges:
-            return result
-        else:
-            return PyRanges(result)
+        return result
 
 
     def apply_pair(self,
