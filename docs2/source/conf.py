@@ -37,6 +37,8 @@ extensions = [
 
 autoapi_dirs = ["../../pyranges/"]
 
+autoapi_ignore = ["*flycheck*"]
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -45,7 +47,14 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-doctest_global_setup = "import pyranges as pr; import pandas as pd; import scipy"
+autodoc_member_order = "alphabetical"
+
+doctest_global_setup = """
+import numpy as np
+np.random.seed(0)
+import pyranges as pr
+import pandas as pd
+"""
 
 
 # -- Options for HTML output -------------------------------------------------

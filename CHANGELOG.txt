@@ -1,3 +1,7 @@
+# 0.0.77 (unreleased)
+- add api-docs
+- make default strandedness of apply-pair equal None
+
 # 0.0.76 (20.02.20)
 - fix leftover print in itergrs
 

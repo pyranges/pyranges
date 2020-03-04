@@ -157,6 +157,8 @@ class PyRanges():
 
         _init(self, df, chromosomes, starts, ends, strands, int64, copy_df)
 
+
+
     def __len__(self):
         """Return the number of intervals in the PyRanges."""
         return sum([len(d) for d in self.values()])
@@ -193,39 +195,278 @@ class PyRanges():
 
         return iter(self.items())
 
-    def __add__(self, o):
 
-        self = self.copy()
+    def apply(self, f, strand=None, as_pyranges=True, **kwargs):
 
-        if isinstance(o, (pd.Series, pd.DataFrame)):
-            assert len(o) == len(self), "Pandas Series or DataFrame must be same length as PyRanges!"
+        """Apply a function to the PyRanges.
 
-            if isinstance(o, pd.Series):
-                if not o.name:
-                    i = 0
-                    while "Unnamed_" + str(i) in self:
-                        i += 1
-                    o.name = "Unnamed_" + str(i)
+        Parameters
+        ----------
+        f : function
+            Function to apply on each DataFrame in a PyRanges
 
-                setattr(self, o.name, o)
+        strand : bool, default None, i.e. auto
 
-            if isinstance(o, pd.DataFrame):
-                for c in o:
-                    setattr(self, c, o[c])
+            Whether to do operations on chromosome/strand pairs or chromosomes. If None, will use
+            chromosome/strand pairs if the PyRanges is stranded.
 
-        elif isinstance(o, dict) and o:
+        as_pyranges : bool, default True
 
-            columns = next(iter(o.values())).columns
+            Whether to return as a PyRanges or dict. If `f` does not return a DataFrame valid for
+            PyRanges, `as_pyranges` must be False.
 
-            ds = []
-            for c in columns:
-                ds.append({k: v[c] for k, v in o.items()})
+        nb_cpu: int, default 1
 
-            for c, d in zip(columns, ds):
-                setattr(self, str(c), d)
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
 
-        return self
+        Returns
+        -------
+        PyRanges or dict
+            Result of applying f to each DataFrame in the PyRanges
 
+        See also
+        --------
+
+        pyranges.PyRanges.apply_pair: apply a function to a pair of PyRanges
+        pyranges.PyRanges.apply_chunks: apply a row-based function to a PyRanges in parallel
+
+        Note
+        ----
+
+        This is the function used internally to carry out almost all unary PyRanges methods.
+
+        Examples
+        --------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 2, 2], "Strand": ["+", "+", "-", "+"],
+        ...                    "Start": [1, 4, 2, 9], "End": [2, 27, 13, 10]})
+        >>> gr
+        +--------------+--------------+-----------+-----------+
+        |   Chromosome | Strand       |     Start |       End |
+        |   (category) | (category)   |   (int32) |   (int32) |
+        |--------------+--------------+-----------+-----------|
+        |            1 | +            |         1 |         2 |
+        |            1 | +            |         4 |        27 |
+        |            2 | +            |         9 |        10 |
+        |            2 | -            |         2 |        13 |
+        +--------------+--------------+-----------+-----------+
+        Stranded PyRanges object has 4 rows and 4 columns from 2 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.apply(lambda df: len(df), as_pyranges=False)
+        {('1', '+'): 2, ('2', '+'): 1, ('2', '-'): 1}
+
+        >>> gr.apply(lambda df: len(df), as_pyranges=False, strand=False)
+        {'1': 2, '2': 2}
+
+        >>> def add_to_ends(df, **kwargs):
+        ...     df.loc[:, "End"] = kwargs["slack"] + df.End
+        ...     return df
+        >>> gr.apply(add_to_ends, slack=500)
+        +--------------+--------------+-----------+-----------+
+        |   Chromosome | Strand       |     Start |       End |
+        |   (category) | (category)   |   (int32) |   (int32) |
+        |--------------+--------------+-----------+-----------|
+        |            1 | +            |         1 |       502 |
+        |            1 | +            |         4 |       527 |
+        |            2 | +            |         9 |       510 |
+        |            2 | -            |         2 |       513 |
+        +--------------+--------------+-----------+-----------+
+        Stranded PyRanges object has 4 rows and 4 columns from 2 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
+
+        if strand is None:
+            strand = self.stranded
+
+        kwargs.update({"strand": strand})
+        kwargs.update(kwargs.get("kwargs", {}))
+        kwargs = fill_kwargs(kwargs)
+
+        result = pyrange_apply_single(f, self, strand, kwargs)
+
+        if not as_pyranges:
+            return result
+        else:
+            return PyRanges(result)
+
+
+    def apply_chunks(self, f, as_pyranges=False, nb_cpu=1, **kwargs):
+
+        """Apply a row-based function to arbitrary partitions of the PyRanges.
+
+        apply_chunks speeds up the application of functions where the result is not affected by
+        applying the function to ordered, non-overlapping splits of the data.
+
+        Parameters
+        ----------
+        f : function
+            Row-based or associative function to apply on the partitions.
+
+        as_pyranges : bool, default False
+
+            Whether to return as a PyRanges or dict. 
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. The data is split into nb_cpu partitions.
+
+        **kwargs
+            Additional keyword arguments to pass as keyword arguments to `f`
+
+        Returns
+        -------
+        dict of lists
+            Result of applying f to each partition of the DataFrames in the PyRanges.
+
+        See also
+        --------
+
+        pyranges.PyRanges.apply_pair: apply a function to a pair of PyRanges
+        pyranges.PyRanges.apply_chunks: apply a row-based function to a PyRanges in parallel
+
+        Note
+        ----
+
+        apply_chunks will only lead to speedups on large datasets or slow-running functions. Using
+        it with nb_cpu=1 is pointless; use apply instead.
+
+        Examples
+        --------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [2, 3, 5], "End": [9, 4, 6]})
+        >>> gr
+        +--------------+-----------+-----------+
+        |   Chromosome |     Start |       End |
+        |   (category) |   (int32) |   (int32) |
+        |--------------+-----------+-----------|
+        |            1 |         2 |         9 |
+        |            1 |         3 |         4 |
+        |            1 |         5 |         6 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.apply_chunks(
+        ... lambda df, **kwargs: list(df.End + kwargs["add"]), nb_cpu=1, add=1000)
+        {'1': [[1009, 1004, 1006]]}
+        """
+
+        kwargs.update(kwargs.get("kwargs", {}))
+        kwargs = fill_kwargs(kwargs)
+
+        result = pyrange_apply_chunks(f, self, as_pyranges, kwargs)
+
+        return result
+
+
+    def apply_pair(self,
+                   other,
+                   f,
+                   strandedness=None,
+                   as_pyranges=True,
+                   **kwargs):
+
+        """Apply a function to a pair of PyRanges.
+
+        The function is applied to each chromosome or chromosome/strand pair found in at least one
+        of the PyRanges.
+
+        Parameters
+        ----------
+        f : function
+            Row-based or associative function to apply on the DataFrames.
+
+        as_pyranges : bool, default False
+
+            Whether to return as a PyRanges or dict. If `f` does not return a DataFrame valid for
+            PyRanges, `as_pyranges` must be False.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        **kwargs
+            Additional keyword arguments to pass as keyword arguments to `f`
+
+        Returns
+        -------
+        dict of lists
+            Result of applying f to each partition of the DataFrames in the PyRanges.
+
+        See also
+        --------
+
+        pyranges.PyRanges.apply_pair: apply a function to a pair of PyRanges
+        pyranges.PyRanges.apply_chunks: apply a row-based function to a PyRanges in parallel
+        pyranges.iter: iterate over two or more PyRanges
+
+        Note
+        ----
+
+        This is the function used internally to carry out almost all comparison functions in
+        PyRanges.
+
+        Examples
+        --------
+
+        >>> gr = pr.data.chipseq()
+        >>> gr2 = pr.data.chipseq_background()
+
+        >>> gr.apply_pair(gr2, pr.methods.intersection._intersection) # same as gr.intersect(gr2)
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 226987603 | 226987617 | U0         |         0 | +            |
+        | chr8         |  38747236 |  38747251 | U0         |         0 | -            |
+        | chr15        |  26105515 |  26105518 | U0         |         0 | +            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1 = pr.data.f1()
+        >>> f1
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         3 |         6 | interval1  |         0 | +            |
+        | chr1         |         8 |         9 | interval3  |         0 | +            |
+        | chr1         |         5 |         7 | interval2  |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f2 = pr.data.f2()
+        >>> f2
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         1 |         2 | a          |         0 | +            |
+        | chr1         |         6 |         7 | b          |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.apply_pair(f2, lambda df, df2: (len(df), len(df2)), as_pyranges=False)
+        {('chr1', '+'): (2, 2), ('chr1', '-'): (1, 2)}
+
+        """
+
+        kwargs.update({"strandedness": strandedness})
+        kwargs.update(kwargs.get("kwargs", {}))
+        kwargs = fill_kwargs(kwargs)
+
+        result = pyrange_apply(f, self, other, **kwargs)
+
+        if not as_pyranges:
+            return result
+        else:
+            return PyRanges(result)
 
     def copy(self):
 
@@ -575,6 +816,99 @@ class PyRanges():
 
         return counts
 
+
+    def insert(self, other, loc=None):
+
+        """Add one or more columns to the PyRanges.
+
+        Parameters
+        ----------
+        other : array, matrix, Series or DataFrame
+            Data to insert into the PyRanges. `other` must have the same length as the PyRanges.
+
+        loc : int, default None, i.e. after last column of PyRanges.
+            Insertion index.
+
+        Returns
+        -------
+        PyRanges
+            A copy of the PyRanges with the column(s) inserted starting at `loc`.
+
+        Note
+        ----
+
+        Column(s) from arrays and matrixes are labeled with a numerical ID.
+
+        Examples
+        --------
+
+        >>> gr = pr.random(4)
+        >>> gr
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr10        |  89739541 |  89739641 | +            |
+        | chr10        |  40294130 |  40294230 | +            |
+        | chr11        |  72039494 |  72039594 | +            |
+        | chr14        |    374564 |    374664 | +            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 4 rows and 4 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> s = pd.Series(data = [1, 3, 3, 7], name="Column")
+        >>> gr.insert(s)
+        +--------------+-----------+-----------+--------------+-----------+
+        | Chromosome   |     Start |       End | Strand       |    Column |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        |--------------+-----------+-----------+--------------+-----------|
+        | chr10        |  89739541 |  89739641 | +            |         1 |
+        | chr10        |  40294130 |  40294230 | +            |         3 |
+        | chr11        |  72039494 |  72039594 | +            |         3 |
+        | chr14        |    374564 |    374664 | +            |         7 |
+        +--------------+-----------+-----------+--------------+-----------+
+        Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        """
+
+        # TODO: need to split dataframes/series/arrays/matrixes and put in dicts
+        #       see attr.py for splitting code
+
+        self = self.copy()
+
+        if isinstance(other, (pd.Series, pd.DataFrame)):
+            assert len(other) == len(self), "Pandas Series or DataFrame must be same length as PyRanges!"
+
+            if isinstance(other, pd.Series):
+                if not other.name:
+                    i = 0
+                    while str(i) in self:
+                        i += 1
+                    other.name = str(i)
+                
+                setattr(self, other.name, other)
+                
+
+            if isinstance(other, pd.DataFrame):
+                for c in other:
+                    setattr(self, c, other[c])
+
+        elif isinstance(other, dict) and other:
+
+            columns = next(iter(other.values())).columns
+
+            ds = []
+            for c in columns:
+                ds.append({k: v[c] for k, v in other.items()})
+
+            for c, d in zip(columns, ds):
+                setattr(self, str(c), d)
+
+        return self
+
+
+
     # def insert(self, other, col, **kwargs):
 
     #     from pyranges.methods.insert import _insert
@@ -781,182 +1115,7 @@ class PyRanges():
 
         return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
-    def apply(self, f, strand=None, as_pyranges=True, **kwargs):
 
-        """Apply a function to the PyRanges.
-
-        Parameters
-        ----------
-        f : function
-            Function to apply on each DataFrame in a PyRanges
-
-        strand : bool, default None, i.e. auto
-
-            Whether to do operations on chromosome/strand pairs or chromosomes. If None, will use
-            chromosome/strand pairs if the PyRanges is stranded.
-
-        as_pyranges : bool, default True
-
-            Whether to return as a PyRanges or dict
-
-        nb_cpu: int, default 1
-
-            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
-            Will only lead to speedups on large datasets.
-
-        Returns
-        -------
-        PyRanges or dict
-            Result of applying f to each DataFrame in the PyRanges
-
-        See also
-        --------
-
-        pyranges.PyRanges.apply_pair: apply a function to a pair of PyRanges
-        pyranges.PyRanges.apply_chunks: apply a row-based function to a PyRanges in parallel
-
-        Examples
-        --------
-
-        >>> gr = pr.from_dict({"Chromosome": [1, 1, 2, 2], "Strand": ["+", "+", "-", "+"],
-        ...                    "Start": [1, 4, 2, 9], "End": [2, 27, 13, 10]})
-        >>> gr
-        +--------------+--------------+-----------+-----------+
-        |   Chromosome | Strand       |     Start |       End |
-        |   (category) | (category)   |   (int32) |   (int32) |
-        |--------------+--------------+-----------+-----------|
-        |            1 | +            |         1 |         2 |
-        |            1 | +            |         4 |        27 |
-        |            2 | +            |         9 |        10 |
-        |            2 | -            |         2 |        13 |
-        +--------------+--------------+-----------+-----------+
-        Stranded PyRanges object has 4 rows and 4 columns from 2 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> gr.apply(lambda df: len(df), as_pyranges=False)
-        {('1', '+'): 2, ('2', '+'): 1, ('2', '-'): 1}
-
-        >>> gr.apply(lambda df: len(df), as_pyranges=False, strand=False)
-        {'1': 2, '2': 2}
-
-        >>> def add_to_ends(df, **kwargs):
-        ...     df.loc[:, "End"] = kwargs["slack"] + df.End
-        ...     return df
-        >>> gr.apply(add_to_ends, slack=500)
-        +--------------+--------------+-----------+-----------+
-        |   Chromosome | Strand       |     Start |       End |
-        |   (category) | (category)   |   (int32) |   (int32) |
-        |--------------+--------------+-----------+-----------|
-        |            1 | +            |         1 |       502 |
-        |            1 | +            |         4 |       527 |
-        |            2 | +            |         9 |       510 |
-        |            2 | -            |         2 |       513 |
-        +--------------+--------------+-----------+-----------+
-        Stranded PyRanges object has 4 rows and 4 columns from 2 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-        """
-
-        if strand is None:
-            strand = self.stranded
-
-        kwargs.update({"strand": strand})
-        kwargs.update(kwargs.get("kwargs", {}))
-        kwargs = fill_kwargs(kwargs)
-
-        result = pyrange_apply_single(f, self, strand, kwargs)
-
-        if not as_pyranges:
-            return result
-        else:
-            return PyRanges(result)
-
-
-    def apply_chunks(self, f, as_pyranges=False, nb_cpu=1, **kwargs):
-
-        """Apply a row-based function to arbitrary partitions of the PyRanges.
-
-        apply_chunks speeds up the application of functions where the result is not affected by
-        applying the function to ordered, non-overlapping splits of the data.
-
-        Parameters
-        ----------
-        f : function
-            Row-based or associative function to apply on the partitions.
-
-        as_pyranges : bool, default False
-
-            Whether to return as a PyRanges or dict. 
-
-        nb_cpu: int, default 1
-
-            How many cpus to use. The data is split into nb_cpu partitions.
-
-        **kwargs
-            Additional keyword arguments to pass as keyword arguments to `f`
-
-        Returns
-        -------
-        dict of lists
-            Result of applying f to each partition of the DataFrames in the PyRanges.
-
-        See also
-        --------
-
-        pyranges.PyRanges.apply_pair: apply a function to a pair of PyRanges
-        pyranges.PyRanges.apply_chunks: apply a row-based function to a PyRanges in parallel
-
-        Note
-        ----
-
-        apply_chunks will only lead to speedups on large datasets or slow-running functions. Using
-        it with nb_cpu=1 is pointless; use apply instead.
-
-        Examples
-        --------
-
-        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [2, 3, 5], "End": [9, 4, 6]})
-        >>> gr
-        +--------------+-----------+-----------+
-        |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
-        |--------------+-----------+-----------|
-        |            1 |         2 |         9 |
-        |            1 |         3 |         4 |
-        |            1 |         5 |         6 |
-        +--------------+-----------+-----------+
-        Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome.
-
-        >>> gr.apply_chunks(
-        ... lambda df, **kwargs: list(df.End + kwargs["add"]), nb_cpu=1, add=1000)
-        {'1': [[1009, 1004, 1006]]}
-        """
-
-        kwargs.update(kwargs.get("kwargs", {}))
-        kwargs = fill_kwargs(kwargs)
-
-        result = pyrange_apply_chunks(f, self, as_pyranges, kwargs)
-
-        return result
-
-
-    def apply_pair(self,
-                   other,
-                   f,
-                   strandedness=False,
-                   as_pyranges=True,
-                   **kwargs):
-
-        kwargs.update({"strandedness": strandedness})
-        kwargs.update(kwargs.get("kwargs", {}))
-        kwargs = fill_kwargs(kwargs)
-
-        result = pyrange_apply(f, self, other, **kwargs)
-
-        if not as_pyranges:
-            return result
-        else:
-            return PyRanges(result)
 
     def slack(self, slack):
 
@@ -969,6 +1128,7 @@ class PyRanges():
             pyrange_apply_single(_slack, self, self.stranded, kwargs))
 
         return prg
+
 
     def five_end(self, slack=0):
 
@@ -985,6 +1145,7 @@ class PyRanges():
             pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
     def sort(self, by=None, **kwargs):
+
         from pyranges.methods.sort import _sort
         kwargs["sparse"] = {"self": False}
         if by:

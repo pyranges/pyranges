@@ -3,7 +3,7 @@ import pandas as pd
 from ncls import NCLS
 
 
-def _intersection(scdf, ocdf, kwargs):
+def _intersection(scdf, ocdf, **kwargs):
 
     how = kwargs["how"]
 
