@@ -1,7 +1,7 @@
 from sorted_nearest import annotate_clusters, cluster_by
 
 
-def _cluster(df, kwargs):
+def _cluster(df, **kwargs):
 
     if df.empty:
         return None
@@ -23,7 +23,7 @@ def _cluster(df, kwargs):
     return cdf
 
 
-def _cluster_by(df, kwargs):
+def _cluster_by(df, **kwargs):
 
     if df.empty:
         return None

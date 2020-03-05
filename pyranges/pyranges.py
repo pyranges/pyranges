@@ -284,7 +284,7 @@ class PyRanges():
         kwargs.update(kwargs.get("kwargs", {}))
         kwargs = fill_kwargs(kwargs)
 
-        result = pyrange_apply_single(f, self, strand, kwargs)
+        result = pyrange_apply_single(f, self, **kwargs)
 
         if not as_pyranges:
             return result
@@ -356,7 +356,7 @@ class PyRanges():
         kwargs.update(kwargs.get("kwargs", {}))
         kwargs = fill_kwargs(kwargs)
 
-        result = pyrange_apply_chunks(f, self, as_pyranges, kwargs)
+        result = pyrange_apply_chunks(f, self, as_pyranges, **kwargs)
 
         return result
 
@@ -468,10 +468,272 @@ class PyRanges():
         else:
             return PyRanges(result)
 
+    def cluster(self, strand=None, by=None, slack=0, count=False, nb_cpu=1):
+
+        """Give overlapping intervals a common id.
+
+        Parameters
+        ----------
+        strand : bool, default None, i.e. auto
+
+            Whether to ignore strand information if PyRanges is stranded.
+
+        by : str or list, default None
+
+            Only intervals with an equal value in column(s) `by` are clustered.
+
+        slack : int, default 0
+
+            Consider intervals separated by less than `slack` to be in the same cluster. If `slack`
+            is negative, intervals overlapping less than `slack` are not considered to be in the
+            same cluster.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        Returns
+        -------
+        PyRanges
+            PyRanges with an ID-column "Cluster" added.
+
+        See also
+        --------
+
+        pyranges.merge: combine overlapping intervals into one
+
+        Examples
+        --------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1, 1], "Start": [1, 2, 3, 9],
+        ...                    "End": [3, 3, 10, 12], "Gene": [1, 2, 3, 3]})
+        >>> gr
+        +--------------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |
+        |   (category) |   (int32) |   (int32) |   (int64) |
+        |--------------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |
+        |            1 |         2 |         3 |         2 |
+        |            1 |         3 |        10 |         3 |
+        |            1 |         9 |        12 |         3 |
+        +--------------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.cluster()
+        +--------------+-----------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |   Cluster |
+        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |
+        |--------------+-----------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |         1 |
+        |            1 |         2 |         3 |         2 |         1 |
+        |            1 |         3 |        10 |         3 |         1 |
+        |            1 |         9 |        12 |         3 |         1 |
+        +--------------+-----------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.cluster(by="Gene", count=True)
+        +--------------+-----------+-----------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |   Cluster |     Count |
+        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |   (int64) |
+        |--------------+-----------+-----------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |         1 |         1 |
+        |            1 |         2 |         3 |         2 |         2 |         1 |
+        |            1 |         3 |        10 |         3 |         3 |         2 |
+        |            1 |         9 |        12 |         3 |         3 |         2 |
+        +--------------+-----------+-----------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        Avoid clustering bookended intervals with slack=-1:
+
+        >>> gr.cluster(slack=-1)
+        +--------------+-----------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |   Cluster |
+        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |
+        |--------------+-----------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |         1 |
+        |            1 |         2 |         3 |         2 |         1 |
+        |            1 |         3 |        10 |         3 |         2 |
+        |            1 |         9 |        12 |         3 |         2 |
+        +--------------+-----------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        if strand is None:
+            strand = self.stranded
+
+        kwargs = {"strand": strand, "slack": slack, "count": count, "by": by}
+        kwargs = fill_kwargs(kwargs)
+
+        _stranded = self.stranded
+        if not strand and _stranded:
+            self.Strand2 = self.Strand
+            self = self.unstrand()
+
+        if not by:
+            from pyranges.methods.cluster import _cluster
+            df = pyrange_apply_single(_cluster, self, **kwargs)
+        else:
+            from pyranges.methods.cluster import _cluster_by
+            kwargs["by"] = by
+            df = pyrange_apply_single(_cluster_by, self, **kwargs)
+
+        gr = PyRanges(df)
+
+        # each cluster got same ids (0 to len). Need to make unique!
+        new_dfs = {}
+        first = True
+        max_id = 0
+        for k, v in gr.items():
+            if first:
+                max_id = v.Cluster.max()
+                new_dfs[k] = v
+                first = False
+                continue
+
+            v.loc[:, "Cluster"] += max_id
+            max_id = v.Cluster.max()
+            new_dfs[k] = v
+
+        if not strand and _stranded:
+            new_dfs = {
+                k: d.rename(columns={"Strand2": "Strand"})
+                for k, d in new_dfs.items()
+            }
+
+        self = PyRanges(new_dfs)
+
+        return self
+
     def copy(self):
+
+        """Make a deep copy of the PyRanges."""
 
         return self.apply(lambda df: df.copy(deep=True))
 
+    def count_overlaps(self, other, strandedness=None, keep_nonoverlapping=True):
+
+        """Count number of intervals overlapping.
+
+        Parameters
+        ----------
+        strandedness : str, default None, i.e. auto
+
+            Whether to perform operation on the same, opposite or no strand.
+
+        by : str or list, default None
+
+            Only intervals with an equal value in column(s) `by` are clustered.
+
+        slack : int, default 0
+
+            Consider intervals separated by less than `slack` to be in the same cluster. If `slack`
+            is negative, intervals overlapping less than `slack` are not considered to be in the
+            same cluster.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        Returns
+        -------
+        PyRanges
+            PyRanges with an ID-column "Cluster" added.
+
+        See also
+        --------
+
+        pyranges.merge: combine overlapping intervals into one
+
+        Examples
+        --------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1, 1], "Start": [1, 2, 3, 9],
+        ...                    "End": [3, 3, 10, 12], "Gene": [1, 2, 3, 3]})
+        >>> gr
+        +--------------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |
+        |   (category) |   (int32) |   (int32) |   (int64) |
+        |--------------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |
+        |            1 |         2 |         3 |         2 |
+        |            1 |         3 |        10 |         3 |
+        |            1 |         9 |        12 |         3 |
+        +--------------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.cluster()
+        +--------------+-----------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |   Cluster |
+        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |
+        |--------------+-----------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |         1 |
+        |            1 |         2 |         3 |         2 |         1 |
+        |            1 |         3 |        10 |         3 |         1 |
+        |            1 |         9 |        12 |         3 |         1 |
+        +--------------+-----------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.cluster(by="Gene", count=True)
+        +--------------+-----------+-----------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |   Cluster |     Count |
+        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |   (int64) |
+        |--------------+-----------+-----------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |         1 |         1 |
+        |            1 |         2 |         3 |         2 |         2 |         1 |
+        |            1 |         3 |        10 |         3 |         3 |         2 |
+        |            1 |         9 |        12 |         3 |         3 |         2 |
+        +--------------+-----------+-----------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        Avoid clustering bookended intervals with slack=-1:
+
+        >>> gr.cluster(slack=-1)
+        +--------------+-----------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |      Gene |   Cluster |
+        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |
+        |--------------+-----------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         1 |         1 |
+        |            1 |         2 |         3 |         2 |         1 |
+        |            1 |         3 |        10 |         3 |         2 |
+        |            1 |         9 |        12 |         3 |         2 |
+        +--------------+-----------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        kwargs = fill_kwargs(kwargs)
+
+        from pyranges.methods.coverage import _number_overlapping
+        counts = pyrange_apply(_number_overlapping, self, other, **kwargs)
+
+        return pr.PyRanges(counts)
+
+    def coverage(self, other, **kwargs):
+
+        kwargs = fill_kwargs(kwargs)
+
+        counts = self.count_overlaps(other, keep_nonoverlapping=True, **kwargs)
+
+        strand = True if kwargs["strandedness"] else False
+        other = other.merge(count=True, strand=strand)
+
+        from pyranges.methods.coverage import _coverage
+
+        # print(counts)
+        counts = pr.PyRanges(pyrange_apply(_coverage, counts, other, **kwargs))
+        # print("counts" * 100)
+        # print(counts)
+
+        return counts
     # def eval(self, eval_cmd, strand=True, as_pyranges=True, **kwargs):
 
     #     f = lambda df: eval(eval_cmd)
@@ -789,32 +1051,6 @@ class PyRanges():
 
         return gr
 
-    def count_overlaps(self, other, **kwargs):
-
-        kwargs = fill_kwargs(kwargs)
-
-        from pyranges.methods.coverage import _number_overlapping
-        counts = pyrange_apply(_number_overlapping, self, other, **kwargs)
-
-        return pr.PyRanges(counts)
-
-    def coverage(self, other, **kwargs):
-
-        kwargs = fill_kwargs(kwargs)
-
-        counts = self.count_overlaps(other, keep_nonoverlapping=True, **kwargs)
-
-        strand = True if kwargs["strandedness"] else False
-        other = other.merge(count=True, strand=strand)
-
-        from pyranges.methods.coverage import _coverage
-
-        # print(counts)
-        counts = pr.PyRanges(pyrange_apply(_coverage, counts, other, **kwargs))
-        # print("counts" * 100)
-        # print(counts)
-
-        return counts
 
 
     def insert(self, other, loc=None):
@@ -823,8 +1059,8 @@ class PyRanges():
 
         Parameters
         ----------
-        other : array, matrix, Series or DataFrame
-            Data to insert into the PyRanges. `other` must have the same length as the PyRanges.
+        other : Series, DataFrame or dict
+            Data to insert into the PyRanges. `other` must have the same number of rows as the PyRanges.
 
         loc : int, default None, i.e. after last column of PyRanges.
             Insertion index.
@@ -837,7 +1073,7 @@ class PyRanges():
         Note
         ----
 
-        Column(s) from arrays and matrixes are labeled with a numerical ID.
+        If a Series, or a dict of Series is used, the Series must have a name.
 
         Examples
         --------
@@ -870,54 +1106,96 @@ class PyRanges():
         Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
+        >>> df = pd.DataFrame({"NY": s, "AN": s})
+        >>> df
+           NY  AN
+        0   1   1
+        1   3   3
+        2   3   3
+        3   7   7
+
+        Note that the original PyRanges was not affected by previously inserting Column:
+
+        >>> gr.insert(df, 3)
+        +--------------+-----------+-----------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End |        NY |        AN | Strand       |
+        | (category)   |   (int32) |   (int32) |   (int64) |   (int64) | (category)   |
+        |--------------+-----------+-----------+-----------+-----------+--------------|
+        | chr10        |  89739541 |  89739641 |         1 |         1 | +            |
+        | chr10        |  40294130 |  40294230 |         3 |         3 | +            |
+        | chr11        |  72039494 |  72039594 |         3 |         3 | +            |
+        | chr14        |    374564 |    374664 |         7 |         7 | +            |
+        +--------------+-----------+-----------+-----------+-----------+--------------+
+        Stranded PyRanges object has 4 rows and 6 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> arbitrary_result = gr.apply(
+        ... lambda df: pd.Series(df.Start + df.End, name="Hi!"), as_pyranges=False)
+        >>> arbitrary_result
+        {('chr10', '+'): 0    179479182
+        1     80588360
+        Name: Hi!, dtype: int32, ('chr11', '+'): 3    144079088
+        Name: Hi!, dtype: int32, ('chr14', '+'): 2    749228
+        Name: Hi!, dtype: int32}
+
+        >>> gr.insert(arbitrary_result)
+        +--------------+-----------+-----------+--------------+-----------+
+        | Chromosome   |     Start |       End | Strand       |       Hi! |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |
+        |--------------+-----------+-----------+--------------+-----------|
+        | chr10        |  89739541 |  89739641 | +            | 179479182 |
+        | chr10        |  40294130 |  40294230 | +            |  80588360 |
+        | chr11        |  72039494 |  72039594 | +            | 144079088 |
+        | chr14        |    374564 |    374664 | +            |    749228 |
+        +--------------+-----------+-----------+--------------+-----------+
+        Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
-        # TODO: need to split dataframes/series/arrays/matrixes and put in dicts
-        #       see attr.py for splitting code
+        if loc is None:
+            loc = len(self.columns)
 
         self = self.copy()
+
+        from pyranges.methods.attr import _setattr
 
         if isinstance(other, (pd.Series, pd.DataFrame)):
             assert len(other) == len(self), "Pandas Series or DataFrame must be same length as PyRanges!"
 
             if isinstance(other, pd.Series):
                 if not other.name:
-                    i = 0
-                    while str(i) in self:
-                        i += 1
-                    other.name = str(i)
-                
-                setattr(self, other.name, other)
-                
+                    raise Exception("Series must have a name!")
+
+                _setattr(self, other.name, other, loc)
 
             if isinstance(other, pd.DataFrame):
                 for c in other:
-                    setattr(self, c, other[c])
+                    _setattr(self, c, other[c], loc)
+                    loc += 1
 
         elif isinstance(other, dict) and other:
 
-            columns = next(iter(other.values())).columns
+            first = next(iter(other.values()))
+            is_dataframe = isinstance(first, pd.DataFrame)
+            if is_dataframe:
+                columns = first.columns
 
-            ds = []
-            for c in columns:
-                ds.append({k: v[c] for k, v in other.items()})
+                ds = []
+                for c in columns:
+                    ds.append({k: v[c] for k, v in other.items()})
 
-            for c, d in zip(columns, ds):
-                setattr(self, str(c), d)
+                for c, d in zip(columns, ds):
+                    _setattr(self, str(c), d, loc)
+                    loc += 1
+            else:
+                if not first.name:
+                    raise Exception("Series must have a name!")
+
+                d = {k: v for k, v in other.items()}
+                _setattr(self, first.name, d, loc)
 
         return self
 
-
-
-    # def insert(self, other, col, **kwargs):
-
-    #     from pyranges.methods.insert import _insert
-
-    #     kwargs["columns"] = col
-    #     kwargs = fill_kwargs(kwargs)
-    #     dfs = pyrange_apply(_insert, self, other, **kwargs)
-
-    #     return PyRanges(dfs)
 
     def split(self, strand=None, **kwargs):
 
@@ -932,58 +1210,6 @@ class PyRanges():
         return pr.PyRanges(df)
 
 
-    def cluster(self, strand=None, by=None, **kwargs):
-
-        if strand is None:
-            strand = self.stranded
-
-        kwargs = fill_kwargs(kwargs)
-
-        kwargs["sparse"] = {"self": False}
-
-        _stranded = self.stranded
-        if not strand and _stranded:
-            # print(" WOOO " * 100)
-            self.Strand2 = self.Strand
-            self = self.unstrand()
-
-        if not by:
-            from pyranges.methods.cluster import _cluster
-            df = pyrange_apply_single(_cluster, self, strand, kwargs)
-        else:
-            from pyranges.methods.cluster import _cluster_by
-            kwargs["by"] = by
-            df = pyrange_apply_single(_cluster_by, self, strand, kwargs)
-
-        gr = PyRanges(df)
-
-        # each cluster got same ids (0 to len). Need to make unique!
-        new_dfs = {}
-        first = True
-        max_id = 0
-        for k, v in gr.items():
-            if first:
-                max_id = v.Cluster.max()
-                new_dfs[k] = v
-                first = False
-                continue
-
-            v.loc[:, "Cluster"] += max_id
-            max_id = v.Cluster.max()
-            new_dfs[k] = v
-
-        if not strand and _stranded:
-            # print(" wooo " * 100)
-            # print(new_dfs)
-            new_dfs = {
-                k: d.rename(columns={"Strand2": "Strand"})
-                for k, d in new_dfs.items()
-            }
-            # print(new_dfs)
-
-        self = PyRanges(new_dfs)
-
-        return self
 
     def new_position(self, new_pos, strand=None, **kwargs):
 

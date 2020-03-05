@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-def _setattr(self, column_name, column):
+def _setattr(self, column_name, column, pos=False):
 
     if not len(self):
         return
@@ -22,7 +22,7 @@ def _setattr(self, column_name, column):
 
     if already_exists:
         pos = list(self.values()[0].columns).index(column_name)
-    else:
+    elif not pos:
         pos = self.values()[0].shape[1]
 
     start_length, end_length = 0, 0

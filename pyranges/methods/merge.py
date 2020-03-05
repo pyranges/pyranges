@@ -3,7 +3,7 @@ import pandas as pd
 from sorted_nearest import find_clusters, merge_by
 
 
-def _merge(df, kwargs):
+def _merge(df, **kwargs):
 
     if df.empty:
         return None
@@ -42,7 +42,7 @@ def _merge(df, kwargs):
     return cluster_df
 
 
-def _merge_by(df, kwargs):
+def _merge_by(df, **kwargs):
 
     if df.empty:
         return None

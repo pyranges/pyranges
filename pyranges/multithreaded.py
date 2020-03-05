@@ -24,7 +24,7 @@ def call_f(f, nparams, df, odf, kwargs):
         return f.remote(df, odf)
 
 
-def call_f_single(f, nparams, df, kwargs):
+def call_f_single(f, nparams, df, **kwargs):
 
     if nparams == 2:
         return f.remote(df, **kwargs)
@@ -315,10 +315,11 @@ def pyrange_apply(function, self, other, **kwargs):
     return results
 
 
-def pyrange_apply_single(function, self, strand, kwargs):
+def pyrange_apply_single(function, self, **kwargs):
 
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
+    strand = kwargs["strand"]
 
     if nb_cpu > 1:
         import ray
@@ -343,7 +344,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["strand"] = _strand
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, kwargs)
+            result = call_f_single(function, nparams, df, **kwargs)
             results.append(result)
 
         keys = self.keys()
@@ -356,7 +357,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["chromosome"] = c
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, kwargs)
+            result = call_f_single(function, nparams, df, **kwargs)
             results.append(result)
             keys.append(c)
 
@@ -377,7 +378,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
                 df = dfs.values()[0]
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, kwargs)
+            result = call_f_single(function, nparams, df, **kwargs)
             results.append(result)
             keys.append(c)
 
@@ -474,7 +475,7 @@ def _slack(df, kwargs):
     return df
 
 
-def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
+def pyrange_apply_chunks(function, self, as_pyranges, **kwargs):
 
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
@@ -493,7 +494,7 @@ def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
         dfs = np.array_split(v, nb_cpu)
         lengths.append(len(dfs))
         results.extend(
-            [call_f_single(function, nparams, df, kwargs) for df in dfs])
+            [call_f_single(function, nparams, df, **kwargs) for df in dfs])
         keys.append(k)
 
     results = get(results)

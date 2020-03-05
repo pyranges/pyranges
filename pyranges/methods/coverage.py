@@ -3,7 +3,7 @@ import pandas as pd
 from ncls import NCLS
 
 
-def _number_overlapping(scdf, ocdf, kwargs):
+def _number_overlapping(scdf, ocdf, **kwargs):
 
     keep_nonoverlapping = kwargs.get("keep_nonoverlapping", True)
 
@@ -12,10 +12,7 @@ def _number_overlapping(scdf, ocdf, kwargs):
     if ocdf.empty:
         if keep_nonoverlapping:
             df = scdf.copy()
-            # print(df)
             df.insert(df.shape[1], "NumberOverlaps", 0)
-            # print("df" * 100)
-            # print(df)
             return df
         else:
             return None
