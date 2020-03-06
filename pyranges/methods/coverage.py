@@ -6,13 +6,14 @@ from ncls import NCLS
 def _number_overlapping(scdf, ocdf, **kwargs):
 
     keep_nonoverlapping = kwargs.get("keep_nonoverlapping", True)
+    column_name = kwargs.get("overlap_col", True)
 
     if scdf.empty:
         return None
     if ocdf.empty:
         if keep_nonoverlapping:
             df = scdf.copy()
-            df.insert(df.shape[1], "NumberOverlaps", 0)
+            df.insert(df.shape[1], column_name, 0)
             return df
         else:
             return None
@@ -41,19 +42,21 @@ def _number_overlapping(scdf, ocdf, **kwargs):
 
     counts_per_read = counts_per_read.set_index("Index")
 
-    df.insert(df.shape[1], "NumberOverlaps", counts_per_read)
+    df.insert(df.shape[1], column_name, counts_per_read)
 
     return df
 
 
 
-def _coverage(scdf, ocdf, kwargs):
+def _coverage(scdf, ocdf, **kwargs):
+
+    fraction_col = kwargs["fraction_col"]
 
     if scdf.empty:
         return None
     if ocdf.empty:
         df = scdf.copy()
-        df.insert(df.shape[1], "FractionOverlaps", 0.0)
+        df.insert(df.shape[1], fraction_col, 0.0)
         return df
 
     oncls = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
@@ -70,6 +73,6 @@ def _coverage(scdf, ocdf, kwargs):
 
     scdf = scdf.copy()
 
-    scdf.insert(scdf.shape[1], "FractionOverlaps", _fractions)
+    scdf.insert(scdf.shape[1], fraction_col, _fractions)
 
     return scdf

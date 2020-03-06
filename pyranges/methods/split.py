@@ -2,6 +2,17 @@ import pandas as pd
 
 def _split(df):
 
+    """Blah blah.
+
+    Example
+    -------
+
+    >>> 5
+    5
+
+    TODO: would be sped up if used numpy instead of pandas for everything?
+    """
+
     dtype = df.Start.dtype
 
     starts = df.Start

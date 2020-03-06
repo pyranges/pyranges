@@ -37,7 +37,7 @@ extensions = [
 
 autoapi_dirs = ["../../pyranges/"]
 
-autoapi_ignore = ["*flycheck*", "*#*", "*pyranges/__init___.py"]
+autoapi_ignore = ["*flycheck*", "*#*", "*pyranges/methods/*py"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -56,6 +56,7 @@ import pyranges as pr
 import pandas as pd
 """
 
+collect_ignore = ["pyranges/__init__.py"]
 
 # -- Options for HTML output -------------------------------------------------
 

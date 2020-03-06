@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+
 try:
     import mkl
     mkl.set_num_threads(1)
@@ -24,8 +25,17 @@ get_example_path = data.get_example_path
 
 read_gff = read_gtf
 
-def from_dict(d):
-    return PyRanges(pd.DataFrame(d))
+def from_dict(d, int64=False):
+
+    return PyRanges(pd.DataFrame(d), int64=int64)
+
+def from_string(s, int64=False):
+
+    from io import StringIO
+    df = pd.read_csv(StringIO(s), sep=r"\s+", index_col=None)
+
+    return PyRanges(df, int64=int64)
+
 
 import pyranges.genomicfeatures.genomicfeatures as gf
 
@@ -38,3 +48,5 @@ from pyranges.methods.multioverlap import count_overlaps#, interval_split
 
 from pyranges import statistics
 stats = statistics
+
+# __all__ = [read_gff3, read_bed, read_bam, read_gtf, concat, iter, count_overlaps]
