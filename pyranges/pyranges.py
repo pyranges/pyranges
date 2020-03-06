@@ -1238,6 +1238,13 @@ class PyRanges():
 
         return df.dtypes
 
+    @property
+    def empty(self):
+
+        """Indicate whether PyRanges is empty."""
+
+        return len(self) == 0
+
 
     def overlap(self, other, **kwargs):
 
@@ -1485,52 +1492,67 @@ class PyRanges():
         return PyRanges(result)
 
 
-    def join(self, other, **kwargs):
+    def head(self, n=8):
 
-        from pyranges.methods.join import _write_both
+        """Return the n first rows.
 
-        slack = kwargs.get("slack")
-        if slack:
-            self.Start__slack = self.Start
-            self.End__slack = self.End
+        Parameters
+        ----------
 
-            self = self.slack(slack)
+        n : int, default 8
 
-        if "suffix" in kwargs:
-            suffixes = "", kwargs["suffix"]
-            kwargs["suffixes"] = suffixes
+            Return n rows.
 
-        kwargs = fill_kwargs(kwargs)
+        Returns
+        -------
+        PyRanges
 
-        if "new_pos" in kwargs:
-            if kwargs["new_pos"] in "intersection union".split():
-                suffixes = kwargs.get("suffixes")
-                assert suffixes is not None, "Must give two non-empty suffixes when using new_pos with intersection or union."
-                assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
-                assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
+            PyRanges with the n first rows.
 
-        how = kwargs.get("how")
+        See Also
+        --------
 
-        if how in ["left", "outer"]:
-            kwargs["example_header_other"] = other.head(1).df
-        if how in ["right", "outer"]:
-            kwargs["example_header_self"] = self.head(1).df
+        PyRanges.tail : return the last rows
+        PyRanges.sample : return random rows
 
+        Examples
+        --------
 
-        dfs = pyrange_apply(_write_both, self, other, **kwargs)
+        >>> gr = pr.data.chipseq()
+        >>> gr
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+        | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+        | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+        | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+        | ...          | ...       | ...       | ...        | ...       | ...          |
+        | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+        | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+        | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+        | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        
+        >>> gr.head(3)
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 212609534 | 212609559 | U0         |         0 | +            |
+        | chr1         | 169887529 | 169887554 | U0         |         0 | +            |
+        | chr1         | 216711011 | 216711036 | U0         |         0 | +            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
 
-        gr = PyRanges(dfs)
-
-        if slack:
-            gr.Start = gr.Start__slack
-            gr.End = gr.End__slack
-            gr = gr.drop(like="(Start|End).*__slack")
-
-        new_position = kwargs.get("new_pos")
-        if new_position:
-            gr = gr.new_position(new_pos=new_position, suffixes=kwargs["suffixes"])
-
-        return gr
+        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter[:n] = True
+        return self[subsetter]
 
 
     def insert(self, other, loc=None):
@@ -1679,9 +1701,9 @@ class PyRanges():
 
     def intersect(self, other, strandedness=None, how=None, nb_cpu=1):
 
-        """Return the interval-segments which overlap.
+        """Return overlapping subintervals.
 
-        Overlaps in self are reported if they overlap with those of other.
+        Returns the segments of the intervals in self which overlap with those in other.
 
         Parameters
         ----------
@@ -1707,18 +1729,15 @@ class PyRanges():
 
         Returns
         -------
-        dict of lists
-            Result of applying f to each partition of the DataFrames in the PyRanges.
+        PyRanges
+
+            A PyRanges with overlapping subintervals.
 
         See also
         --------
 
-        pyranges.PyRanges.set_intersect : find set-intersection between PyRanges 
-        pyranges.PyRanges.overlap : report overlapping intervals
-
-        Note
-        ----
-
+        PyRanges.set_intersect : set-intersect PyRanges 
+        PyRanges.overlap : report overlapping intervals
 
         Examples
         --------
@@ -1783,6 +1802,7 @@ class PyRanges():
         Unstranded PyRanges object has 1 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
         """
+
         kwargs = {"how": how, "strandedness": strandedness, "nb_cpu": nb_cpu}
         kwargs = fill_kwargs(kwargs)
         kwargs["sparse"] = {"self": False, "other": True}
@@ -1807,6 +1827,177 @@ class PyRanges():
         """
 
         return natsorted([(k, df) for (k, df) in self.dfs.items()])
+
+
+    def join(self, other, strandedness=None, how=None, slack=0, suffix="_b", nb_cpu=1):
+
+        """Join PyRanges on genomic location.
+
+        Parameters
+        ----------
+        other : PyRanges
+
+            PyRanges to join.
+
+        strandedness : {None, "same", "opposite", False}, default None, i.e. auto
+
+            Whether to compare PyRanges on the same strand, the opposite or ignore strand
+            information. The default, None, means use "same" if both PyRanges are strande,
+            otherwise ignore the strand information.
+
+        how : {None, "left", "right"}, default None, i.e. "inner"
+
+            How to handle intervals without overlap. None means only keep overlapping intervals.
+            "left" keeps all intervals in self, "right" keeps all intervals in other.
+
+        slack : int, default 0
+
+            Lengthen intervals in self before joining.
+
+        suffix : str, default "_b"
+
+            Suffix to give overlapping columns in other.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        Returns
+        -------
+        PyRanges
+
+            A PyRanges appended with columns of another.
+
+        Notes
+        -----
+
+        The chromosome from other will never be reported as it is always the same as in self.
+
+        As pandas did not have NaN for non-float datatypes until recently, "left" and "right" join
+        give non-overlapping rows the value -1 to avoid promoting columns to object. This will
+        change to NaN in a future version as general NaN becomes stable in pandas.
+
+        See also
+        --------
+
+        PyRanges.new_position : give joined PyRanges new coordinates
+
+        Examples
+        --------
+
+        >>> f1 = pr.from_dict({'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
+        ...                    'End': [6, 9, 7], 'Name': ['interval1', 'interval3', 'interval2']})
+        >>> f1
+        +--------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | Name       |
+        | (category)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        | chr1         |         3 |         6 | interval1  |
+        | chr1         |         8 |         9 | interval3  |
+        | chr1         |         5 |         7 | interval2  |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> f2 = pr.from_dict({'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...                    'End': [2, 7], 'Name': ['a', 'b']})
+        >>> f2
+        +--------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | Name       |
+        | (category)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        | chr1         |         1 |         2 | a          |
+        | chr1         |         6 |         7 | b          |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> f1.join(f2)
+        +--------------+-----------+-----------+------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------+-----------+-----------+------------|
+        | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
+        +--------------+-----------+-----------+------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 1 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> f1.join(f2, how="right")
+        +--------------+-----------+-----------+------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------+-----------+-----------+------------|
+        | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
+        | chr1         |        -1 |        -1 | -1         |         1 |         2 | a          |
+        +--------------+-----------+-----------+------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 2 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        With slack 1, bookended features are joined:
+
+        >>> f1.join(f2, slack=1)
+        +--------------+-----------+-----------+------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------+-----------+-----------+------------|
+        | chr1         |         3 |         6 | interval1  |         6 |         7 | b          |
+        | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
+        +--------------+-----------+-----------+------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 2 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        from pyranges.methods.join import _write_both
+
+        kwargs = {"strandedness": strandedness, "how": how, "suffix": suffix, "nb_cpu": nb_cpu}
+        # slack = kwargs.get("slack")
+        if slack:
+            self.Start__slack = self.Start
+            self.End__slack = self.End
+
+            self = self.slack(slack)
+
+        if "suffix" in kwargs:
+            suffixes = "", kwargs["suffix"]
+            kwargs["suffixes"] = suffixes
+
+        kwargs = fill_kwargs(kwargs)
+
+        if "new_pos" in kwargs:
+            if kwargs["new_pos"] in "intersection union".split():
+                suffixes = kwargs.get("suffixes")
+                assert suffixes is not None, "Must give two non-empty suffixes when using new_pos with intersection or union."
+                assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
+                assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
+
+        how = kwargs.get("how")
+
+        if how in ["left", "outer"]:
+            kwargs["example_header_other"] = other.head(1).df
+        if how in ["right", "outer"]:
+            kwargs["example_header_self"] = self.head(1).df
+
+
+        dfs = pyrange_apply(_write_both, self, other, **kwargs)
+
+        gr = PyRanges(dfs)
+
+        if slack:
+            gr.Start = gr.Start__slack
+            gr.End = gr.End__slack
+            gr = gr.drop(like="(Start|End).*__slack")
+
+        new_position = kwargs.get("new_pos")
+        if new_position:
+            gr = gr.new_position(new_pos=new_position, suffixes=kwargs["suffixes"])
+
+        return gr
+
+    def keys(self):
+        return natsorted(self.dfs.keys())
+
+
 
 
     def split(self, strand=None, **kwargs):
@@ -1940,10 +2131,10 @@ class PyRanges():
         if isinstance(slack, dict):
             assert self.stranded, "PyRanges must be stranded to add 5/3-end specific slack."
 
-        kwargs = fill_kwargs({"slack": slack})
+        kwargs = fill_kwargs({"slack": slack, "strand": self.stranded})
 
         prg = PyRanges(
-            pyrange_apply_single(_slack, self, self.stranded, kwargs))
+            pyrange_apply_single(_slack, self, **kwargs))
 
         return prg
 
@@ -1971,10 +2162,6 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         return PyRanges(
             pyrange_apply_single(_sort, self, self.stranded, kwargs))
-
-
-    def keys(self):
-        return natsorted(self.dfs.keys())
 
 
 
@@ -2033,10 +2220,6 @@ class PyRanges():
                                                                        True))
 
         return pr.PyRanges(gr.dfs)
-
-    @property
-    def empty(self):
-        return len(self) == 0
 
 
     def lengths(self, as_dict=False):
@@ -2118,11 +2301,6 @@ class PyRanges():
 
         return int(self.lengths(as_dict=False).sum())
 
-
-    def head(self, n=8):
-        subsetter = np.zeros(len(self), dtype=np.bool)
-        subsetter[:n] = True
-        return self[subsetter]
 
     def tail(self, n=8):
         subsetter = np.zeros(len(self), dtype=np.bool)

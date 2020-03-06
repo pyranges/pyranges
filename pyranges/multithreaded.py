@@ -441,7 +441,7 @@ def _tes(df, kwargs):
     return tes.reindex(df.index)
 
 
-def _slack(df, kwargs):
+def _slack(df, **kwargs):
 
     df = df.copy()
     dtype = df.Start.dtype
