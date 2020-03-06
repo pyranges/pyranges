@@ -388,6 +388,12 @@ class PyRanges():
         f : function
             Row-based or associative function to apply on the DataFrames.
 
+        strandedness : {None, "same", "opposite", False}, default None, i.e. auto
+
+            Whether to compare PyRanges on the same strand, the opposite or ignore strand
+            information. The default, None, means use "same" if both PyRanges are strande,
+            otherwise ignore the strand information.
+
         as_pyranges : bool, default False
 
             Whether to return as a PyRanges or dict. If `f` does not return a DataFrame valid for
@@ -1434,14 +1440,6 @@ class PyRanges():
         return result
 
 
-    def intersect(self, other, **kwargs):
-
-        kwargs = fill_kwargs(kwargs)
-        kwargs["sparse"] = {"self": False, "other": True}
-
-        dfs = pyrange_apply(_intersection, self, other, **kwargs)
-
-        return PyRanges(dfs)
 
     def set_intersect(self, other, **kwargs):
 
@@ -1486,6 +1484,7 @@ class PyRanges():
 
         return PyRanges(result)
 
+
     def join(self, other, **kwargs):
 
         from pyranges.methods.join import _write_both
@@ -1510,10 +1509,6 @@ class PyRanges():
                 assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
                 assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
 
-        # def get_items_dtypes(s):
-
-        #     columns = s.columns
-        #     dtypes = (s.dfs.values())
         how = kwargs.get("how")
 
         if how in ["left", "outer"]:
@@ -1682,6 +1677,120 @@ class PyRanges():
         return self
 
 
+    def intersect(self, other, strandedness=None, how=None, nb_cpu=1):
+
+        """Return the interval-segments which overlap.
+
+        Overlaps in self are reported if they overlap with those of other.
+
+        Parameters
+        ----------
+        other : PyRanges
+
+            PyRanges to find overlaps with.
+
+        strandedness : {None, "same", "opposite", False}, default None, i.e. auto
+
+            Whether to compare PyRanges on the same strand, the opposite or ignore strand
+            information. The default, None, means use "same" if both PyRanges are strande,
+            otherwise ignore the strand information.
+
+        how : {None, "first", "last", "containment"}, default None, i.e. all
+
+            What intervals to report. By default reports all overlapping intervals. "containment"
+            reports intervals where the overlapping is contained within it.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        Returns
+        -------
+        dict of lists
+            Result of applying f to each partition of the DataFrames in the PyRanges.
+
+        See also
+        --------
+
+        pyranges.PyRanges.set_intersect : find set-intersection between PyRanges 
+        pyranges.PyRanges.overlap : report overlapping intervals
+
+        Note
+        ----
+
+
+        Examples
+        --------
+
+        >>> gr = pr.from_dict({"Chromosome": ["chr1"] * 3, "Start": [1, 4, 10],
+        ...                    "End": [3, 9, 11], "ID": ["a", "b", "c"]})
+        >>> gr
+        +--------------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End | ID         |
+        |   (category) |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        |         chr1 |         1 |         3 | a          |
+        |         chr1 |         4 |         9 | b          |
+        |         chr1 |        10 |        11 | c          |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr2 = pr.from_dict({"Chromosome": ["chr1"] * 3, "Start": [2, 2, 9], "End": [3, 9, 10]})
+        >>> gr2
+        +--------------+-----------+-----------+
+        |   Chromosome |     Start |       End |
+        |   (category) |   (int32) |   (int32) |
+        |--------------+-----------+-----------|
+        |         chr1 |         2 |         3 |
+        |         chr1 |         2 |         9 |
+        |         chr1 |         9 |        10 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.intersect(gr2)
+        +--------------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End | ID         |
+        |   (category) |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        |         chr1 |         2 |         3 | a          |
+        |         chr1 |         2 |         3 | a          |
+        |         chr1 |         4 |         9 | b          |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.intersect(gr2, how="first")
+        +--------------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End | ID         |
+        |   (category) |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        |         chr1 |         2 |         3 | a          |
+        |         chr1 |         4 |         9 | b          |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.intersect(gr2, how="containment")
+        +--------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        | chr1         |         4 |         9 | b          |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 1 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+        kwargs = {"how": how, "strandedness": strandedness, "nb_cpu": nb_cpu}
+        kwargs = fill_kwargs(kwargs)
+        kwargs["sparse"] = {"self": False, "other": True}
+
+        dfs = pyrange_apply(_intersection, self, other, **kwargs)
+
+        return PyRanges(dfs)
+
     def items(self):
 
         """Return the pairs of keys and DataFrames.
@@ -1698,7 +1807,6 @@ class PyRanges():
         """
 
         return natsorted([(k, df) for (k, df) in self.dfs.items()])
-
 
 
     def split(self, strand=None, **kwargs):
