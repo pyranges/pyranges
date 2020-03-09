@@ -82,6 +82,8 @@ def _get_df(self, n, sort):
 
     if len(self) <= n:
         df = self.df.astype(object)
+        if sort:
+            df = df.sort_values(sort_cols)
     else:
         if self.stranded:
             top = _get_stranded_f(self, half_entries, "head", sort)
@@ -276,9 +278,9 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
     ustr = untraditional_strand_info(self, str_repr_width)
 
     order = {(True, True): "Chromosome, Start, End and Strand.",
-             (True, False): "Chromosome, Start, End and Strand.",
-             (False, False): "Chromosome.",
-             (False, True): "Chromosome and Strand."}[sort, self.stranded]
+            (True, False): "Chromosome, Start, End and Strand.",
+            (False, False): "Chromosome.",
+            (False, True): "Chromosome and Strand."}[sort, self.stranded]
 
     order = "For printing, the PyRanges was sorted on " + order
 
