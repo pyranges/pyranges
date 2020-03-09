@@ -399,13 +399,15 @@ def _lengths(df):
     return lengths
 
 
-def _tss(df, kwargs):
+def _tss(df, **kwargs):
 
-    slack = kwargs["slack"]
+    df = df.copy(deep=True)
+
+    slack = kwargs.get("slack", 0)
 
     tss_pos = df.loc[df.Strand == "+"]
 
-    tss_neg = df.loc[df.Strand == "-"].copy()
+    tss_neg = df.loc[df.Strand == "-"]
 
     # pd.options.mode.chained_assignment = None
     tss_neg.loc[:, "Start"] = tss_neg.End

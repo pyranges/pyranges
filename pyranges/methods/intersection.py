@@ -59,7 +59,7 @@ def _intersection(scdf, ocdf, **kwargs):
         return None
 
 
-def _overlap(scdf, ocdf, kwargs):
+def _overlap(scdf, ocdf, **kwargs):
 
     invert = kwargs["invert"]
     return_indexes = kwargs.get("return_indexes", False)
@@ -79,7 +79,7 @@ def _overlap(scdf, ocdf, kwargs):
     if not how:
         _indexes = it.all_overlaps_self(starts, ends, indexes)
     elif how == "containment":
-        _indexes = it.has_containment(starts, ends, indexes)
+        _indexes, _ = it.all_containments_both(starts, ends, indexes)
     else:
         _indexes = it.has_overlaps(starts, ends, indexes)
 
