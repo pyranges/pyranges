@@ -6,7 +6,7 @@ import pandas as pd
 def count_overlaps(grs, features=None, how=None, nb_cpu=1, strandedness=None):
 
     if features is None:
-        features = pr.concat(grs.values()).split()
+        features = pr.concat(grs.values()).split(between=True)
 
     from pyranges.methods.intersection import _count_overlaps
 

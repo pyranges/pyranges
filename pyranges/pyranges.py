@@ -2184,7 +2184,7 @@ class PyRanges():
 
             return pd.concat(_lengths).reset_index(drop=True)
 
-    def overlap(self, other, how="first", invert=False):
+    def overlap(self, other, strandedness=None, how="first", invert=False):
 
         """Return overlapping intervals.
 
@@ -2299,6 +2299,138 @@ class PyRanges():
 
     def print(self, n=8, merge_position=False, sort=False, formatting=None, chain=False):
 
+        """Print the PyRanges.
+
+        Parameters
+        ----------
+
+        n : int, default 8
+
+            The number of rows to print.
+
+        merge_postion : bool, default False
+
+            Print location in same column to save screen space.
+
+        sort : bool, default False
+
+            Sort the PyRanges before printing. Will print strands interleaved.
+
+        formatting : dict, default None
+
+            Formatting options per column.
+
+        chain : False
+
+            Return the PyRanges. Useful to print intermediate results in call chains.
+
+        See Also
+        --------
+
+        PyRanges.pc : print chain
+        PyRanges.sp : sort print
+        PyRanges.mp : merge print
+        PyRanges.spc : sort print chain
+        PyRanges.mpc : merge print chain
+        PyRanges.msp : merge sort print
+        PyRanges.mspc : merge sort print chain
+        PyRanges.rp : raw print dictionary of DataFrames
+
+        Examples
+        --------
+
+        >>> d = {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5000],
+        ...      'End': [6, 9, 7000], 'Name': ['i1', 'i3', 'i2'],
+        ...      'Score': [1.1, 2.3987, 5.9999995], 'Strand': ['+', '+', '-']}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+------------+-------------+--------------+
+        | Chromosome   |     Start |       End | Name       |       Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (float64) | (category)   |
+        |--------------+-----------+-----------+------------+-------------+--------------|
+        | chr1         |         3 |         6 | i1         |      1.1    | +            |
+        | chr1         |         8 |         9 | i3         |      2.3987 | +            |
+        | chr1         |      5000 |      7000 | i2         |      6      | -            |
+        +--------------+-----------+-----------+------------+-------------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.print(formatting={"Start": "{:,}", "Score": "{:.2f}"})
+        +--------------+-----------+-----------+------------+-------------+--------------+
+        | Chromosome   |     Start |       End | Name       |       Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (float64) | (category)   |
+        |--------------+-----------+-----------+------------+-------------+--------------|
+        | chr1         |         3 |         6 | i1         |         1.1 | +            |
+        | chr1         |         8 |         9 | i3         |         2.4 | +            |
+        | chr1         |     5,000 |      7000 | i2         |         6   | -            |
+        +--------------+-----------+-----------+------------+-------------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        
+        >>> gr.print(merge_position=True) # gr.mp()
+        +--------------------+------------+-------------+
+        | - Position -       | Name       |       Score |
+        | (Multiple types)   | (object)   |   (float64) |
+        |--------------------+------------+-------------|
+        | chr1 3-6 +         | i1         |      1.1    |
+        | chr1 8-9 +         | i3         |      2.3987 |
+        | chr1 5000-7000 -   | i2         |      6      |
+        +--------------------+------------+-------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> chipseq = pr.data.chipseq()
+        >>> chipseq
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+        | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+        | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+        | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+        | ...          | ...       | ...       | ...        | ...       | ...          |
+        | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+        | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+        | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+        | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        To interleave strands in output, use print with `sort=True`:
+        
+        >>> chipseq.print(sort=True, n=20) # chipseq.sp()
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 1325303   | 1325328   | U0         | 0         | -            |
+        | chr1         | 1541598   | 1541623   | U0         | 0         | +            |
+        | chr1         | 1599121   | 1599146   | U0         | 0         | +            |
+        | chr1         | 1820285   | 1820310   | U0         | 0         | -            |
+        | chr1         | 2448322   | 2448347   | U0         | 0         | -            |
+        | chr1         | 3046141   | 3046166   | U0         | 0         | -            |
+        | chr1         | 3437168   | 3437193   | U0         | 0         | -            |
+        | chr1         | 3504032   | 3504057   | U0         | 0         | +            |
+        | chr1         | 3637087   | 3637112   | U0         | 0         | -            |
+        | chr1         | 3681903   | 3681928   | U0         | 0         | -            |
+        | ...          | ...       | ...       | ...        | ...       | ...          |
+        | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+        | chrY         | 15548022  | 15548047  | U0         | 0         | +            |
+        | chrY         | 16045242  | 16045267  | U0         | 0         | -            |
+        | chrY         | 16495497  | 16495522  | U0         | 0         | -            |
+        | chrY         | 21559181  | 21559206  | U0         | 0         | +            |
+        | chrY         | 21707662  | 21707687  | U0         | 0         | -            |
+        | chrY         | 21751211  | 21751236  | U0         | 0         | -            |
+        | chrY         | 21910706  | 21910731  | U0         | 0         | -            |
+        | chrY         | 22054002  | 22054027  | U0         | 0         | -            |
+        | chrY         | 22210637  | 22210662  | U0         | 0         | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome, Start, End and Strand.
+        """
+
         s = tostring(
             self,
             n=n,
@@ -2311,17 +2443,102 @@ class PyRanges():
         if chain:
             return self
 
-    def split(self, strand=None, **kwargs):
+    def split(self, strand=None, between=False):
+
+        """Split into non-overlapping intervals.
+
+        Parameters
+        ----------
+        strand : bool, default None, i.e. auto
+
+            Whether to ignore strand information if PyRanges is stranded.
+
+        between : bool, default False
+
+            Include lengths between intervals.
+
+        Returns
+        -------
+        PyRanges
+
+            PyRanges with intervals split at overlap points.
+
+        See Also
+        --------
+
+        pyranges.multioverlap : find overlaps with multiple PyRanges
+
+        Examples
+        --------
+
+        >>> gr = pr.data.f1()
+        >>> gr
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         3 |         6 | interval1  |         0 | +            |
+        | chr1         |         8 |         9 | interval3  |         0 | +            |
+        | chr1         |         5 |         7 | interval2  |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.split(between=True)
+        +--------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | Strand     |
+        | (object)     |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        | chr1         |         3 |         6 | +          |
+        | chr1         |         6 |         8 | +          |
+        | chr1         |         8 |         9 | +          |
+        | chr1         |         5 |         7 | -          |
+        +--------------+-----------+-----------+------------+
+        Stranded PyRanges object has 4 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.split(strand=False)
+        +--------------+-----------+-----------+
+        | Chromosome   |     Start |       End |
+        | (object)     |   (int32) |   (int32) |
+        |--------------+-----------+-----------|
+        | chr1         |         3 |         5 |
+        | chr1         |         5 |         6 |
+        | chr1         |         6 |         7 |
+        | chr1         |         8 |         9 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 4 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.split(strand=False, between=True)
+        +--------------+-----------+-----------+
+        | Chromosome   |     Start |       End |
+        | (object)     |   (int32) |   (int32) |
+        |--------------+-----------+-----------|
+        | chr1         |         3 |         5 |
+        | chr1         |         5 |         6 |
+        | chr1         |         6 |         7 |
+        | chr1         |         7 |         8 |
+        | chr1         |         8 |         9 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 5 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
 
         if strand is None:
             strand = self.stranded
 
-        kwargs = fill_kwargs(kwargs)
+        kwargs = fill_kwargs({"strand": strand})
 
         from pyranges.methods.split import _split
-        df = pyrange_apply_single(_split, self, strand, kwargs)
+        df = pyrange_apply_single(_split, self, **kwargs)
 
-        return pr.PyRanges(df)
+        split = pr.PyRanges(df)
+        if not between:
+            strandedness = "same" if strand else False
+            split = split.overlap(self, strandedness=strandedness)
+
+        return split
 
 
 
