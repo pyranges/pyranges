@@ -206,7 +206,7 @@ class PyRanges():
         return iter(self.items())
 
 
-    def apply(self, f, strand=None, as_pyranges=True, **kwargs):
+    def apply(self, f, strand=None, as_pyranges=True, nb_cpu=1, **kwargs):
 
         """Apply a function to the PyRanges.
 
@@ -229,6 +229,9 @@ class PyRanges():
 
             How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
             Will only lead to speedups on large datasets.
+
+        **kwargs
+            Additional keyword arguments to pass as keyword arguments to `f`
 
         Returns
         -------
@@ -2288,7 +2291,7 @@ class PyRanges():
         For printing, the PyRanges was sorted on Chromosome.
         """
 
-        kwargs = {}
+        kwargs = {"strandedness": strandedness}
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs["how"] = how
         kwargs = fill_kwargs(kwargs)
@@ -2536,15 +2539,99 @@ class PyRanges():
         """
 
         from pyranges.methods.sort import _sort
-        kwargs = {}
+        kwargs = {"strand": self.stranded}
         kwargs["sparse"] = {"self": False}
         if by:
             kwargs["by"] = by
         kwargs = fill_kwargs(kwargs)
         return PyRanges(
-            pyrange_apply_single(_sort, self, self.stranded, kwargs))
+            pyrange_apply_single(_sort, self, **kwargs))
 
-    def split(self, strand=None, between=False):
+
+    def slack(self, slack):
+
+        """Extend the intervals from the ends.
+
+
+        Parameters
+        ----------
+
+        slack : int or dict of ints with "3" and/or "5" as keys.
+
+            The number of nucleotides to extend the ends with.
+
+        Examples
+        --------
+
+        >>> d = {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5], 'End': [6, 9, 7],
+        ...      'Strand': ['+', '+', '-']}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         3 |         6 | +            |
+        | chr1         |         8 |         9 | +            |
+        | chr1         |         5 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.slack(4)
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         0 |        10 | +            |
+        | chr1         |         4 |        13 | +            |
+        | chr1         |         1 |        11 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.slack({"3": 1})
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         3 |         7 | +            |
+        | chr1         |         8 |        10 | +            |
+        | chr1         |         4 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.slack({"3": 1, "5": 2})
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         7 | +            |
+        | chr1         |         6 |        10 | +            |
+        | chr1         |         4 |         9 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.slack(-1)
+        Traceback (most recent call last):
+        ...
+        AssertionError: Some intervals are negative or zero length after applying slack!
+        """
+
+        if isinstance(slack, dict):
+            assert self.stranded, "PyRanges must be stranded to add 5/3-end specific slack."
+
+        kwargs = fill_kwargs({"slack": slack, "strand": self.stranded})
+
+        prg = PyRanges(
+            pyrange_apply_single(_slack, self, **kwargs))
+
+        return prg
+
+
+    def split(self, strand=None, between=False, nb_cpu=1):
 
         """Split into non-overlapping intervals.
 
@@ -2557,6 +2644,11 @@ class PyRanges():
         between : bool, default False
 
             Include lengths between intervals.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
 
         Returns
         -------
@@ -2583,6 +2675,18 @@ class PyRanges():
         | chr1         |         5 |         7 | interval2  |         0 | -            |
         +--------------+-----------+-----------+------------+-----------+--------------+
         Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.split()
+        +--------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | Strand     |
+        | (object)     |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        | chr1         |         3 |         6 | +          |
+        | chr1         |         8 |         9 | +          |
+        | chr1         |         5 |         7 | -          |
+        +--------------+-----------+-----------+------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
         >>> gr.split(between=True)
@@ -2642,6 +2746,145 @@ class PyRanges():
         return split
 
 
+    def subset(self, f, strand=None, **kwargs):
+
+        """Return a subset of the rows.
+
+        Parameters
+        ----------
+        f : function
+            Function which returns boolean Series equal to length of df.
+
+        strand : bool, default None, i.e. auto
+
+            Whether to do operations on chromosome/strand pairs or chromosomes. If None, will use
+            chromosome/strand pairs if the PyRanges is stranded.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        **kwargs
+            Additional keyword arguments to pass as keyword arguments to `f`
+
+        Notes
+        -----
+
+        PyRanges can also be subsetted directly with a boolean Series. This function is slightly
+        faster, but more cumbersome.
+
+        Examples
+        --------
+
+        >>> gr = pr.data.f1()
+        >>> gr
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         3 |         6 | interval1  |         0 | +            |
+        | chr1         |         8 |         9 | interval3  |         0 | +            |
+        | chr1         |         5 |         7 | interval2  |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.subset(lambda df: df.Start > 4)
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         8 |         9 | interval3  |         0 | +            |
+        | chr1         |         5 |         7 | interval2  |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        Also possible:
+
+        >>> gr[gr.Start > 4]
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         8 |         9 | interval3  |         0 | +            |
+        | chr1         |         5 |         7 | interval2  |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
+
+        kwargs = fill_kwargs(kwargs)
+
+        if strand is None:
+            strand = self.stranded
+
+        if self.stranded and not strand:
+            self = self.unstrand()
+
+
+        kwargs.update({"strand": strand})
+
+        result = pyrange_apply_single(f, self, **kwargs)
+
+        if not result:
+            return pr.PyRanges()
+
+        first_result = next(iter(result.values()))
+
+        assert first_result.dtype == bool, "result of subset function must be bool, but is {}".format(
+            first_result.dtype)
+
+        return self[result]
+
+    def summary(self):
+
+        """Return info.
+
+        Count refers to the number of intervals, the rest to the lengths.
+
+        Examples
+        --------
+
+        >>> gr = pr.data.ensembl_gtf()
+        >>> gr
+        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
+        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
+        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
+        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
+        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
+        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
+        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
+        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
+        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
+        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |
+        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
+        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
+
+        >>> gr.summary()
+        +-------+-----------+---------------------+-----------------------+
+        |       |   pyrange |   coverage_stranded |   coverage_unstranded |
+        |-------+-----------+---------------------+-----------------------|
+        | count |   2446    |               62    |                  32   |
+        | mean  |   2291.92 |            15598    |               27704.2 |
+        | std   |  11906.9  |            38307.8  |               67026.9 |
+        | min   |      1    |               83    |                  83   |
+        | 25%   |     90    |             1079.25 |                1155   |
+        | 50%   |    138    |             3076    |                6343   |
+        | 75%   |    382.25 |            10058.2  |               20650.8 |
+        | max   | 241726    |           241726    |              291164   |
+        +-------+-----------+---------------------+-----------------------+
+        """
+
+        from pyranges.methods.summary import _summary
+
+        return _summary(self)
 
     def new_position(self, new_pos, strand=None, **kwargs):
 
@@ -2707,27 +2950,6 @@ class PyRanges():
 
         return PyRanges(df)
 
-    def subset(self, function, strand=None, **kwargs):
-
-        kwargs = fill_kwargs(kwargs)
-
-        if strand is None:
-            strand = self.stranded
-
-        if self.stranded and not strand:
-            self = self.unstrand()
-
-        result = pyrange_apply_single(function, self, strand, kwargs)
-
-        if not result:
-            return pr.PyRanges()
-
-        first_result = next(iter(result.values()))
-
-        assert first_result.dtype == bool, "result of subset function must be bool, but is {}".format(
-            first_result.dtype)
-
-        return self[result]
 
     def to_example(self, nrows=10):
 
@@ -2754,27 +2976,6 @@ class PyRanges():
         return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
 
-
-    def slack(self, slack):
-
-
-        # Parameters
-        # ----------
-
-        # slack : int or dict of ints with "3" and/or "5" as keys.
-
-        #     The number of nucleotides to extend the five end with.
-
-
-        if isinstance(slack, dict):
-            assert self.stranded, "PyRanges must be stranded to add 5/3-end specific slack."
-
-        kwargs = fill_kwargs({"slack": slack, "strand": self.stranded})
-
-        prg = PyRanges(
-            pyrange_apply_single(_slack, self, **kwargs))
-
-        return prg
 
 
 
@@ -2828,11 +3029,6 @@ class PyRanges():
 
 
 
-    def summary(self):
-
-        from pyranges.methods.summary import _summary
-
-        return _summary(self)
 
     def to_csv(self, path=None, sep=",", header=True, compression="infer", chain=False):
         from pyranges.out import _to_csv

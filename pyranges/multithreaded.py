@@ -453,7 +453,7 @@ def _slack(df, **kwargs):
         slack,
         (int, dict)), "Slack parameter must be integer or dict, is {}".format(
             type(slack))
-    # df = self.df.copy()
+
     if isinstance(slack, int):
         df.loc[:, "Start"] = df.Start - slack
         df.loc[df.Start < 0, "Start"] = 0
@@ -473,6 +473,8 @@ def _slack(df, **kwargs):
             df.loc[df.Strand == "+", "End"] += three_end_slack
 
     df = df.astype({"Start": dtype, "End": dtype})
+
+    assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying slack!"
 
     return df
 
