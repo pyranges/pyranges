@@ -2187,6 +2187,122 @@ class PyRanges():
 
             return pd.concat(_lengths).reset_index(drop=True)
 
+    def merge(self, strand=None, count=False, by=None):
+
+        """Merge overlapping intervals into one.
+
+        Parameters
+        ----------
+        strand : bool, default None, i.e. auto
+
+            Only merge intervals on same strand.
+
+        count : bool, default False
+
+            Count intervals in each superinterval.
+
+        by : str or list of str, default None
+
+            Only merge intervals with equal values in these columns.
+
+        Returns
+        -------
+        PyRanges
+
+            PyRanges with superintervals.
+
+        Notes
+        -----
+
+        To avoid losing metadata, use cluster instead. If you want to perform a reduction function
+        on the metadata, use pandas groupby.
+
+        See Also
+        --------
+
+        PyRanges.cluster : annotate overlapping intervals with common ID
+
+        Examples
+        --------
+
+        >>> gr = pr.data.ensembl_gtf()[["Feature", "gene_name"]]
+        >>> gr
+        +--------------+--------------+-----------+-----------+--------------+-------------+
+        | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
+        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |
+        |--------------+--------------+-----------+-----------+--------------+-------------|
+        | 1            | gene         | 11868     | 14409     | +            | DDX11L1     |
+        | 1            | transcript   | 11868     | 14409     | +            | DDX11L1     |
+        | 1            | exon         | 11868     | 12227     | +            | DDX11L1     |
+        | 1            | exon         | 12612     | 12721     | +            | DDX11L1     |
+        | ...          | ...          | ...       | ...       | ...          | ...         |
+        | 1            | gene         | 1173055   | 1179555   | -            | TTLL10-AS1  |
+        | 1            | transcript   | 1173055   | 1179555   | -            | TTLL10-AS1  |
+        | 1            | exon         | 1179364   | 1179555   | -            | TTLL10-AS1  |
+        | 1            | exon         | 1173055   | 1176396   | -            | TTLL10-AS1  |
+        +--------------+--------------+-----------+-----------+--------------+-------------+
+        Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.merge()
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   | Start     | End       | Strand       |
+        | (category)   | (int32)   | (int32)   | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | 1            | 11868     | 14409     | +            |
+        | 1            | 29553     | 31109     | +            |
+        | 1            | 52472     | 53312     | +            |
+        | 1            | 57597     | 64116     | +            |
+        | ...          | ...       | ...       | ...          |
+        | 1            | 1062207   | 1063288   | -            |
+        | 1            | 1070966   | 1074306   | -            |
+        | 1            | 1081817   | 1116361   | -            |
+        | 1            | 1173055   | 1179555   | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 62 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.merge(by="Feature")
+        +--------------+-----------+-----------+--------------+--------------+
+        | Chromosome   | Start     | End       | Strand       | Feature      |
+        | (category)   | (int32)   | (int32)   | (category)   | (category)   |
+        |--------------+-----------+-----------+--------------+--------------|
+        | 1            | 65564     | 65573     | +            | CDS          |
+        | 1            | 69036     | 70005     | +            | CDS          |
+        | 1            | 924431    | 924948    | +            | CDS          |
+        | 1            | 925921    | 926013    | +            | CDS          |
+        | ...          | ...       | ...       | ...          | ...          |
+        | 1            | 1062207   | 1063288   | -            | transcript   |
+        | 1            | 1070966   | 1074306   | -            | transcript   |
+        | 1            | 1081817   | 1116361   | -            | transcript   |
+        | 1            | 1173055   | 1179555   | -            | transcript   |
+        +--------------+-----------+-----------+--------------+--------------+
+        Stranded PyRanges object has 748 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.merge(by=["Feature", "gene_name"])
+
+        """
+
+        if strand is None:
+            strand = self.stranded
+
+        kwargs = {"strand": strand, "count": count, "by": by}
+
+        if not kwargs["by"]:
+            kwargs["sparse"] = {"self": True}
+            from pyranges.methods.merge import _merge
+            df = pyrange_apply_single(_merge, self, **kwargs)
+        else:
+            kwargs["sparse"] = {"self": False}
+            from pyranges.methods.merge import _merge_by
+            df = pyrange_apply_single(_merge_by, self, **kwargs)
+
+        if not count:
+            df = {k: v.drop("Count", axis=1) for k, v in df.items()}
+
+        return PyRanges(df)
+
     def overlap(self, other, strandedness=None, how="first", invert=False):
 
         """Return overlapping intervals.
@@ -2760,7 +2876,7 @@ class PyRanges():
             Whether to do operations on chromosome/strand pairs or chromosomes. If None, will use
             chromosome/strand pairs if the PyRanges is stranded.
 
-        nb_cpu: int, default 1
+        nb_cpu : int, default 1
 
             How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
             Will only lead to speedups on large datasets.
@@ -2773,6 +2889,12 @@ class PyRanges():
 
         PyRanges can also be subsetted directly with a boolean Series. This function is slightly
         faster, but more cumbersome.
+
+        Returns
+        -------
+        PyRanges
+
+            PyRanges subset on rows.
 
         Examples
         --------
@@ -2838,11 +2960,32 @@ class PyRanges():
 
         return self[result]
 
-    def summary(self):
+    def summary(self, to_stdout=True, return_df=False):
 
         """Return info.
 
         Count refers to the number of intervals, the rest to the lengths.
+
+        The column "pyrange" describes the data as is. "coverage_forward" and "coverage_reverse"
+        describe the data after strand-specific merging of overlapping intervals.
+        "coverage_unstranded" describes the data after merging, without considering the strands.
+
+        The row "count" is the number of intervals and "sum" is their total length. The rest describe the lengths of the
+        intervals.
+
+        Parameters
+        ----------
+        to_stdout : bool, default True
+
+            Print summary.
+
+        return_df : bool, default False
+
+            Return df with summary.
+
+        Returns
+        -------
+            None or DataFrame with summary.
 
         Examples
         --------
@@ -2868,23 +3011,36 @@ class PyRanges():
         19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
 
         >>> gr.summary()
-        +-------+-----------+---------------------+-----------------------+
-        |       |   pyrange |   coverage_stranded |   coverage_unstranded |
-        |-------+-----------+---------------------+-----------------------|
-        | count |   2446    |               62    |                  32   |
-        | mean  |   2291.92 |            15598    |               27704.2 |
-        | std   |  11906.9  |            38307.8  |               67026.9 |
-        | min   |      1    |               83    |                  83   |
-        | 25%   |     90    |             1079.25 |                1155   |
-        | 50%   |    138    |             3076    |                6343   |
-        | 75%   |    382.25 |            10058.2  |               20650.8 |
-        | max   | 241726    |           241726    |              291164   |
-        +-------+-----------+---------------------+-----------------------+
+        +-------+------------------+--------------------+--------------------+-----------------------+
+        |       |          pyrange |   coverage_forward |   coverage_reverse |   coverage_unstranded |
+        |-------+------------------+--------------------+--------------------+-----------------------|
+        | count |   2446           |               39   |               23   |                  32   |
+        | mean  |   2291.92        |             7058.1 |            30078.6 |               27704.2 |
+        | std   |  11906.9         |            10322.3 |            59467.7 |               67026.9 |
+        | min   |      1           |               83   |              154   |                  83   |
+        | 25%   |     90           |             1051   |             1204   |                1155   |
+        | 50%   |    138           |             2541   |             6500   |                6343   |
+        | 75%   |    382.25        |             7168   |            23778   |               20650.8 |
+        | max   | 241726           |            43065   |           241726   |              291164   |
+        | sum   |      5.60603e+06 |           275266   |           691807   |              886534   |
+        +-------+------------------+--------------------+--------------------+-----------------------+
+
+        >>> gr.summary(return_df=True, to_stdout=False)
+                    pyrange  coverage_forward  coverage_reverse  coverage_unstranded
+        count  2.446000e+03         39.000000         23.000000            32.000000
+        mean   2.291918e+03       7058.102564      30078.565217         27704.187500
+        std    1.190685e+04      10322.309347      59467.695265         67026.868647
+        min    1.000000e+00         83.000000        154.000000            83.000000
+        25%    9.000000e+01       1051.000000       1204.000000          1155.000000
+        50%    1.380000e+02       2541.000000       6500.000000          6343.000000
+        75%    3.822500e+02       7168.000000      23778.000000         20650.750000
+        max    2.417260e+05      43065.000000     241726.000000        291164.000000
+        sum    5.606031e+06     275266.000000     691807.000000        886534.000000
         """
 
         from pyranges.methods.summary import _summary
 
-        return _summary(self)
+        return _summary(self, to_stdout, return_df)
 
     def new_position(self, new_pos, strand=None, **kwargs):
 
@@ -2901,26 +3057,6 @@ class PyRanges():
 
         return pr.PyRanges(dfs)
 
-    def merge(self, strand=None, count=False, **kwargs):
-
-        if strand is None:
-            strand = self.stranded
-
-        kwargs["strand"] = strand
-
-        if not ("by" in kwargs):
-            kwargs["sparse"] = {"self": True}
-            from pyranges.methods.merge import _merge
-            df = pyrange_apply_single(_merge, self, **kwargs)
-        else:
-            kwargs["sparse"] = {"self": False}
-            from pyranges.methods.merge import _merge_by
-            df = pyrange_apply_single(_merge_by, self, strand, **kwargs)
-
-        if not count:
-            df = {k: v.drop("Count", axis=1) for k, v in df.items()}
-
-        return PyRanges(df)
 
     def window(self, window_size, strand=None, **kwargs):
 
@@ -3090,14 +3226,44 @@ class PyRanges():
         return self[subsetter]
 
 
-
     def mp(self, n=8, formatting=None):
 
         print(tostring(self, n=n, merge_position=True, formatting=formatting))
 
+    def mpc(self, n=8, formatting=None):
+
+        print(tostring(self, n=n, merge_position=True, formatting=formatting))
+
+        return self
+
+
+    def mspc(self, n=30, formatting=None):
+
+        print(
+            tostring(
+                self,
+                n=n,
+                merge_position=True,
+                sort=True,
+                formatting=formatting))
+
+        return self
+
+    def pc(self, n=8, formatting=None):
+
+        print(tostring(self, n=n, formatting=formatting))
+
+        return self
+
     def sp(self, n=30, formatting=None):
 
         print(tostring(self, n=n, sort=True, formatting=formatting))
+
+    def spc(self, n=30, formatting=None):
+
+        print(tostring(self, n=n, sort=True, formatting=formatting))
+
+        return self
 
     def msp(self, n=30, formatting=None):
 
@@ -3113,35 +3279,7 @@ class PyRanges():
 
         print(self.dfs)
 
-    def pc(self, n=8, formatting=None):
 
-        print(tostring(self, n=n, formatting=formatting))
-
-        return self
-
-    def mpc(self, n=8, formatting=None):
-
-        print(tostring(self, n=n, merge_position=True, formatting=formatting))
-
-        return self
-
-    def spc(self, n=30, formatting=None):
-
-        print(tostring(self, n=n, sort=True, formatting=formatting))
-
-        return self
-
-    def mspc(self, n=30, formatting=None):
-
-        print(
-            tostring(
-                self,
-                n=n,
-                merge_position=True,
-                sort=True,
-                formatting=formatting))
-
-        return self
 
     def rpc(self):
 

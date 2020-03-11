@@ -51,7 +51,11 @@ def _merge_by(df, **kwargs):
     by = kwargs["by"]
     chromosome, strand = kwargs["chromosome"], kwargs.get("strand", None)
 
-    cdf = df.sort_values([by, "Start"])
+    if isinstance(by, str):
+        cdf = df.sort_values([by, "Start"])
+    else:
+        cdf = df.sort_values(by + ["Start"])
+
 
     new_ids = (cdf[by] != cdf[by].shift()).cumsum()
 
@@ -62,32 +66,40 @@ def _merge_by(df, **kwargs):
     ids, starts, ends, number = merge_by(cdf.Start.values, cdf.End.values, cdf.ClusterBy.values, slack)
 
     nidx = pd.Index(range(len(starts)))
-    if strand:
-        cluster_df = pd.DataFrame({
-            "Chromosome":
-            pd.Series(chromosome, dtype="category", index=nidx),
-            "Start":
-            starts,
-            "End":
-            ends,
-            by:
-            ids,
-            "Strand":
-            pd.Series(strand, dtype="category", index=nidx)
-        })
-    else:
-        cluster_df = pd.DataFrame({
-            "Chromosome":
-            pd.Series(chromosome, dtype="category", index=nidx),
-            "Start":
-            starts,
-            "End":
-            ends,
-            by:
-            ids,
-        })
 
-    cluster_df = cluster_df.merge(new_to_old, left_on=by, right_on="new")
+    cluster_df = pd.DataFrame({
+        "Chromosome":
+        pd.Series(chromosome, dtype="category", index=nidx),
+        "Start":
+        starts,
+        "End":
+        ends,
+        "by": ids
+    })
+
+
+
+    # for _by in by:
+    #     cluster_df.insert(cluster_df.shape[1], _by, )
+
+    if strand:
+        cluster_df.insert(cluster_df.shape[1], "Strand", pd.Series(strand, dtype="category", index=nidx))
+    # else:
+    #     cluster_df = pd.DataFrame({
+    #         "Chromosome":
+    #         pd.Series(chromosome, dtype="category", index=nidx),
+    #         "Start":
+    #         starts,
+    #         "End":
+    #         ends,
+    #         by:
+    #         ids,
+    #     })
+
+    print(cluster_df)
+    print(new_to_old)
+
+    cluster_df = cluster_df.merge(new_to_old, left_on="by", right_on="new")
     cluster_df = cluster_df.drop([by, "new"], axis=1)
     cluster_df = cluster_df.rename(columns={"old": by})
     cluster_df.insert(cluster_df.shape[1], "Count", number)
