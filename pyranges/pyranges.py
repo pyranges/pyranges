@@ -3316,6 +3316,198 @@ class PyRanges():
 
         return PyRanges(df)
 
+    def to_example(self, nrows=10):
+
+        """Return as dict.
+
+        Used for easily creating examples for copy and pasting.
+
+        Parameters
+        ----------
+        nrows:
+            Number of rows. Half is taken from the start, the other half from the end.
+
+        See Also
+        --------
+
+        PyRanges.from_dict : create PyRanges from dict
+
+        Examples
+        --------
+
+        >>> gr = pr.data.chipseq()
+        >>> gr
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+        | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+        | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+        | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+        | ...          | ...       | ...       | ...        | ...       | ...          |
+        | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+        | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+        | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+        | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> d = gr.to_example()
+        >>> d
+        {'Chromosome': ['chr1', 'chr1', 'chrY', 'chrY'], 'Start': [212609534, 169887529, 8010951, 7405376], 'End': [212609559, 169887554, 8010976, 7405401], 'Name': ['U0', 'U0', 'U0', 'U0'], 'Score': [0, 0, 0, 0], 'Strand': ['+', '+', '-', '-']}
+        >>> pr.from_dict(d)
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 212609534 | 212609559 | U0         |         0 | +            |
+        | chr1         | 169887529 | 169887554 | U0         |         0 | +            |
+        | chrY         |   8010951 |   8010976 | U0         |         0 | -            |
+        | chrY         |   7405376 |   7405401 | U0         |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 4 rows and 6 columns from 2 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
+
+        nrows_half = int(min(nrows, len(self))/2)
+
+        if nrows < len(self):
+            first = self.head(nrows_half)
+            last = self.tail(nrows_half)
+            example = pr.concat([first, last])
+        else:
+            example = self
+
+        d = {c: list(getattr(example, c)) for c in example.columns}
+
+        return d
+
+    def three_end(self, slack=0):
+
+        """Return the 3'-end.
+
+        Parameters
+        ----------
+
+        """
+
+        assert self.stranded, "Need stranded pyrange to find 3'."
+        kwargs = fill_kwargs({"slack": slack, "strand": True})
+        return PyRanges(
+            pyrange_apply_single(_tes, self, **kwargs))
+
+    def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
+
+        """Return as PyRles.
+
+        Create collection of Rles representing the coverage or other numerical value.
+
+        Parameters
+        ----------
+        value_col : str, default None
+            Numerical column to create PyRles from.
+
+        strand : bool, default None, i.e. auto
+            Whether to treat strands serparately.
+
+        rpm : bool, default False
+            Normalize by multiplying with `1e6/(number_intervals)`.
+
+        nb_cpu : int, default 1
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        See Also
+        --------
+        PyRles
+
+        Examples:
+        ---------
+
+        >>> d = {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
+        ...      'End': [6, 9, 7], 'Score': [0.1, 5, 3.14], 'Strand': ['+', '+', '-']}
+        >>> gr = pr.from_dict(d)
+        >>> gr.to_rle()
+        chr1 +
+        --
+        +--------+-----+-----+-----+-----+
+        | Runs   | 3   | 3   | 2   | 1   |
+        |--------+-----+-----+-----+-----|
+        | Values | 0.0 | 1.0 | 0.0 | 1.0 |
+        +--------+-----+-----+-----+-----+
+        Rle of length 9 containing 4 elements (avg. length 2.25)
+        <BLANKLINE>
+        chr1 -
+        --
+        +--------+-----+-----+
+        | Runs   | 5   | 2   |
+        |--------+-----+-----|
+        | Values | 0.0 | 1.0 |
+        +--------+-----+-----+
+        Rle of length 7 containing 2 elements (avg. length 3.5)
+        PyRles object with 2 chromosomes/strand pairs.
+
+        >>> gr.to_rle(value_col="Score")
+        chr1 +
+        --
+        +--------+-----+-----+-----+-----+
+        | Runs   | 3   | 3   | 2   | 1   |
+        |--------+-----+-----+-----+-----|
+        | Values | 0.0 | 0.1 | 0.0 | 5.0 |
+        +--------+-----+-----+-----+-----+
+        Rle of length 9 containing 4 elements (avg. length 2.25)
+        <BLANKLINE>
+        chr1 -
+        --
+        +--------+-----+------+
+        | Runs   | 5   | 2    |
+        |--------+-----+------|
+        | Values | 0.0 | 3.14 |
+        +--------+-----+------+
+        Rle of length 7 containing 2 elements (avg. length 3.5)
+        PyRles object with 2 chromosomes/strand pairs.
+
+        >>> gr.to_rle(value_col="Score", strand=False)
+        chr1
+        +--------+-----+-----+------+------+-----+-----+
+        | Runs   | 3   | 2   | 1    | 1    | 1   | 1   |
+        |--------+-----+-----+------+------+-----+-----|
+        | Values | 0.0 | 0.1 | 3.24 | 3.14 | 0.0 | 5.0 |
+        +--------+-----+-----+------+------+-----+-----+
+        Rle of length 9 containing 6 elements (avg. length 1.5)
+        Unstranded PyRles object with 1 chromosome.
+
+        >>> gr.to_rle(rpm=True)
+        chr1 +
+        --
+        +--------+-----+-------------------+-----+-------------------+
+        | Runs   | 3   | 3                 | 2   | 1                 |
+        |--------+-----+-------------------+-----+-------------------|
+        | Values | 0.0 | 333333.3333333333 | 0.0 | 333333.3333333333 |
+        +--------+-----+-------------------+-----+-------------------+
+        Rle of length 9 containing 4 elements (avg. length 2.25)
+        <BLANKLINE>
+        chr1 -
+        --
+        +--------+-----+-------------------+
+        | Runs   | 5   | 2                 |
+        |--------+-----+-------------------|
+        | Values | 0.0 | 333333.3333333333 |
+        +--------+-----+-------------------+
+        Rle of length 7 containing 2 elements (avg. length 3.5)
+        PyRles object with 2 chromosomes/strand pairs.
+        """
+
+        if strand is None:
+            strand = self.stranded
+
+        from pyranges.methods.to_rle import _to_rle
+
+        return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
+
+
 
     def window(self, window_size, strand=None):
 
@@ -3429,40 +3621,9 @@ class PyRanges():
         return PyRanges(df)
 
 
-    def to_example(self, nrows=10):
-
-        nrows_half = int(min(nrows, len(self))/2)
-
-        if nrows < len(self):
-            first = self.head(nrows_half)
-            last = self.tail(nrows_half)
-            example = pr.concat([first, last])
-        else:
-            example = self
-
-        d = {c: list(getattr(example, c)) for c in example.columns}
-
-        return d
-
-    def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
-
-        if strand is None:
-            strand = self.stranded
-
-        from pyranges.methods.to_rle import _to_rle
-
-        return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
 
 
-
-
-    def three_end(self, slack=0):
-
-        assert self.stranded, "Need stranded pyrange to find 3'."
-        kwargs = fill_kwargs({"slack": slack})
-        return PyRanges(
-            pyrange_apply_single(_tes, self, self.stranded, kwargs))
 
 
 

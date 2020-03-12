@@ -11,6 +11,7 @@ def _to_rle(ranges, value_col=None, strand=True, rpm=False, **kwargs):
             "Using the coverage method requires that pyrle is installed.")
 
     _kwargs = {
+        "strand": strand,
         "value_col": value_col,
         "sparse": {
             "self": False
@@ -18,7 +19,7 @@ def _to_rle(ranges, value_col=None, strand=True, rpm=False, **kwargs):
     }  # already sparse
     kwargs.update(_kwargs)
 
-    result = pyrange_apply_single(coverage, ranges, strand, kwargs)
+    result = pyrange_apply_single(coverage, ranges, **kwargs)
 
     if rpm:
         multiplier = 1e6 / len(ranges)
