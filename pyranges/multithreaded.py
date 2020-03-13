@@ -422,25 +422,20 @@ def _tss(df, **kwargs):
     return tss.reindex(df.index)
 
 
-def _tes(df, kwargs):
+def _tes(df, **kwargs):
 
-    slack = kwargs["slack"]
+    df = df.copy()
+    if df.Strand.iloc[0] == "+":
+        df.loc[:, "Start"] = df.End
+    else:
+        df.loc[:, "End"] = df.Start
 
-    tes_pos = df.loc[df.Strand == "+"]
+    df.loc[:, "Start"] = df.End
+    df.loc[:, "End"] = df.End + 1
+    df.loc[:, "Start"] = df.Start
+    df.loc[df.Start < 0, "Start"] = 0
 
-    tes_neg = df.loc[df.Strand == "-"].copy()
-
-    # pd.options.mode.chained_assignment = None
-    tes_neg.loc[:, "Start"] = tes_neg.End
-
-    # pd.options.mode.chained_assignment = "warn"
-    tes = pd.concat([tes_pos, tes_neg], sort=False)
-    tes["Start"] = tes.End
-    tes.End = tes.End + 1 + slack
-    tes.Start = tes.Start - slack
-    tes.loc[tes.Start < 0, "Start"] = 0
-
-    return tes.reindex(df.index)
+    return df.reindex(df.index)
 
 
 def _slack(df, **kwargs):

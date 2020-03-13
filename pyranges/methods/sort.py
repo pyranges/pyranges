@@ -1,4 +1,4 @@
-def _sort(df, kwargs):
+def _sort(df, **kwargs):
 
     if "by" in kwargs:
         by = kwargs["by"]

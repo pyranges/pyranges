@@ -1482,20 +1482,25 @@ class PyRanges():
 
     def five_end(self):
 
-        """Return the five end of intervals.
+        """Return the five prime end of intervals.
 
-        The five end is the start of a forward strand or the end of a reverse strand.
+        The five prime end is the start of a forward strand or the end of a reverse strand.
 
         Returns
         -------
         PyRanges
 
-            PyRanges with the five ends of every interval.
+            PyRanges with the five prime ends
 
         Notes
         -----
 
         Requires the PyRanges to be stranded.
+
+        See Also
+        --------
+
+        PyRanges.three_end : return the 3' end
 
         Examples
         --------
@@ -3023,6 +3028,102 @@ class PyRanges():
 
         return split
 
+    @property
+    def stranded(self):
+        """Whether PyRanges has (valid) strand info.
+
+        Note
+        ----
+
+        A PyRanges can have invalid values in the Strand-column. It is not considered stranded.
+
+        See Also
+        --------
+
+        PyRanges.strands : return the strands
+
+        Examples
+        --------
+
+        >>> d =  {'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...       'End': [5, 8], 'Strand': ['+', '.']}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         5 | +            |
+        | chr1         |         6 |         8 | .            |
+        +--------------+-----------+-----------+--------------+
+        Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        Considered unstranded due to these Strand values: '.'
+
+        >>> gr.stranded
+        False
+
+        >>> "Strand" in gr.columns
+        True
+        """
+        keys = self.keys()
+
+        if not len(keys):
+            # so that stranded ops work with empty dataframes
+            return True
+
+        key = keys[0]
+
+        return isinstance(key, tuple)
+
+    @property
+    def strands(self):
+
+        """Return strands.
+
+        Notes
+        -----
+
+        If the strand-column contains an invalid value, [] is returned.
+
+        See Also
+        --------
+
+        PyRanges.stranded : whether has valid strand info
+
+        Examples
+        --------
+        >>> d =  {'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...       'End': [5, 8], 'Strand': ['+', '.']}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         5 | +            |
+        | chr1         |         6 |         8 | .            |
+        +--------------+-----------+-----------+--------------+
+        Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        Considered unstranded due to these Strand values: '.'
+
+        >>> gr.strands
+        []
+
+        >>> gr.Strand.drop_duplicates().to_list()
+        ['+', '.']
+
+        >>> gr.Strand = ["+", "-"]
+        >>> gr.strands
+        ['+', '-']
+        """
+
+        if not self.stranded:
+            return []
+
+        return natsorted(set([k[1] for k in self.keys()]))
+
 
     def subset(self, f, strand=None, **kwargs):
 
@@ -3204,6 +3305,7 @@ class PyRanges():
 
         return _summary(self, to_stdout, return_df)
 
+
     def tile(self, tile_size, overlap=False, strand=None, nb_cpu=1):
 
         """Return overlapping genomic tiles.
@@ -3384,19 +3486,282 @@ class PyRanges():
 
         return d
 
-    def three_end(self, slack=0):
+    def three_end(self):
 
         """Return the 3'-end.
 
-        Parameters
-        ----------
+        The 3'-end is the start of intervals on the reverse strand and the end of intervals on the
+        forward strand.
+
+        Returns
+        -------
+        PyRanges
+            PyRanges with the 3'.
+
+        See Also
+        --------
+        PyRanges.five_end : return the five prime end
+
+        Examples
+        --------
+
+        >>> d =  {'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...       'End': [5, 8], 'Strand': ['+', '-']}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         5 | +            |
+        | chr1         |         6 |         8 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.three_end()
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         5 |         6 | +            |
+        | chr1         |         6 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
 
         """
 
         assert self.stranded, "Need stranded pyrange to find 3'."
-        kwargs = fill_kwargs({"slack": slack, "strand": True})
+        kwargs = fill_kwargs({"strand": True})
         return PyRanges(
             pyrange_apply_single(_tes, self, **kwargs))
+
+
+    def to_bed(self, path=None, keep=True, compression="infer", chain=False):
+        r"""Write to bed.
+
+        Parameters
+        ----------
+        path : str, default None
+            Where to write. If None, returns string representation.
+
+        keep : bool, default True
+
+            Whether to keep all columns, not just Chromosome, Start, End,
+            Name, Score, Strand when writing.
+
+        compression : str, compression type to use, by default infer based on extension.
+            See pandas.DataFree.to_csv for more info.
+
+        chain : bool, default False
+            Whether to return the PyRanges after writing.
+
+        Examples
+        --------
+
+        >>> d =  {'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...       'End': [5, 8], 'Strand': ['+', '-'], "Gene": [1, 2]}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+-----------+
+        | Chromosome   |     Start |       End | Strand       |      Gene |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        |--------------+-----------+-----------+--------------+-----------|
+        | chr1         |         1 |         5 | +            |         1 |
+        | chr1         |         6 |         8 | -            |         2 |
+        +--------------+-----------+-----------+--------------+-----------+
+        Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> print(gr.to_bed())
+        chr1	1	5	.	.	+	1
+        chr1	6	8	.	.	-	2
+        <BLANKLINE>
+
+        Does not include noncanonical bed-column `Gene`:
+
+        >>> print(gr.to_bed(keep=False))
+        chr1	1	5	.	.	+
+        chr1	6	8	.	.	-
+        <BLANKLINE>
+
+        >>> gr.to_bed("test.bed", chain=True)
+        +--------------+-----------+-----------+--------------+-----------+
+        | Chromosome   |     Start |       End | Strand       |      Gene |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        |--------------+-----------+-----------+--------------+-----------|
+        | chr1         |         1 |         5 | +            |         1 |
+        | chr1         |         6 |         8 | -            |         2 |
+        +--------------+-----------+-----------+--------------+-----------+
+        Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> open("test.bed").readlines()
+        ['chr1\t1\t5\t.\t.\t+\t1\n', 'chr1\t6\t8\t.\t.\t-\t2\n']
+        """
+        from pyranges.out import _to_bed
+
+        result = _to_bed(self, path, keep=keep, compression=compression)
+
+        if path and chain:
+            return self
+        else:
+            return result
+
+    def to_bigwig(self, path=None, chromosome_sizes=None, rpm=True, divide=None, value_col=None, dryrun=False, chain=False):
+
+        """Write regular or value coverage to bigwig.
+
+        Note
+        ----
+
+        To create one bigwig per strand, subset the PyRanges first.
+
+        Parameters
+        ----------
+        path : str
+
+            Where to write bigwig.
+
+        chromosome_sizes : PyRanges or dict
+
+            If dict: map of chromosome names to chromosome length.
+
+        rpm : True
+
+            Whether to normalize data by dividing by total number of intervals and multiplying by
+            1e6.
+
+        divide : bool, default False
+
+            (Only useful with value_col) Divide value coverage by regular coverage and take log2.
+
+        value_col : str, default None
+
+            Name of column to compute coverage of.
+
+        dryrun : bool, default False
+
+            Return data that would be written without writing bigwigs.
+
+        chain : bool, default False
+            Whether to return the PyRanges after writing.
+
+        Note
+        ----
+
+        Requires pybigwig to be installed.
+
+        If you require more control over the normalization process, use pyranges.to_bigwig()
+
+        See Also
+        --------
+        pyranges.to_bigwig : write pandas DataFrame to bigwig.
+
+        Examples
+        --------
+
+        >>> d =  {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [1, 4, 6],
+        ...       'End': [7, 8, 10], 'Strand': ['+', '-', '-'],
+        ...       'Value': [10, 20, 30]}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+-----------+
+        | Chromosome   |     Start |       End | Strand       |     Value |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        |--------------+-----------+-----------+--------------+-----------|
+        | chr1         |         1 |         7 | +            |        10 |
+        | chr1         |         4 |         8 | -            |        20 |
+        | chr1         |         6 |        10 | -            |        30 |
+        +--------------+-----------+-----------+--------------+-----------+
+        Stranded PyRanges object has 3 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.to_bigwig(dryrun=True, rpm=False)
+        +--------------+-----------+-----------+-------------+
+        | Chromosome   |     Start |       End |       Score |
+        | (object)     |   (int32) |   (int32) |   (float64) |
+        |--------------+-----------+-----------+-------------|
+        | chr1         |         1 |         4 |           1 |
+        | chr1         |         4 |         6 |           2 |
+        | chr1         |         6 |         7 |           3 |
+        | chr1         |         7 |         8 |           2 |
+        | chr1         |         8 |        10 |           1 |
+        +--------------+-----------+-----------+-------------+
+        Unstranded PyRanges object has 5 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.to_bigwig(dryrun=True, rpm=False, value_col="Value")
+        +--------------+-----------+-----------+-------------+
+        | Chromosome   |     Start |       End |       Score |
+        | (object)     |   (int32) |   (int32) |   (float64) |
+        |--------------+-----------+-----------+-------------|
+        | chr1         |         1 |         4 |          10 |
+        | chr1         |         4 |         6 |          30 |
+        | chr1         |         6 |         7 |          60 |
+        | chr1         |         7 |         8 |          50 |
+        | chr1         |         8 |        10 |          30 |
+        +--------------+-----------+-----------+-------------+
+        Unstranded PyRanges object has 5 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.to_bigwig(dryrun=True, rpm=False, value_col="Value", divide=True)
+        +--------------+-----------+-----------+-------------+
+        | Chromosome   |     Start |       End |       Score |
+        | (object)     |   (int32) |   (int32) |   (float64) |
+        |--------------+-----------+-----------+-------------|
+        | chr1         |         0 |         1 |   nan       |
+        | chr1         |         1 |         4 |     3.32193 |
+        | chr1         |         4 |         6 |     3.90689 |
+        | chr1         |         6 |         7 |     4.32193 |
+        | chr1         |         7 |         8 |     4.64386 |
+        | chr1         |         8 |        10 |     4.90689 |
+        +--------------+-----------+-----------+-------------+
+        Unstranded PyRanges object has 6 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        from pyranges.out import _to_bigwig
+
+        result = _to_bigwig(self, path, chromosome_sizes, rpm, divide, value_col, dryrun)
+
+        if dryrun:
+            return result
+
+        if chain:
+            return self
+        else:
+            pass
+
+    def to_csv(self, path=None, sep=",", header=True, compression="infer", chain=False):
+        from pyranges.out import _to_csv
+        result = _to_csv(
+            self, path, sep=sep, header=header, compression=compression)
+        if path and chain:
+            return self
+        else:
+            return result
+
+    def to_gff3(self, path=None, compression="infer", chain=False):
+        from pyranges.out import _to_gff3
+
+        result = _to_gff3(self, path, compression=compression)
+
+        if path and chain:
+            return self
+        else:
+            return result
+
+    def to_gtf(self, path=None, compression="infer", chain=False):
+        from pyranges.out import _to_gtf
+
+        result = _to_gtf(self, path, compression=compression)
+
+        if path and chain:
+            return self
+        else:
+            return result
 
     def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
 
@@ -3508,6 +3873,66 @@ class PyRanges():
         return _to_rle(self, value_col, strand=strand, rpm=rpm, nb_cpu=nb_cpu)
 
 
+    def unstrand(self):
+
+        """Remove strand.
+
+        Note
+        ----
+
+        Removes Strand column even if PyRanges is not stranded.
+
+        See Also
+        --------
+
+        PyRanges.stranded : whether PyRanges contains valid strand info.
+
+        Examples
+        --------
+
+        >>> d =  {'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...       'End': [5, 8], 'Strand': ['+', '-']}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         5 | +            |
+        | chr1         |         6 |         8 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.unstrand()
+        +--------------+-----------+-----------+
+        | Chromosome   |     Start |       End |
+        | (category)   |   (int32) |   (int32) |
+        |--------------+-----------+-----------|
+        | chr1         |         1 |         5 |
+        | chr1         |         6 |         8 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 2 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        if not self.stranded and "Strand" in self.columns:
+            return self.drop("Strand")
+        elif not self.stranded:
+            return self
+
+        gr = pr.concat([self["+"], self["-"]])
+
+        gr = gr.apply(lambda df: df.drop("Strand", axis=1).reset_index(drop=
+                                                                       True))
+
+        return pr.PyRanges(gr.dfs)
+
+
+    def values(self):
+        """Return the underlying DataFrames."""
+
+        return [df for k, df in self.items() if not df.empty]
 
     def window(self, window_size, strand=None):
 
@@ -3621,100 +4046,6 @@ class PyRanges():
         return PyRanges(df)
 
 
-
-
-
-
-
-
-    @property
-    def stranded(self):
-        keys = self.keys()
-        # print(keys)
-        # print(not(len(keys)))
-        if not len(keys):
-            # so that stranded ops work with empty dataframes
-            return True
-
-        key = keys[0]
-        # print("isinstance " * 10, isinstance(key, tuple))
-
-        return isinstance(key, tuple)
-
-    @property
-    def strands(self):
-
-        if not self.stranded:
-            raise Exception("PyRanges not stranded!")
-
-        return natsorted(set([k[1] for k in self.keys()]))
-
-
-    def values(self):
-
-        return [df for k, df in self.items() if not df.empty]
-
-    def unstrand(self):
-
-        if not self.stranded:
-            return self
-
-        gr = pr.concat([self["+"], self["-"]])
-
-        gr = gr.apply(lambda df: df.drop("Strand", axis=1).reset_index(drop=
-                                                                       True))
-
-        return pr.PyRanges(gr.dfs)
-
-
-
-
-    def to_csv(self, path=None, sep=",", header=True, compression="infer", chain=False):
-        from pyranges.out import _to_csv
-        result = _to_csv(
-            self, path, sep=sep, header=header, compression=compression)
-        if path and chain:
-            return self
-        else:
-            return result
-
-    def to_bed(self, path=None, keep=True, compression="infer", chain=False):
-        from pyranges.out import _to_bed
-
-        result = _to_bed(self, path, keep=keep, compression=compression)
-
-        if path and chain:
-            return self
-        else:
-            return result
-
-    def to_gtf(self, path=None, compression="infer", chain=False):
-        from pyranges.out import _to_gtf
-
-        result = _to_gtf(self, path, compression=compression)
-
-        if path and chain:
-            return self
-        else:
-            return result
-
-    def to_gff3(self, path=None, compression="infer", chain=False):
-        from pyranges.out import _to_gff3
-
-        result = _to_gff3(self, path, compression=compression)
-
-        if path and chain:
-            return self
-        else:
-            return result
-
-
-    def to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None, value_col=None):
-        from pyranges.out import _to_bigwig
-
-        _to_bigwig(self, path, chromosome_sizes, rpm, divide_by, value_col)
-
-        return self
 
 
     def tail(self, n=8):

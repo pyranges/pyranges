@@ -227,7 +227,7 @@ def untraditional_strand_info(self, str_repr_width):
         if n_untraditional_strands:
             ustr = "Considered unstranded due to these Strand values: {}"
             for i in range(n_untraditional_strands + 1):
-                _ustr = ustr.format(", ".join(untraditional_strands[:i]))
+                _ustr = ustr.format(", ".join(untraditional_strands[:i+1]))
                 if len(_ustr) > str_repr_width - 20:
                     break
 
