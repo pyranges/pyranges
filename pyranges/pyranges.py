@@ -167,27 +167,202 @@ class PyRanges():
 
     def __getattr__(self, name):
 
+        """Return column.
+
+        Parameters
+        ----------
+        name : str
+
+            Column to return
+
+        Returns
+        -------
+        pandas.Series
+
+        Example
+        -------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [0, 100, 250], "End": [10, 125, 251]})
+        >>> gr.Start
+        0      0
+        1    100
+        2    250
+        Name: Start, dtype: int32
+        """
+
         from pyranges.methods.attr import _getattr
 
         return _getattr(self, name)
 
     def __setattr__(self, column_name, column):
 
-        if column_name in ["columns"]:
+        """Insert or update column.
 
-            def set_columns(df, columns):
-                df.columns = columns
-                return df
+        Parameters
+        ----------
+        column_name : str
 
-            self = self.apply(lambda df: set_columns(df, column))
+            Name of column to update or insert.
 
-        else:
+        column : list, np.array or pd.Series
 
-            from pyranges.methods.attr import _setattr
+            Data to insert.
 
-            _setattr(self, column_name, column)
+        Example
+        -------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [0, 100, 250], "End": [10, 125, 251]})
+        >>> gr.Start = np.array([1, 1, 2])
+        >>> gr
+        +--------------+-----------+-----------+
+        |   Chromosome |     Start |       End |
+        |   (category) |   (int64) |   (int32) |
+        |--------------+-----------+-----------|
+        |            1 |         1 |        10 |
+        |            1 |         1 |       125 |
+        |            1 |         2 |       251 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        from pyranges.methods.attr import _setattr
+
+        _setattr(self, column_name, column)
 
     def __getitem__(self, val):
+
+        """Fetch columns or subset on position.
+
+        If a list is provided, the column(s) in the list is returned. This subsets on columns.
+
+        If a numpy array is provided, it must be of type bool and the same length as the PyRanges.
+
+        Otherwise, a subset of the rows is returned with the location info provided.
+
+        Parameters
+        ----------
+        val : bool array/Series, tuple, list, str or slice
+
+            Data to fetch.
+
+        Examples
+        --------
+
+        >>> gr = pr.data.ensembl_gtf()
+        >>> gr
+        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
+        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | +20   |
+        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |
+        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------|
+        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ...   |
+        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ...   |
+        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | ...   |
+        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | ...   |
+        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...   |
+        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | ...   |
+        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | ...   |
+        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | ...   |
+        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | ...   |
+        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
+        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        20 hidden columns: (assigned, ccds_id, exon_id, exon_number, exon_version, gene_biotype, gene_id, gene_name, gene_source, ... (+ 11 more.)
+
+        >>> gr[["Source", "gene_id"]]
+        +--------------+------------+-----------+-----------+--------------+-----------------+
+        | Chromosome   | Source     | Start     | End       | Strand       | gene_id         |
+        | (category)   | (object)   | (int32)   | (int32)   | (category)   | (object)        |
+        |--------------+------------+-----------+-----------+--------------+-----------------|
+        | 1            | havana     | 11868     | 14409     | +            | ENSG00000223972 |
+        | 1            | havana     | 11868     | 14409     | +            | ENSG00000223972 |
+        | 1            | havana     | 11868     | 12227     | +            | ENSG00000223972 |
+        | 1            | havana     | 12612     | 12721     | +            | ENSG00000223972 |
+        | ...          | ...        | ...       | ...       | ...          | ...             |
+        | 1            | havana     | 1173055   | 1179555   | -            | ENSG00000205231 |
+        | 1            | havana     | 1173055   | 1179555   | -            | ENSG00000205231 |
+        | 1            | havana     | 1179364   | 1179555   | -            | ENSG00000205231 |
+        | 1            | havana     | 1173055   | 1176396   | -            | ENSG00000205231 |
+        +--------------+------------+-----------+-----------+--------------+-----------------+
+        Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        Create boolean Series and use it to subset:
+
+        >>> s = (gr.Feature == "gene") | (gr.gene_id == "ENSG00000223972")
+        >>> gr[s]
+        +--------------+----------------+--------------+-----------+-----------+------------+--------------+------------+-------+
+        | Chromosome   | Source         | Feature      | Start     | End       | Score      | Strand       | Frame      | +20   |
+        | (category)   | (object)       | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |
+        |--------------+----------------+--------------+-----------+-----------+------------+--------------+------------+-------|
+        | 1            | havana         | gene         | 11868     | 14409     | .          | +            | .          | ...   |
+        | 1            | havana         | transcript   | 11868     | 14409     | .          | +            | .          | ...   |
+        | 1            | havana         | exon         | 11868     | 12227     | .          | +            | .          | ...   |
+        | 1            | havana         | exon         | 12612     | 12721     | .          | +            | .          | ...   |
+        | ...          | ...            | ...          | ...       | ...       | ...        | ...          | ...        | ...   |
+        | 1            | havana         | gene         | 1062207   | 1063288   | .          | -            | .          | ...   |
+        | 1            | ensembl_havana | gene         | 1070966   | 1074306   | .          | -            | .          | ...   |
+        | 1            | ensembl_havana | gene         | 1081817   | 1116361   | .          | -            | .          | ...   |
+        | 1            | havana         | gene         | 1173055   | 1179555   | .          | -            | .          | ...   |
+        +--------------+----------------+--------------+-----------+-----------+------------+--------------+------------+-------+
+        Stranded PyRanges object has 95 rows and 28 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        20 hidden columns: (assigned, ccds_id, exon_id, exon_number, exon_version, gene_biotype, gene_id, gene_name, gene_source, gene_version, ... (+ 10 more.)
+
+        >>> cs = pr.data.chipseq()
+        >>> cs[10000:100000]
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr2         |     33241 |     33266 | U0         |         0 | +            |
+        | chr2         |     13611 |     13636 | U0         |         0 | -            |
+        | chr2         |     32620 |     32645 | U0         |         0 | -            |
+        | chr3         |     87179 |     87204 | U0         |         0 | +            |
+        | chr4         |     45413 |     45438 | U0         |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 5 rows and 6 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> cs["chr1", "-"]
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 100079649 | 100079674 | U0         | 0         | -            |
+        | chr1         | 223587418 | 223587443 | U0         | 0         | -            |
+        | chr1         | 202450161 | 202450186 | U0         | 0         | -            |
+        | chr1         | 156338310 | 156338335 | U0         | 0         | -            |
+        | ...          | ...       | ...       | ...        | ...       | ...          |
+        | chr1         | 203557775 | 203557800 | U0         | 0         | -            |
+        | chr1         | 28114107  | 28114132  | U0         | 0         | -            |
+        | chr1         | 21622765  | 21622790  | U0         | 0         | -            |
+        | chr1         | 80668132  | 80668157  | U0         | 0         | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 437 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> cs["chr5", "-", 90000:]
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr5         | 399682    | 399707    | U0         | 0         | -            |
+        | chr5         | 1847502   | 1847527   | U0         | 0         | -            |
+        | chr5         | 5247533   | 5247558   | U0         | 0         | -            |
+        | chr5         | 5300394   | 5300419   | U0         | 0         | -            |
+        | ...          | ...       | ...       | ...        | ...       | ...          |
+        | chr5         | 178786234 | 178786259 | U0         | 0         | -            |
+        | chr5         | 179268931 | 179268956 | U0         | 0         | -            |
+        | chr5         | 179289594 | 179289619 | U0         | 0         | -            |
+        | chr5         | 180513795 | 180513820 | U0         | 0         | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 285 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> cs["chrM"]
+        Empty PyRanges
+        """
 
         from pyranges.methods.getitem import _getitem
 
@@ -195,13 +370,41 @@ class PyRanges():
 
     def __str__(self):
 
+        """Return string representation."""
+
         return tostring(self)
 
     def __repr__(self):
 
+        """Return REPL representation."""
+
         return str(self)
 
+
     def __iter__(self):
+
+        """Iterate over the keys and values.
+
+        See Also
+        --------
+        pyranges.iter : iterate over multiple PyRanges
+
+        Examples
+        --------
+        >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [0, 100, 250],
+        ...                   "End": [10, 125, 251], "Strand": ["+", "+", "-"]})
+
+        >>> for k, v in gr:
+        ...     print(k)
+        ...     print(v)
+        ('1', '+')
+        Chromosome  Start  End Strand
+        0          1      0   10      +
+        1          1    100  125      +
+        ('1', '-')
+        Chromosome  Start  End Strand
+        2          1    250  251      -
+        """
 
         return iter(self.items())
 
@@ -2724,6 +2927,48 @@ class PyRanges():
             return self
 
 
+    def sample(self, n=8, replace=False):
+        """Subsample arbitrary rows of PyRanges.
+
+        If n is larger than length of PyRanges, replace must be True.
+
+        Parameters
+        ----------
+        n : int, default 8
+
+            Number of rows to return
+
+        replace : bool, False
+
+            Reuse rows. 
+
+        Examples
+        --------
+
+        >>> gr = pr.data.chipseq()
+        >>> np.random.seed(0)
+        >>> gr.sample(n=3) 
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr2         |  76564764 |  76564789 | U0         |         0 | +            |
+        | chr3         | 185739979 | 185740004 | U0         |         0 | -            |
+        | chr20        |  40373657 |  40373682 | U0         |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.sample(10001)
+        Traceback (most recent call last):
+        ...
+        ValueError: Cannot take a larger sample than population when 'replace=False'
+        """
+        sample = np.random.choice(len(self), size=n, replace=False)
+        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter[sample] = True
+        return self[subsetter]
+
     def sort(self, by=None, nb_cpu=1):
 
         """Sort by position or columns.
@@ -3304,6 +3549,69 @@ class PyRanges():
         from pyranges.methods.summary import _summary
 
         return _summary(self, to_stdout, return_df)
+
+
+    def tail(self, n=8):
+
+        """Return the n last rows.
+
+        Parameters
+        ----------
+
+        n : int, default 8
+
+            Return n rows.
+
+        Returns
+        -------
+        PyRanges
+
+            PyRanges with the n last rows.
+
+        See Also
+        --------
+
+        PyRanges.head : return the first rows
+        PyRanges.sample : return random rows
+
+        Examples
+        --------
+
+        >>> gr = pr.data.chipseq()
+        >>> gr
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+        | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+        | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+        | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+        | ...          | ...       | ...       | ...        | ...       | ...          |
+        | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+        | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+        | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+        | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.tail(3)
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chrY         |  13517892 |  13517917 | U0         |         0 | -            |
+        | chrY         |   8010951 |   8010976 | U0         |         0 | -            |
+        | chrY         |   7405376 |   7405401 | U0         |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
+
+        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter[(len(self) - n):] = True
+        return self[subsetter]
 
 
     def tile(self, tile_size, overlap=False, strand=None, nb_cpu=1):
@@ -4044,20 +4352,6 @@ class PyRanges():
         df = pyrange_apply_single(_windows, self, **kwargs)
 
         return PyRanges(df)
-
-
-
-
-    def tail(self, n=8):
-        subsetter = np.zeros(len(self), dtype=np.bool)
-        subsetter[(len(self) - n):] = True
-        return self[subsetter]
-
-    def sample(self, n=8):
-        sample = np.random.choice(len(self), size=n, replace=False)
-        subsetter = np.zeros(len(self), dtype=np.bool)
-        subsetter[sample] = True
-        return self[subsetter]
 
 
     def mp(self, n=8, formatting=None):
