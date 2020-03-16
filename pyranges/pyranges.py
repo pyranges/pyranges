@@ -139,7 +139,13 @@ class PyRanges():
     """
 
     dfs = None
+    """Dict mapping chromosomes or chromosome/strand pairs to pandas DataFrames."""
+
     gf = None
+    """Namespace for genomic-features methods."""
+
+    stats = None
+    """Namespace for statistcal methods."""
 
     def __init__(self,
                  df=None,
@@ -1469,10 +1475,114 @@ class PyRanges():
 
     #     return PyRanges(dfs)
 
-    def nearest(self, other, **kwargs):
+    def nearest(self, other, strandedness=None, overlap=True, how=None):
+
+        """Find closest interval.
+
+        Parameters
+        ----------
+        other : PyRanges
+
+            PyRanges to join.
+
+        strandedness : {None, "same", "opposite", False}, default None, i.e. auto
+
+            Whether to compare PyRanges on the same strand, the opposite or ignore strand
+            information. The default, None, means use "same" if both PyRanges are strande,
+            otherwise ignore the strand information.
+
+        overlap : bool, default True
+
+            Whether to include overlaps.
+
+        how : {None, "upstream", "downstream"}, default None, i.e. both directions
+
+            Whether to only look for nearest in one direction.
+
+        suffix : str, default "_b"
+
+            Suffix to give overlapping columns in other.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        Returns
+        -------
+        PyRanges
+
+            A PyRanges with columns representing nearest interval horizontally appended.
+
+        Notes
+        -----
+
+        A k_nearest also exists, but is less performant.
+
+        See also
+        --------
+
+        PyRanges.new_position : give joined PyRanges new coordinates
+        PyRanges.k_nearest : find k nearest intervals
+
+        Examples
+        --------
+
+        >>> f1 = pr.from_dict({'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
+        ...                    'End': [6, 9, 7], 'Strand': ['+', '+', '-']})
+        >>> f1
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         3 |         6 | +            |
+        | chr1         |         8 |         9 | +            |
+        | chr1         |         5 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f2 = pr.from_dict({'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...                    'End': [2, 7], 'Strand': ['+', '-']})
+        >>> f2
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         2 | +            |
+        | chr1         |         6 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.nearest(f2)
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
+        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
+        | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
+        | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
+        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        Stranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.nearest(f2, how="upstream")
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
+        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
+        | chr1         |         3 |         6 | +            |         1 |         2 | +            |          2 |
+        | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
+        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        Stranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
 
         from pyranges.methods.nearest import _nearest
 
+        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap}
         kwargs = fill_kwargs(kwargs)
         if kwargs.get("how") in "upstream downstream".split():
             assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
