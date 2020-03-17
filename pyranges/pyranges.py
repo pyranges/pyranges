@@ -1475,278 +1475,8 @@ class PyRanges():
 
     #     return PyRanges(dfs)
 
-    def nearest(self, other, strandedness=None, overlap=True, how=None):
-
-        """Find closest interval.
-
-        Parameters
-        ----------
-        other : PyRanges
-
-            PyRanges to join.
-
-        strandedness : {None, "same", "opposite", False}, default None, i.e. auto
-
-            Whether to compare PyRanges on the same strand, the opposite or ignore strand
-            information. The default, None, means use "same" if both PyRanges are strande,
-            otherwise ignore the strand information.
-
-        overlap : bool, default True
-
-            Whether to include overlaps.
-
-        how : {None, "upstream", "downstream"}, default None, i.e. both directions
-
-            Whether to only look for nearest in one direction.
-
-        suffix : str, default "_b"
-
-            Suffix to give overlapping columns in other.
-
-        nb_cpu: int, default 1
-
-            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
-            Will only lead to speedups on large datasets.
-
-        Returns
-        -------
-        PyRanges
-
-            A PyRanges with columns representing nearest interval horizontally appended.
-
-        Notes
-        -----
-
-        A k_nearest also exists, but is less performant.
-
-        See also
-        --------
-
-        PyRanges.new_position : give joined PyRanges new coordinates
-        PyRanges.k_nearest : find k nearest intervals
-
-        Examples
-        --------
-
-        >>> f1 = pr.from_dict({'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
-        ...                    'End': [6, 9, 7], 'Strand': ['+', '+', '-']})
-        >>> f1
-        +--------------+-----------+-----------+--------------+
-        | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
-        |--------------+-----------+-----------+--------------|
-        | chr1         |         3 |         6 | +            |
-        | chr1         |         8 |         9 | +            |
-        | chr1         |         5 |         7 | -            |
-        +--------------+-----------+-----------+--------------+
-        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> f2 = pr.from_dict({'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
-        ...                    'End': [2, 7], 'Strand': ['+', '-']})
-        >>> f2
-        +--------------+-----------+-----------+--------------+
-        | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
-        |--------------+-----------+-----------+--------------|
-        | chr1         |         1 |         2 | +            |
-        | chr1         |         6 |         7 | -            |
-        +--------------+-----------+-----------+--------------+
-        Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> f1.nearest(f2)
-        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
-        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
-        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
-        | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
-        | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
-        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
-        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
-        Stranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> f1.nearest(f2, how="upstream")
-        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
-        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
-        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
-        | chr1         |         3 |         6 | +            |         1 |         2 | +            |          2 |
-        | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
-        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
-        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
-        Stranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-        """
-
-        from pyranges.methods.nearest import _nearest
-
-        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap}
-        kwargs = fill_kwargs(kwargs)
-        if kwargs.get("how") in "upstream downstream".split():
-            assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
-
-        dfs = pyrange_apply(_nearest, self, other, **kwargs)
-
-        return PyRanges(dfs)
-
 
     # @profile
-    def k_nearest(self, other, k=1, **kwargs):
-
-        from pyranges.methods.k_nearest import _nearest
-        from sorted_nearest import get_all_ties, get_different_ties
-
-        kwargs = fill_kwargs(kwargs)
-        kwargs["stranded"] = self.stranded and other.stranded
-
-        overlap = kwargs.get("overlap", True)
-        ties = kwargs.get("ties", False)
-
-        self = pr.PyRanges({k: v.copy() for k, v in self.dfs.items()})
-
-        try: # if k is an array
-            k = k.values
-        except:
-            pass
-
-        self.__k__ = k
-        self.__IX__ = np.arange(len(self))
-
-
-        # from time import time
-        # start = time()
-        dfs = pyrange_apply(_nearest, self, other, **kwargs)
-        # end = time()
-        # print("nearest", end - start)
-
-        nearest = PyRanges(dfs)
-        # nearest.msp()
-        # raise
-        # print("nearest len", len(nearest))
-
-        if not overlap:
-            # self = self.drop(like="__k__|__IX__")
-            result = nearest#.drop(like="__k__|__IX__")
-        else:
-            from collections import defaultdict
-            overlap_kwargs = {k: v for k, v in kwargs.items()}
-            # print("kwargs ties:", kwargs.get("ties"))
-            overlap_kwargs["how"] = defaultdict(lambda: None, {"first": "first", "last": "last"})[kwargs.get("ties")]
-            # start = time()
-            overlaps = self.join(other, **overlap_kwargs)
-            # end = time()
-            # print("overlaps", end - start)
-            overlaps.Distance = 0
-            # print("overlaps len", len(overlaps))
-
-            result = pr.concat([overlaps, nearest])
-
-        if not len(result):
-            return pr.PyRanges()
-        # print(result)
-        # print(overlaps.drop(like="__").df)
-        # raise
-
-        # start = time()
-        new_result = {}
-        if ties in ["first", "last"]:
-            # method = "tail" if ties == "last" else "head"
-            # keep = "last" if ties == "last" else "first"
-
-            for c, df in result:
-                # start = time()
-                # print(c)
-                # print(df)
-
-                df = df.sort_values(["__IX__", "Distance"])
-                grpby = df.groupby("__k__", sort=False)
-                dfs = []
-                for k, kdf in grpby:
-                    # print("k", k)
-                    # print(kdf)
-                    # dist_bool = ~kdf.Distance.duplicated(keep=keep)
-                    # print(dist_bool)
-                    # kdf = kdf[dist_bool]
-                    grpby2 = kdf.groupby("__IX__", sort=False)
-                    # f = getattr(grpby2, method)
-                    _df = grpby2.head(k)
-                    # print(_df)
-                    dfs.append(_df)
-                # raise
-
-                if dfs:
-                    new_result[c] = pd.concat(dfs)
-                # print(new_result[c])
-        elif ties == "different" or not ties:
-            for c, df in result:
-
-                # print(df)
-
-                if df.empty:
-                    continue
-                dfs = []
-
-                df = df.sort_values(["__IX__", "Distance"])
-                grpby = df.groupby("__k__", sort=False)
-
-                # for each index
-                # want to keep until we have k
-                # then keep all with same distance
-                for k, kdf in grpby:
-                    # print("kdf " * 10)
-                    # print("k " * 5, k)
-                    # print(kdf["__IX__ Distance".split()])
-                    # print(kdf.dtypes)
-                    # print(kdf.index.dtypes)
-                    # if ties:
-                    if ties:
-                        lx = get_different_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
-                    else:
-                        lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
-                    # print(lx)
-
-
-                    # else:
-                    #     lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
-                    _df = kdf.reindex(lx)
-                    # print("_df", _df)
-                    dfs.append(_df)
-
-                if dfs:
-                    new_result[c] = pd.concat(dfs)
-
-        result = pr.PyRanges(new_result)
-
-        if not result.__IX__.is_monotonic:
-            result = result.sort("__IX__")
-
-        result = result.drop(like="__IX__|__k__")
-
-        self = self.drop(like="__k__|__IX__")
-
-        def prev_to_neg(df, kwargs):
-
-            strand = df.Strand.iloc[0] if "Strand" in df else "+"
-
-            suffix = kwargs["suffix"]
-
-            bools = df["End" + suffix] < df.Start
-            if not strand == "+":
-                bools = ~bools
-
-            df.loc[bools, "Distance"] = -df.loc[bools, "Distance"]
-            return df
-
-        # print(result)
-        result = result.apply(prev_to_neg, suffix=kwargs["suffix"])
-        # print(result)
-
-        # end = time()
-        # print("final stuff", end - start)
-
-        return result
 
 
 
@@ -2390,6 +2120,372 @@ class PyRanges():
 
         return natsorted(self.dfs.keys())
 
+    def k_nearest(self, other, k=1, ties=None, strandedness=None, overlap=True, how=None, suffix="_b", nb_cpu=1):
+
+        """Find k nearest intervals.
+
+        Parameters
+        ----------
+        other : PyRanges
+
+            PyRanges to find nearest interval in.
+
+        k : int or list/array/Series of int
+
+            Number of closest to return. If iterable, must be same length as PyRanges.
+
+        ties : {None, "first", "last", "different"}, default None
+
+            How to resolve ties, i.e. closest intervals with equal distance. None means that ...
+            "first" means that the first tie is kept, "last" meanst that the last is kept.
+            "different" means that all nearest intervals with the k unique nearest distances are kept.
+
+        strandedness : {None, "same", "opposite", False}, default None, i.e. auto
+
+            Whether to compare PyRanges on the same strand, the opposite or ignore strand
+            information. The default, None, means use "same" if both PyRanges are stranded,
+            otherwise ignore the strand information.
+
+        overlap : bool, default True
+
+            Whether to include overlaps.
+
+        how : {None, "upstream", "downstream"}, default None, i.e. both directions
+
+            Whether to only look for nearest in one direction. Always with respect to the PyRanges
+            it is called on.
+
+        suffix : str, default "_b"
+
+            Suffix to give columns with shared name in other.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        Returns
+        -------
+        PyRanges
+
+            A PyRanges with columns of nearest interval horizontally appended.
+
+        Notes
+        -----
+
+        nearest also exists, and is more performant.
+
+        See also
+        --------
+
+        PyRanges.new_position : give joined PyRanges new coordinates
+        PyRanges.nearest : find nearest intervals
+
+        Examples
+        --------
+
+        >>> f1 = pr.from_dict({'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
+        ...                    'End': [6, 9, 7], 'Strand': ['+', '+', '-']})
+        >>> f1
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         3 |         6 | +            |
+        | chr1         |         8 |         9 | +            |
+        | chr1         |         5 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f2 = pr.from_dict({'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...                    'End': [2, 7], 'Strand': ['+', '-']})
+        >>> f2
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         2 | +            |
+        | chr1         |         6 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.k_nearest(f2, k=2)
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int32) |
+        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
+        | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
+        | chr1         |         3 |         6 | +            |         1 |         2 | +            |         -2 |
+        | chr1         |         8 |         9 | +            |         6 |         7 | -            |         -2 |
+        | chr1         |         8 |         9 | +            |         1 |         2 | +            |         -7 |
+        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
+        | chr1         |         5 |         7 | -            |         1 |         2 | +            |          4 |
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        Stranded PyRanges object has 6 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.k_nearest(f2, how="upstream", k=2)
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int32) |
+        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
+        | chr1         |         3 |         6 | +            |         1 |         2 | +            |         -2 |
+        | chr1         |         8 |         9 | +            |         6 |         7 | -            |         -2 |
+        | chr1         |         8 |         9 | +            |         1 |         2 | +            |         -7 |
+        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        Stranded PyRanges object has 4 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.k_nearest(f2, k=[1, 2, 1])
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int32) |
+        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
+        | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
+        | chr1         |         8 |         9 | +            |         6 |         7 | -            |         -2 |
+        | chr1         |         8 |         9 | +            |         1 |         2 | +            |         -7 |
+        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        Stranded PyRanges object has 4 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> d1 = {"Chromosome": [1], "Start": [5], "End": [6]}
+        >>> d2 = {"Chromosome": 1, "Start": [1] * 2 + [5] * 2 + [9] * 2,
+        ...       "End": [3] * 2 + [7] * 2 + [11] * 2, "ID": range(6)}
+        >>> gr, gr2 = pr.from_dict(d1), pr.from_dict(d2)
+
+        >>> gr
+        +--------------+-----------+-----------+
+        |   Chromosome |     Start |       End |
+        |   (category) |   (int32) |   (int32) |
+        |--------------+-----------+-----------|
+        |            1 |         5 |         6 |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 1 rows and 3 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr2
+        +--------------+-----------+-----------+-----------+
+        |   Chromosome |     Start |       End |        ID |
+        |   (category) |   (int32) |   (int32) |   (int64) |
+        |--------------+-----------+-----------+-----------|
+        |            1 |         1 |         3 |         0 |
+        |            1 |         1 |         3 |         1 |
+        |            1 |         5 |         7 |         2 |
+        |            1 |         5 |         7 |         3 |
+        |            1 |         9 |        11 |         4 |
+        |            1 |         9 |        11 |         5 |
+        +--------------+-----------+-----------+-----------+
+        Unstranded PyRanges object has 6 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.k_nearest(gr2, k=2)
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
+        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int64) |
+        |--------------+-----------+-----------+-----------+-----------+-----------+------------|
+        |            1 |         5 |         6 |         5 |         7 |         2 |          0 |
+        |            1 |         5 |         6 |         5 |         7 |         3 |          0 |
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        Unstranded PyRanges object has 2 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.k_nearest(gr2, k=2, ties="different")
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
+        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int64) |
+        |--------------+-----------+-----------+-----------+-----------+-----------+------------|
+        |            1 |         5 |         6 |         5 |         7 |         2 |          0 |
+        |            1 |         5 |         6 |         5 |         7 |         3 |          0 |
+        |            1 |         5 |         6 |         1 |         3 |         1 |         -3 |
+        |            1 |         5 |         6 |         1 |         3 |         0 |         -3 |
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        Unstranded PyRanges object has 4 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.k_nearest(gr2, k=3, ties="first")
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
+        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int64) |
+        |--------------+-----------+-----------+-----------+-----------+-----------+------------|
+        |            1 |         5 |         6 |         5 |         7 |         2 |          0 |
+        |            1 |         5 |         6 |         1 |         3 |         1 |         -3 |
+        |            1 |         5 |         6 |         9 |        11 |         4 |          4 |
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        Unstranded PyRanges object has 3 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.k_nearest(gr2, k=1, overlap=False)
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
+        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int32) |
+        |--------------+-----------+-----------+-----------+-----------+-----------+------------|
+        |            1 |         5 |         6 |         1 |         3 |         1 |         -3 |
+        |            1 |         5 |         6 |         1 |         3 |         0 |         -3 |
+        +--------------+-----------+-----------+-----------+-----------+-----------+------------+
+        Unstranded PyRanges object has 2 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        from pyranges.methods.k_nearest import _nearest
+        from sorted_nearest import get_all_ties, get_different_ties
+
+        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap, "nb_cpu": nb_cpu,
+                  "k": k, "ties": ties}
+        kwargs = fill_kwargs(kwargs)
+        kwargs["stranded"] = self.stranded and other.stranded
+
+        overlap = kwargs.get("overlap", True)
+        ties = kwargs.get("ties", False)
+
+        self = pr.PyRanges({k: v.copy() for k, v in self.dfs.items()})
+
+        try: # if k is a Series
+            k = k.values
+        except:
+            pass
+
+        self.__k__ = k
+        self.__IX__ = np.arange(len(self))
+
+
+        # from time import time
+        # start = time()
+        dfs = pyrange_apply(_nearest, self, other, **kwargs)
+        # end = time()
+        # print("nearest", end - start)
+
+        nearest = PyRanges(dfs)
+        # nearest.msp()
+        # raise
+        # print("nearest len", len(nearest))
+
+        if not overlap:
+            # self = self.drop(like="__k__|__IX__")
+            result = nearest#.drop(like="__k__|__IX__")
+        else:
+            from collections import defaultdict
+            # overlap_kwargs = {k: v for k, v in kwargs.items()}
+            # print("kwargs ties:", kwargs.get("ties"))
+            overlap_how = defaultdict(lambda: None, {"first": "first", "last": "last"})[kwargs.get("ties")]
+            # start = time()
+            overlaps = self.join(other, strandedness=strandedness, how=overlap_how, nb_cpu=nb_cpu)
+            # end = time()
+            # print("overlaps", end - start)
+            overlaps.Distance = 0
+            # print("overlaps len", len(overlaps))
+
+            result = pr.concat([overlaps, nearest])
+
+        if not len(result):
+            return pr.PyRanges()
+        # print(result)
+        # print(overlaps.drop(like="__").df)
+        # raise
+
+        # start = time()
+        new_result = {}
+        if ties in ["first", "last"]:
+            # method = "tail" if ties == "last" else "head"
+            # keep = "last" if ties == "last" else "first"
+
+            for c, df in result:
+                # start = time()
+                # print(c)
+                # print(df)
+
+                df = df.sort_values(["__IX__", "Distance"])
+                grpby = df.groupby("__k__", sort=False)
+                dfs = []
+                for k, kdf in grpby:
+                    # print("k", k)
+                    # print(kdf)
+                    # dist_bool = ~kdf.Distance.duplicated(keep=keep)
+                    # print(dist_bool)
+                    # kdf = kdf[dist_bool]
+                    grpby2 = kdf.groupby("__IX__", sort=False)
+                    # f = getattr(grpby2, method)
+                    _df = grpby2.head(k)
+                    # print(_df)
+                    dfs.append(_df)
+                # raise
+
+                if dfs:
+                    new_result[c] = pd.concat(dfs)
+                # print(new_result[c])
+        elif ties == "different" or not ties:
+            for c, df in result:
+
+                # print(df)
+
+                if df.empty:
+                    continue
+                dfs = []
+
+                df = df.sort_values(["__IX__", "Distance"])
+                grpby = df.groupby("__k__", sort=False)
+
+                # for each index
+                # want to keep until we have k
+                # then keep all with same distance
+                for k, kdf in grpby:
+                    # print("kdf " * 10)
+                    # print("k " * 5, k)
+                    # print(kdf["__IX__ Distance".split()])
+                    # print(kdf.dtypes)
+                    # print(kdf.index.dtypes)
+                    # if ties:
+                    if ties:
+                        lx = get_different_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
+                    else:
+                        lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
+                    # print(lx)
+
+
+                    # else:
+                    #     lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
+                    _df = kdf.reindex(lx)
+                    # print("_df", _df)
+                    dfs.append(_df)
+
+                if dfs:
+                    new_result[c] = pd.concat(dfs)
+
+        result = pr.PyRanges(new_result)
+
+        if not result.__IX__.is_monotonic:
+            result = result.sort("__IX__")
+
+        result = result.drop(like="__IX__|__k__")
+
+        self = self.drop(like="__k__|__IX__")
+
+        def prev_to_neg(df, **kwargs):
+
+            strand = df.Strand.iloc[0] if "Strand" in df else "+"
+
+            suffix = kwargs["suffix"]
+
+            bools = df["End" + suffix] < df.Start
+            if not strand == "+":
+                bools = ~bools
+
+            df.loc[bools, "Distance"] = -df.loc[bools, "Distance"]
+            return df
+
+        # print(result)
+        result = result.apply(prev_to_neg, suffix=kwargs["suffix"])
+        # print(result)
+
+        # end = time()
+        # print("final stuff", end - start)
+
+        return result
+
+
 
     @property
     def length(self):
@@ -2506,7 +2602,7 @@ class PyRanges():
             return pd.concat(_lengths).reset_index(drop=True)
 
 
-    def merge(self, strand=None, count=False, by=None):
+    def merge(self, strand=None, count=False, count_col="Count", by=None):
 
         """Merge overlapping intervals into one.
 
@@ -2519,6 +2615,10 @@ class PyRanges():
         count : bool, default False
 
             Count intervals in each superinterval.
+
+        count_col : str, default "Count"
+
+            Name of column with counts.
 
         by : str or list of str, default None
 
@@ -2563,50 +2663,65 @@ class PyRanges():
         Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> gr.merge()
-        +--------------+-----------+-----------+--------------+
-        | Chromosome   | Start     | End       | Strand       |
-        | (category)   | (int32)   | (int32)   | (category)   |
-        |--------------+-----------+-----------+--------------|
-        | 1            | 11868     | 14409     | +            |
-        | 1            | 29553     | 31109     | +            |
-        | 1            | 52472     | 53312     | +            |
-        | 1            | 57597     | 64116     | +            |
-        | ...          | ...       | ...       | ...          |
-        | 1            | 1062207   | 1063288   | -            |
-        | 1            | 1070966   | 1074306   | -            |
-        | 1            | 1081817   | 1116361   | -            |
-        | 1            | 1173055   | 1179555   | -            |
-        +--------------+-----------+-----------+--------------+
-        Stranded PyRanges object has 62 rows and 4 columns from 1 chromosomes.
+        >>> gr.merge(count=True, count_col="Count")
+        +--------------+-----------+-----------+--------------+-----------+
+        | Chromosome   | Start     | End       | Strand       | Count     |
+        | (category)   | (int32)   | (int32)   | (category)   | (int32)   |
+        |--------------+-----------+-----------+--------------+-----------|
+        | 1            | 11868     | 14409     | +            | 12        |
+        | 1            | 29553     | 31109     | +            | 11        |
+        | 1            | 52472     | 53312     | +            | 3         |
+        | 1            | 57597     | 64116     | +            | 7         |
+        | ...          | ...       | ...       | ...          | ...       |
+        | 1            | 1062207   | 1063288   | -            | 4         |
+        | 1            | 1070966   | 1074306   | -            | 10        |
+        | 1            | 1081817   | 1116361   | -            | 319       |
+        | 1            | 1173055   | 1179555   | -            | 4         |
+        +--------------+-----------+-----------+--------------+-----------+
+        Stranded PyRanges object has 62 rows and 5 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> gr.merge(by="Feature")
-        +--------------+-----------+-----------+--------------+--------------+
-        | Chromosome   | Start     | End       | Strand       | Feature      |
-        | (category)   | (int32)   | (int32)   | (category)   | (category)   |
-        |--------------+-----------+-----------+--------------+--------------|
-        | 1            | 65564     | 65573     | +            | CDS          |
-        | 1            | 69036     | 70005     | +            | CDS          |
-        | 1            | 924431    | 924948    | +            | CDS          |
-        | 1            | 925921    | 926013    | +            | CDS          |
-        | ...          | ...       | ...       | ...          | ...          |
-        | 1            | 1062207   | 1063288   | -            | transcript   |
-        | 1            | 1070966   | 1074306   | -            | transcript   |
-        | 1            | 1081817   | 1116361   | -            | transcript   |
-        | 1            | 1173055   | 1179555   | -            | transcript   |
-        +--------------+-----------+-----------+--------------+--------------+
-        Stranded PyRanges object has 748 rows and 5 columns from 1 chromosomes.
+        >>> gr.merge(by="Feature", count=True)
+        +--------------+-----------+-----------+--------------+--------------+-----------+
+        | Chromosome   | Start     | End       | Strand       | Feature      | Count     |
+        | (category)   | (int32)   | (int32)   | (category)   | (category)   | (int32)   |
+        |--------------+-----------+-----------+--------------+--------------+-----------|
+        | 1            | 65564     | 65573     | +            | CDS          | 1         |
+        | 1            | 69036     | 70005     | +            | CDS          | 2         |
+        | 1            | 924431    | 924948    | +            | CDS          | 1         |
+        | 1            | 925921    | 926013    | +            | CDS          | 11        |
+        | ...          | ...       | ...       | ...          | ...          | ...       |
+        | 1            | 1062207   | 1063288   | -            | transcript   | 1         |
+        | 1            | 1070966   | 1074306   | -            | transcript   | 1         |
+        | 1            | 1081817   | 1116361   | -            | transcript   | 19        |
+        | 1            | 1173055   | 1179555   | -            | transcript   | 1         |
+        +--------------+-----------+-----------+--------------+--------------+-----------+
+        Stranded PyRanges object has 748 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> gr.merge(by=["Feature", "gene_name"])
-
+        >>> gr.merge(by=["Feature", "gene_name"], count=True)
+        +--------------+-----------+-----------+--------------+--------------+-------------+-----------+
+        | Chromosome   | Start     | End       | Strand       | Feature      | gene_name   | Count     |
+        | (category)   | (int32)   | (int32)   | (category)   | (category)   | (object)    | (int32)   |
+        |--------------+-----------+-----------+--------------+--------------+-------------+-----------|
+        | 1            | 1020172   | 1020373   | +            | CDS          | AGRN        | 1         |
+        | 1            | 1022200   | 1022462   | +            | CDS          | AGRN        | 2         |
+        | 1            | 1034555   | 1034703   | +            | CDS          | AGRN        | 2         |
+        | 1            | 1035276   | 1035324   | +            | CDS          | AGRN        | 4         |
+        | ...          | ...       | ...       | ...          | ...          | ...         | ...       |
+        | 1            | 347981    | 348366    | -            | transcript   | RPL23AP24   | 1         |
+        | 1            | 1173055   | 1179555   | -            | transcript   | TTLL10-AS1  | 1         |
+        | 1            | 14403     | 29570     | -            | transcript   | WASH7P      | 1         |
+        | 1            | 185216    | 195411    | -            | transcript   | WASH9P      | 1         |
+        +--------------+-----------+-----------+--------------+--------------+-------------+-----------+
+        Stranded PyRanges object has 807 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
         if strand is None:
             strand = self.stranded
 
-        kwargs = {"strand": strand, "count": count, "by": by}
+        kwargs = {"strand": strand, "count": count, "by": by, "count_col": count_col}
 
         if not kwargs["by"]:
             kwargs["sparse"] = {"self": True}
@@ -2617,11 +2732,125 @@ class PyRanges():
             from pyranges.methods.merge import _merge_by
             df = pyrange_apply_single(_merge_by, self, **kwargs)
 
-        if not count:
-            df = {k: v.drop("Count", axis=1) for k, v in df.items()}
-
         return PyRanges(df)
 
+
+    def nearest(self, other, strandedness=None, overlap=True, how=None, nb_cpu=1):
+
+        """Find closest interval.
+
+        Parameters
+        ----------
+        other : PyRanges
+
+            PyRanges to find nearest interval in.
+
+        strandedness : {None, "same", "opposite", False}, default None, i.e. auto
+
+            Whether to compare PyRanges on the same strand, the opposite or ignore strand
+            information. The default, None, means use "same" if both PyRanges are strande,
+            otherwise ignore the strand information.
+
+        overlap : bool, default True
+
+            Whether to include overlaps.
+
+        how : {None, "upstream", "downstream"}, default None, i.e. both directions
+
+            Whether to only look for nearest in one direction. Always with respect to the PyRanges
+            it is called on.
+
+        suffix : str, default "_b"
+
+            Suffix to give columns with shared name in other.
+
+        nb_cpu: int, default 1
+
+            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+            Will only lead to speedups on large datasets.
+
+        Returns
+        -------
+        PyRanges
+
+            A PyRanges with columns representing nearest interval horizontally appended.
+
+        Notes
+        -----
+
+        A k_nearest also exists, but is less performant.
+
+        See also
+        --------
+
+        PyRanges.new_position : give joined PyRanges new coordinates
+        PyRanges.k_nearest : find k nearest intervals
+
+        Examples
+        --------
+
+        >>> f1 = pr.from_dict({'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
+        ...                    'End': [6, 9, 7], 'Strand': ['+', '+', '-']})
+        >>> f1
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         3 |         6 | +            |
+        | chr1         |         8 |         9 | +            |
+        | chr1         |         5 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f2 = pr.from_dict({'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
+        ...                    'End': [2, 7], 'Strand': ['+', '-']})
+        >>> f2
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         2 | +            |
+        | chr1         |         6 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.nearest(f2)
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
+        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
+        | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
+        | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
+        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        Stranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> f1.nearest(f2, how="upstream")
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
+        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
+        |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
+        | chr1         |         3 |         6 | +            |         1 |         2 | +            |          2 |
+        | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
+        | chr1         |         5 |         7 | -            |         6 |         7 | -            |          0 |
+        +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
+        Stranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
+
+        from pyranges.methods.nearest import _nearest
+
+        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap, "nb_cpu": nb_cpu}
+        kwargs = fill_kwargs(kwargs)
+        if kwargs.get("how") in "upstream downstream".split():
+            assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
+
+        dfs = pyrange_apply(_nearest, self, other, **kwargs)
+
+        return PyRanges(dfs)
 
     def new_position(self, new_pos, columns=None):
 
@@ -3610,23 +3839,23 @@ class PyRanges():
 
         >>> gr = pr.data.ensembl_gtf()
         >>> gr
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
-        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
-        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
-        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
-        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
+        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
+        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | +20   |
+        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |
+        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------|
+        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ...   |
+        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ...   |
+        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | ...   |
+        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | ...   |
+        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...   |
+        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | ...   |
+        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | ...   |
+        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | ...   |
+        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | ...   |
+        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------+
         Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
+        20 hidden columns: (assigned, ccds_id, exon_id, exon_number, exon_version, gene_biotype, gene_id, gene_name, gene_source, ... (+ 11 more.)
 
         >>> gr.summary()
         +-------+------------------+--------------------+--------------------+-----------------------+
@@ -3836,7 +4065,7 @@ class PyRanges():
 
         return PyRanges(df)
 
-    def to_example(self, nrows=10):
+    def to_example(self, n=10):
 
         """Return as dict.
 
@@ -3844,7 +4073,7 @@ class PyRanges():
 
         Parameters
         ----------
-        nrows:
+        n : int, default 10
             Number of rows. Half is taken from the start, the other half from the end.
 
         See Also
@@ -3874,7 +4103,7 @@ class PyRanges():
         Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> d = gr.to_example()
+        >>> d = gr.to_example(n=4)
         >>> d
         {'Chromosome': ['chr1', 'chr1', 'chrY', 'chrY'], 'Start': [212609534, 169887529, 8010951, 7405376], 'End': [212609559, 169887554, 8010976, 7405401], 'Name': ['U0', 'U0', 'U0', 'U0'], 'Score': [0, 0, 0, 0], 'Strand': ['+', '+', '-', '-']}
         >>> pr.from_dict(d)
@@ -3891,9 +4120,9 @@ class PyRanges():
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
-        nrows_half = int(min(nrows, len(self))/2)
+        nrows_half = int(min(n, len(self))/2)
 
-        if nrows < len(self):
+        if n < len(self):
             first = self.head(nrows_half)
             last = self.tail(nrows_half)
             example = pr.concat([first, last])

@@ -74,5 +74,6 @@ html_static_path = ['_static']
 
 html_theme_options = {
     'page_width': 'auto',
+    'body_max_width': 'auto'
 }
 # page_width = 1200
