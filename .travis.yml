@@ -22,6 +22,7 @@ install:
   - python --version
   - pip --version
   - pip install sorted_nearest ncls pyrle
+  # to build docs pip install sphinxcontrib-napoleon sphinx-autoapi
   - python setup.py install
   - python -c 'import pandas as pd; print(pd.__version__)'
   - ls tests

@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from collections import defaultdict
 
 try:
     import mkl
@@ -9,6 +10,8 @@ except ImportError:
 
 import pandas as pd
 import numpy as np
+
+import pyranges as pr
 
 import pkg_resources
 
@@ -20,6 +23,8 @@ from pyranges.methods.concat import concat
 from pyrle import PyRles, Rle
 
 from pyranges.version import __version__
+
+from natsort import natsorted
 
 get_example_path = data.get_example_path
 
@@ -39,17 +44,234 @@ def from_string(s, int64=False):
 
 import pyranges.genomicfeatures.genomicfeatures as gf
 
-random = gf.random
 
-from pyranges.methods.itergrs import itergrs
-iter = itergrs
+def itergrs(prs, strand=None, keys=False):
+
+    r"""Iterate over multiple PyRanges at once.
+
+    Parameters
+    ----------
+    prs : list of PyRanges
+
+        PyRanges to iterate over.
+
+    strand : bool, default None, i.e. auto
+
+        Whether to iterate over strands. If True, all PyRanges must be stranded.
+
+    keys : bool, default False
+
+        Return tuple with key and value from iterator.
+
+    Examples
+    --------
+
+    >>> d1 = {"Chromosome": [1, 1, 2], "Start": [1, 2, 3], "End": [4, 9, 12], "Strand": ["+", "+", "-"]}
+    >>> d2 = {"Chromosome": [2, 3, 3], "Start": [5, 9, 21], "End": [81, 42, 25], "Strand": ["-", "+", "-"]}
+    >>> gr1, gr2 = pr.from_dict(d1), pr.from_dict(d2)
+    >>> gr1
+    +--------------+-----------+-----------+--------------+
+    |   Chromosome |     Start |       End | Strand       |
+    |   (category) |   (int32) |   (int32) | (category)   |
+    |--------------+-----------+-----------+--------------|
+    |            1 |         1 |         4 | +            |
+    |            1 |         2 |         9 | +            |
+    |            2 |         3 |        12 | -            |
+    +--------------+-----------+-----------+--------------+
+    Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+    >>> gr2
+    +--------------+-----------+-----------+--------------+
+    |   Chromosome |     Start |       End | Strand       |
+    |   (category) |   (int32) |   (int32) | (category)   |
+    |--------------+-----------+-----------+--------------|
+    |            2 |         5 |        81 | -            |
+    |            3 |         9 |        42 | +            |
+    |            3 |        21 |        25 | -            |
+    +--------------+-----------+-----------+--------------+
+    Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+    >>> ranges = [gr1, gr2]
+
+    >>> for key, dfs in pr.itergrs(ranges, keys=True):
+    ...     print("-----------\n" + str(key) + "\n-----------")
+    ...     for df in dfs:
+    ...         print(df)
+    -----------
+    ('1', '+')
+    -----------
+      Chromosome  Start  End Strand
+    0          1      1    4      +
+    1          1      2    9      +
+    Empty DataFrame
+    Columns: [Chromosome, Start, End, Strand]
+    Index: []
+    -----------
+    ('2', '-')
+    -----------
+      Chromosome  Start  End Strand
+    2          2      3   12      -
+      Chromosome  Start  End Strand
+    0          2      5   81      -
+    -----------
+    ('3', '+')
+    -----------
+    Empty DataFrame
+    Columns: [Chromosome, Start, End, Strand]
+    Index: []
+      Chromosome  Start  End Strand
+    1          3      9   42      +
+    -----------
+    ('3', '-')
+    -----------
+    Empty DataFrame
+    Columns: [Chromosome, Start, End, Strand]
+    Index: []
+      Chromosome  Start  End Strand
+    2          3     21   25      -
+    """
+
+    if strand is None:
+        strand = all([gr.stranded for gr in prs])
+
+    if strand is False and any([gr.stranded for gr in prs]):
+        prs = [gr.unstrand() for gr in prs]
+
+    grs_per_chromosome = defaultdict(list)
+    set_keys = set()
+    for gr in prs:
+        set_keys.update(gr.dfs.keys())
+
+    empty_dfs = [pd.DataFrame(columns=gr.columns) for gr in prs]
+    for gr, empty in zip(prs, empty_dfs):
+        for k in set_keys:
+            df = gr.dfs.get(k, empty)
+            grs_per_chromosome[k].append(df)
+
+    if not keys:
+        return iter(grs_per_chromosome.values())
+    else:
+        return iter(natsorted(grs_per_chromosome.items()))
+
+def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
+
+    """Return PyRanges with random intervals.
+
+    Parameters
+    ----------
+    n : int, default 1000
+
+        Number of intervals.
+
+    length : int, default 100
+
+        Length of intervals.
+
+    chromsizes : dict or DataFrame, default None, i.e. use "hg19"
+
+        Draw intervals from within these bounds.
+
+    strand : bool, default True
+
+        Data should have strand.
+
+    int64 : bool, default False
+
+        Use int64 to represent Start and End.
+
+    Examples
+    --------
+
+    >>> np.random.seed(0)
+    >>> pr.random()
+    +--------------+-----------+-----------+--------------+
+    | Chromosome   | Start     | End       | Strand       |
+    | (category)   | (int32)   | (int32)   | (category)   |
+    |--------------+-----------+-----------+--------------|
+    | chr1         | 43223238  | 43223338  | +            |
+    | chr1         | 164609738 | 164609838 | +            |
+    | chr1         | 91355620  | 91355720  | +            |
+    | chr1         | 196620772 | 196620872 | +            |
+    | ...          | ...       | ...       | ...          |
+    | chrY         | 16870714  | 16870814  | -            |
+    | chrY         | 32379907  | 32380007  | -            |
+    | chrY         | 12904861  | 12904961  | -            |
+    | chrY         | 36607258  | 36607358  | -            |
+    +--------------+-----------+-----------+--------------+
+    Stranded PyRanges object has 1,000 rows and 4 columns from 24 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+    To have random lengths:
+
+    >>> gr = pr.random(length=1)
+    >>> gr.End += np.random.randint(int(1e5), size=len(gr))
+    >>> gr.Length = gr.lengths()
+    >>> gr
+    +--------------+-----------+-----------+--------------+-----------+
+    | Chromosome   | Start     | End       | Strand       | Length    |
+    | (category)   | (int32)   | (int64)   | (category)   | (int64)   |
+    |--------------+-----------+-----------+--------------+-----------|
+    | chr1         | 203654331 | 203695380 | +            | 41049     |
+    | chr1         | 46918271  | 46978908  | +            | 60637     |
+    | chr1         | 97355021  | 97391587  | +            | 36566     |
+    | chr1         | 57284999  | 57323542  | +            | 38543     |
+    | ...          | ...       | ...       | ...          | ...       |
+    | chrY         | 31665821  | 31692660  | -            | 26839     |
+    | chrY         | 20236607  | 20253473  | -            | 16866     |
+    | chrY         | 33255377  | 33315933  | -            | 60556     |
+    | chrY         | 31182964  | 31205467  | -            | 22503     |
+    +--------------+-----------+-----------+--------------+-----------+
+    Stranded PyRanges object has 1,000 rows and 5 columns from 24 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+    """
+
+    if chromsizes is None:
+        from pyranges import data
+        chromsizes = data.chromsizes()
+        df = chromsizes.df
+    elif isinstance(chromsizes, dict):
+        df = pd.DataFrame({"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())})
+    else:
+        df = chromsizes.df
+
+    p = df.End / df.End.sum()
+
+    n_per_chrom = pd.Series(np.random.choice(
+        df.index, size=n, p=p)).value_counts(sort=False).to_frame()
+    n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
+    n_per_chrom.columns = "Count Chromosome".split()
+
+    random_dfs = []
+    for _, (count, chrom) in n_per_chrom.iterrows():
+        r = np.random.randint(
+            0, df[df.Chromosome == chrom].End - length, size=count)
+        _df = pd.DataFrame({
+            "Chromosome": chrom,
+            "Start": r,
+            "End": r + length
+        })
+        random_dfs.append(_df)
+
+    random_df = pd.concat(random_dfs)
+    if strand:
+        s = np.random.choice("+ -".split(), size=n)
+        random_df.insert(3, "Strand", s)
+
+    return PyRanges(random_df, int64=int64)
+
 
 from pyranges.methods.multioverlap import count_overlaps#, interval_split
 
 from pyranges import statistics
 stats = statistics
+"""Namespace for statistcal functions.
 
-# __all__ = [read_gff3, read_bed, read_bam, read_gtf, concat, iter, count_overlaps]
+See Also
+--------
+pyranges.statistics : statistcal methods for genomics."""
+
 
 def to_bigwig(gr, path, chromosome_sizes):
 
@@ -95,6 +317,8 @@ def to_bigwig(gr, path, chromosome_sizes):
     +--------------+-----------+-----------+
     Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.
     For printing, the PyRanges was sorted on Chromosome.
+
+    Overlapping intervals are invalid in bigwigs:
 
     >>> to_bigwig(gr, "outpath.bw", hg19)
     Traceback (most recent call last):

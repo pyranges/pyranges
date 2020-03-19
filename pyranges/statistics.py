@@ -1,3 +1,5 @@
+"""Fast implementation of  bb"""
+
 import pandas as pd
 import numpy as np
 
@@ -8,6 +10,56 @@ from pyranges.methods.statistics import _relative_distance
 
 
 def simes(df, groupby, pcol):
+
+    """Apply Simes method for giving dependent events a p-value.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+
+        Data to analyse with Simes.
+
+    groupby : str or list of str
+
+        Features equal in these columns will be merged with Simes.
+
+    pcol : str
+
+        Name of column with p-values.
+
+    Examples
+    --------
+
+    >>> s = '''Chromosome Start End Strand Gene PValue
+    ... 1 10 20 + P53 0.0001
+    ... 1 20 20 + P53 0.0002
+    ... 1 30 20 + P53 0.0003
+    ... 2 60 65 - FOX 0.05
+    ... 2 70 75 - FOX 0.0000001
+    ... 2 80 90 - FOX 0.0000021'''
+
+    >>> gr = pr.from_string(s)
+    >>> gr
+    +--------------+-----------+-----------+--------------+------------+-------------+
+    |   Chromosome |     Start |       End | Strand       | Gene       |      PValue |
+    |   (category) |   (int32) |   (int32) | (category)   | (object)   |   (float64) |
+    |--------------+-----------+-----------+--------------+------------+-------------|
+    |            1 |        10 |        20 | +            | P53        |     0.0001  |
+    |            1 |        20 |        20 | +            | P53        |     0.0002  |
+    |            1 |        30 |        20 | +            | P53        |     0.0003  |
+    |            2 |        60 |        65 | -            | FOX        |     0.05    |
+    |            2 |        70 |        75 | -            | FOX        |     1e-07   |
+    |            2 |        80 |        90 | -            | FOX        |     2.1e-06 |
+    +--------------+-----------+-----------+--------------+------------+-------------+
+    Stranded PyRanges object has 6 rows and 6 columns from 2 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+    >>> simes = pr.stats.simes(gr.df, "Gene", "PValue")
+    >>> simes
+      Gene         Simes
+    0  FOX  3.000000e-07
+    1  P53  3.000000e-04
+    """
 
     if isinstance(groupby, str):
         groupby = [groupby]

@@ -116,7 +116,7 @@ def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
     else:
         return "".join([
             outdf.to_csv(
-                index=False, header=False, sep=sep, quoting=csv.QUOTE_NONE)
+                index=False, header=header, sep=sep, quoting=csv.QUOTE_NONE)
             for _, outdf in sorted(gr.dfs.items())
         ])
 
@@ -254,7 +254,7 @@ def _gff3(df):
         if i != total_cols:
             new_val = c + '=' + col + ';'
         else:
-            new_val = c + '=' + col 
+            new_val = c + '=' + col
         rest_df.loc[:, c] = rest_df[c].astype(str)
         rest_df.loc[~isnull, c] = new_val
         rest_df.loc[isnull, c] = ""

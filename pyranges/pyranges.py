@@ -141,8 +141,13 @@ class PyRanges():
     dfs = None
     """Dict mapping chromosomes or chromosome/strand pairs to pandas DataFrames."""
 
-    gf = None
-    """Namespace for genomic-features methods."""
+    features = None
+    """Namespace for genomic-features methods.
+
+    See Also
+    --------
+    pyranges.genomicfeatures.genomicfeatures.GenomicFeaturesMethods : namespace for feature-functionality
+    """
 
     stats = None
     """Namespace for statistcal methods."""
@@ -163,13 +168,6 @@ class PyRanges():
 
         _init(self, df, chromosomes, starts, ends, strands, int64, copy_df)
 
-
-
-    def __len__(self):
-        """Return the number of intervals in the PyRanges."""
-        return sum([len(d) for d in self.values()])
-
-    # def __call__(self, f, strand=None, as_pyranges=True, nb_cpu=1, **kwargs):
 
     def __getattr__(self, name):
 
@@ -374,18 +372,6 @@ class PyRanges():
 
         return _getitem(self, val)
 
-    def __str__(self):
-
-        """Return string representation."""
-
-        return tostring(self)
-
-    def __repr__(self):
-
-        """Return REPL representation."""
-
-        return str(self)
-
 
     def __iter__(self):
 
@@ -413,6 +399,25 @@ class PyRanges():
         """
 
         return iter(self.items())
+
+
+    def __len__(self):
+        """Return the number of intervals in the PyRanges."""
+        return sum([len(d) for d in self.values()])
+
+
+    def __str__(self):
+
+        """Return string representation."""
+
+        return tostring(self)
+
+    def __repr__(self):
+
+        """Return REPL representation."""
+
+        return str(self)
+
 
 
     def apply(self, f, strand=None, as_pyranges=True, nb_cpu=1, **kwargs):
@@ -528,7 +533,7 @@ class PyRanges():
 
         as_pyranges : bool, default False
 
-            Whether to return as a PyRanges or dict. 
+            Whether to return as a PyRanges or dict.
 
         nb_cpu: int, default 1
 
@@ -1137,7 +1142,7 @@ class PyRanges():
         return pr.PyRanges(counts)
 
 
-    def coverage(self, other, strandedness=None, keep_nonoverlapping=True, overlap_col="NumberOverlaps", fraction_col="FractionOverlaps"):
+    def coverage(self, other, strandedness=None, keep_nonoverlapping=True, overlap_col="NumberOverlaps", fraction_col="FractionOverlaps", nb_cpu=1):
 
         """Count number of overlaps and their fraction per interval.
 
@@ -1220,7 +1225,7 @@ class PyRanges():
         """
 
         kwargs = {"strandedness": strandedness, "keep_nonoverlapping": keep_nonoverlapping,
-                  "overlap_col": overlap_col, "fraction_col": fraction_col}
+                  "overlap_col": overlap_col, "fraction_col": fraction_col, nb_cpu: nb_cpu}
         kwargs = fill_kwargs(kwargs)
 
         counts = self.count_overlaps(other, keep_nonoverlapping=True, overlap_col=overlap_col)
@@ -1622,7 +1627,7 @@ class PyRanges():
         +--------------+-----------+-----------+------------+-----------+--------------+
         Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        
+
         >>> gr.head(3)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -1822,7 +1827,7 @@ class PyRanges():
         See also
         --------
 
-        PyRanges.set_intersect : set-intersect PyRanges 
+        PyRanges.set_intersect : set-intersect PyRanges
         PyRanges.overlap : report overlapping intervals
 
         Examples
@@ -2734,6 +2739,67 @@ class PyRanges():
 
         return PyRanges(df)
 
+    def mp(self, n=8, formatting=None):
+
+        """Merge location and print.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(tostring(self, n=n, merge_position=True, formatting=formatting))
+
+    def mpc(self, n=8, formatting=None):
+
+        """Merge location, print and return self.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(tostring(self, n=n, merge_position=True, formatting=formatting))
+
+        return self
+
+    def msp(self, n=30, formatting=None):
+
+        """Sort on location, merge location info and print.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(
+            tostring(
+                self,
+                n=n,
+                merge_position=True,
+                sort=True,
+                formatting=formatting))
+
+
+    def mspc(self, n=30, formatting=None):
+
+        """Sort on location, merge location, print and return self.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(
+            tostring(
+                self,
+                n=n,
+                merge_position=True,
+                sort=True,
+                formatting=formatting))
+
+        return self
+
 
     def nearest(self, other, strandedness=None, overlap=True, how=None, nb_cpu=1):
 
@@ -3042,7 +3108,7 @@ class PyRanges():
         --------
 
         PyRanges.intersect : report overlapping subintervals
-        PyRanges.set_intersect : set-intersect PyRanges 
+        PyRanges.set_intersect : set-intersect PyRanges
 
         Examples
         --------
@@ -3116,6 +3182,19 @@ class PyRanges():
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
 
         return pr.PyRanges(dfs)
+
+    def pc(self, n=8, formatting=None):
+
+        """Print and return self.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(tostring(self, n=n, formatting=formatting))
+
+        return self
 
     def print(self, n=8, merge_position=False, sort=False, formatting=None, chain=False):
 
@@ -3265,6 +3344,31 @@ class PyRanges():
         if chain:
             return self
 
+    def rp(self):
+
+        """Print dict of DataFrames.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(self.dfs)
+
+
+
+    def rpc(self):
+
+        """Print dict of DataFrames and return self.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(self.dfs)
+
+        return self
 
     def sample(self, n=8, replace=False):
         """Subsample arbitrary rows of PyRanges.
@@ -3279,14 +3383,14 @@ class PyRanges():
 
         replace : bool, False
 
-            Reuse rows. 
+            Reuse rows.
 
         Examples
         --------
 
         >>> gr = pr.data.chipseq()
         >>> np.random.seed(0)
-        >>> gr.sample(n=3) 
+        >>> gr.sample(n=3)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
         | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -3405,6 +3509,31 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         return PyRanges(
             pyrange_apply_single(_sort, self, **kwargs))
+
+
+    def sp(self, n=30, formatting=None):
+
+        """Sort on location and print.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(tostring(self, n=n, sort=True, formatting=formatting))
+
+    def spc(self, n=30, formatting=None):
+
+        """Sort on location, print and return self.
+
+        See Also
+        --------
+
+        PyRanges.print : print PyRanges."""
+
+        print(tostring(self, n=n, sort=True, formatting=formatting))
+
+        return self
 
 
     def slack(self, slack):
@@ -4382,6 +4511,44 @@ class PyRanges():
             pass
 
     def to_csv(self, path=None, sep=",", header=True, compression="infer", chain=False):
+
+        r"""Write to comma- or other value-separated file.
+
+        Parameters
+        ----------
+        path : str, default None, i.e. return string representation.
+
+            Where to write file.
+
+        sep : str, default ","
+
+            String of length 1. Field delimiter for the output file.
+
+        header : bool, default True
+
+            Write out the column names.
+
+        compression : {‘infer’, ‘gzip’, ‘bz2’, ‘zip’, ‘xz’, None}, default "infer"
+
+            Which compression to use. Uses file extension to infer by default.
+
+        chain: bool, default False
+
+            Whether to return the PyRanges after writing.
+
+        Examples
+        --------
+
+        >>> d = {"Chromosome": [1] * 3, "Start": [1, 3, 5], "End": [4, 6, 9], "Feature": ["gene", "exon", "exon"]}
+        >>> gr = pr.from_dict(d)
+        >>> print(gr.to_csv(sep="\t"))
+        Chromosome	Start	End	Feature
+        1	1	4	gene
+        1	3	6	exon
+        1	5	9	exon
+        <BLANKLINE>
+        """
+
         from pyranges.out import _to_csv
         result = _to_csv(
             self, path, sep=sep, header=header, compression=compression)
@@ -4391,6 +4558,60 @@ class PyRanges():
             return result
 
     def to_gff3(self, path=None, compression="infer", chain=False):
+
+        """Write to General Feature Format.
+
+        Parameters
+        ----------
+        path : str, default None, i.e. return string representation.
+
+            Where to write file.
+
+        compression : {‘infer’, ‘gzip’, ‘bz2’, ‘zip’, ‘xz’, None}, default "infer"
+
+            Which compression to use. Uses file extension to infer by default.
+
+        chain: bool, default False
+
+            Whether to return the PyRanges after writing.
+
+        Notes
+        -----
+
+        GTF uses a different naming-convention for columns than PyRanges.
+        This is the mapping between column names:
+
+        ``{"seqname": "Chromosome", "source": "Source", "type": "Feature", "start": "Start", "end": "End", "score": "Score", "strand": "Strand", "phase": "Frame", "attributes": "Attribute"}``
+
+        All other columns are appended as a field in the attribute string.
+
+        Nonexisting columns will be added with a '.' to represent the missing values.
+
+        See Also
+        --------
+        pyranges.read_gff3 : read GFF3 files
+        pyranges.to_gtf : write to GTF format
+
+        Examples
+        --------
+
+        >>> d = {"Chromosome": [1] * 3, "Start": [1, 3, 5], "End": [4, 6, 9], "Feature": ["gene", "exon", "exon"]}
+        >>> gr = pr.from_dict(d)
+        >>> print(gr.to_gff3())
+        1	.	gene	2	4	.	.	.
+        1	.	exon	4	6	.	.	.
+        1	.	exon	6	9	.	.	.
+        <BLANKLINE>
+
+        >>> gr.Gene = [1, 2, 3]
+        >>> gr.function = ["a b", "c", "def"]
+        >>> print(gr.to_gff3())
+        1	.	gene	2	4	.	.	.	Gene=1;function=a b
+        1	.	exon	4	6	.	.	.	Gene=2;function=c
+        1	.	exon	6	9	.	.	.	Gene=3;function=def
+        <BLANKLINE>
+        """
+
         from pyranges.out import _to_gff3
 
         result = _to_gff3(self, path, compression=compression)
@@ -4401,6 +4622,60 @@ class PyRanges():
             return result
 
     def to_gtf(self, path=None, compression="infer", chain=False):
+
+        """Write to Gene Transfer Format.
+
+        Parameters
+        ----------
+        path : str, default None, i.e. return string representation.
+
+            Where to write file.
+
+        compression : {‘infer’, ‘gzip’, ‘bz2’, ‘zip’, ‘xz’, None}, default "infer"
+
+            Which compression to use. Uses file extension to infer by default.
+
+        chain: bool, default False
+
+            Whether to return the PyRanges after writing.
+
+        Notes
+        -----
+
+        GTF uses a different naming-convention for columns than PyRanges.
+        This is the mapping between column names:
+
+        ``{"seqname": "Chromosome", "source": "Source", "feature": "Feature", "start": "Start", "end": "End", "score": "Score", "strand": "Strand", "frame": "Frame", "attribute": "Attribute"}``
+
+        All other columns are appended as a field in the attribute string.
+
+        Nonexisting columns will be added with a '.' to represent the missing values.
+
+        See Also
+        --------
+        pyranges.read_gtf : read GTF files
+        pyranges.to_gff3 : write to GFF3 format
+
+        Examples
+        --------
+
+        >>> d = {"Chromosome": [1] * 3, "Start": [1, 3, 5], "End": [4, 6, 9], "Feature": ["gene", "exon", "exon"]}
+        >>> gr = pr.from_dict(d)
+        >>> print(gr.to_gtf())
+        1	.	gene	2	4	.	.	.
+        1	.	exon	4	6	.	.	.
+        1	.	exon	6	9	.	.	.
+        <BLANKLINE>
+
+        >>> gr.name = ["Tim", "Eric", "Endre"]
+        >>> gr.prices = ["Cheap", "Premium", "Fine European"]
+        >>> print(gr.to_gtf())
+        1	.	gene	2	4	.	.	.	name "Tim"; prices "Cheap";
+        1	.	exon	4	6	.	.	.	name "Eric"; prices "Premium";
+        1	.	exon	6	9	.	.	.	name "Endre"; prices "Fine European";
+        <BLANKLINE>
+        """
+
         from pyranges.out import _to_gtf
 
         result = _to_gtf(self, path, compression=compression)
@@ -4409,6 +4684,7 @@ class PyRanges():
             return self
         else:
             return result
+
 
     def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
 
@@ -4431,12 +4707,14 @@ class PyRanges():
             How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
             Will only lead to speedups on large datasets.
 
-        See Also
-        --------
-        PyRles
+        Returns
+        -------
+        pyrle.PyRles
 
-        Examples:
-        ---------
+            Rle with coverage or other info from the PyRanges.
+
+        Examples
+        --------
 
         >>> d = {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
         ...      'End': [6, 9, 7], 'Score': [0.1, 5, 3.14], 'Strand': ['+', '+', '-']}
@@ -4692,67 +4970,6 @@ class PyRanges():
 
         return PyRanges(df)
 
-
-    def mp(self, n=8, formatting=None):
-
-        print(tostring(self, n=n, merge_position=True, formatting=formatting))
-
-    def mpc(self, n=8, formatting=None):
-
-        print(tostring(self, n=n, merge_position=True, formatting=formatting))
-
-        return self
-
-
-    def mspc(self, n=30, formatting=None):
-
-        print(
-            tostring(
-                self,
-                n=n,
-                merge_position=True,
-                sort=True,
-                formatting=formatting))
-
-        return self
-
-    def pc(self, n=8, formatting=None):
-
-        print(tostring(self, n=n, formatting=formatting))
-
-        return self
-
-    def sp(self, n=30, formatting=None):
-
-        print(tostring(self, n=n, sort=True, formatting=formatting))
-
-    def spc(self, n=30, formatting=None):
-
-        print(tostring(self, n=n, sort=True, formatting=formatting))
-
-        return self
-
-    def msp(self, n=30, formatting=None):
-
-        print(
-            tostring(
-                self,
-                n=n,
-                merge_position=True,
-                sort=True,
-                formatting=formatting))
-
-    def rp(self):
-
-        print(self.dfs)
-
-
-
-    def rpc(self):
-
-        print(self.dfs)
-
-        return self
 
     def __getstate__(self):
         return self.dfs
