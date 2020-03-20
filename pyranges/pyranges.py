@@ -146,11 +146,18 @@ class PyRanges():
 
     See Also
     --------
-    pyranges.genomicfeatures.genomicfeatures.GenomicFeaturesMethods : namespace for feature-functionality
+    pyranges.genomicfeatures : namespace for feature-functionality
+    pyranges.genomicfeatures.GenomicFeaturesMethods : namespace for feature-functionality
     """
 
     stats = None
-    """Namespace for statistcal methods."""
+    """Namespace for statistcal methods.
+
+    See Also
+    --------
+    pyranges.statistics : namespace for statistics
+    pyranges.stats.StatisticsMethods : namespace for statistics
+    """
 
     def __init__(self,
                  df=None,

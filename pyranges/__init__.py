@@ -42,7 +42,7 @@ def from_string(s, int64=False):
     return PyRanges(df, int64=int64)
 
 
-import pyranges.genomicfeatures.genomicfeatures as gf
+import pyranges.genomicfeatures as gf
 
 
 def itergrs(prs, strand=None, keys=False):

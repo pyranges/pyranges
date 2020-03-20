@@ -9,7 +9,7 @@ from pyranges.multithreaded import pyrange_apply
 from pyranges.methods.statistics import _relative_distance
 
 
-def simes(df, groupby, pcol):
+def simes(df, groupby, pcol, keep_position=False):
 
     """Apply Simes method for giving dependent events a p-value.
 
@@ -26,6 +26,15 @@ def simes(df, groupby, pcol):
     pcol : str
 
         Name of column with p-values.
+
+    keep_position : bool, default False
+
+        Keep columns "Chromosome", "Start", "End" and "Strand" if they exist.
+
+    See Also
+    --------
+
+    pr.stats.fdr : correct for multiple testing
 
     Examples
     --------
@@ -59,15 +68,36 @@ def simes(df, groupby, pcol):
       Gene         Simes
     0  FOX  3.000000e-07
     1  P53  3.000000e-04
+
+    >>> gr.apply(lambda df:
+    ... pr.stats.simes(df, "Gene", "PValue", keep_position=True))
+    +--------------+-----------+-----------+-------------+------------+------------+
+    |   Chromosome |     Start |       End |       Simes | Strand     | Gene       |
+    |     (object) |   (int32) |   (int32) |   (float64) | (object)   | (object)   |
+    |--------------+-----------+-----------+-------------+------------+------------|
+    |            1 |        10 |        20 |      0.0001 | +          | P53        |
+    |            2 |        60 |        90 |      1e-07  | -          | FOX        |
+    +--------------+-----------+-----------+-------------+------------+------------+
+    Stranded PyRanges object has 2 rows and 6 columns from 2 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
     if isinstance(groupby, str):
         groupby = [groupby]
 
+    positions = []
+    if "Strand" in df:
+        stranded = True
+
+    if keep_position:
+        positions += ["Chromosome", "Start", "End"]
+        if stranded:
+            positions += ["Strand"]
+
     sorter = groupby + [pcol]
 
-    sdf = df[sorter].sort_values(sorter)
-    g = sdf.groupby(groupby)
+    sdf = df[positions + sorter].sort_values(sorter)
+    g = sdf.groupby(positions + groupby)
 
     ranks = g.cumcount().values + 1
     size = g.size().values
@@ -78,12 +108,63 @@ def simes(df, groupby, pcol):
 
     sdf.insert(sdf.shape[1], "Simes", simes)
 
-    simes = sdf.groupby(groupby).Simes.min().reset_index()
+    if keep_position:
+
+        grpby_dict = {"Chromosome": "first", "Start": "min", "End": "max", "Simes": "min"}
+
+        if stranded:
+            grpby_dict["Strand"] = "first"
+
+        simes = sdf.groupby(groupby).agg(grpby_dict).reset_index()
+        columns = list(simes.columns)
+        columns.append(columns[0])
+        del columns[0]
+        simes = simes[columns]
+    else:
+        simes = sdf.groupby(groupby).Simes.min().reset_index()
 
     return simes
 
 
 def rowbased_spearman(x, y):
+
+    """Fast row-based Spearman's correlation.
+
+    Parameters
+    ----------
+    x : matrix-like
+
+        2D numerical matrix. Same size as y.
+
+    y : matrix-like
+
+        2D numerical matrix. Same size as x.
+
+    Returns
+    -------
+    numpy.array
+
+        Array with same length as input, where values are P-values.
+
+    See Also
+    --------
+
+    pyranges.statistics.rowbased_pearson : fast row-based Pearson's correlation.
+    pr.stats.fdr : correct for multiple testing
+
+    Examples
+    --------
+
+    >>> np.random.seed(0)
+    >>> x = np.random.randint(10, size=(10, 10))
+    >>> y = np.random.randint(10, size=(10, 10))
+
+    Perform Spearman's correlation pairwise on each row in 10x10 matrixes:
+
+    >>> pr.stats.rowbased_spearman(x, y)
+    array([ 0.07523548, -0.24838724,  0.03703774,  0.24194052,  0.04778621,
+           -0.23913505,  0.12923138,  0.26840486,  0.13292204, -0.29846295])
+    """
 
     x = np.asarray(x)
     y = np.asarray(y)
@@ -93,7 +174,46 @@ def rowbased_spearman(x, y):
 
     return rowbased_pearson(rx, ry)
 
+
 def rowbased_pearson(x, y):
+
+    """Fast row-based Pearson's correlation.
+
+    Parameters
+    ----------
+    x : matrix-like
+
+        2D numerical matrix. Same size as y.
+
+    y : matrix-like
+
+        2D numerical matrix. Same size as x.
+
+    Returns
+    -------
+    numpy.array
+
+        Array with same length as input, where values are P-values.
+
+    See Also
+    --------
+
+    pyranges.statistics.rowbased_spearman : fast row-based Spearman's correlation.
+    pr.stats.fdr : correct for multiple testing
+
+    Examples
+    --------
+
+    >>> np.random.seed(0)
+    >>> x = np.random.randint(10, size=(10, 10))
+    >>> y = np.random.randint(10, size=(10, 10))
+
+    Perform Pearson's correlation pairwise on each row in 10x10 matrixes:
+
+    >>> pr.stats.rowbased_pearson(x, y)
+    array([ 0.20349603, -0.01667236, -0.01448763, -0.00442322,  0.06527234,
+           -0.36710862,  0.14978726,  0.32360286,  0.17209191, -0.08902829])
+    """
 
     # Thanks to https://github.com/dengemann
 
@@ -120,7 +240,37 @@ def rowbased_pearson(x, y):
 
 def rowbased_rankdata(data):
 
-    """Row-based rankdata using method=mean"""
+    """Rank order of entries in each row.
+
+    Same as SciPy rankdata with method=mean.
+
+    Parameters
+    ----------
+    data : matrix-like
+
+        The data to find order of.
+
+    Returns
+    -------
+    Pandas.DataFrame
+
+        DataFrame where values are order of data.
+
+    Examples
+    --------
+
+    >>> np.random.seed(0)
+    >>> x = np.random.randint(10, size=(3, 10))
+    >>> x
+    array([[5, 0, 3, 3, 7, 9, 3, 5, 2, 4],
+           [7, 6, 8, 8, 1, 6, 7, 7, 8, 1],
+           [5, 9, 8, 9, 4, 3, 0, 3, 5, 0]])
+    >>> pr.stats.rowbased_rankdata(x)
+         0    1    2    3    4     5    6    7    8    9
+    0  7.5  1.0  4.0  4.0  9.0  10.0  4.0  7.5  2.0  6.0
+    1  6.0  3.5  9.0  9.0  1.5   3.5  6.0  6.0  9.0  1.5
+    2  6.5  9.5  8.0  9.5  5.0   3.5  1.5  3.5  6.5  1.5
+    """
 
     dc = np.asarray(data).copy()
     sorter = np.apply_along_axis(np.argsort, 1, data)
@@ -166,6 +316,65 @@ def rowbased_rankdata(data):
 
 def fdr(p_vals):
 
+    """Adjust p-values with Benjamini-Hochberg.
+
+    Parameters
+    ----------
+    data : array-like
+
+
+    Returns
+    -------
+    Pandas.DataFrame
+
+        DataFrame where values are order of data.
+
+    Examples
+    --------
+
+    >>> np.random.seed(0)
+    >>> x = np.random.random(10) / 100
+
+    >>> gr = pr.random(10)
+    >>> gr.PValue = x
+    >>> gr
+    +--------------+-----------+-----------+--------------+----------------------+
+    | Chromosome   | Start     | End       | Strand       | PValue               |
+    | (category)   | (int32)   | (int32)   | (category)   | (float64)            |
+    |--------------+-----------+-----------+--------------+----------------------|
+    | chr1         | 176601938 | 176602038 | +            | 0.005488135039273248 |
+    | chr1         | 155082851 | 155082951 | -            | 0.007151893663724195 |
+    | chr2         | 211134424 | 211134524 | -            | 0.006027633760716439 |
+    | chr9         | 78826761  | 78826861  | -            | 0.005448831829968969 |
+    | ...          | ...       | ...       | ...          | ...                  |
+    | chr22        | 16728001  | 16728101  | +            | 0.003834415188257777 |
+    | chr19        | 17333425  | 17333525  | +            | 0.009636627605010294 |
+    | chr17        | 8085927   | 8086027   | -            | 0.008917730007820798 |
+    | chr16        | 52216522  | 52216622  | +            | 0.004375872112626925 |
+    +--------------+-----------+-----------+--------------+----------------------+
+    Stranded PyRanges object has 10 rows and 5 columns from 9 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+    >>> gr.FDR = pr.stats.fdr(gr.PValue)
+    >>> gr.print(formatting={"PValue": "{:.4f}", "FDR": "{:.4}"})
+    +--------------+-----------+-----------+--------------+-------------+-------------+
+    | Chromosome   | Start     | End       | Strand       | PValue      | FDR         |
+    | (category)   | (int32)   | (int32)   | (category)   | (float64)   | (float64)   |
+    |--------------+-----------+-----------+--------------+-------------+-------------|
+    | chr1         | 176601938 | 176602038 | +            | 0.0055      | 0.01098     |
+    | chr1         | 155082851 | 155082951 | -            | 0.0072      | 0.00894     |
+    | chr2         | 211134424 | 211134524 | -            | 0.0060      | 0.01005     |
+    | chr9         | 78826761  | 78826861  | -            | 0.0054      | 0.01362     |
+    | ...          | ...       | ...       | ...          | ...         | ...         |
+    | chr22        | 16728001  | 16728101  | +            | 0.0038      | 0.03834     |
+    | chr19        | 17333425  | 17333525  | +            | 0.0096      | 0.009637    |
+    | chr17        | 8085927   | 8086027   | -            | 0.0089      | 0.009909    |
+    | chr16        | 52216522  | 52216622  | +            | 0.0044      | 0.01459     |
+    +--------------+-----------+-----------+--------------+-------------+-------------+
+    Stranded PyRanges object has 10 rows and 6 columns from 9 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+    """
+
     from scipy.stats import rankdata
     ranked_p_values = rankdata(p_vals)
     fdr = p_vals * len(p_vals) / ranked_p_values
@@ -175,6 +384,9 @@ def fdr(p_vals):
 
 
 def fisher_exact(n1, d1, n2, d2, **kwargs):
+
+
+
     try:
         from fisher import pvalue_npy
     except:

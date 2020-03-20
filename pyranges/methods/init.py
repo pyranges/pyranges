@@ -4,7 +4,7 @@ import pandas as pd
 from natsort import natsorted
 
 from pyranges.statistics import StatisticsMethods
-from pyranges.genomicfeatures.genomicfeatures import GenomicFeaturesMethods
+from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges import PyRanges
 
 
