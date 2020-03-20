@@ -8,6 +8,7 @@ from pyranges.multithreaded import pyrange_apply
 
 from pyranges.methods.statistics import _relative_distance
 
+__all__ = ["simes", "fisher_exact", "StatisticsMethods", "fdr", "rowbased_rankdata", "rowbased_pearson", "rowbased_spearman", "mcc"]
 
 def simes(df, groupby, pcol, keep_position=False):
 
