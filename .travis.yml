@@ -27,6 +27,6 @@ install:
   - python -c 'import pandas as pd; print(pd.__version__)'
   - ls tests
 
-script: python -m pytest -m "not explore" --cov=pyranges tests
+script: python -m pytest -m "not explore" --cov=pyranges tests & py.test --doctest-modules
 
 after_success: coveralls

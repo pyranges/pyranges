@@ -28,7 +28,7 @@ class GenomicFeaturesMethods():
 
         See Also
         --------
-        pyranges.genomicfeatures.genomicfeatures.GenomicFeaturesMethods.tes : return the transcription end sites
+        pyranges.genomicfeatures.GenomicFeaturesMethods.tes : return the transcription end sites
 
         Examples
         --------
@@ -95,7 +95,7 @@ class GenomicFeaturesMethods():
 
         See Also
         --------
-        pyranges.genomicfeatures.genomicfeatures.GenomicFeaturesMethods.tss : return the transcription start sites
+        pyranges.genomicfeatures.GenomicFeaturesMethods.tss : return the transcription start sites
 
         Examples
         --------
@@ -171,7 +171,7 @@ class GenomicFeaturesMethods():
 
         See Also
         --------
-        pyranges.genomicfeatures.genomicfeatures.GenomicFeaturesMethods.tss : return the transcription start sites
+        pyranges.genomicfeatures.GenomicFeaturesMethods.tss : return the transcription start sites
 
         Examples
         --------
