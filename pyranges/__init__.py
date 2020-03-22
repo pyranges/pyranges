@@ -262,7 +262,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
     return PyRanges(random_df, int64=int64)
 
 
-from pyranges.methods.multioverlap import count_overlaps#, interval_split
+from pyranges.multioverlap import count_overlaps
 
 from pyranges import statistics
 stats = statistics
@@ -452,3 +452,5 @@ def to_bigwig(gr, path, chromosome_sizes):
     values = df.Score.tolist()
 
     bw.addEntries(chromosomes, starts, ends=ends, values=values)
+
+__all__ = ["from_string", "from_dict", "to_bigwig", "count_overlaps", "random", "itergrs", "read_gtf", "read_bam", "read_bed", "read_gff3", "concat", "PyRanges"]

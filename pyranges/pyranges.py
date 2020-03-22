@@ -81,6 +81,7 @@ class PyRanges():
     pyranges.read_gff: read gff-file into PyRanges
     pyranges.read_gtf: read gtf-file into PyRanges
     pyranges.from_dict: create PyRanges from dict of columns
+    pyranges.from_string: create PyRanges from multiline string
 
     Notes
     -----
@@ -174,6 +175,68 @@ class PyRanges():
             df = pd.DataFrame(columns="Chromosome Start End".split())
 
         _init(self, df, chromosomes, starts, ends, strands, int64, copy_df)
+
+    def __array_ufunc__(self, *args, **kwargs):
+
+        """Apply unary numpy-function.
+
+
+        Apply function to all columns which are not index, i.e. Chromosome,
+        Start, End nor Strand.
+
+        Notes
+        -----
+
+        Function must produce a vector of equal length.
+
+        Examples
+        --------
+
+        >>> gr = pr.from_dict({"Chromosome": [1, 2, 3], "Start": [1, 2, 3],
+        ... "End": [2, 3, 4], "Score": [9, 16, 25], "Score2": [121, 144, 169],
+        ... "Name": ["n1", "n2", "n3"]})
+        >>> gr
+        +--------------+-----------+-----------+-----------+-----------+------------+
+        |   Chromosome |     Start |       End |     Score |    Score2 | Name       |
+        |   (category) |   (int32) |   (int32) |   (int64) |   (int64) | (object)   |
+        |--------------+-----------+-----------+-----------+-----------+------------|
+        |            1 |         1 |         2 |         9 |       121 | n1         |
+        |            2 |         2 |         3 |        16 |       144 | n2         |
+        |            3 |         3 |         4 |        25 |       169 | n3         |
+        +--------------+-----------+-----------+-----------+-----------+------------+
+        Unstranded PyRanges object has 3 rows and 6 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> np.sqrt(gr)
+        +--------------+-----------+-----------+-------------+-------------+------------+
+        |   Chromosome |     Start |       End |       Score |      Score2 | Name       |
+        |   (category) |   (int32) |   (int32) |   (float64) |   (float64) | (object)   |
+        |--------------+-----------+-----------+-------------+-------------+------------|
+        |            1 |         1 |         2 |           3 |          11 | n1         |
+        |            2 |         2 |         3 |           4 |          12 | n2         |
+        |            3 |         3 |         4 |           5 |          13 | n3         |
+        +--------------+-----------+-----------+-------------+-------------+------------+
+        Unstranded PyRanges object has 3 rows and 6 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        """
+
+        func, call, gr = args
+
+        columns = list(gr.columns)
+        non_index = [c for c in columns if c not in ["Chromosome", "Start", "End", "Strand"]]
+
+        for chromosome, df in gr:
+            subset = df.head(1)[non_index].select_dtypes(include=np.number).columns
+            _v = getattr(func, call)(df[subset], **kwargs)
+            # print(_v)
+            # print(df[_c])
+            df[subset] = _v
+
+
+        return gr
+
+
+        # self.apply()
 
 
     def __getattr__(self, name):
@@ -1241,7 +1304,7 @@ class PyRanges():
                   "overlap_col": overlap_col, "fraction_col": fraction_col, "nb_cpu": nb_cpu}
         kwargs = fill_kwargs(kwargs)
 
-        counts = self.count_overlaps(other, keep_nonoverlapping=True, overlap_col=overlap_col)
+        counts = self.count_overlaps(other, keep_nonoverlapping=True, overlap_col=overlap_col, strandedness=strandedness)
 
         strand = True if kwargs["strandedness"] else False
         other = other.merge(count=True, strand=strand)
@@ -1927,7 +1990,7 @@ class PyRanges():
 
             Lengthen intervals in self before joining.
 
-        suffix : str, default "_b"
+        suffix : str or tuple, default "_b"
 
             Suffix to give overlapping columns in other.
 
@@ -2031,18 +2094,18 @@ class PyRanges():
 
             self = self.slack(slack)
 
-        if "suffix" in kwargs:
+        if "suffix" in kwargs and isinstance(kwargs["suffix"], str):
             suffixes = "", kwargs["suffix"]
             kwargs["suffixes"] = suffixes
 
         kwargs = fill_kwargs(kwargs)
 
-        if "new_pos" in kwargs:
-            if kwargs["new_pos"] in "intersection union".split():
-                suffixes = kwargs.get("suffixes")
-                assert suffixes is not None, "Must give two non-empty suffixes when using new_pos with intersection or union."
-                assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
-                assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
+        # if "new_pos" in kwargs:
+        #     if kwargs["new_pos"] in "intersection union".split():
+        #         suffixes = kwargs.get("suffixes")
+        #         assert suffixes is not None, "Must give two non-empty suffixes when using new_pos with intersection or union."
+        #         assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
+        #         assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
 
         how = kwargs.get("how")
 
@@ -2050,7 +2113,6 @@ class PyRanges():
             kwargs["example_header_other"] = other.head(1).df
         if how in ["right", "outer"]:
             kwargs["example_header_self"] = self.head(1).df
-
 
         dfs = pyrange_apply(_write_both, self, other, **kwargs)
 
@@ -2061,9 +2123,9 @@ class PyRanges():
             gr.End = gr.End__slack
             gr = gr.drop(like="(Start|End).*__slack")
 
-        new_position = kwargs.get("new_pos")
-        if new_position:
-            gr = gr.new_position(new_pos=new_position, suffixes=kwargs["suffixes"])
+        # new_position = kwargs.get("new_pos")
+        # if new_position:
+        #     gr = gr.new_position(new_pos=new_position, suffixes=kwargs["suffixes"])
 
         return gr
 
@@ -3022,6 +3084,9 @@ class PyRanges():
 
         from pyranges.methods.new_position import _new_position
 
+        if self.empty:
+            return self
+
         kwargs = {"strand": None}
         kwargs["sparse"] = {"self": False}
         kwargs["new_pos"] = new_pos
@@ -3571,6 +3636,9 @@ class PyRanges():
         Unstranded PyRanges object has 1 rows and 3 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
         """
+
+        if self.empty and other.empty:
+            return pr.PyRanges()
 
         strand = True if strandedness else False
 
@@ -4179,10 +4247,9 @@ class PyRanges():
 
         from pyranges.methods.subtraction import _subtraction
 
-        kwargs = {}
+        kwargs = {"strandedness": strandedness}
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs = fill_kwargs(kwargs)
-        strandedness = kwargs["strandedness"]
 
         strand = True if strandedness else False
         other_clusters = other.merge(strand=strand)
