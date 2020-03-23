@@ -1126,6 +1126,9 @@ class PyRanges():
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
+        if not len(self.values()):
+            return []
+
         first = next(iter(self.values()))
         columns = first.columns
 

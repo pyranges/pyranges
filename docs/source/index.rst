@@ -25,12 +25,10 @@ Other libraries in the PyRanges ecosystem:
 - pyrle
 - pyranges-db
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   overview
 
 
 

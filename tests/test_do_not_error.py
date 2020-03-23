@@ -50,9 +50,6 @@ def test_three_in_a_row(gr, gr2, gr3, strandedness_chain, method_chain):
     s1, s2 = strandedness_chain
     f1, f2 = method_chain
 
-    # print(s1, s2)
-    # print(f1, f2)
-
     m1 = getattr(gr, f1)
     gr2 = m1(gr2, strandedness=s1)
     if len(gr2) > 0:
