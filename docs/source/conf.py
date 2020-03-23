@@ -29,9 +29,10 @@ author = 'Endre Bakken Stovner'
 # ones.
 extensions = [
     'sphinxcontrib.napoleon',
-    "sphinx.ext.autodoc",
-    "autoapi.extension",
-    "sphinx.ext.autosummary",
+    'autoapi.extension',
+    # "sphinx.ext.autodoc",
+    # "autoapi.extension",
+    # "sphinx.ext.autosummary",
     "sphinx.ext.doctest"
 ]
 
