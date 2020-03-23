@@ -398,10 +398,10 @@ def to_bigwig(gr, path, chromosome_sizes):
     | chr3         | 0         | 198022430 |
     | chr4         | 0         | 191154276 |
     | ...          | ...       | ...       |
-    | chrY         | 0         | 59373566  |
-    | chrX         | 0         | 155270560 |
-    | chrM         | 0         | 16571     |
     | chr22        | 0         | 51304566  |
+    | chrM         | 0         | 16571     |
+    | chrX         | 0         | 155270560 |
+    | chrY         | 0         | 59373566  |
     +--------------+-----------+-----------+
     Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.
     For printing, the PyRanges was sorted on Chromosome.

@@ -355,7 +355,7 @@ def genome_bounds(gr, chromsizes, clip=False):
 
 
 
-def _last_tile(df, kwargs):
+def _last_tile(df, **kwargs):
     # do not need copy, since it is only used internally by
     # tile_genome
     # df = df.copy()
@@ -391,7 +391,42 @@ def tile_genome(genome, tile_size, tile_last=False):
     Examples
     --------
 
-    >>>
+    >>> chromsizes = pr.data.chromsizes()
+    >>> chromsizes
+    +--------------+-----------+-----------+
+    | Chromosome   | Start     | End       |
+    | (category)   | (int32)   | (int32)   |
+    |--------------+-----------+-----------|
+    | chr1         | 0         | 249250621 |
+    | chr2         | 0         | 243199373 |
+    | chr3         | 0         | 198022430 |
+    | chr4         | 0         | 191154276 |
+    | ...          | ...       | ...       |
+    | chr22        | 0         | 51304566  |
+    | chrM         | 0         | 16571     |
+    | chrX         | 0         | 155270560 |
+    | chrY         | 0         | 59373566  |
+    +--------------+-----------+-----------+
+    Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome.
+
+    >>> pr.gf.tile_genome(chromsizes, int(1e6))
+    +--------------+-----------+-----------+
+    | Chromosome   | Start     | End       |
+    | (category)   | (int32)   | (int32)   |
+    |--------------+-----------+-----------|
+    | chr1         | 0         | 1000000   |
+    | chr1         | 1000000   | 2000000   |
+    | chr1         | 2000000   | 3000000   |
+    | chr1         | 3000000   | 4000000   |
+    | ...          | ...       | ...       |
+    | chrY         | 56000000  | 57000000  |
+    | chrY         | 57000000  | 58000000  |
+    | chrY         | 58000000  | 59000000  |
+    | chrY         | 59000000  | 59373566  |
+    +--------------+-----------+-----------+
+    Unstranded PyRanges object has 3,114 rows and 3 columns from 25 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome.
     """
 
     if isinstance(genome, dict):
