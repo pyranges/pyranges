@@ -1153,7 +1153,7 @@ class PyRanges():
 
             Name of column with overlap counts.
 
-        nb_cpu: int, default 1
+        nb_cpu : int, default 1
 
             How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
             Will only lead to speedups on large datasets.
@@ -3365,6 +3365,23 @@ class PyRanges():
         Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
         For printing, the PyRanges was sorted on Chromosome, Start, End and Strand.
 
+        >>> pr.data.chromsizes().print()
+        +--------------+-----------+-----------+
+        | Chromosome   | Start     | End       |
+        | (category)   | (int32)   | (int32)   |
+        |--------------+-----------+-----------|
+        | chr1         | 0         | 249250621 |
+        | chr2         | 0         | 243199373 |
+        | chr3         | 0         | 198022430 |
+        | chr4         | 0         | 191154276 |
+        | ...          | ...       | ...       |
+        | chr22        | 0         | 51304566  |
+        | chrM         | 0         | 16571     |
+        | chrX         | 0         | 155270560 |
+        | chrY         | 0         | 59373566  |
+        +--------------+-----------+-----------+
+        Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
         """
 
         s = tostring(

@@ -1,4 +1,5 @@
 import pandas as pd
+import natsort
 
 import shutil
 
@@ -26,6 +27,10 @@ def _get_stranded_f(self, half_entries, f, sort=False):
 
         plus = getattr(plus, f)(half_entries)
         minus = getattr(minus, f)(half_entries)
+
+        if f == "tail":
+            plus = plus.iloc[::-1]
+            minus = minus.iloc[::-1]
 
         df = pd.concat([plus, minus])
         if sort:
@@ -73,6 +78,9 @@ def _get_unstranded_f(self, half_entries, f, sort=False):
 
     df = pd.concat(dfs)
 
+    if f == "tail":
+        df = df.iloc[::-1]
+
     return df
 
 
@@ -95,6 +103,9 @@ def _get_df(self, n, sort):
         middle = top.head(1)
         # dot_dot_line.loc[:, :] = "..."
         df = pd.concat([top, middle, bottom]).astype(object)
+
+    # df = df.reset_index(drop=True)
+    # df = df.reindex(index=natsort.order_by_index(df.index, natsort.index_natsorted(zip(df.Chromosome))))
 
     return df
 

@@ -368,6 +368,32 @@ def _last_tile(df, kwargs):
 
 def tile_genome(genome, tile_size, tile_last=False):
 
+    """Create a tiled genome.
+
+    Parameters
+    ----------
+    chromsizes : dict or PyRanges
+
+        Dict or PyRanges describing the lengths of the chromosomes.
+
+    tile_size : int
+        Length of the tiles.
+
+    tile_last : bool, default False
+
+        Use genome length as end of last tile.
+
+    See Also
+    --------
+
+    pyranges.PyRanges.tile : split intervals into adjacent non-overlapping tiles.
+
+    Examples
+    --------
+
+    >>>
+    """
+
     if isinstance(genome, dict):
         chromosomes, ends = list(genome.keys()), list(genome.values())
         df = pd.DataFrame({"Chromosome": chromosomes, "Start": 0, "End": ends})

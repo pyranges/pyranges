@@ -16,7 +16,6 @@ import pyranges as pr
 import pkg_resources
 
 from pyranges.pyranges import PyRanges
-from pyranges.readers import read_gtf, read_bam, read_bed, read_gff3
 from pyranges import data
 from pyranges.methods.concat import concat
 
@@ -28,13 +27,99 @@ from natsort import natsorted
 
 get_example_path = data.get_example_path
 
-read_gff = read_gtf
+
+
+from pyranges.multioverlap import count_overlaps
 
 def from_dict(d, int64=False):
 
+    """Create a PyRanges from dict.
+
+    Parameters
+    ----------
+    d : dict of array-like
+
+        Dict with data.
+
+    int64 : bool, default False.
+
+        Whether to use 64-bit integers for starts and ends.
+
+    Warning
+    -------
+
+    On versions of Python prior to 3.6, this function returns a PyRanges with
+    the columns in arbitrary order.
+
+    See Also
+    --------
+
+    pyranges.from_string : create a PyRanges from a multiline string.
+
+    Examples
+    --------
+
+    >>> d = {"Chromosome": [1, 1, 2], "Start": [1, 2, 3], "End": [4, 9, 12], "Strand": ["+", "+", "-"], "ArbitraryValue": ["a", "b", "c"]}
+    >>> pr.from_dict(d)
+    +--------------+-----------+-----------+--------------+------------------+
+    |   Chromosome |     Start |       End | Strand       | ArbitraryValue   |
+    |   (category) |   (int32) |   (int32) | (category)   | (object)         |
+    |--------------+-----------+-----------+--------------+------------------|
+    |            1 |         1 |         4 | +            | a                |
+    |            1 |         2 |         9 | +            | b                |
+    |            2 |         3 |        12 | -            | c                |
+    +--------------+-----------+-----------+--------------+------------------+
+    Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+    """
+
     return PyRanges(pd.DataFrame(d), int64=int64)
 
+
 def from_string(s, int64=False):
+
+    """Create a PyRanges from multiline string.
+
+    Parameters
+    ----------
+    s : str
+
+        String with data.
+
+    int64 : bool, default False.
+
+        Whether to use 64-bit integers for starts and ends.
+
+    See Also
+    --------
+
+    pyranges.from_dict : create a PyRanges from a dictionary.
+
+    Examples
+    --------
+
+    >>> s = '''Chromosome      Start        End Strand
+    ... chr1  246719402  246719502      +
+    ... chr5   15400908   15401008      +
+    ... chr9   68366534   68366634      +
+    ... chr14   79220091   79220191      +
+    ... chr14  103456471  103456571      -'''
+
+    >>> pr.from_string(s)
+    +--------------+-----------+-----------+--------------+
+    | Chromosome   |     Start |       End | Strand       |
+    | (category)   |   (int32) |   (int32) | (category)   |
+    |--------------+-----------+-----------+--------------|
+    | chr1         | 246719402 | 246719502 | +            |
+    | chr5         |  15400908 |  15401008 | +            |
+    | chr9         |  68366534 |  68366634 | +            |
+    | chr14        |  79220091 |  79220191 | +            |
+    | chr14        | 103456471 | 103456571 | -            |
+    +--------------+-----------+-----------+--------------+
+    Stranded PyRanges object has 5 rows and 4 columns from 4 chromosomes.
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+    """
 
     from io import StringIO
     df = pd.read_csv(StringIO(s), sep=r"\s+", index_col=None)
@@ -262,7 +347,10 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
     return PyRanges(random_df, int64=int64)
 
 
-from pyranges.multioverlap import count_overlaps
+from pyranges.readers import read_bam, read_bed, read_gff3
+from pyranges.readers import read_gtf
+read_gff = read_gtf
+
 
 from pyranges import statistics
 stats = statistics

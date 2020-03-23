@@ -92,10 +92,10 @@ def _overlap(scdf, ocdf, **kwargs):
     return scdf.reindex(_indexes)
 
 
-def _count_overlaps(scdf, ocdf, kwargs):
+def _count_overlaps(scdf, ocdf, **kwargs):
 
     kwargs["return_indexes"] = True
-    idx = _overlap(scdf, ocdf, kwargs)
+    idx = _overlap(scdf, ocdf, **kwargs)
 
     sx = pd.DataFrame(np.zeros(len(scdf)), index=scdf.index)
     if idx is None:
