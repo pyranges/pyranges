@@ -4,7 +4,7 @@ from sorted_nearest import maketiles
 import numpy as np
 
 
-def _windows(df, kwargs):
+def _windows(df, **kwargs):
 
     window_size = kwargs["window_size"]
 
@@ -26,7 +26,7 @@ def _intersect_tile(df):
     return df
 
 
-def _tiles(df, kwargs):
+def _tiles(df, **kwargs):
 
     overlap = kwargs.get("overlap")
 

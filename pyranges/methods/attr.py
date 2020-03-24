@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-def _setattr(self, column_name, column):
+def _setattr(self, column_name, column, pos=False):
 
     if not len(self):
         return
@@ -22,7 +22,7 @@ def _setattr(self, column_name, column):
 
     if already_exists:
         pos = list(self.values()[0].columns).index(column_name)
-    else:
+    elif not pos:
         pos = self.values()[0].shape[1]
 
     start_length, end_length = 0, 0
@@ -54,7 +54,8 @@ def _setattr(self, column_name, column):
     if column_name not in ["Chromosome", "Strand"]:
         self.__dict__["dfs"] = dfs
     else:
-        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df).dfs # will merge the dfs, then split on keys again to ensure they are correct
+        int64 = True if self.dtypes["Start"] == np.int64 else False
+        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df, int64=int64).dfs # will merge the dfs, then split on keys again to ensure they are correct
 
 
 def _getattr(self, name):

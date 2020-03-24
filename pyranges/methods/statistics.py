@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def _relative_distance(scdf, ocdf, kwargs):
+def _relative_distance(scdf, ocdf, **kwargs):
 
     if scdf.empty or ocdf.empty:
         return np.array([])

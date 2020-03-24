@@ -3,7 +3,7 @@ import pandas as pd
 from ncls import NCLS
 
 
-def _intersection(scdf, ocdf, kwargs):
+def _intersection(scdf, ocdf, **kwargs):
 
     how = kwargs["how"]
 
@@ -59,7 +59,7 @@ def _intersection(scdf, ocdf, kwargs):
         return None
 
 
-def _overlap(scdf, ocdf, kwargs):
+def _overlap(scdf, ocdf, **kwargs):
 
     invert = kwargs["invert"]
     return_indexes = kwargs.get("return_indexes", False)
@@ -79,7 +79,7 @@ def _overlap(scdf, ocdf, kwargs):
     if not how:
         _indexes = it.all_overlaps_self(starts, ends, indexes)
     elif how == "containment":
-        _indexes = it.has_containment(starts, ends, indexes)
+        _indexes, _ = it.all_containments_both(starts, ends, indexes)
     else:
         _indexes = it.has_overlaps(starts, ends, indexes)
 
@@ -92,10 +92,10 @@ def _overlap(scdf, ocdf, kwargs):
     return scdf.reindex(_indexes)
 
 
-def _count_overlaps(scdf, ocdf, kwargs):
+def _count_overlaps(scdf, ocdf, **kwargs):
 
     kwargs["return_indexes"] = True
-    idx = _overlap(scdf, ocdf, kwargs)
+    idx = _overlap(scdf, ocdf, **kwargs)
 
     sx = pd.DataFrame(np.zeros(len(scdf)), index=scdf.index)
     if idx is None:

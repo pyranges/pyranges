@@ -80,7 +80,7 @@ def _previous_nonoverlapping(left_starts, right_ends):
     return r_idx, dist
 
 
-def _nearest(scdf, ocdf, kwargs):
+def _nearest(scdf, ocdf, **kwargs):
 
     if scdf.empty or ocdf.empty:
         return None

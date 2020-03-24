@@ -5,79 +5,10 @@ from time import time
 
 from sorted_nearest import k_nearest_previous_nonoverlapping, k_nearest_next_nonoverlapping, get_all_ties
 
-"""You should remove duplicates after merging, right?
-
-"""
-
 try:
     dummy = profile
 except NameError:
     profile = lambda x: x
-
-
-# def remove_duplicates(df, ties):
-
-#     return df
-    # k_dfs = []
-    # k_grpby = df.groupby("k", sort=False)
-
-    # xdf = pd.DataFrame(columns=df.columns)
-
-    # if ties in "first last".split():
-    #     for k, kdf in k_grpby:
-    #         k_dfs.append(kdf.groupby("LX", sort=False).head(k))
-    #     if k_dfs:
-    #         xdf = pd.concat(k_dfs)
-    # elif ties in [False, None]:
-
-    #     df = df.sort_values(["LX", "D"])
-    #     for k, kdf in k_grpby:
-    #         print(kdf)
-    #         kdf.index = range(kdf.shape[0])
-    #         lx = get_all_ties(kdf.index.values, kdf.LX.values, kdf.D.astype(np.int64).values, k)
-    #         kdf = kdf.reindex(lx)
-    #         k_dfs.append(kdf)
-    #     if k_dfs:
-    #         xdf = pd.concat(k_dfs)
-    # else:
-    #     xdf = df
-
-    # return xdf
-
-
-# def remove_duplicates_single(df, ties):
-#     return df
-    # k_dfs = []
-    # k_grpby = df.groupby("__k__", sort=False)
-
-
-    # print("in\n" * 10)
-    # print(df)
-    # xdf = pd.DataFrame(columns=df.columns)
-
-    # if ties in "first last".split():
-    #     for k, kdf in k_grpby:
-    #         k_dfs.append(kdf.groupby("__IX__", sort=False).head(k))
-    #     if k_dfs:
-    #         xdf = pd.concat(k_dfs)
-    # elif ties in [False, None]:
-    #     df = df.sort_values(["__IX__", "Distance"])
-    #     for k, kdf in k_grpby:
-    #         kdf.index = range(kdf.shape[0])
-    #         lx = get_all_ties(kdf.index.values, kdf.__IX__.values, kdf.Distance.astype(np.int64).values, k)
-    #         kdf = kdf.reindex(lx)
-    #         k_dfs.append(kdf)
-    #     if k_dfs:
-    #         xdf = pd.concat(k_dfs)
-    # else:
-    #     xdf = df
-
-    # print("out\n" * 10)
-    # print(df)
-
-    # return xdf
-
-# @profile
 def nearest_previous_idx(d1, d2, k, ties=None):
 
     d1s = d1.Start.sort_values()
@@ -132,7 +63,7 @@ def nearest_next_idx(d1, d2, k, ties=None):
     return lidx, ridx, dist
 
 
-def nearest(d1, d2, kwargs):
+def nearest(d1, d2, **kwargs):
 
     suffix = kwargs.get("suffix", "_b")
     ties = kwargs.get("ties", None)
@@ -176,7 +107,7 @@ def nearest(d1, d2, kwargs):
 
 
 
-def nearest_previous(d1, d2, kwargs):
+def nearest_previous(d1, d2, **kwargs):
 
     suffix = kwargs.get("suffix", "_b")
     ties = kwargs.get("ties", None)
@@ -201,7 +132,7 @@ def nearest_previous(d1, d2, kwargs):
     return df
 
 
-def nearest_next(d1, d2, kwargs):
+def nearest_next(d1, d2, **kwargs):
 
     suffix = kwargs.get("suffix", "_b")
     ties = kwargs.get("ties", None)
@@ -221,7 +152,7 @@ def nearest_next(d1, d2, kwargs):
 
 
 # @profile
-def _nearest(d1, d2, kwargs):
+def _nearest(d1, d2, **kwargs):
 
     if d1.empty or d2.empty:
         return None
@@ -246,7 +177,7 @@ def _nearest(d1, d2, kwargs):
     else:
         __nearest = nearest
 
-    df = __nearest(d1, d2, kwargs)
+    df = __nearest(d1, d2, **kwargs)
 
     return df
 

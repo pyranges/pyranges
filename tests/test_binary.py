@@ -225,7 +225,6 @@ def test_coverage(gr, gr2, strandedness):
     coverage_command = "bedtools coverage {strand} -a {f1} -b {f2}"
 
     bedtools_result = run_bedtools(coverage_command, gr, gr2, strandedness)
-    print(bedtools_result)
 
     bedtools_df = pd.read_csv(
         StringIO(bedtools_result),
@@ -238,7 +237,6 @@ def test_coverage(gr, gr2, strandedness):
         sep="\t")
 
     result = gr.coverage(gr2, strandedness=strandedness)
-    print(result)
 
     # assert len(result) > 0
     assert np.all(
@@ -303,6 +301,9 @@ def test_subtraction(gr, gr2, strandedness):
         sep="\t")
 
     result = gr.subtract(gr2, strandedness=strandedness)
+
+    print(bedtools_df)
+    print(result)
 
     compare_results(bedtools_df, result)
 
@@ -440,32 +441,32 @@ def test_reldist(gr, gr2):
 new_pos = ["union"]  # ["intersection", "union"]
 
 
-@pytest.mark.parametrize("strandedness,new_pos", product(
-    strandedness, new_pos))
-@settings(
-    max_examples=max_examples,
-    deadline=deadline,
-    print_blob=True,
-    suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
-def test_join_new_pos(gr, gr2, strandedness, new_pos):
+# @pytest.mark.parametrize("strandedness,new_pos", product(
+#     strandedness, new_pos))
+# @settings(
+#     max_examples=max_examples,
+#     deadline=deadline,
+#     print_blob=True,
+#     suppress_health_check=HealthCheck.all())
+# @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+# def test_join_new_pos(gr, gr2, strandedness, new_pos):
 
-    result = gr.join(gr2, strandedness=strandedness, new_pos=new_pos)
+#     result = gr.join(gr2, strandedness=strandedness).new_position(new_pos)
 
-    import numpy as np
-    result2 = gr.join(gr2, strandedness=strandedness)
+#     import numpy as np
+#     result2 = gr.join(gr2, strandedness=strandedness)
 
-    if result.df.empty:
-        assert result2.df.empty
-    else:
-        if new_pos == "union":
-            new_starts = np.minimum(result2.Start, result2.Start_b)
-            new_ends = np.maximum(result2.End, result2.End_b)
-        else:
-            new_starts = np.maximum(result2.Start, result2.Start_b)
-            new_ends = np.minimum(result2.End, result2.End_b)
-        assert list(result.Start.values) == list(new_starts)
-        assert list(result.End.values) == list(new_ends)
+#     if result.df.empty:
+#         assert result2.df.empty
+#     else:
+#         if new_pos == "union":
+#             new_starts = np.minimum(result2.Start, result2.Start_b)
+#             new_ends = np.maximum(result2.End, result2.End_b)
+#         else:
+#             new_starts = np.maximum(result2.Start, result2.Start_b)
+#             new_ends = np.minimum(result2.End, result2.End_b)
+#         assert list(result.Start.values) == list(new_starts)
+#         assert list(result.End.values) == list(new_ends)
 
 
 # @pytest.mark.parametrize("strand", [True, False])
@@ -492,7 +493,7 @@ def test_join_new_pos(gr, gr2, strandedness, new_pos):
 
 #     assert_df_equal(result, expected)
 
-k_nearest_ties = ["first", "last", None] 
+k_nearest_ties = ["first", "last", None]
 # k_nearest_ties = ["first", None]
 k_nearest_ties = ["last"]
 

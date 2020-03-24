@@ -2,7 +2,7 @@ import pandas as pd
 from ncls import NCLS
 
 
-def _subtraction(scdf, ocdf, kwargs):
+def _subtraction(scdf, ocdf, **kwargs):
 
     if ocdf.empty or scdf.empty:
         return scdf

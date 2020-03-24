@@ -116,7 +116,7 @@ def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
     else:
         return "".join([
             outdf.to_csv(
-                index=False, header=False, sep=sep, quoting=csv.QUOTE_NONE)
+                index=False, header=header, sep=sep, quoting=csv.QUOTE_NONE)
             for _, outdf in sorted(gr.dfs.items())
         ])
 
@@ -146,14 +146,21 @@ def _to_bed(self, path=None, sep="\t", keep=True, compression="infer"):
         res = "".join([
             outdf.to_csv(
                 index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
-            for _, outdf in sorted(gr.dfs.items())
+            for outdf in outdfs
         ])
         return res
 
 
-def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None, value_col=None):
+def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=None, dryrun=False):
 
-    if not divide_by:
+    try:
+        import pyBigWig
+    except ModuleNotFoundError:
+        print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
+        import sys
+        sys.exit(1)
+
+    if not divide:
         gr = self.to_rle(rpm=rpm, strand=False, value_col=value_col).to_ranges()
     else:
         gr = self.to_rle(rpm=rpm, strand=False, value_col=value_col)
@@ -172,14 +179,13 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide_by=None, value_col
     subset = ['Chromosome', 'Start', 'End', 'Score']
 
     gr = gr[subset].unstrand()
-    df = gr.sort(strand=False).df
 
-    try:
-        import pyBigWig
-    except ModuleNotFoundError:
-        print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
-        import sys
-        sys.exit(1)
+    gr = gr.sort()
+
+    if dryrun:
+        return gr
+
+    df = gr.df
 
     if not isinstance(chromosome_sizes, dict):
         size_df = chromosome_sizes.df
@@ -248,7 +254,7 @@ def _gff3(df):
         if i != total_cols:
             new_val = c + '=' + col + ';'
         else:
-            new_val = c + '=' + col 
+            new_val = c + '=' + col
         rest_df.loc[:, c] = rest_df[c].astype(str)
         rest_df.loc[~isnull, c] = new_val
         rest_df.loc[isnull, c] = ""

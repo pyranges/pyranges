@@ -19,15 +19,15 @@ def get_n_args(f):
 def call_f(f, nparams, df, odf, kwargs):
 
     if nparams == 3:
-        return f.remote(df, odf, kwargs)
+        return f.remote(df, odf, **kwargs)
     else:
         return f.remote(df, odf)
 
 
-def call_f_single(f, nparams, df, kwargs):
+def call_f_single(f, nparams, df, **kwargs):
 
     if nparams == 2:
-        return f.remote(df, kwargs)
+        return f.remote(df, **kwargs)
     else:
         return f.remote(df)
 
@@ -315,10 +315,11 @@ def pyrange_apply(function, self, other, **kwargs):
     return results
 
 
-def pyrange_apply_single(function, self, strand, kwargs):
+def pyrange_apply_single(function, self, **kwargs):
 
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
+    strand = kwargs["strand"]
 
     if nb_cpu > 1:
         import ray
@@ -343,7 +344,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["strand"] = _strand
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, kwargs)
+            result = call_f_single(function, nparams, df, **kwargs)
             results.append(result)
 
         keys = self.keys()
@@ -356,7 +357,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
             kwargs["chromosome"] = c
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, kwargs)
+            result = call_f_single(function, nparams, df, **kwargs)
             results.append(result)
             keys.append(c)
 
@@ -377,7 +378,7 @@ def pyrange_apply_single(function, self, strand, kwargs):
                 df = dfs.values()[0]
 
             df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, kwargs)
+            result = call_f_single(function, nparams, df, **kwargs)
             results.append(result)
             keys.append(c)
 
@@ -398,13 +399,15 @@ def _lengths(df):
     return lengths
 
 
-def _tss(df, kwargs):
+def _tss(df, **kwargs):
 
-    slack = kwargs["slack"]
+    df = df.copy(deep=True)
+
+    slack = kwargs.get("slack", 0)
 
     tss_pos = df.loc[df.Strand == "+"]
 
-    tss_neg = df.loc[df.Strand == "-"].copy()
+    tss_neg = df.loc[df.Strand == "-"]
 
     # pd.options.mode.chained_assignment = None
     tss_neg.loc[:, "Start"] = tss_neg.End
@@ -419,28 +422,23 @@ def _tss(df, kwargs):
     return tss.reindex(df.index)
 
 
-def _tes(df, kwargs):
+def _tes(df, **kwargs):
 
-    slack = kwargs["slack"]
+    df = df.copy()
+    if df.Strand.iloc[0] == "+":
+        df.loc[:, "Start"] = df.End
+    else:
+        df.loc[:, "End"] = df.Start
 
-    tes_pos = df.loc[df.Strand == "+"]
+    df.loc[:, "Start"] = df.End
+    df.loc[:, "End"] = df.End + 1
+    df.loc[:, "Start"] = df.Start
+    df.loc[df.Start < 0, "Start"] = 0
 
-    tes_neg = df.loc[df.Strand == "-"].copy()
-
-    # pd.options.mode.chained_assignment = None
-    tes_neg.loc[:, "Start"] = tes_neg.End
-
-    # pd.options.mode.chained_assignment = "warn"
-    tes = pd.concat([tes_pos, tes_neg], sort=False)
-    tes["Start"] = tes.End
-    tes.End = tes.End + 1 + slack
-    tes.Start = tes.Start - slack
-    tes.loc[tes.Start < 0, "Start"] = 0
-
-    return tes.reindex(df.index)
+    return df.reindex(df.index)
 
 
-def _slack(df, kwargs):
+def _slack(df, **kwargs):
 
     df = df.copy()
     dtype = df.Start.dtype
@@ -450,7 +448,7 @@ def _slack(df, kwargs):
         slack,
         (int, dict)), "Slack parameter must be integer or dict, is {}".format(
             type(slack))
-    # df = self.df.copy()
+
     if isinstance(slack, int):
         df.loc[:, "Start"] = df.Start - slack
         df.loc[df.Start < 0, "Start"] = 0
@@ -471,10 +469,12 @@ def _slack(df, kwargs):
 
     df = df.astype({"Start": dtype, "End": dtype})
 
+    assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying slack!"
+
     return df
 
 
-def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
+def pyrange_apply_chunks(function, self, as_pyranges, **kwargs):
 
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
@@ -493,7 +493,7 @@ def pyrange_apply_chunks(function, self, as_pyranges, kwargs):
         dfs = np.array_split(v, nb_cpu)
         lengths.append(len(dfs))
         results.extend(
-            [call_f_single(function, nparams, df, kwargs) for df in dfs])
+            [call_f_single(function, nparams, df, **kwargs) for df in dfs])
         keys.append(k)
 
     results = get(results)

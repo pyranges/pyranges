@@ -312,10 +312,12 @@ def test_getitem(selector):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
+    print_blob=True,
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
 def test_summary(gr):
 
+    print(gr.to_example())
     # merely testing that it does not error
     # contents are just (pandas) dataframe.describe()
     gr.summary()

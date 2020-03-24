@@ -1,4 +1,5 @@
 import pandas as pd
+import natsort
 
 import shutil
 
@@ -42,6 +43,9 @@ def _get_stranded_f(self, half_entries, f, sort=False):
     # got twice as many entries as needed before sort. Halve here:
     df = getattr(df, f)(half_entries)
 
+    # dfs = {df.Chromosome.iloc[0]: df for df in}
+    df = df.reset_index(drop=True)
+    df = df.reindex(index=natsort.order_by_index(df.index, natsort.index_natsorted(zip(df.Chromosome))))
 
     return df
 
@@ -73,6 +77,9 @@ def _get_unstranded_f(self, half_entries, f, sort=False):
 
     df = pd.concat(dfs)
 
+    if f == "tail" and len(df.Chromosome.drop_duplicates()) > 1:
+        df = df.iloc[::-1]
+
     return df
 
 
@@ -82,6 +89,8 @@ def _get_df(self, n, sort):
 
     if len(self) <= n:
         df = self.df.astype(object)
+        if sort:
+            df = df.sort_values(sort_cols)
     else:
         if self.stranded:
             top = _get_stranded_f(self, half_entries, "head", sort)
@@ -93,6 +102,9 @@ def _get_df(self, n, sort):
         middle = top.head(1)
         # dot_dot_line.loc[:, :] = "..."
         df = pd.concat([top, middle, bottom]).astype(object)
+
+    # df = df.reset_index(drop=True)
+    # df = df.reindex(index=natsort.order_by_index(df.index, natsort.index_natsorted(zip(df.Chromosome))))
 
     return df
 
@@ -225,7 +237,7 @@ def untraditional_strand_info(self, str_repr_width):
         if n_untraditional_strands:
             ustr = "Considered unstranded due to these Strand values: {}"
             for i in range(n_untraditional_strands + 1):
-                _ustr = ustr.format(", ".join(untraditional_strands[:i]))
+                _ustr = ustr.format(", ".join(untraditional_strands[:i+1]))
                 if len(_ustr) > str_repr_width - 20:
                     break
 
@@ -276,9 +288,9 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
     ustr = untraditional_strand_info(self, str_repr_width)
 
     order = {(True, True): "Chromosome, Start, End and Strand.",
-             (True, False): "Chromosome, Start, End and Strand.",
-             (False, False): "Chromosome.",
-             (False, True): "Chromosome and Strand."}[sort, self.stranded]
+            (True, False): "Chromosome, Start, End and Strand.",
+            (False, False): "Chromosome.",
+            (False, True): "Chromosome and Strand."}[sort, self.stranded]
 
     order = "For printing, the PyRanges was sorted on " + order
 
