@@ -441,32 +441,32 @@ def test_reldist(gr, gr2):
 new_pos = ["union"]  # ["intersection", "union"]
 
 
-@pytest.mark.parametrize("strandedness,new_pos", product(
-    strandedness, new_pos))
-@settings(
-    max_examples=max_examples,
-    deadline=deadline,
-    print_blob=True,
-    suppress_health_check=HealthCheck.all())
-@given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
-def test_join_new_pos(gr, gr2, strandedness, new_pos):
+# @pytest.mark.parametrize("strandedness,new_pos", product(
+#     strandedness, new_pos))
+# @settings(
+#     max_examples=max_examples,
+#     deadline=deadline,
+#     print_blob=True,
+#     suppress_health_check=HealthCheck.all())
+# @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+# def test_join_new_pos(gr, gr2, strandedness, new_pos):
 
-    result = gr.join(gr2, strandedness=strandedness).new_position(new_pos)
+#     result = gr.join(gr2, strandedness=strandedness).new_position(new_pos)
 
-    import numpy as np
-    result2 = gr.join(gr2, strandedness=strandedness)
+#     import numpy as np
+#     result2 = gr.join(gr2, strandedness=strandedness)
 
-    if result.df.empty:
-        assert result2.df.empty
-    else:
-        if new_pos == "union":
-            new_starts = np.minimum(result2.Start, result2.Start_b)
-            new_ends = np.maximum(result2.End, result2.End_b)
-        else:
-            new_starts = np.maximum(result2.Start, result2.Start_b)
-            new_ends = np.minimum(result2.End, result2.End_b)
-        assert list(result.Start.values) == list(new_starts)
-        assert list(result.End.values) == list(new_ends)
+#     if result.df.empty:
+#         assert result2.df.empty
+#     else:
+#         if new_pos == "union":
+#             new_starts = np.minimum(result2.Start, result2.Start_b)
+#             new_ends = np.maximum(result2.End, result2.End_b)
+#         else:
+#             new_starts = np.maximum(result2.Start, result2.Start_b)
+#             new_ends = np.minimum(result2.End, result2.End_b)
+#         assert list(result.Start.values) == list(new_starts)
+#         assert list(result.End.values) == list(new_ends)
 
 
 # @pytest.mark.parametrize("strand", [True, False])
