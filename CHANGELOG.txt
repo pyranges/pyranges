@@ -4,6 +4,7 @@
 - add pr.from_string() to create a PyRanges from a multiline string
 - remove set_columns, set on .columns directly
 - apply numpy-methods to pyranges
+- add pr.get_fasta(gr, path)
 
 # 0.0.76 (20.02.20)
 - fix leftover print in itergrs

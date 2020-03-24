@@ -38,6 +38,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="data/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.data</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="genomicfeatures/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.genomicfeatures</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_fasta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.get_fasta</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="multioverlap/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.multioverlap</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyranges/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.pyranges</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="readers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.readers</span></code></a></li>
@@ -2256,7 +2257,7 @@ on the metadata, use pandas groupby.</p>
 
 <dl class="method">
 <dt id="pyranges.PyRanges.nearest">
-<code class="sig-name descname">nearest</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em>, <em class="sig-param">strandedness=None</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">how=None</em>, <em class="sig-param">nb_cpu=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pyranges.PyRanges.nearest" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">nearest</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em>, <em class="sig-param">strandedness=None</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">how=None</em>, <em class="sig-param">suffix='_b'</em>, <em class="sig-param">nb_cpu=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pyranges.PyRanges.nearest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find closest interval.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -29,7 +29,8 @@ def _summary(self, to_stdout=True, return_df=False):
 
     # statistics for lengths
     for summary, d in lengths.items():
-        summaries[summary] = pd.concat(d.values()).describe()
+        if d:
+            summaries[summary] = pd.concat(d.values()).describe()
 
     summary = pd.concat(summaries.values(), axis=1)
     summary.columns = list(summaries)

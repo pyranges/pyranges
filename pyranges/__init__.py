@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+import sys
+
 from collections import defaultdict
 
 try:
@@ -127,6 +129,11 @@ def from_string(s, int64=False):
     return PyRanges(df, int64=int64)
 
 
+from pyranges.get_fasta import get_fasta
+
+get_fasta = get_fasta
+
+
 import pyranges.genomicfeatures as gf
 
 
@@ -239,6 +246,7 @@ def itergrs(prs, strand=None, keys=False):
         return iter(grs_per_chromosome.values())
     else:
         return iter(natsorted(grs_per_chromosome.items()))
+
 
 def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
 

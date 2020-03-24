@@ -2836,7 +2836,7 @@ class PyRanges():
         return self
 
 
-    def nearest(self, other, strandedness=None, overlap=True, how=None, nb_cpu=1):
+    def nearest(self, other, strandedness=None, overlap=True, how=None, suffix="_b", nb_cpu=1):
 
         """Find closest interval.
 
@@ -2944,7 +2944,7 @@ class PyRanges():
 
         from pyranges.methods.nearest import _nearest
 
-        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap, "nb_cpu": nb_cpu}
+        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap, "nb_cpu": nb_cpu, "suffix": suffix}
         kwargs = fill_kwargs(kwargs)
         if kwargs.get("how") in "upstream downstream".split():
             assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
@@ -2952,6 +2952,7 @@ class PyRanges():
         dfs = pyrange_apply(_nearest, self, other, **kwargs)
 
         return PyRanges(dfs)
+
 
     def new_position(self, new_pos, columns=None):
 
@@ -3666,9 +3667,10 @@ class PyRanges():
             self = self.unstrand()
             other = other.unstrand()
 
-        if strandedness == "opposite":
+        if strandedness == "opposite" and len(other):
             other = other.copy()
             other.Strand = other.Strand.replace({"+": "-", "-": "+"})
+
 
         gr = pr.concat([self, other], strand)
 
