@@ -344,6 +344,13 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
 
 def to_rows(anno):
     rowdicts = []
+    try:
+        l = anno.head(1)
+        for l in l:
+            l.replace('"', '').replace(";", "").split()
+    except AttributeError:
+        raise Exception("Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(l=l))
+
     for l in anno:
         l = l.replace('"', '').replace(";", "").split()
         rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
@@ -504,3 +511,68 @@ def read_gff3(f, annotation=None, as_df=False, nrows=None, skiprows=0):
         return PyRanges(df)
     else:
         return df
+
+
+# @profile
+def read_bigwig(f, as_df=False):
+
+    try:
+        import pyBigWig
+    except ModuleNotFoundError:
+        print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
+        import sys
+        sys.exit(1)
+
+    """Read bigwig files.
+
+    Parameters
+    ----------
+    f : str
+
+        Path to bw file.
+
+    as_df : bool, default False
+
+        Whether to return as pandas DataFrame instead of PyRanges.
+
+    Examples
+    --------
+
+    >>> f = pr.get_example_path("bw.bw")
+    >>> gr = pr.read_bigwig(f)
+    >>> gr
+    """
+
+    from natsort import natsorted
+
+    bw = pyBigWig.open(f)
+
+    size = int(1e5)
+    chromosomes = bw.chroms()
+
+    dfs = {}
+
+    for chromosome in natsorted(chromosomes):
+        outstarts = []
+        outends = []
+        outvalues = []
+
+        length = chromosomes[chromosome]
+
+        starts = list(range(0, length, size))
+        ends = list(range(size, length + size, size))
+        ends[-1] = length
+        for start, end in zip(starts, ends):
+            intervals = bw.intervals(chromosome, start, end)
+            if intervals is not None:
+                for s, e, v in intervals:
+                    outstarts.append(s)
+                    outends.append(e)
+                    outvalues.append(v)
+
+        outstarts = pd.Series(outstarts)
+        outends = pd.Series(outends)
+        outvalues = pd.Series(outvalues)
+        dfs[chromosome] = pd.DataFrame({"Chromosome": chromosome, "Start": outstarts, "End": outends, "Value": outvalues})
+
+    return pr.PyRanges(dfs)

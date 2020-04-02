@@ -32,9 +32,17 @@ def _cluster_by(df, **kwargs):
     count = kwargs.get("count", False)
 
     by = kwargs["by"]
-    cdf = df.sort_values(by)
 
-    new_ids = (cdf[by] != cdf[by].shift()).cumsum()
+    if isinstance(by, str):
+        cdf = df.sort_values([by, "Start"])
+    else:
+        cdf = df.sort_values(by + ["Start"])
+
+    if isinstance(by, str):
+        new_ids = (cdf[by] != cdf[by].shift()).cumsum()
+    else:
+        new_ids = (cdf[by] != cdf[by].shift()).any(axis=1).cumsum()
+
     cdf.insert(cdf.shape[1], "ClusterBy", new_ids)
 
     cdf = cdf.sort_values(["ClusterBy", "Start"])

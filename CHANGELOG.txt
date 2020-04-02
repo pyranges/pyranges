@@ -1,4 +1,8 @@
-# 0.0.77 (unreleased)
+# 0.0.78
+- add reader for bigwig
+- fix cluster (allow for multiple by arguments)
+
+# 0.0.77 (24.03.20)
 - add api-docs
 - make default strandedness of apply-pair equal None
 - add pr.from_string() to create a PyRanges from a multiline string
