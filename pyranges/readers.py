@@ -519,7 +519,7 @@ def read_bigwig(f, as_df=False):
     try:
         import pyBigWig
     except ModuleNotFoundError:
-        print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
+        print("bwread must be installed to read bigwigs. Use `conda install -c bioconda bwread` or `pip install bwread` to install it.")
         import sys
         sys.exit(1)
 

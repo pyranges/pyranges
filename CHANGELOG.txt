@@ -1,6 +1,8 @@
-# 0.0.78
-- add reader for bigwig
+# 0.0.78 (18.03.20)
+- add reader for bigwig (pr.read_bigwig)
 - fix cluster (allow for multiple by arguments)
+- optimize to_bigwig slightly
+- fix: overlap did not recognize invert-argument
 
 # 0.0.77 (24.03.20)
 - add api-docs

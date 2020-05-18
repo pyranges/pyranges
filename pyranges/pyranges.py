@@ -3235,6 +3235,7 @@ class PyRanges():
         kwargs = {"strandedness": strandedness}
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs["how"] = how
+        kwargs["invert"] = invert
         kwargs = fill_kwargs(kwargs)
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
@@ -4862,6 +4863,9 @@ class PyRanges():
         """
 
         from pyranges.out import _to_bigwig
+
+        if chromosome_sizes is None:
+            raise Exception("Chromosome sizes must be a dict or pyranges!")
 
         result = _to_bigwig(self, path, chromosome_sizes, rpm, divide, value_col, dryrun)
 
