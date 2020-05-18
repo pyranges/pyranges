@@ -3230,6 +3230,16 @@ class PyRanges():
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 1 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.overlap(gr2, invert=True)
+        +--------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        | chr1         |        10 |        11 | c          |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 1 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
         """
 
         kwargs = {"strandedness": strandedness}
@@ -4865,7 +4875,7 @@ class PyRanges():
         from pyranges.out import _to_bigwig
 
         if chromosome_sizes is None:
-            raise Exception("Chromosome sizes must be a dict or pyranges!")
+            chromosome_sizes = pr.data.chromsizes()
 
         result = _to_bigwig(self, path, chromosome_sizes, rpm, divide, value_col, dryrun)
 
