@@ -355,7 +355,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
     return PyRanges(random_df, int64=int64)
 
 
-from pyranges.readers import read_bam, read_bed, read_gff3
+from pyranges.readers import read_bam, read_bed, read_bigwig, read_gff3
 from pyranges.readers import read_gtf
 read_gff = read_gtf
 
@@ -457,7 +457,7 @@ def to_bigwig(gr, path, chromosome_sizes):
     | Values | 0.0 | 20.0 | 50.0 | 30.0 |
     +--------+-----+------+------+------+
     Rle of length 10 containing 4 elements (avg. length 2.5)
-    PyRles object with 2 chromosomes/strand pairs.
+    RleDict object with 2 chromosomes/strand pairs.
 
     >>> raw = gr.to_rle(rpm=False)
     >>> raw
@@ -478,7 +478,7 @@ def to_bigwig(gr, path, chromosome_sizes):
     | Values | 0.0 | 1.0 | 2.0 | 1.0 |
     +--------+-----+-----+-----+-----+
     Rle of length 10 containing 4 elements (avg. length 2.5)
-    PyRles object with 2 chromosomes/strand pairs.
+    RleDict object with 2 chromosomes/strand pairs.
 
     >>> result = (value / raw).apply_values(np.log10)
     >>> result
@@ -499,19 +499,19 @@ def to_bigwig(gr, path, chromosome_sizes):
     | Values | nan | 1.3010300397872925 | 1.3979400396347046 | 1.4771212339401245 |
     +--------+-----+--------------------+--------------------+--------------------+
     Rle of length 10 containing 4 elements (avg. length 2.5)
-    PyRles object with 2 chromosomes/strand pairs.
+    RleDict object with 2 chromosomes/strand pairs.
 
     >>> out = result.numbers_only().to_ranges()
     >>> out
-    +--------------+-----------+-----------+-------------+------------+
-    | Chromosome   |     Start |       End |       Score | Strand     |
-    | (object)     |   (int32) |   (int32) |   (float64) | (object)   |
-    |--------------+-----------+-----------+-------------+------------|
-    | chr1         |         1 |         7 |     1       | +          |
-    | chr1         |         4 |         6 |     1.30103 | -          |
-    | chr1         |         6 |         8 |     1.39794 | -          |
-    | chr1         |         8 |        10 |     1.47712 | -          |
-    +--------------+-----------+-----------+-------------+------------+
+    +--------------+-----------+-----------+-------------+--------------+
+    | Chromosome   |     Start |       End |       Score | Strand       |
+    | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+    |--------------+-----------+-----------+-------------+--------------|
+    | chr1         |         1 |         7 |     1       | +            |
+    | chr1         |         4 |         6 |     1.30103 | -            |
+    | chr1         |         6 |         8 |     1.39794 | -            |
+    | chr1         |         8 |        10 |     1.47712 | -            |
+    +--------------+-----------+-----------+-------------+--------------+
     Stranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
 

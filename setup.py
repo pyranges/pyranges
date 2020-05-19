@@ -20,7 +20,7 @@ setup(
     package_data={
         'pyranges': [
             'example_data/*.bed', 'example_data/*.gtf', 'example_data/*.bam',
-            'example_data/*.bam.bai', 'example_data/*.gz'
+            'example_data/*.bam.bai', 'example_data/*.gz', 'example_data/*.bw'
         ]
     },
     # data_files = ["LICENSE"],

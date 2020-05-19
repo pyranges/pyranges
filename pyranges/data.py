@@ -92,6 +92,12 @@ def aorta2():
 
     return pr.read_bed(full_path)
 
+def bw():
+
+    full_path = get_example_path("bw.bw")
+
+    return pr.read_bigwig(full_path)
+
 def chipseq():
 
     """

@@ -185,8 +185,6 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=N
     if dryrun:
         return gr
 
-    df = gr.df
-
     if not isinstance(chromosome_sizes, dict):
         size_df = chromosome_sizes.df
         chromosome_sizes = {k: v for k, v in zip(size_df.Chromosome, size_df.End)}
@@ -196,12 +194,13 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=N
     bw = pyBigWig.open(path, "w")
     bw.addHeader(header)
 
-    chromosomes = df.Chromosome.tolist()
-    starts = df.Start.tolist()
-    ends = df.End.tolist()
-    values = df.Score.tolist()
+    for chromosome, df in gr:
+        chromosomes = df.Chromosome.tolist()
+        starts = df.Start.tolist()
+        ends = df.End.tolist()
+        values = df.Score.tolist()
 
-    bw.addEntries(chromosomes, starts, ends=ends, values=values)
+        bw.addEntries(chromosomes, starts, ends=ends, values=values)
 
 
 

@@ -1,39 +1,23 @@
 Todo:
-- write docs for coverage
-- rename coverage to_rle; much more descriptive
-- divide docs into parts: Rle/GenomicFeatures/stats
 - docs: write about pyranges-internals
+- docs: NCLS
+- docs: pyrle
 - create pyranges-compiled package. sorted_nearest is too narrow a name
-- add chain-flag to print/to_-methods, so that they do not return the object by default
-- implement check after apply to see that strand/chromosome are correct per df
-- test to_gtf with apply_chunks
+- be able to read wonky flybase gffs
 
 Bugs:
 - pr.data.ensembl_gtf().cluster(by="exon_id") not displaying correctly
+- when subsetting on columns, expected order not always preserved
 
 Test:
 - (hypothesis): gr.coverage() == gr.coverage().to_ranges().coverage()
-- test subsetting with bool vectors
-- test concatting grs with different categories
-
-
-Multicore:
-- test multicpu functionality locally
-- make pyranges work in multicpu even if ray is started
-
-PyRanges-db:
-- fetch GWAS-catalogue
-  (https://www.ebi.ac.uk/gwas/api/search/downloads/full and https://www.ebi.ac.uk/gwas/api/search/downloads/alternative)
 
 GenomicFeatures:
 - (FIX): avoid .df call in tes/tss, genomicfeatures
-- create pyranges random (like bedtools random)
-- compute introns per transcript or per gene (Need to do in Cython - have genomicfeatures package?)
-  - 1: need merge(by=id) to ensure that all exons per transcript are merged
-  - 2: then need exon computation code
-
-Possibly:
-- test http://code.databio.org/AIList, see if it is faster than my NCLS-implementation
+- compute 3'-UTR
+- have summary in gf also? what should it contain?
+  - same as summary, only per feature type?
+  - colsplit: divide PyRanges on values in columns
 
 Think:
 - what should subset ["chr1", "."] in an unstranded PyRanges with a strand-column containing "." return? What about ["."]?

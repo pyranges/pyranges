@@ -1024,6 +1024,25 @@ class PyRanges():
         +--------------+-----------+-----------+-----------+-----------+
         Unstranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr2 = pr.data.ensembl_gtf()[["Feature", "Source"]]
+        >>> gr2.cluster(by=["Feature", "Source"])
+        +--------------+--------------+---------------+-----------+-----------+--------------+-----------+
+        | Chromosome   | Feature      | Source        | Start     | End       | Strand       | Cluster   |
+        | (category)   | (category)   | (object)      | (int32)   | (int32)   | (category)   | (int32)   |
+        |--------------+--------------+---------------+-----------+-----------+--------------+-----------|
+        | 1            | CDS          | ensembl       | 69090     | 70005     | +            | 1         |
+        | 1            | CDS          | ensembl       | 925941    | 926013    | +            | 2         |
+        | 1            | CDS          | ensembl       | 925941    | 926013    | +            | 2         |
+        | 1            | CDS          | ensembl       | 925941    | 926013    | +            | 2         |
+        | ...          | ...          | ...           | ...       | ...       | ...          | ...       |
+        | 1            | transcript   | havana_tagene | 167128    | 169240    | -            | 1142      |
+        | 1            | transcript   | mirbase       | 17368     | 17436     | -            | 1143      |
+        | 1            | transcript   | mirbase       | 187890    | 187958    | -            | 1144      |
+        | 1            | transcript   | mirbase       | 632324    | 632413    | -            | 1145      |
+        +--------------+--------------+---------------+-----------+-----------+--------------+-----------+
+        Stranded PyRanges object has 2,446 rows and 7 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
         if strand is None:
@@ -3211,11 +3230,22 @@ class PyRanges():
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 1 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.overlap(gr2, invert=True)
+        +--------------+-----------+-----------+------------+
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
+        |--------------+-----------+-----------+------------|
+        | chr1         |        10 |        11 | c          |
+        +--------------+-----------+-----------+------------+
+        Unstranded PyRanges object has 1 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
         """
 
         kwargs = {"strandedness": strandedness}
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs["how"] = how
+        kwargs["invert"] = invert
         kwargs = fill_kwargs(kwargs)
 
         dfs = pyrange_apply(_overlap, self, other, **kwargs)
@@ -4801,7 +4831,7 @@ class PyRanges():
         >>> gr.to_bigwig(dryrun=True, rpm=False)
         +--------------+-----------+-----------+-------------+
         | Chromosome   |     Start |       End |       Score |
-        | (object)     |   (int32) |   (int32) |   (float64) |
+        | (category)   |   (int32) |   (int32) |   (float64) |
         |--------------+-----------+-----------+-------------|
         | chr1         |         1 |         4 |           1 |
         | chr1         |         4 |         6 |           2 |
@@ -4815,7 +4845,7 @@ class PyRanges():
         >>> gr.to_bigwig(dryrun=True, rpm=False, value_col="Value")
         +--------------+-----------+-----------+-------------+
         | Chromosome   |     Start |       End |       Score |
-        | (object)     |   (int32) |   (int32) |   (float64) |
+        | (category)   |   (int32) |   (int32) |   (float64) |
         |--------------+-----------+-----------+-------------|
         | chr1         |         1 |         4 |          10 |
         | chr1         |         4 |         6 |          30 |
@@ -4829,7 +4859,7 @@ class PyRanges():
         >>> gr.to_bigwig(dryrun=True, rpm=False, value_col="Value", divide=True)
         +--------------+-----------+-----------+-------------+
         | Chromosome   |     Start |       End |       Score |
-        | (object)     |   (int32) |   (int32) |   (float64) |
+        | (category)   |   (int32) |   (int32) |   (float64) |
         |--------------+-----------+-----------+-------------|
         | chr1         |         0 |         1 |   nan       |
         | chr1         |         1 |         4 |     3.32193 |
@@ -4843,6 +4873,9 @@ class PyRanges():
         """
 
         from pyranges.out import _to_bigwig
+
+        if chromosome_sizes is None:
+            chromosome_sizes = pr.data.chromsizes()
 
         result = _to_bigwig(self, path, chromosome_sizes, rpm, divide, value_col, dryrun)
 
@@ -5032,14 +5065,14 @@ class PyRanges():
 
     def to_rle(self, value_col=None, strand=None, rpm=False, nb_cpu=1):
 
-        """Return as PyRles.
+        """Return as RleDict.
 
         Create collection of Rles representing the coverage or other numerical value.
 
         Parameters
         ----------
         value_col : str, default None
-            Numerical column to create PyRles from.
+            Numerical column to create RleDict from.
 
         strand : bool, default None, i.e. auto
             Whether to treat strands serparately.
@@ -5053,7 +5086,7 @@ class PyRanges():
 
         Returns
         -------
-        pyrle.PyRles
+        pyrle.RleDict
 
             Rle with coverage or other info from the PyRanges.
 
@@ -5081,7 +5114,7 @@ class PyRanges():
         | Values | 0.0 | 1.0 |
         +--------+-----+-----+
         Rle of length 7 containing 2 elements (avg. length 3.5)
-        PyRles object with 2 chromosomes/strand pairs.
+        RleDict object with 2 chromosomes/strand pairs.
 
         >>> gr.to_rle(value_col="Score")
         chr1 +
@@ -5101,7 +5134,7 @@ class PyRanges():
         | Values | 0.0 | 3.14 |
         +--------+-----+------+
         Rle of length 7 containing 2 elements (avg. length 3.5)
-        PyRles object with 2 chromosomes/strand pairs.
+        RleDict object with 2 chromosomes/strand pairs.
 
         >>> gr.to_rle(value_col="Score", strand=False)
         chr1
@@ -5111,7 +5144,7 @@ class PyRanges():
         | Values | 0.0 | 0.1 | 3.24 | 3.14 | 0.0 | 5.0 |
         +--------+-----+-----+------+------+-----+-----+
         Rle of length 9 containing 6 elements (avg. length 1.5)
-        Unstranded PyRles object with 1 chromosome.
+        Unstranded RleDict object with 1 chromosome.
 
         >>> gr.to_rle(rpm=True)
         chr1 +
@@ -5131,7 +5164,7 @@ class PyRanges():
         | Values | 0.0 | 333333.3333333333 |
         +--------+-----+-------------------+
         Rle of length 7 containing 2 elements (avg. length 3.5)
-        PyRles object with 2 chromosomes/strand pairs.
+        RleDict object with 2 chromosomes/strand pairs.
         """
 
         if strand is None:
