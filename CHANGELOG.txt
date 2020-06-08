@@ -1,4 +1,4 @@
-# 0.0.79 (08.06.20) # unreleased!
+# 0.0.79 (08.06.20)
 - fix bug in features.introns where the gene_id column was overwritten (issue #134)
 
 # 0.0.78 (18.03.20)
