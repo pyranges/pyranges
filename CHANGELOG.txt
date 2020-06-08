@@ -1,3 +1,6 @@
+# 0.0.79 (08.06.20) # unreleased!
+- fix bug in features.introns where the gene_id column was overwritten (issue #134)
+
 # 0.0.78 (18.03.20)
 - add reader for bigwig (pr.read_bigwig)
 - fix cluster (allow for multiple by arguments)
