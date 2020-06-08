@@ -4688,6 +4688,63 @@ class PyRanges():
             pyrange_apply_single(_tes, self, **kwargs))
 
 
+#     def to_bam(self, path=None, header=None, chromosome_sizes=None, chain=False):
+
+#         r"""Write to bam.
+
+#         Parameters
+#         ----------
+#         path : str, default None
+#             Where to write. If None, returns string representation.
+
+#         keep : bool, default True
+
+#             Whether to keep all columns, not just Chromosome, Start, End,
+#             Name, Score, Strand when writing.
+
+#         compression : str, compression type to use, by default infer based on extension.
+#             See pandas.DataFree.to_csv for more info.
+
+#         header : dict
+
+#             Header to use in the bamfile. See the pysam docs for how it should look.
+#             Or use the header attribute from another pyasam.AlignmentFile.
+
+#         chromosome_sizes : PyRanges or dict
+
+#             If dict: map of chromosome names to chromosome length.
+
+#         chain : bool, default False
+#             Whether to return the PyRanges after writing.
+
+#         Note
+#         ----
+
+#         The following pyranges columns are used when writing:
+
+#         Chromosome, Start, End, Strand, MapQ, Flag, QueryStart, QueryEnd, Name, Cigar, Quality
+
+#         Examples
+#         --------
+
+#         >>> header = {"SQ": [{"SN": 1, "LN": 249250621}]}
+
+#         >>> c = '''Name	Flag Chromosome Start End MapQ Cigar QuerySequence Quality
+# read1	115	1	142618765 142618790	255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:65536	ZL:i:25
+# read2	115	1	142618765 142618790  255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:214748	ZL:i:25
+# read3	115	1	142618765 142618790  255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:2147484	ZL:i:25
+# read4	115	1	142618765 142618790  255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:2147483647	ZL:i:25
+# read5	115	1	142618765 142618790  255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:-65536	ZL:i:25
+# read6	115	1	142618765 142618790  255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:-214748	ZL:i:25
+# read7	115	1	142618765 142618790  255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:-2147484	ZL:i:25
+# read8	115	1	142618765 142618790  255	25M	CGACCCACTCCGCCATTTTCATCCG	IIGIIIHIGIIFIIIIIIIGIGIII	NM:i:0ZP:i:-2147483647	ZL:i:25'''
+
+#         >>>
+#         """
+
+
+
+
     def to_bed(self, path=None, keep=True, compression="infer", chain=False):
         r"""Write to bed.
 

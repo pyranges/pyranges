@@ -262,3 +262,30 @@ def _gff3(df):
     outdf.insert(outdf.shape[1], "Attribute", attribute)
 
     return outdf
+
+# def _to_bam(df, filename, header=None, chromsizes=None):
+
+#     def _header_from_chromsizes(chromsizes):
+
+#         try:
+#             chromsizes = {k: v for k, v in zip(chromsizes.Chromosome, chromsizes.End)}
+#         except:
+#             pass
+
+#         chromosomes = []
+#         for chromosome, length in chromsizes.items():
+#             chromosomes.append({"LN": length, "SN": chromosome})
+
+#         return {"SQ": chromosomes}
+
+#     if chromsizes:
+#         header = _header_from_chromsizes(chromsizes)
+
+
+#     import sys
+
+#     try:
+#         import bamread
+#     except ModuleNotFoundError as e:
+#         print("bamread must be installed to write bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it.")
+#         sys.exit(1)

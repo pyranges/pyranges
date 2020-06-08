@@ -513,7 +513,6 @@ def read_gff3(f, annotation=None, as_df=False, nrows=None, skiprows=0):
         return df
 
 
-# @profile
 def read_bigwig(f, as_df=False):
 
     try:

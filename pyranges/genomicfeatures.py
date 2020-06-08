@@ -533,39 +533,39 @@ def _introns2(df, exons, **kwargs):
 
     exons = exons[["Start", "End", id_column]]
     genes = df[["Start", "End", id_column]]
-    exons.columns = ["Start", "End", "gene_id"]
-    genes.columns = ["Start", "End", "gene_id"]
+    exons.columns = ["Start", "End", "by_id"]
+    genes.columns = ["Start", "End", "by_id"]
 
     intersection = pd.Series(
-        np.intersect1d(exons["gene_id"], genes["gene_id"]))
+        np.intersect1d(exons["by_id"], genes["by_id"]))
     if len(intersection) == 0:
         return None
 
-    exons = exons[exons["gene_id"].isin(intersection)].reset_index(
-        drop=True).sort_values(["gene_id", "Start"])
-    genes = genes[genes["gene_id"].isin(intersection)].reset_index(
-        drop=True).sort_values(["gene_id", "Start"])
+    exons = exons[exons["by_id"].isin(intersection)].reset_index(
+        drop=True).sort_values(["by_id", "Start"])
+    genes = genes[genes["by_id"].isin(intersection)].reset_index(
+        drop=True).sort_values(["by_id", "Start"])
     df = df[df[id_column].isin(intersection)].reset_index(
-        drop=True)  #.sort_values(id_column)
+        drop=True)
 
     assert len(genes) == len(
-        genes.drop_duplicates("gene_id")
+        genes.drop_duplicates("by_id")
     ), "The {id_column}s need to be unique to compute the introns.".format(
         id_column=id_column)
 
-    exon_ids = (exons["gene_id"].shift() != exons["gene_id"])
-    gene_ids = pd.Series(range(1, len(genes) + 1))
-    df.insert(0, "__temp__", gene_ids)
+    exon_ids = (exons["by_id"].shift() != exons["by_id"])
+    by_ids = pd.Series(range(1, len(genes) + 1))
+    df.insert(0, "__temp__", by_ids)
 
-    if len(exons) > 1 and exons["gene_id"].iloc[0] == exons["gene_id"].iloc[1]:
+    if len(exons) > 1 and exons["by_id"].iloc[0] == exons["by_id"].iloc[1]:
         exon_ids.iloc[0] = False
         exon_ids = exon_ids.cumsum() + 1
     else:
         exon_ids = exon_ids.cumsum()
 
-    assert (gene_ids == exon_ids.drop_duplicates().values).all()
+    assert (by_ids == exon_ids.drop_duplicates().values).all()
     starts, ends, ids = find_introns(genes.Start.values, genes.End.values,
-                                     gene_ids.values, exons.Start.values,
+                                     by_ids.values, exons.Start.values,
                                      exons.End.values, exon_ids.values)
 
     introns = pd.DataFrame(
@@ -573,33 +573,33 @@ def _introns2(df, exons, **kwargs):
             "Chromosome": df.Chromosome.iloc[0],
             "Start": starts,
             "End": ends,
-            "gene_id": ids
+            "by_id": ids
         })
 
-    vc = introns["gene_id"].value_counts(sort=False).to_frame().reset_index()
-    vc.columns = ["gene_id", "counts"]
+    vc = introns["by_id"].value_counts(sort=False).to_frame().reset_index()
+    vc.columns = ["by_id", "counts"]
 
     genes_without_introns = pd.DataFrame(
         data={
-            "gene_id": np.setdiff1d(gene_ids.values, vc.gene_id.values),
+            "by_id": np.setdiff1d(by_ids.values, vc.by_id.values),
             "counts": 0
         })
 
-    vc = pd.concat([vc, genes_without_introns]).sort_values("gene_id")
+    vc = pd.concat([vc, genes_without_introns]).sort_values("by_id")
 
-    original_ids = np.repeat(vc.gene_id, vc.counts).to_frame()
+    original_ids = np.repeat(vc.by_id, vc.counts).to_frame()
     original_ids = original_ids.merge(
         df[["__temp__", id_column]],
         right_on="__temp__",
-        left_on="gene_id",
+        left_on="by_id",
         suffixes=("_drop", ""))
     original_ids = original_ids.drop(
         ["__temp__"] +
         [c for c in original_ids.columns if c.endswith("_drop")],
-        axis=1).sort_values("gene_id")
-    introns.loc[:, "gene_id"] = original_ids[id_column].values
+        axis=1).sort_values("by_id")
+    introns.loc[:, "by_id"] = original_ids[id_column].values
     introns = introns.merge(
-        df, left_on="gene_id", right_on=id_column, suffixes=("", "_dropme"))
+        df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme"))
     introns = introns.drop(
         [c for c in introns.columns if c.endswith("_dropme")], axis=1)
 
