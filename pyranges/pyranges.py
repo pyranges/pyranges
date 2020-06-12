@@ -1844,6 +1844,18 @@ class PyRanges():
 
         return self
 
+    def int64(self):
+
+        """Whether PyRanges uses int64 for starts/ends.
+
+        Returns
+        -------
+        bool
+
+            Whether the PyRanges uses int64 for starts/ends (True) or int32 (False).
+        """
+
+        return "int64" == self.dtypes["Start"]
 
     def intersect(self, other, strandedness=None, how=None, nb_cpu=1):
 
@@ -2109,7 +2121,7 @@ class PyRanges():
         from pyranges.methods.join import _write_both
 
         kwargs = {"strandedness": strandedness, "how": how, "suffix": suffix, "nb_cpu": nb_cpu}
-        # slack = kwargs.get("slack")
+
         if slack:
             self.Start__slack = self.Start
             self.End__slack = self.End
@@ -2122,32 +2134,47 @@ class PyRanges():
 
         kwargs = fill_kwargs(kwargs)
 
-        # if "new_pos" in kwargs:
-        #     if kwargs["new_pos"] in "intersection union".split():
-        #         suffixes = kwargs.get("suffixes")
-        #         assert suffixes is not None, "Must give two non-empty suffixes when using new_pos with intersection or union."
-        #         assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
-        #         assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
-
         how = kwargs.get("how")
 
-        if how in ["left", "outer"]:
+        if how in ["left", "right", "outer"]:
             kwargs["example_header_other"] = other.head(1).df
-        if how in ["right", "outer"]:
             kwargs["example_header_self"] = self.head(1).df
+
+            int64 = other.int64()
+
+            new_dfs = {k: v for k, v in self.items()}
+            if self.stranded and other.stranded:
+                o = set(other.keys())
+                s = set(self.keys())
+                missing_keys = o.difference(s)
+                for m in missing_keys:
+                    c, s = m
+                    new_dfs[m] = pd.DataFrame({"Chromosome": [c], "Start": -42, "End": -42, "Strand": "."})
+            else:
+                o = set(other.chromosomes)
+                s = set(self.chromosomes)
+                missing_keys = o.difference(s)
+
+                if self.stranded:
+                    for m in missing_keys:
+                        new_dfs[m[0], "."] = pd.DataFrame({"Chromosome": [m], "Start": -42, "End": -42, "Strand": "."})
+                else:
+                    for m in missing_keys:
+                        new_dfs[m] = pd.DataFrame({"Chromosome": [m], "Start": -42, "End": -42})
+
+            self = pr.PyRanges(new_dfs, int64=int64)
 
         dfs = pyrange_apply(_write_both, self, other, **kwargs)
 
         gr = PyRanges(dfs)
 
+        if how in ["left", "outer", "right"]:
+            gr = gr.subset(lambda df: df.Start != -42)
+
         if slack:
             gr.Start = gr.Start__slack
             gr.End = gr.End__slack
             gr = gr.drop(like="(Start|End).*__slack")
-
-        # new_position = kwargs.get("new_pos")
-        # if new_position:
-        #     gr = gr.new_position(new_pos=new_position, suffixes=kwargs["suffixes"])
 
         return gr
 

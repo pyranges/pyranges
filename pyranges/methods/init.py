@@ -165,7 +165,19 @@ def _init(self,
     # df is actually dict of dfs
     else:
 
-        empty_removed = {k: v.copy() for k, v in df.items() if not v.empty}
+
+        empty_removed = {}
+
+        for k, v in df.items():
+            if v.empty:
+                continue
+
+            v = v.copy()
+            v.loc[:, ["Start", "End"]] = v[["Start", "End"]].astype("int64" if int64 else "int32")
+            empty_removed[k] = v
+
+        # empty_removed = {k: v.copy() for k, v in df.items() if not v.empty}
+
         if empty_removed:
             first_key, first_df = list(empty_removed.items())[0]
             # from pydbg import dbg;

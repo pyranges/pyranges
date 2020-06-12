@@ -109,13 +109,15 @@ def _write_both(scdf, ocdf, **kwargs):
     how = kwargs["how"]
 
     if scdf.empty or ocdf.empty:
-        if how in ["left", "outer"] and ocdf.empty:
+        if how == "left" and ocdf.empty:
             ocdf = null_types(kwargs["example_header_other"])
-        elif how in ["right", "outer"] and scdf.empty:
+        elif how == "right" and scdf.empty:
             scdf = null_types(kwargs["example_header_self"])
-        # TODO: add outer
-        # elif how == "outer":
-        #     if scdf.empty:
+        elif how == "outer":
+            if scdf.empty:
+                scdf = null_types(kwargs["example_header_self"])
+            if ocdf.empty:
+                ocdf = null_types(kwargs["example_header_other"])
         else:
             return None
 
