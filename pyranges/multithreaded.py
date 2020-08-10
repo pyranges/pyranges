@@ -104,6 +104,20 @@ def process_results(results, keys):
     for k in to_delete:
         del results_dict[k]
 
+    # in case user rassigned chromosomes/strands
+    new_results = {}
+    for k, v in results_dict.items():
+
+        chromosome = v.Chromosome.head(1).iloc[0]
+        strand = v.get("Strand", pd.Series(["."])).head(1).iloc[0]
+
+        if strand in "+-":
+            new_results[chromosome, strand] = v
+        else:
+            new_results[chromosome] = v
+
+    results_dict = new_results
+
     return results_dict
 
 
@@ -388,6 +402,7 @@ def pyrange_apply_single(function, self, **kwargs):
         ray.shutdown()
 
     results = process_results(results, keys)
+
 
     return results
 
