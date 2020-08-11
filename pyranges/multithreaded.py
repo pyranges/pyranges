@@ -8,6 +8,7 @@ from natsort import natsorted
 
 import os
 
+from collections import defaultdict
 
 def get_n_args(f):
 
@@ -104,19 +105,17 @@ def process_results(results, keys):
     for k in to_delete:
         del results_dict[k]
 
-    # in case user rassigned chromosomes/strands
-    new_results = {}
-    for k, v in results_dict.items():
+    # check if user reassigned chromos/strands
+    gr = pr.PyRanges(results_dict)
+    cs = set(gr.chromosomes)
+    try:
+        cs2 = set(gr.Chromosome.drop_duplicates())
+    except:
+        cs2 = set()
 
-        chromosome = v.Chromosome.head(1).iloc[0]
-        strand = v.get("Strand", pd.Series(["."])).head(1).iloc[0]
-
-        if strand in "+-":
-            new_results[chromosome, strand] = v
-        else:
-            new_results[chromosome] = v
-
-    results_dict = new_results
+    if cs != cs2:
+        df = gr.df
+        results_dict = pr.PyRanges(df).dfs
 
     return results_dict
 
