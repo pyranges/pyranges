@@ -8,6 +8,7 @@ from natsort import natsorted
 
 import os
 
+from collections import defaultdict
 
 def get_n_args(f):
 
@@ -103,6 +104,18 @@ def process_results(results, keys):
 
     for k in to_delete:
         del results_dict[k]
+
+    # check if user reassigned chromos/strands
+    gr = pr.PyRanges(results_dict)
+    cs = set(gr.chromosomes)
+    try:
+        cs2 = set(gr.Chromosome.drop_duplicates())
+    except:
+        cs2 = set()
+
+    if cs != cs2:
+        df = gr.df
+        results_dict = pr.PyRanges(df).dfs
 
     return results_dict
 
@@ -388,6 +401,7 @@ def pyrange_apply_single(function, self, **kwargs):
         ray.shutdown()
 
     results = process_results(results, keys)
+
 
     return results
 
