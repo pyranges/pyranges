@@ -1,3 +1,6 @@
+# 0.0.81 (13.08.20)
+- fix Fisher's implementation
+
 # 0.0.80 (10.08.20)
 - fix reassigning chromosomes in apply
 
