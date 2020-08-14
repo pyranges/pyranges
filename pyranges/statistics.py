@@ -81,7 +81,7 @@ def fdr(p_vals):
     return fdr
 
 
-def fisher_exact(n1, d1, n2, d2, pseudocount=0):
+def fisher_exact(tp, fp, fn, tn, pseudocount=0):
 
     """Fisher's exact for contingency tables.
 
@@ -91,21 +91,21 @@ def fisher_exact(n1, d1, n2, d2, pseudocount=0):
 
     Parameters
     ----------
-    n1 : array-like of int
+    tp : array-like of int
 
-        Top left square of contingency table.
+        Top left square of contingency table (true positives).
 
-    d1 : array-like of int
+    fp : array-like of int
 
-        Bottom left square of contingency table.
+        Top right square of contingency table (false positives).
 
-    n2 : array-like of int
+    fn : array-like of int
 
-        Top right square of contingency table.
+        Bottom left square of contingency table (false negatives).
 
-    d2 : array-like of int
+    tn : array-like of int
 
-        Bottom right square of contingency table.
+        Bottom right square of contingency table (true negatives).
 
     pseudocount : float, default 0
 
@@ -116,7 +116,7 @@ def fisher_exact(n1, d1, n2, d2, pseudocount=0):
 
     The odds-ratio is computed thusly:
 
-    ``((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))``
+    ``((tp + pseudocount) / (fp + pseudocount)) / ((fn + pseudocount) / (tn + pseudocount))``
 
     Returns
     -------
@@ -132,19 +132,17 @@ def fisher_exact(n1, d1, n2, d2, pseudocount=0):
     Examples
     --------
 
-    >>> d = {"TP": [1, 0, 8], "FP": [11, 12, 1], "TN": [9, 10, 2], "FN": [3, 2, 5]}
+    >>> d = {"TP": [12, 0], "FP": [5, 12], "TN": [29, 10], "FN": [2, 2]}
     >>> df = pd.DataFrame(d)
     >>> df
        TP  FP  TN  FN
-    0   1  11   9   3
+    0  12   5  29   2
     1   0  12  10   2
-    2   8   1   2   5
 
     >>> pr.stats.fisher_exact(df.TP, df.FP, df.TN, df.FN)
              OR         P     PLeft    PRight
-    0  0.407407  0.002759  0.001380  0.999966
+    0  0.165517  0.080269  0.044555  0.994525
     1  0.000000  0.000067  0.000034  1.000000
-    2  0.800000  0.034965  0.999126  0.024476
     """
 
 
@@ -155,14 +153,14 @@ def fisher_exact(n1, d1, n2, d2, pseudocount=0):
         print("fisher needs to be installed to use fisher exact. pip install fisher or conda install -c bioconda fisher.")
         sys.exit(-1)
 
-    n1 = np.array(n1, dtype=np.uint)
-    n2 = np.array(n2, dtype=np.uint)
-    d1 = np.array(d1, dtype=np.uint)
-    d2 = np.array(d2, dtype=np.uint)
+    tp = np.array(tp, dtype=np.uint)
+    fp = np.array(fp, dtype=np.uint)
+    fn = np.array(fn, dtype=np.uint)
+    tn = np.array(tn, dtype=np.uint)
 
-    left, right, twosided = pvalue_npy(n1, d1, n2, d2)
+    left, right, twosided = pvalue_npy(tp, fp, fn, tn)
 
-    OR = ((n1 + pseudocount) / (d2 + pseudocount)) / ((n2 + pseudocount) / (d1 + pseudocount))
+    OR = ((tp + pseudocount) / (fp + pseudocount)) / ((fn + pseudocount) / (tn + pseudocount))
 
     df = pd.DataFrame({"OR": OR, "P": twosided, "PLeft": left, "PRight": right})
 
