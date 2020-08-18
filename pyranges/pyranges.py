@@ -2009,6 +2009,10 @@ class PyRanges():
             How to handle intervals without overlap. None means only keep overlapping intervals.
             "left" keeps all intervals in self, "right" keeps all intervals in other.
 
+        report_overlap : bool, default False
+
+            Report amount of overlap in base pairs. 
+
         slack : int, default 0
 
             Lengthen intervals in self before joining.
