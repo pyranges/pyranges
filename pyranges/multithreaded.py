@@ -105,17 +105,6 @@ def process_results(results, keys):
     for k in to_delete:
         del results_dict[k]
 
-    # check if user reassigned chromos/strands
-    gr = pr.PyRanges(results_dict)
-    cs = set(gr.chromosomes)
-    try:
-        cs2 = set(gr.Chromosome.drop_duplicates())
-    except:
-        cs2 = set()
-
-    if cs != cs2:
-        df = gr.df
-        results_dict = pr.PyRanges(df).dfs
 
     return results_dict
 
@@ -298,9 +287,6 @@ def pyrange_apply(function, self, other, **kwargs):
                     odf = pd.DataFrame(columns="Chromosome Start End".split())
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
-
-                # dbg(df)
-                # dbg(odf)
 
                 result = call_f(function, nparams, df, odf, kwargs)
                 results.append(result)
