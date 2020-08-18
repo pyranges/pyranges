@@ -133,7 +133,7 @@ def _write_both(scdf, ocdf, **kwargs):
 
     df = scdf.join(ocdf, rsuffix=suffix)
 
-    if kwargs.get("report_overlap"): 
+    if kwargs.get("report_overlap"):
         df["Overlap"] = df[["End", "End"+suffix]].min(axis=1) - df[["Start", "Start"+suffix]].max(axis=1)
 
     return df
