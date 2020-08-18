@@ -1,3 +1,6 @@
+# 0.0.83 (18.08.20)
+- hotfix
+
 # 0.0.82 (18.08.20)
 - fix error introduced in 0.0.80
 

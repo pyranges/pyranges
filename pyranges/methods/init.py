@@ -185,7 +185,7 @@ def _init(self,
 
 
         if not all([_single_value_key, _key_same, _strand_valid]):
-            df = pd.concat(empty_removed.values())
+            df = pd.concat(empty_removed.values()).reset_index(drop=True)
 
             if _has_strand and _strand_valid:
                 empty_removed = df.groupby(["Chromosome", "Strand"])
