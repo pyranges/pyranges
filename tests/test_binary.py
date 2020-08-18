@@ -162,6 +162,7 @@ def test_set_union(gr, gr2, strandedness):
     suppress_health_check=HealthCheck.all())
 @given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
 # @reproduce_failure('4.32.2', b'AXicY2RAA4wQzIgiCAAAgAAF')
+# @reproduce_failure('5.5.4', b'AXicY2RABYyMEAqKGRgAAHMABg==')
 def test_overlap(gr, gr2, strandedness):
 
     overlap_command = "bedtools intersect -u {strand} -a {f1} -b {f2}"

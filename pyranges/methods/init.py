@@ -6,6 +6,7 @@ from natsort import natsorted
 from pyranges.statistics import StatisticsMethods
 from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges import PyRanges
+from pyranges.helpers import single_value_key, get_key_from_df
 
 
 def set_dtypes(df, int64):
@@ -166,40 +167,32 @@ def _init(self,
     else:
 
         empty_removed = {k: v.copy() for k, v in df.items() if not v.empty}
-        if empty_removed:
-            first_key, first_df = list(empty_removed.items())[0]
-            # from pydbg import dbg;
-            # dbg(first_df)
-            stranded = "Strand" in first_df
 
-            all_strands_valid = True
-            if stranded:
-                all_strands_valid = all([
-                    len(set(df.Strand.drop_duplicates()) -
-                        set(["+", "-"])) == 0 for df in empty_removed.values()
-                ])
+        _single_value_key = True
+        _key_same = True
+        _strand_valid = True
+        _has_strand = True
+        for key, df in empty_removed.items():
 
-            assert all(c in first_df for c in "Chromosome Start End".split(
-            )), "Columns Chromosome, Start and End must be in the dataframe!"
+            _key = get_key_from_df(df)
+            _single_value_key = single_value_key(df) and _single_value_key
+            _key_same = (_key == key) and _key_same
 
-            # if not has strand key, but is stranded, need to add strand key
-            has_strand_key = isinstance(first_key, tuple)
-            if not has_strand_key and stranded and all_strands_valid:
-                new_dfs = {}
-                for k, v in empty_removed.items():
-                    for s, sdf in v.groupby("Strand"):
-                        new_dfs[k, s] = sdf
-                empty_removed = new_dfs
+            if isinstance(_key, tuple):
+                _strand_valid = _strand_valid and (_key[1] in ["+", "-"])
+            else:
+                _has_strand = False
 
-            # need to merge strand keys if not strands valid anymore
-            elif has_strand_key and (not all_strands_valid or not stranded):
-                new_dfs = {}
-                cs = set([k[0] for k in empty_removed.keys()])
-                for c in natsorted(cs):
-                    dfs = [empty_removed.get((c, s)) for s in "+-"]
-                    new_dfs[c] = pd.concat(
-                        [df for df in dfs if not df is None]).reset_index(drop=True)
-                empty_removed = new_dfs
+
+        if not all([_single_value_key, _key_same, _strand_valid]):
+            df = pd.concat(empty_removed.values()).reset_index(drop=True)
+
+            if _has_strand and _strand_valid:
+                empty_removed = df.groupby(["Chromosome", "Strand"])
+            else:
+                empty_removed = df.groupby("Chromosome")
+
+            empty_removed = {k: v for (k, v) in empty_removed}
 
         self.__dict__["dfs"] = empty_removed
 
