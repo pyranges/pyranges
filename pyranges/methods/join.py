@@ -124,8 +124,6 @@ def _write_both(scdf, ocdf, **kwargs):
     else:
         suffix = kwargs.get("suffixes", "_a _b".split())[1]
 
-    how = kwargs["how"]
-
     scdf, ocdf = _both_dfs(scdf, ocdf, how=how)
     nix = pd.Index(range(len(scdf)))
     scdf.index = nix
@@ -134,5 +132,8 @@ def _write_both(scdf, ocdf, **kwargs):
     ocdf = ocdf.drop("Chromosome", axis=1)
 
     df = scdf.join(ocdf, rsuffix=suffix)
+
+    if kwargs.get("report_overlap"):
+        df["Overlap"] = df[["End", "End"+suffix]].min(axis=1) - df[["Start", "Start"+suffix]].max(axis=1)
 
     return df

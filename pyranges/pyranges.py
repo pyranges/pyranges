@@ -1988,7 +1988,7 @@ class PyRanges():
 
         return natsorted([(k, df) for (k, df) in self.dfs.items()])
 
-    def join(self, other, strandedness=None, how=None, slack=0, suffix="_b", nb_cpu=1):
+    def join(self, other, strandedness=None, how=None, report_overlap=False, slack=0, suffix="_b", nb_cpu=1):
 
         """Join PyRanges on genomic location.
 
@@ -2008,6 +2008,10 @@ class PyRanges():
 
             How to handle intervals without overlap. None means only keep overlapping intervals.
             "left" keeps all intervals in self, "right" keeps all intervals in other.
+
+        report_overlap : bool, default False
+
+            Report amount of overlap in base pairs. 
 
         slack : int, default 0
 
@@ -2109,7 +2113,7 @@ class PyRanges():
 
         from pyranges.methods.join import _write_both
 
-        kwargs = {"strandedness": strandedness, "how": how, "suffix": suffix, "nb_cpu": nb_cpu}
+        kwargs = {"strandedness": strandedness, "how": how, "report_overlap":report_overlap, "suffix": suffix, "nb_cpu": nb_cpu}
         # slack = kwargs.get("slack")
         if slack:
             self.Start__slack = self.Start
@@ -2138,7 +2142,6 @@ class PyRanges():
             kwargs["example_header_self"] = self.head(1).df
 
         dfs = pyrange_apply(_write_both, self, other, **kwargs)
-
         gr = PyRanges(dfs)
 
         if slack:
