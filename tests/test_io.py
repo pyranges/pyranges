@@ -1,14 +1,11 @@
 import pyranges as pr
 
-# def test_read_bam():
-
-#     pr.read_bam("tests/test_data/test_sorted.bam")
-
 
 def test_read_gtf():
 
     gr = pr.read_gtf("tests/test_data/ensembl.gtf", full=True)
-    assert len(gr.columns) == 28
+
+    assert len(gr.columns) == 26
 
     df = gr.df
     transcript = df.iloc[1]
@@ -19,7 +16,8 @@ def test_read_gtf():
 
     gr = pr.read_gtf("tests/test_data/ensembl.gtf",
                      full=True, duplicate_attr=True)
-    assert len(gr.columns) == 28
+    print(gr.columns)
+    assert len(gr.columns) == 26
 
     df = gr.df
     transcript = df.iloc[1]
