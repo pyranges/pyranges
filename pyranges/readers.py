@@ -327,7 +327,6 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
     _to_rows = to_rows_keep_duplicates if duplicate_attr else to_rows
 
     dfs = []
-    i = 0
     for df in df_iter:
         extra = _to_rows(df.Attribute)
         df = df.drop("Attribute", axis=1)
