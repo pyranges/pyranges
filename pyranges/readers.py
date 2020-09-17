@@ -313,7 +313,7 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split(
     )
-    # names = "Chromosome Start End Score Strand Source Feature Frame Attribute".split()
+
     df_iter = pd.read_csv(
         f,
         sep="\t",
@@ -327,6 +327,7 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
     _to_rows = to_rows_keep_duplicates if duplicate_attr else to_rows
 
     dfs = []
+    i = 0
     for df in df_iter:
         extra = _to_rows(df.Attribute)
         df = df.drop("Attribute", axis=1)
@@ -352,8 +353,9 @@ def to_rows(anno):
         raise Exception("Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(l=l))
 
     for l in anno:
-        l = l.replace('"', '').replace(";", "").split()
-        rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
+        rowdicts.append({k: v
+                         for k, v in [kv.replace('"', '').split(None, 1)
+                                      for kv in l.split("; ")]})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -362,8 +364,9 @@ def to_rows_keep_duplicates(anno):
     rowdicts = []
     for l in anno:
         rowdict = {}
-        l = l.replace('"', '').replace(";", "").split()
-        for k, v in zip(*([iter(l)] * 2)):
+
+        for k, v in (kv.replace('"', '').split(None, 1) for kv in l.split("; ")):
+
             if k not in rowdict:
                 rowdict[k] = v
             elif k in rowdict and isinstance(rowdict[k], list):
@@ -441,8 +444,6 @@ def read_gtf_restricted(f,
 
 def to_rows_gff3(anno):
     rowdicts = []
-
-    # anno = anno.str.replace(";$", "")
 
     for l in list(anno):
         l = (it.split("=") for it in l.split(";"))
