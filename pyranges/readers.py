@@ -355,7 +355,12 @@ def to_rows(anno):
     for l in anno:
         rowdicts.append({k: v
                          for k, v in [kv.replace('"', '').split(None, 1)
-                                      for kv in l.split("; ")]})
+                                      # l[:-1] removes final ";" cheaply
+                                      for kv in l[:-1].split("; ")]})
+
+    # for l in anno:
+    #     l = l.replace('"', '').replace(";", "").split()
+    #     rowdicts.append({k: v for k, v in zip(*([iter(l)] * 2))})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -365,7 +370,8 @@ def to_rows_keep_duplicates(anno):
     for l in anno:
         rowdict = {}
 
-        for k, v in (kv.replace('"', '').split(None, 1) for kv in l.split("; ")):
+        # l[:-1] removes final ";" cheaply
+        for k, v in (kv.replace('"', '').split(None, 1) for kv in l[:-1].split("; ")):
 
             if k not in rowdict:
                 rowdict[k] = v
