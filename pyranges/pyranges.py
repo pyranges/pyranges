@@ -2011,7 +2011,7 @@ class PyRanges():
 
         report_overlap : bool, default False
 
-            Report amount of overlap in base pairs. 
+            Report amount of overlap in base pairs.
 
         slack : int, default 0
 
@@ -2665,7 +2665,7 @@ class PyRanges():
             return pd.concat(_lengths).reset_index(drop=True)
 
 
-    def merge(self, strand=None, count=False, count_col="Count", by=None):
+    def merge(self, strand=None, count=False, count_col="Count", by=None, slack=0):
 
         """Merge overlapping intervals into one.
 
@@ -2686,6 +2686,10 @@ class PyRanges():
         by : str or list of str, default None
 
             Only merge intervals with equal values in these columns.
+
+        slack : int, default 0
+
+            Allow this many nucleotides between each interval to merge.
 
         Returns
         -------
@@ -2784,7 +2788,7 @@ class PyRanges():
         if strand is None:
             strand = self.stranded
 
-        kwargs = {"strand": strand, "count": count, "by": by, "count_col": count_col}
+        kwargs = {"strand": strand, "count": count, "by": by, "count_col": count_col, "slack": slack}
 
         if not kwargs["by"]:
             kwargs["sparse"] = {"self": True}

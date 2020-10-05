@@ -1,3 +1,6 @@
+# 0.0.86 (05.10.20)
+- add slack-option to merge
+
 # 0.0.85 (17.09.20)
 - fix error when parsing gtf-files with whitespace in value-tags
 
