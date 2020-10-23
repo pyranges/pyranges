@@ -63,7 +63,9 @@ def null_types(h):
         elif d == "str" or d == "object":
             null = "-1"
         elif d == "category":
-            h2.loc[:, n] = h2[:, n].cat.add_categories("-1")
+            tmp_cat = h2[n].copy()
+            tmp_cat = tmp_cat.cat.add_categories("-1")
+            h2[n] = tmp_cat
             null = "-1"
 
         h2.loc[:, n] = null
