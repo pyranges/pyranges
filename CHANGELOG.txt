@@ -1,3 +1,6 @@
+# 0.0.88 (09.11.20)
+- fix bug when concatting stranded and unstranded pyranges (thanks cfriedline, issue #160)
+
 # 0.0.87 (23.10.20)
 - fix bug in join with left/right option
 

@@ -15,8 +15,10 @@ def concat(pyranges, strand=None):
     # dbg([p.df.dtypes for p in pyranges])
     grs_per_chromosome = defaultdict(list)
 
+    strand_info = [gr.stranded for gr in pyranges]
+
     if strand is None:
-        strand = all([gr.stranded for gr in pyranges])
+        strand = all(strand_info)
 
     if strand:
         assert all([
@@ -30,22 +32,23 @@ def concat(pyranges, strand=None):
     else:
         for gr in pyranges:
             for chromosome in gr.chromosomes:
-                # dbg(gr)
-                # dbg(gr[chromosome])
                 df = gr[chromosome].df
-                # dbg(df.dtypes)
                 grs_per_chromosome[chromosome].append(df)
 
     new_pyrange = {}
 
     for k, v in grs_per_chromosome.items():
-        # dbg([_v.dtypes for _v in v])
         new_pyrange[k] = pd.concat(v, sort=False)
-        # dbg(new_pyrange[k].dtypes)
 
     res = pr.multithreaded.process_results(new_pyrange.values(),
                                            new_pyrange.keys())
 
-    # dbg([r.dtypes for r in res.values()])
+    if any(strand_info) and not all(strand_info):
+        new_res = {}
+        for k, v in res.items():
+            new_res[k] = v.assign(Strand=v.Strand.fillna("."))
+        res = new_res
 
-    return pr.PyRanges(res)
+    res = pr.PyRanges(res)
+
+    return  res
