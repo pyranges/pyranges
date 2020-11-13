@@ -19,37 +19,29 @@ def set_dtypes(df, int64):
             "Start": np.int32,
             "End": np.int32,
             "Chromosome": "category",
-            "Strand": "category"
+            "Strand": "category",
         }
     else:
         dtypes = {
             "Start": np.int64,
             "End": np.int64,
             "Chromosome": "category",
-            "Strand": "category"
+            "Strand": "category",
         }
 
-    if not "Strand" in df:
+    if "Strand" not in df:
         del dtypes["Strand"]
 
     # need to ascertain that object columns do not consist of multiple types
     # https://github.com/biocore-ntnu/epic2/issues/32
     for column in "Chromosome Strand".split():
-        if not column in df:
+        if column not in df:
             continue
-
-        if df[column].dtype == object and len(
-                df[column].apply(type).drop_duplicates()) > 1:
-            df[column] = df[column].astype(str)
-        elif df[column].dtype != object:
-            df[column] = df[column].astype(str)
+        df[column] = df[column].astype(str)
 
     for col, dtype in dtypes.items():
-
         if df[col].dtype.name != dtype:
-
             df[col] = df[col].astype(dtype)
-
     return df
 
 
@@ -80,18 +72,20 @@ def create_pyranges_df(chromosomes, starts, ends, strands=None):
 
         columns = [chromosomes, starts, ends, strands]
         lengths = list(str(len(s)) for s in columns)
-        assert len(
-            set(lengths)
-        ) == 1, "chromosomes, starts, ends and strands must be of equal length. But are {}".format(
-            ", ".join(lengths))
+        assert (
+            len(set(lengths)) == 1
+        ), "chromosomes, starts, ends and strands must be of equal length. But are {}".format(
+            ", ".join(lengths)
+        )
         colnames = "Chromosome Start End Strand".split()
     else:
         columns = [chromosomes, starts, ends]
         lengths = list(str(len(s)) for s in columns)
-        assert len(
-            set(lengths)
-        ) == 1, "chromosomes, starts and ends must be of equal length. But are {}".format(
-            ", ".join(lengths))
+        assert (
+            len(set(lengths)) == 1
+        ), "chromosomes, starts and ends must be of equal length. But are {}".format(
+            ", ".join(lengths)
+        )
         colnames = "Chromosome Start End".split()
 
     idx = range(len(starts))
@@ -119,7 +113,8 @@ def check_strandedness(df):
     contains_more_than_plus_minus_in_strand_col = False
 
     if str(df.Strand.dtype) == "category" and (
-            set(df.Strand.cat.categories) - set("+-")):
+        set(df.Strand.cat.categories) - set("+-")
+    ):
         contains_more_than_plus_minus_in_strand_col = True
     elif not ((df.Strand == "+") | (df.Strand == "-")).all():
         contains_more_than_plus_minus_in_strand_col = True
@@ -130,14 +125,16 @@ def check_strandedness(df):
     return not contains_more_than_plus_minus_in_strand_col
 
 
-def _init(self,
-          df=None,
-          chromosomes=None,
-          starts=None,
-          ends=None,
-          strands=None,
-          int64=False,
-          copy_df=True):
+def _init(
+    self,
+    df=None,
+    chromosomes=None,
+    starts=None,
+    ends=None,
+    strands=None,
+    int64=False,
+    copy_df=True,
+):
     # TODO: add categorize argument with dict of args to categorize?
 
     if isinstance(df, PyRanges):
@@ -182,7 +179,6 @@ def _init(self,
                 _strand_valid = _strand_valid and (_key[1] in ["+", "-"])
             else:
                 _has_strand = False
-
 
         if not all([_single_value_key, _key_same, _strand_valid]):
             df = pd.concat(empty_removed.values()).reset_index(drop=True)
