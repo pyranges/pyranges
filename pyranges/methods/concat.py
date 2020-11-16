@@ -47,8 +47,9 @@ def concat(pyranges, strand=None):
         new_res = {}
         for k, v in res.items():
             new_res[k] = v.assign(Strand=v.Strand.fillna("."))
-        res = new_res
-
-    res = pr.PyRanges(res)
+        res = pr.PyRanges(new_res)
+        res.Strand = res.Strand
+    else:
+        res = pr.PyRanges(res)
 
     return  res

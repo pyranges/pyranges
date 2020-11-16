@@ -8,10 +8,13 @@ def assert_equal_length_before_after(gr1, gr2):
     print("in test")
     l1 = len(gr1)
     l2 = len(gr2)
-    print(pr.concat([gr1, gr2]))
-    c = len(pr.concat([gr1, gr2]))
+    c = pr.concat([gr1, gr2])
 
-    assert l1 + l2 == c
+    if not gr1.stranded or not gr2.stranded:
+        assert not c.stranded
+
+    lc = len(c)
+    assert l1 + l2 == lc
 
 def test_concat_stranded_unstranded(f1, f2):
 
