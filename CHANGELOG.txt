@@ -1,3 +1,6 @@
+# 0.0.89 (16.11.20)
+- fix #159 (thanks cfriedline)
+
 # 0.0.88 (09.11.20)
 - fix bug when concatting stranded and unstranded pyranges (thanks cfriedline, issue #160)
 
