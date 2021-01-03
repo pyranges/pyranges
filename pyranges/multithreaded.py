@@ -8,7 +8,6 @@ from natsort import natsorted
 
 import os
 
-from collections import defaultdict
 
 def get_n_args(f):
 
@@ -105,7 +104,6 @@ def process_results(results, keys):
     for k in to_delete:
         del results_dict[k]
 
-
     return results_dict
 
 
@@ -183,7 +181,6 @@ def get_multithreaded_funcs(function, nb_cpu):
 
     return function, get, _merge_dfs
 
-
 def pyrange_apply(function, self, other, **kwargs):
 
     nparams = get_n_args(function)
@@ -218,6 +215,11 @@ def pyrange_apply(function, self, other, **kwargs):
     items = natsorted(self.dfs.items())
     keys = natsorted(self.dfs.keys())
 
+    dummy = pd.DataFrame(columns="Chromosome Start End".split())
+
+    other_chromosomes = other.chromosomes
+    other_dfs = other.dfs
+
     if strandedness:
 
         for (c, s), df in items:
@@ -225,7 +227,7 @@ def pyrange_apply(function, self, other, **kwargs):
             os = strand_dict[s]
 
             if not (c, os) in other.keys() or len(other[c, os].values()) == 0:
-                odf = pd.DataFrame(columns="Chromosome Start End".split())
+                odf = dummy
             else:
                 odf = other[c, os].values()[0]
 
@@ -240,10 +242,10 @@ def pyrange_apply(function, self, other, **kwargs):
 
             for (c, s), df in items:
 
-                if not c in other.chromosomes:
-                    odf = pd.DataFrame(columns="Chromosome Start End".split())
+                if not c in other_chromosomes:
+                    odf = dummy
                 else:
-                    odf = other.dfs[c]
+                    odf = other_dfs[c]
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
                 result = call_f(function, nparams, df, odf, kwargs)
@@ -253,11 +255,11 @@ def pyrange_apply(function, self, other, **kwargs):
 
             for c, df in items:
 
-                if not c in other.chromosomes:
-                    odf = pd.DataFrame(columns="Chromosome Start End".split())
+                if not c in other_chromosomes:
+                    odf = dummy
                 else:
-                    odf1 = other[c, "+"].df
-                    odf2 = other[c, "-"].df
+                    odf1 = other_dfs[c, "+"]
+                    odf2 = other_dfs[c, "-"]
 
                     odf = _merge_dfs.remote(odf1, odf2)
 
@@ -270,21 +272,20 @@ def pyrange_apply(function, self, other, **kwargs):
 
             for (c, s), df in self.items():
 
-                if not c in other.chromosomes:
-                    odfs = pr.PyRanges(
-                        pd.DataFrame(columns="Chromosome Start End".split()))
+                if not c in other_chromosomes:
+                    odfs = pr.PyRanges(dummy)
                 else:
-                    odfs = other[c].values()
+                    odfp = other_dfs.get((c, "+"), dummy)
+                    odfm = other_dfs.get((c, "-"), dummy)
 
-                # from pydbg import dbg
-                # dbg(odfs)
+                    odfs = [odfp, odfm]
 
                 if len(odfs) == 2:
                     odf = _merge_dfs.remote(*odfs)
                 elif len(odfs) == 1:
                     odf = odfs[0]
                 else:
-                    odf = pd.DataFrame(columns="Chromosome Start End".split())
+                    odf = dummy
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
@@ -294,10 +295,10 @@ def pyrange_apply(function, self, other, **kwargs):
         else:
 
             for c, df in items:
-                if not c in other.chromosomes:
-                    odf = pd.DataFrame(columns="Chromosome Start End".split())
+                if not c in other_chromosomes:
+                    odf = dummy
                 else:
-                    odf = other.dfs[c]
+                    odf = other_dfs[c]
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
@@ -387,7 +388,6 @@ def pyrange_apply_single(function, self, **kwargs):
         ray.shutdown()
 
     results = process_results(results, keys)
-
 
     return results
 

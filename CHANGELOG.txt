@@ -1,3 +1,6 @@
+# 0.0.90 (03.01.21)
+- fix #165 slow set operations on small files with many chromosomes (thanks ndukler)
+
 # 0.0.89 (16.11.20)
 - fix #159 (thanks cfriedline)
 
