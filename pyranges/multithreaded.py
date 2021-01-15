@@ -258,7 +258,7 @@ def pyrange_apply(function, self, other, **kwargs):
                 if not c in other_chromosomes:
                     odf = dummy
                 else:
-                    odf1 = other_dfs((c, "+"), dummy)
+                    odf1 = other_dfs.get((c, "+"), dummy)
                     odf2 = other_dfs.get((c, "-"), dummy)
 
                     odf = _merge_dfs.remote(odf1, odf2)
