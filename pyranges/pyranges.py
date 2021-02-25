@@ -2664,6 +2664,62 @@ class PyRanges():
 
             return pd.concat(_lengths).reset_index(drop=True)
 
+    def max_disjoint(self, strand=None, slack=0, **kwargs):
+
+        """Find the maximal disjoint set of intervals.
+
+        Parameters
+        ----------
+        strand : bool, default None, i.e. auto
+
+            Find the max disjoint set separately for each strand.
+
+        slack : int, default 0
+
+            Consider intervals within a distance of slack to be overlapping.
+
+        Returns
+        -------
+        PyRanges
+
+            PyRanges with maximal disjoint set of intervals.
+
+        Examples
+        --------
+        >>> gr = pr.data.f1()
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         3 |         6 | interval1  |         0 | +            |
+        | chr1         |         8 |         9 | interval3  |         0 | +            |
+        | chr1         |         5 |         7 | interval2  |         0 | -            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.max_disjoint(strand=False)
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        |--------------+-----------+-----------+------------+-----------+--------------|
+        | chr1         |         3 |         6 | interval1  |         0 | +            |
+        | chr1         |         8 |         9 | interval3  |         0 | +            |
+        +--------------+-----------+-----------+------------+-----------+--------------+
+        Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+        """
+
+        if strand is None:
+            strand = self.stranded
+
+        kwargs = {"strand": strand, "slack": slack}
+        kwargs = fill_kwargs(kwargs)
+
+        from pyranges.methods.max_disjoint import _max_disjoint
+        df = pyrange_apply_single(_max_disjoint, self, **kwargs)
+
+        return pr.PyRanges(df)
 
     def merge(self, strand=None, count=False, count_col="Count", by=None, slack=0):
 

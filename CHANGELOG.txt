@@ -1,3 +1,6 @@
+# 0.0.93 (25.02.21)
+- add max_disjoint for maximal disjoint set
+
 # 0.0.91-92 (15.01.21)
 - hotfix for 0.0.90
 
