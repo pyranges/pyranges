@@ -55,7 +55,8 @@ def _setattr(self, column_name, column, pos=False):
         self.__dict__["dfs"] = dfs
     else:
         int64 = True if self.dtypes["Start"] == np.int64 else False
-        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df, int64=int64).dfs # will merge the dfs, then split on keys again to ensure they are correct
+        # will merge the dfs, then split on keys again to ensure they are correct
+        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df, int64=int64).dfs 
 
 
 def _getattr(self, name):

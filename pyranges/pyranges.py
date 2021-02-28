@@ -313,6 +313,11 @@ class PyRanges():
         else:
             _setattr(self, column_name, column)
 
+            if column_name in ["Start", "End"]:
+                if self.dtypes["Start"] != self.dtypes["End"]:
+                    print("Warning! Start and End columns now have different dtypes: {} and {}".format(
+                        self.dtypes["Start"], self.dtypes["End"]))
+
     def __getitem__(self, val):
 
         """Fetch columns or subset on position.
