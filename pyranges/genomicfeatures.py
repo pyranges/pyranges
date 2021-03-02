@@ -263,7 +263,7 @@ def _outside_bounds(df, **kwargs):
         size_df = chromsizes.df
         chromsizes = {k: v for k, v in zip(size_df.Chromosome, size_df.End)}
 
-    size = chromsizes[df.Chromosome.iloc[0]]
+    size = int(chromsizes[df.Chromosome.iloc[0]])
     clip = kwargs.get("clip", False)
 
     ends_outside = df.End > size

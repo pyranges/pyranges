@@ -492,7 +492,11 @@ class PyRanges():
 
         return str(self)
 
+    def _repr_html_(self):
 
+        """Return REPL HTML representation for Jupyter Noteboooks."""
+
+        return self.df._repr_html_()
 
     def apply(self, f, strand=None, as_pyranges=True, nb_cpu=1, **kwargs):
 
