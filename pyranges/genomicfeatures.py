@@ -499,7 +499,7 @@ def _tes(df, slack=0):
     tes_neg = df.loc[df.Strand == "-"].copy()
 
     # pd.options.mode.chained_assignment = None
-    tes_neg.loc[:, "Start"] = tes_neg.End
+    tes_neg.loc[:, "End"] = tes_neg.Start
 
     # pd.options.mode.chained_assignment = "warn"
     tes = pd.concat([tes_pos, tes_neg], sort=False)
