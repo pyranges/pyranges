@@ -1,3 +1,6 @@
+# 0.0.96 (02.04.23)
+- fixes to .tes and .tss methods (issue #182)
+
 # 0.0.95 (02.03.21)
 - teensy fix bedclip
 - add pretty-printing in jupyter notebooks (thanks to @rasi)

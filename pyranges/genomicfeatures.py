@@ -473,12 +473,12 @@ def _tss(df, slack=0):
     tss_neg = df.loc[df.Strand == "-"].copy()
 
     # pd.options.mode.chained_assignment = None
-    tss_neg.loc[:, "Start"] = tss_neg.End
+    tss_neg.loc[:, "Start"] = tss_neg.End - 1
 
     # pd.options.mode.chained_assignment = "warn"
     tss = pd.concat([tss_pos, tss_neg], sort=False)
-    tss["End"] = tss.Start
-    tss.End = tss.End + 1 + slack
+    tss["End"] = tss.Start + 1
+    tss.End = tss.End + slack
     tss.Start = tss.Start - slack
     tss.loc[tss.Start < 0, "Start"] = 0
 
@@ -499,12 +499,12 @@ def _tes(df, slack=0):
     tes_neg = df.loc[df.Strand == "-"].copy()
 
     # pd.options.mode.chained_assignment = None
-    tes_neg.loc[:, "Start"] = tes_neg.End
+    tes_neg.loc[:, "End"] = tes_neg.Start + 1
 
     # pd.options.mode.chained_assignment = "warn"
     tes = pd.concat([tes_pos, tes_neg], sort=False)
-    tes["Start"] = tes.End
-    tes.End = tes.End + 1 + slack
+    tes["Start"] = tes.End - 1
+    tes.End = tes.End + slack
     tes.Start = tes.Start - slack
     tes.loc[tes.Start < 0, "Start"] = 0
 
