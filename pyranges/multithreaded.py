@@ -402,6 +402,7 @@ def _lengths(df):
 def _tss(df, **kwargs):
 
     df = df.copy(deep=True)
+    dtype = df.dtypes["Start"]
 
     slack = kwargs.get("slack", 0)
 
@@ -419,21 +420,27 @@ def _tss(df, **kwargs):
     tss.Start = tss.Start - slack
     tss.loc[tss.Start < 0, "Start"] = 0
 
+    tss.loc[:, "Start"] = df.Start.astype(dtype)
+    tss.loc[:, "End"] = df.Start.astype(dtype)
+
     return tss.reindex(df.index)
 
 
 def _tes(df, **kwargs):
 
     df = df.copy()
+    dtype = df.dtypes["Start"]
     if df.Strand.iloc[0] == "+":
         df.loc[:, "Start"] = df.End
     else:
         df.loc[:, "End"] = df.Start
-
     df.loc[:, "Start"] = df.End
     df.loc[:, "End"] = df.End + 1
     df.loc[:, "Start"] = df.Start
     df.loc[df.Start < 0, "Start"] = 0
+
+    df.loc[:, "Start"] = df.Start.astype(dtype)
+    df.loc[:, "End"] = df.Start.astype(dtype)
 
     return df.reindex(df.index)
 
