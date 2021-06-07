@@ -1,3 +1,6 @@
+# 0.0.98 (07.06.21)
+- fix k-nearest how=None
+
 # 0.0.98 (20.05.21)
 - fix casting in tss/tes
 

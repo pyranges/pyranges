@@ -100,9 +100,7 @@ def compare_results_nearest(bedtools_df, result):
 
     result = result.df
 
-
     if not len(result) == 0:
-
         bedtools_df = bedtools_df.sort_values("Start End Distance".split())
         result = result.sort_values("Start End Distance".split())
         result_df = result["Chromosome Start End Strand Distance".split()]
@@ -551,3 +549,36 @@ def test_k_nearest(gr, gr2, nearest_how, overlap, strandedness, ties):
     print(result)
 
     compare_results_nearest(bedtools_df, result)
+
+
+# @settings(
+#     max_examples=max_examples,
+#     deadline=deadline,
+#     print_blob=True,
+#     suppress_health_check=HealthCheck.all())
+# @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
+# def test_k_nearest_nearest_self_same_size(gr):
+
+#     result = gr.k_nearest(
+#         gr, k=1, strandedness=None, overlap=True, how=None, ties="first")
+
+#     assert len(result) == len(gr)
+
+@settings(
+    max_examples=max_examples,
+    deadline=deadline,
+    print_blob=True,
+    suppress_health_check=HealthCheck.all())
+@given(gr=dfs_min(), gr2=dfs_min())  # pylint: disable=no-value-for-parameter
+def test_k_nearest_1_vs_nearest(gr, gr2):
+
+    result_k = gr.k_nearest(gr2, k=1, strandedness=None, overlap=True, how=None)
+    if len(result_k) > 0:
+        result_k.Distance = result_k.Distance.abs()
+
+    result_n = gr.nearest(gr2, strandedness=None, overlap=True, how=None)
+
+    if len(result_k) == 0 and len(result_n) == 0:
+        pass
+    else:
+        assert (result_k.sort().Distance.abs() == result_n.sort().Distance).all()
