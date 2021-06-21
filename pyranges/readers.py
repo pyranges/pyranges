@@ -364,7 +364,6 @@ def to_rows(anno):
                                       # l[:-1] removes final ";" cheaply
                                       for kv in l[:-1].split("; ")]})
 
-
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
 
