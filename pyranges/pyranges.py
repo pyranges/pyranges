@@ -3145,7 +3145,7 @@ class PyRanges():
         return pr.PyRanges(dfs)
 
 
-    def overlap(self, other, strandedness=None, how="first", invert=False):
+    def overlap(self, other, strandedness=None, how="first", invert=False, nb_cpu=1):
 
         """Return overlapping intervals.
 
@@ -3259,7 +3259,7 @@ class PyRanges():
         For printing, the PyRanges was sorted on Chromosome.
         """
 
-        kwargs = {"strandedness": strandedness}
+        kwargs = {"strandedness": strandedness, "nb_cpu": nb_cpu}
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs["how"] = how
         kwargs["invert"] = invert

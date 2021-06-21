@@ -1,3 +1,9 @@
+# 0.0.100 (21.06.21)
+- add full-flag to read_gtf
+
+# 0.0.99 (17.06.21)
+- add nb_cpu arg to overlap
+
 # 0.0.98 (07.06.21)
 - fix k-nearest how=None
 
