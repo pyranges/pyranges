@@ -305,7 +305,7 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
     if full:
         gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr)
     else:
-        gr = read_gtf_restricted(f, as_df=False, skiprows=0, nrows=None)
+        gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
 
     return gr
 
@@ -392,8 +392,8 @@ def to_rows_keep_duplicates(anno):
 
 
 def read_gtf_restricted(f,
+                        skiprows,
                         as_df=False,
-                        skiprows=0,
                         nrows=None):
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
@@ -419,6 +419,7 @@ def read_gtf_restricted(f,
         names="Chromosome Feature Start End Score Strand Attribute".split(),
         dtype=dtypes,
         chunksize=int(1e5),
+        skiprows=skiprows,
         nrows=nrows)
 
     dfs = []
@@ -461,7 +462,7 @@ def to_rows_gff3(anno):
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
 
-def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None, skiprows=0):
+def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
 
     """Read files in the General Feature Format.
 
@@ -489,8 +490,10 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None, skiprows=0
     pyranges.read_gtf : read files in the Gene Transfer Format
     """
 
+    _skiprows = skiprows(f)
+
     if not full:
-        return read_gtf_restricted(f, as_df=as_df, nrows=nrows, skiprows=skiprows)
+        return read_gtf_restricted(f, _skiprows, as_df=as_df, nrows=nrows)
 
     dtypes = {
         "Chromosome": "category",
@@ -509,7 +512,7 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None, skiprows=0
         names=names,
         dtype=dtypes,
         chunksize=int(1e5),
-        skiprows=skiprows,
+        skiprows=_skiprows,
         nrows=nrows)
 
     dfs = []
