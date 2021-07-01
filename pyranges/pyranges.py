@@ -2153,7 +2153,7 @@ class PyRanges():
         dfs = pyrange_apply(_write_both, self, other, **kwargs)
         gr = PyRanges(dfs)
 
-        if slack:
+        if slack and len(gr) > 0:
             gr.Start = gr.Start__slack
             gr.End = gr.End__slack
             gr = gr.drop(like="(Start|End).*__slack")
