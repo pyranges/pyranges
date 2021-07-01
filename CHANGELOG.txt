@@ -1,3 +1,10 @@
+# 0.0.100/0.0.101 (20/21.06.21)
+- add full-flag to read_gtf
+- fix bug in join with slack > 0 when result is empty
+
+# 0.0.99 (17.06.21)
+- add nb_cpu arg to overlap
+
 # 0.0.98 (07.06.21)
 - fix k-nearest how=None
 
