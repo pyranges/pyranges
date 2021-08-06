@@ -1,5 +1,4 @@
 import pyranges as pr
-import pandas as pd
 import numpy as np
 
 
@@ -20,7 +19,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     strandedness : {None, "same", "opposite", False}, default None, i.e. auto
 
         Whether to compare PyRanges on the same strand, the opposite or ignore strand
-        information. The default, None, means use "same" if both PyRanges are strande,
+        information. The default, None, means use "same" if both PyRanges are stranded,
         otherwise ignore the strand information.
 
      how : {None, "all", "containment"}, default None, i.e. all
@@ -140,6 +139,8 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
 
     if features is None:
         features = pr.concat(grs.values()).split(between=True)
+    else:
+        features = features.copy()
 
     from pyranges.methods.intersection import _count_overlaps
 
@@ -147,12 +148,8 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
 
         gr = gr.drop()
 
+        kwargs["name"] = name
         res = features.apply_pair(gr, _count_overlaps, **kwargs)
-
-        setattr(features, name, res)
-
-        setattr(features, name, getattr(features, name).fillna(0))
-
 
     def to_int(df):
         df.loc[:, names] = df[names].astype(np.int32)
@@ -161,10 +158,3 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     features = features.apply(to_int)
 
     return features
-
-# if __name__
-
-
-# if __name__ == "__main__":
-
-#     print(a)
