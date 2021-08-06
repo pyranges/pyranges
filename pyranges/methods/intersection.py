@@ -98,16 +98,14 @@ def _count_overlaps(scdf, ocdf, **kwargs):
     idx = _overlap(scdf, ocdf, **kwargs)
 
     sx = pd.DataFrame(np.zeros(len(scdf)), index=scdf.index)
-    if idx is None:
-        return sx
 
-    vc = pd.Series(idx).value_counts(sort=False)
+    vc = pd.Series(idx, dtype=np.int64).value_counts(sort=False)
 
-    sx.iloc[vc.index, 0] = vc.values
+    sx.loc[vc.index, 0] = vc.values
 
-    sx.columns = ["__0__"]
+    scdf.insert(scdf.shape[1], kwargs["name"], sx)
 
-    return sx
+    return scdf
 
 
 # def _first_df(scdf, ocdf, kwargs):
