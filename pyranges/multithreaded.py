@@ -403,46 +403,33 @@ def _tss(df, **kwargs):
 
     df = df.copy(deep=True)
     dtype = df.dtypes["Start"]
-
     slack = kwargs.get("slack", 0)
 
-    tss_pos = df.loc[df.Strand == "+"]
+    starts = np.where(df.Strand == "+", df.Start, df.End - 1)
+    ends = starts + slack + 1
+    starts = starts - slack
+    starts = np.where(starts < 0, 0, starts)
 
-    tss_neg = df.loc[df.Strand == "-"]
+    df.loc[:, "Start"] = starts.astype(dtype)
+    df.loc[:, "End"] = ends.astype(dtype)
 
-    # pd.options.mode.chained_assignment = None
-    tss_neg.loc[:, "Start"] = tss_neg.End
-
-    # pd.options.mode.chained_assignment = "warn"
-    tss = pd.concat([tss_pos, tss_neg], sort=False)
-    tss["End"] = tss.Start
-    tss.End = tss.End + 1 + slack
-    tss.Start = tss.Start - slack
-    tss.loc[tss.Start < 0, "Start"] = 0
-
-    tss.loc[:, "Start"] = df.Start.astype(dtype)
-    tss.loc[:, "End"] = df.Start.astype(dtype)
-
-    return tss.reindex(df.index)
-
+    return df
 
 def _tes(df, **kwargs):
 
-    df = df.copy()
+    df = df.copy(deep=True)
     dtype = df.dtypes["Start"]
-    if df.Strand.iloc[0] == "+":
-        df.loc[:, "Start"] = df.End
-    else:
-        df.loc[:, "End"] = df.Start
-    df.loc[:, "Start"] = df.End
-    df.loc[:, "End"] = df.End + 1
-    df.loc[:, "Start"] = df.Start
-    df.loc[df.Start < 0, "Start"] = 0
+    slack = kwargs.get("slack", 0)
 
-    df.loc[:, "Start"] = df.Start.astype(dtype)
-    df.loc[:, "End"] = df.Start.astype(dtype)
+    starts = np.where(df.Strand == "+", df.End - 1, df.Start)
+    ends = starts + 1 + slack
+    starts = starts - slack
+    starts = np.where(starts < 0, 0, starts)
 
-    return df.reindex(df.index)
+    df.loc[:, "Start"] = starts.astype(dtype)
+    df.loc[:, "End"] = ends.astype(dtype)
+
+    return df
 
 
 def _slack(df, **kwargs):
