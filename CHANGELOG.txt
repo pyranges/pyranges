@@ -1,3 +1,6 @@
+# 0.0.104 (06/20.08.21)
+- fix broken three_end/five_end code
+
 # 0.0.102/103 (06.08.21)
 - fix bug in pr.count_overlaps
 - demand version 0.0.9 or greater from bamread
