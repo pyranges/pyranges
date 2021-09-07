@@ -40,7 +40,7 @@ def _number_overlapping(scdf, ocdf, **kwargs):
     else:
         df = df.loc[_self_indexes]
 
-    counts_per_read = counts_per_read.set_index("Index")
+    counts_per_read = counts_per_read.set_index("Index").sort_index()
 
     df.insert(df.shape[1], column_name, counts_per_read)
 

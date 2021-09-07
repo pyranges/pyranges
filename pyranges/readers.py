@@ -187,8 +187,8 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
         sys.exit(1)
 
     if bamread.__version__ in ["0.0.1", "0.0.2", "0.0.3", "0.0.4",
-                               "0.0.5", "0.0.6", "0.0.7", "0.0.8"]:
-        print("bamread not recent enough. Must be 0.0.9 or higher. Use `conda install -c bioconda 'bamread>=0.0.9'` or `pip install bamread>=0.0.9` to install it.")
+0                               "0.0.5", "0.0.6", "0.0.7", "0.0.8", "0.0.9"]:
+        print("bamread not recent enough. Must be 0.0.10 or higher. Use `conda install -c bioconda 'bamread>=0.0.10'` or `pip install bamread>=0.0.10` to install it.")
         sys.exit(1)
 
     if sparse:

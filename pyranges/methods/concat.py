@@ -9,10 +9,7 @@ def concat(pyranges, strand=None):
     if not pyranges:
         return None
 
-    # from pydbg import dbg
     pyranges = [pr for pr in pyranges if not pr.empty]
-    # dbg(pyranges)
-    # dbg([p.df.dtypes for p in pyranges])
     grs_per_chromosome = defaultdict(list)
 
     strand_info = [gr.stranded for gr in pyranges]
@@ -46,6 +43,7 @@ def concat(pyranges, strand=None):
     if any(strand_info) and not all(strand_info):
         new_res = {}
         for k, v in res.items():
+            v.loc[:, "Strand"] = v.Strand.cat.add_categories(["."])
             new_res[k] = v.assign(Strand=v.Strand.fillna("."))
         res = pr.PyRanges(new_res)
         res.Strand = res.Strand
