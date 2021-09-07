@@ -36,10 +36,6 @@ def _number_overlapping(scdf, ocdf, **kwargs):
     if keep_nonoverlapping:
         _missing_indexes = np.setdiff1d(scdf.index, _self_indexes)
         missing = pd.DataFrame(data={"Index": _missing_indexes, "Count": 0}, index=_missing_indexes)
-        print("counts_per_read")
-        print(counts_per_read)
-        print("missing")
-        print(missing)
         counts_per_read = pd.concat([counts_per_read, missing])
     else:
         df = df.loc[_self_indexes]
