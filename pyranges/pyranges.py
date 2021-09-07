@@ -239,7 +239,6 @@ class PyRanges():
 
         # self.apply()
 
-
     def __getattr__(self, name):
 
         """Return column.
@@ -925,7 +924,7 @@ class PyRanges():
             type(first_result))
 
         # do a deepcopy of object
-        new_self = pr.PyRanges({k: v.copy() for k, v in self.items()})
+        new_self = self.copy()
         new_self.__setattr__(col, result)
 
         return new_self
@@ -1997,7 +1996,7 @@ class PyRanges():
 
         return natsorted([(k, df) for (k, df) in self.dfs.items()])
 
-    def join(self, other, strandedness=None, how=None, report_overlap=False, slack=0, suffix="_b", nb_cpu=1):
+    def join(self, other, strandedness=None, how=None, report_overlap=False, slack=0, suffix="_b", nb_cpu=1, apply_strand_suffix=None):
 
         """Join PyRanges on genomic location.
 
@@ -2029,6 +2028,11 @@ class PyRanges():
         suffix : str or tuple, default "_b"
 
             Suffix to give overlapping columns in other.
+
+        apply_strand_suffix : bool, default None
+
+            If first pyranges is unstranded, but the second is not, the first will be given a strand column.
+            apply_strand_suffix makes the added strand column a regular data column instead by adding a suffix.
 
         nb_cpu: int, default 1
 
@@ -2122,9 +2126,9 @@ class PyRanges():
 
         from pyranges.methods.join import _write_both
 
-        kwargs = {"strandedness": strandedness, "how": how, "report_overlap":report_overlap, "suffix": suffix, "nb_cpu": nb_cpu}
-        # slack = kwargs.get("slack")
+        kwargs = {"strandedness": strandedness, "how": how, "report_overlap":report_overlap, "suffix": suffix, "nb_cpu": nb_cpu, "apply_strand_suffix": apply_strand_suffix}
         if slack:
+            self = self.copy()
             self.Start__slack = self.Start
             self.End__slack = self.End
 
@@ -2135,13 +2139,6 @@ class PyRanges():
             kwargs["suffixes"] = suffixes
 
         kwargs = fill_kwargs(kwargs)
-
-        # if "new_pos" in kwargs:
-        #     if kwargs["new_pos"] in "intersection union".split():
-        #         suffixes = kwargs.get("suffixes")
-        #         assert suffixes is not None, "Must give two non-empty suffixes when using new_pos with intersection or union."
-        #         assert suffixes[0], "Must have nonempty first suffix when using new_pos with intersection or union."
-        #         assert suffixes[1], "Must have nonempty second suffix when using new_pos with intersection or union."
 
         how = kwargs.get("how")
 
@@ -2158,9 +2155,12 @@ class PyRanges():
             gr.End = gr.End__slack
             gr = gr.drop(like="(Start|End).*__slack")
 
-        # new_position = kwargs.get("new_pos")
-        # if new_position:
-        #     gr = gr.new_position(new_pos=new_position, suffixes=kwargs["suffixes"])
+        if not self.stranded and other.stranded:
+            if apply_strand_suffix is None:
+                import sys
+                print("join: Strand data from other will be added as strand data to self.\nIf this is undesired use the flag apply_strand_suffix=False.\nTo turn off the warning set apply_strand_suffix to True or False.", file=sys.stderr)
+            elif apply_strand_suffix:
+                gr.columns = gr.columns.str.replace("Strand", "Strand" + kwargs["suffix"])
 
         return gr
 
@@ -2192,7 +2192,7 @@ class PyRanges():
 
         return natsorted(self.dfs.keys())
 
-    def k_nearest(self, other, k=1, ties=None, strandedness=None, overlap=True, how=None, suffix="_b", nb_cpu=1):
+    def k_nearest(self, other, k=1, ties=None, strandedness=None, overlap=True, how=None, suffix="_b", nb_cpu=1, apply_strand_suffix=None):
 
         """Find k nearest intervals.
 
@@ -2230,6 +2230,12 @@ class PyRanges():
         suffix : str, default "_b"
 
             Suffix to give columns with shared name in other.
+
+        apply_strand_suffix : bool, default None
+
+            If first pyranges is unstranded, but the second is not, the first will be given a strand column.
+            apply_strand_suffix makes the added strand column a regular data column instead by adding a suffix.
+
 
         nb_cpu: int, default 1
 
@@ -2413,7 +2419,7 @@ class PyRanges():
         overlap = kwargs.get("overlap", True)
         ties = kwargs.get("ties", False)
 
-        self = pr.PyRanges({k: v.copy() for k, v in self.dfs.items()})
+        self = self.copy()
 
         try: # if k is a Series
             k = k.values
@@ -2433,7 +2439,7 @@ class PyRanges():
         else:
             from collections import defaultdict
             overlap_how = defaultdict(lambda: None, {"first": "first", "last": "last"})[kwargs.get("ties")]
-            overlaps = self.join(other, strandedness=strandedness, how=overlap_how, nb_cpu=nb_cpu)
+            overlaps = self.join(other, strandedness=strandedness, how=overlap_how, nb_cpu=nb_cpu, apply_strand_suffix=apply_strand_suffix)
             overlaps.Distance = 0
             result = pr.concat([overlaps, nearest])
 
@@ -2499,6 +2505,14 @@ class PyRanges():
             return df
 
         result = result.apply(prev_to_neg, suffix=kwargs["suffix"])
+
+        if not self.stranded and other.stranded:
+            if apply_strand_suffix is None:
+                import sys
+                print("join: Strand data from other will be added as strand data to self.\nIf this is undesired use the flag apply_strand_suffix=False.\nTo turn off the warning set apply_strand_suffix to True or False.", file=sys.stderr)
+            elif apply_strand_suffix:
+                result.columns = result.columns.str.replace("Strand", "Strand" + kwargs["suffix"])
+
         return result
 
 
@@ -2872,7 +2886,7 @@ class PyRanges():
         return self
 
 
-    def nearest(self, other, strandedness=None, overlap=True, how=None, suffix="_b", nb_cpu=1):
+    def nearest(self, other, strandedness=None, overlap=True, how=None, suffix="_b", nb_cpu=1, apply_strand_suffix=None):
 
         """Find closest interval.
 
@@ -2900,6 +2914,11 @@ class PyRanges():
         suffix : str, default "_b"
 
             Suffix to give columns with shared name in other.
+
+        apply_strand_suffix : bool, default None
+
+            If first pyranges is unstranded, but the second is not, the first will be given the strand column of the second.
+            apply_strand_suffix makes the added strand column a regular data column instead by adding a suffix.
 
         nb_cpu: int, default 1
 
@@ -2980,14 +2999,22 @@ class PyRanges():
 
         from pyranges.methods.nearest import _nearest
 
-        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap, "nb_cpu": nb_cpu, "suffix": suffix}
+        kwargs = {"strandedness": strandedness, "how": how, "overlap": overlap, "nb_cpu": nb_cpu, "suffix": suffix, "apply_strand_suffix": apply_strand_suffix}
         kwargs = fill_kwargs(kwargs)
         if kwargs.get("how") in "upstream downstream".split():
             assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
 
         dfs = pyrange_apply(_nearest, self, other, **kwargs)
+        gr = PyRanges(dfs)
 
-        return PyRanges(dfs)
+        if not self.stranded and other.stranded:
+            if apply_strand_suffix is None:
+                import sys
+                print("join: Strand data from other will be added as strand data to self.\nIf this is undesired use the flag apply_strand_suffix=False.\nTo turn off the warning set apply_strand_suffix to True or False.", file=sys.stderr)
+            elif apply_strand_suffix:
+                gr.columns = gr.columns.str.replace("Strand", "Strand" + kwargs["suffix"])
+
+        return gr
 
 
     def new_position(self, new_pos, columns=None):

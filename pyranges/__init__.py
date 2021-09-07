@@ -549,4 +549,33 @@ def to_bigwig(gr, path, chromosome_sizes):
 
     bw.addEntries(chromosomes, starts, ends=ends, values=values)
 
-__all__ = ["from_string", "from_dict", "to_bigwig", "count_overlaps", "random", "itergrs", "read_gtf", "read_bam", "read_bed", "read_gff3", "concat", "PyRanges"]
+def version_info():
+
+    import importlib
+    def update_version_info(version_info, library):
+        if importlib.util.find_spec(library):
+             version = importlib.import_module(library).__version__
+        else:
+            version = "not installed"
+
+        version_info[library] = version
+
+    version_info = {"pyranges version": pr.__version__,
+                    "pandas version": pd.__version__,
+                    "numpy version": np.__version__,
+                    "python version": sys.version_info}
+
+    update_version_info(version_info, "ncls")
+    update_version_info(version_info, "sorted_nearest")
+    update_version_info(version_info, "pyrle")
+    update_version_info(version_info, "ray")
+    update_version_info(version_info, "bamread")
+    # update_version_info(version_info, "bwread") no version string yet!
+    update_version_info(version_info, "pyranges_db")
+    update_version_info(version_info, "pybigwig")
+    update_version_info(version_info, "hypothesis")
+
+    print(version_info)
+
+
+__all__ = ["from_string", "from_dict", "to_bigwig", "count_overlaps", "random", "itergrs", "read_gtf", "read_bam", "read_bed", "read_gff3", "concat", "PyRanges", "version_info"]

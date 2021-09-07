@@ -237,6 +237,11 @@ def test_coverage(gr, gr2, strandedness):
 
     result = gr.coverage(gr2, strandedness=strandedness)
 
+    print("pyranges")
+    print(result.df)
+    print("bedtools")
+    print(bedtools_df)
+
     # assert len(result) > 0
     assert np.all(
         bedtools_df.NumberOverlaps.values == result.NumberOverlaps.values)

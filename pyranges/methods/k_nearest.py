@@ -95,7 +95,7 @@ def nearest(d1, d2, **kwargs):
     d2 = d2.reindex(xdf.RX)
     d1.index = range(len(d1))
     d2.index = range(len(d1))
-    d2 = d2.drop("Chromosome", 1)
+    d2 = d2.drop("Chromosome", axis=1)
     df = d1.join(d2, rsuffix=suffix)
     df.insert(df.shape[1], "Distance", xdf.D.values)
 
@@ -119,7 +119,7 @@ def nearest_previous(d1, d2, **kwargs):
     d1.index = range(len(d1))
     d2.index = range(len(d1))
 
-    d2 = d2.drop("Chromosome", 1)
+    d2 = d2.drop("Chromosome", axis=1)
     df = d1.join(d2, rsuffix=suffix)
     df.insert(df.shape[1], "Distance", dist)
 
@@ -141,7 +141,7 @@ def nearest_next(d1, d2, **kwargs):
 
     d1 = d1.reindex(lidx)
     d2 = d2.reindex(ridx)
-    d2 = d2.drop("Chromosome", 1)
+    d2 = d2.drop("Chromosome", axis=1)
     d1.index = range(len(d1))
     d2.index = range(len(d1))
     df = d1.join(d2, rsuffix=suffix)
