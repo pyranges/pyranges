@@ -1,4 +1,4 @@
-# 0.0.106/107(hotfix) (07.09.21)
+# 0.0.106/107/108(hotfixes) (07/8.09.21)
 - fix join with slack mutating first arg
 - add flag use_other_strand in join, nearest, k_nearest
 - fix categorical-bug in newer versions of pandas
