@@ -304,9 +304,12 @@ def test_subtraction(gr, gr2, strandedness):
         names="Chromosome Start End Name Score Strand".split(),
         sep="\t")
 
+    print("subtracting" * 50)
     result = gr.subtract(gr2, strandedness=strandedness)
 
+    print("bedtools_result")
     print(bedtools_df)
+    print("PyRanges result:")
     print(result)
 
     compare_results(bedtools_df, result)

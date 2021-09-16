@@ -3,6 +3,12 @@ import pandas as pd
 
 def assert_df_equal(df1, df2):
 
+    print("-"*100)
+    print("df1")
+    print(df1)
+    print("df2")
+    print(df2)
+
     # df1.loc[:, "Start"] = df1.Start.astype(np.int64)
     # df2.loc[:, "Start"] = df1.Start.astype(np.int64)
     # df1.loc[:, "End"] = df1.End.astype(np.int64)

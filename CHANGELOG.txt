@@ -1,3 +1,8 @@
+# 0.0.109 (16.09.21)
+- fix overlap invert behavior
+- add intersect invert flag
+- fix subtract in cases where more than 1024 intervals overlapped a single interval
+
 # 0.0.106/107/108(hotfixes) (07/8.09.21)
 - fix join with slack mutating first arg
 - add flag use_other_strand in join, nearest, k_nearest
