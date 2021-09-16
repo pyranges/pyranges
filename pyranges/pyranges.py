@@ -1854,7 +1854,7 @@ class PyRanges():
         return self
 
 
-    def intersect(self, other, strandedness=None, how=None, nb_cpu=1):
+    def intersect(self, other, strandedness=None, how=None, invert=False, nb_cpu=1):
 
         """Return overlapping subintervals.
 
@@ -1876,6 +1876,10 @@ class PyRanges():
 
             What intervals to report. By default reports all overlapping intervals. "containment"
             reports intervals where the overlapping is contained within it.
+
+        invert : bool, default False
+
+            Whether to return the intervals without overlaps.
 
         nb_cpu: int, default 1
 
@@ -1962,9 +1966,21 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
         kwargs["sparse"] = {"self": False, "other": True}
 
-        dfs = pyrange_apply(_intersection, self, other, **kwargs)
+        if len(self) == 0:
+            return self
 
-        return PyRanges(dfs)
+        if invert:
+            self.__ix__ = np.arange(len(self))
+
+        dfs = pyrange_apply(_intersection, self, other, **kwargs)
+        result = pr.PyRanges(dfs)
+
+        if invert:
+            found_idxs = getattr(result, "__ix__", [])
+            result = self[~self.__ix__.isin(found_idxs)]
+            result = result.drop("__ix__")
+
+        return result
 
     def items(self):
 
@@ -3195,6 +3211,10 @@ class PyRanges():
             What intervals to report. By default reports every interval in self with overlap once.
             "containment" reports all intervals where the overlapping is contained within it.
 
+        invert : bool, default False
+
+            Whether to return the intervals without overlaps.
+
         nb_cpu: int, default 1
 
             How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
@@ -3292,9 +3312,22 @@ class PyRanges():
         kwargs["invert"] = invert
         kwargs = fill_kwargs(kwargs)
 
-        dfs = pyrange_apply(_overlap, self, other, **kwargs)
+        if len(self) == 0:
+            return self
 
-        return pr.PyRanges(dfs)
+        if invert:
+            self = self.copy()
+            self.__ix__ = np.arange(len(self))
+
+        dfs = pyrange_apply(_overlap, self, other, **kwargs)
+        result = pr.PyRanges(dfs)
+
+        if invert:
+            found_idxs = getattr(result, "__ix__", [])
+            result = self[~self.__ix__.isin(found_idxs)]
+            result = result.drop("__ix__")
+
+        return result
 
     def pc(self, n=8, formatting=None):
 
@@ -4343,16 +4376,27 @@ class PyRanges():
 
         from pyranges.methods.subtraction import _subtraction
 
-        kwargs = {"strandedness": strandedness}
+        strand = True if strandedness in ["same", "opposite"] else False
+        kwargs = {"strandedness": strandedness, "strand": strand}
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs = fill_kwargs(kwargs)
 
         strand = True if strandedness else False
-        other_clusters = other.merge(strand=strand)
+        if len(other) != 0:
+            cols_original_order = self.columns.copy()
+            other_clusters = other.merge(strand=strand)
+            self.__ix__ = np.arange(len(self))
+            no_overlap = self.overlap(other_clusters, strandedness=strandedness, invert=True)
+            j = self.sort().join(other_clusters, strandedness=strandedness, suffix="__deleteme__")
+            result = pyrange_apply_single(_subtraction, j, **kwargs)
+            result = {k: v for (k, v) in result.items()}
+            result = PyRanges(result)
+            result = pr.concat([result, no_overlap])
+            result = PyRanges({k: v[cols_original_order] for k, v in result.items()})
+        else:
+            result = self
 
-        result = pyrange_apply(_subtraction, self, other_clusters, **kwargs)
-
-        return PyRanges(result)
+        return result
 
     def summary(self, to_stdout=True, return_df=False):
 
