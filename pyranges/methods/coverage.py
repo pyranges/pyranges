@@ -33,18 +33,18 @@ def _number_overlapping(scdf, ocdf, **kwargs):
 
     df = scdf.copy()
 
-    if keep_nonoverlapping:
-        _missing_indexes = np.setdiff1d(scdf.index, _self_indexes)
-        missing = pd.DataFrame(data={"Index": _missing_indexes, "Count": 0}, index=_missing_indexes)
-        counts_per_read = pd.concat([counts_per_read, missing])
-    else:
-        df = df.loc[_self_indexes]
+    _missing_indexes = np.setdiff1d(scdf.index, _self_indexes)
+    missing = pd.DataFrame(data={"Index": _missing_indexes, "Count": 0}, index=_missing_indexes)
+    counts_per_read = pd.concat([counts_per_read, missing])
 
     counts_per_read = counts_per_read.set_index("Index").sort_index()
 
     df.insert(df.shape[1], column_name, counts_per_read)
 
-    return df
+    if keep_nonoverlapping:
+        return df
+    else:
+        return df[df[column_name] != 0]
 
 
 

@@ -4376,27 +4376,21 @@ class PyRanges():
 
         from pyranges.methods.subtraction import _subtraction
 
-        strand = True if strandedness in ["same", "opposite"] else False
-        kwargs = {"strandedness": strandedness, "strand": strand}
+        kwargs = {"strandedness": strandedness}
         kwargs["sparse"] = {"self": False, "other": True}
         kwargs = fill_kwargs(kwargs)
 
         strand = True if strandedness else False
-        if len(other) != 0:
-            cols_original_order = self.columns.copy()
-            other_clusters = other.merge(strand=strand)
-            self.__ix__ = np.arange(len(self))
-            no_overlap = self.overlap(other_clusters, strandedness=strandedness, invert=True)
-            j = self.sort().join(other_clusters, strandedness=strandedness, suffix="__deleteme__")
-            result = pyrange_apply_single(_subtraction, j, **kwargs)
-            result = {k: v for (k, v) in result.items()}
-            result = PyRanges(result)
-            result = pr.concat([result, no_overlap])
-            result = PyRanges({k: v[cols_original_order] for k, v in result.items()})
-        else:
-            result = self
+        other_clusters = other.merge(strand=strand)
 
-        return result
+        self = self.count_overlaps(other_clusters, strandedness=strandedness, overlap_col="__num__")
+
+        result = pyrange_apply(_subtraction, self, other_clusters, **kwargs)
+
+        self = self.drop("__num__")
+
+        return PyRanges(result).drop("__num__")
+
 
     def summary(self, to_stdout=True, return_df=False):
 

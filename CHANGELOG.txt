@@ -1,3 +1,7 @@
+# 0.0.110 (20.09.21)
+- fix count_overlaps with keep_nonoverlapping=False
+- fix subtract with more than 1024 intervals (new fix)
+
 # 0.0.109 (16.09.21)
 - fix overlap invert behavior
 - add intersect invert flag
