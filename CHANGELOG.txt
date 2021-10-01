@@ -1,3 +1,6 @@
+# 0.0.111 (01.10.2021)
+- require minimum version of NCLS
+
 # 0.0.110 (20.09.21)
 - fix count_overlaps with keep_nonoverlapping=False
 - fix subtract with more than 1024 intervals (new fix)

@@ -6,7 +6,7 @@ __version__ = open("pyranges/version.py").readline().split(" = ")[1].replace(
     '"', '').strip()
 
 install_requires = [
-    "cython", "pandas", "ncls>=0.0.50", "tabulate", "sorted_nearest>=0.0.30", "pyrle",
+    "cython", "pandas", "ncls>=0.0.62", "tabulate", "sorted_nearest>=0.0.33", "pyrle",
     "natsort"] #,
 
 # optional_requires = ["bamread", "pybigwig", "ray"]
