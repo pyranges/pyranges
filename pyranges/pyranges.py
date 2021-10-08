@@ -4310,7 +4310,7 @@ class PyRanges():
 
         return self[result]
 
-    def subsequence(self, start=0, length=None, end=None, by=None, is_sorted=False):
+    def subsequence(self, start=0, end=None, by=None, strand=None, **kwargs):
         """ Get subsequences of the intervals.
 
         Parameters
@@ -4319,14 +4319,16 @@ class PyRanges():
         start : int
             Start of subregion, 0-based and included. Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
 
-        length : int, default None
-            Length of subregion. If None, everything after start is returned
-
         end : int, default None
             End of subregion. Alternative method to define subregion to providing length
 
         by : list of str, default None
             intervals are grouped by this/these ID column(s) beforehand, e.g. exons belonging to same transcripts
+
+        strand : bool, default None, i.e. auto
+
+            Whether to do operations on chromosome/strand pairs or chromosomes. If None, will use
+            chromosome/strand pairs if the PyRanges is stranded.
 
         Returns
         -------
@@ -4410,27 +4412,10 @@ class PyRanges():
         """
         from pyranges.methods.subsequence import _subseq
 
-        from_end = [False,False]
-
-        if start < 0:
-            start = -start
-            from_end[0] = True
-
-        if not end is None and end < 0:
-            end = -end
-            from_end[1] = True
-
+        kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
         kwargs = fill_kwargs(kwargs)
 
-        if strand is None:
-            strand = self.stranded
-
-        if self.stranded and not strand:
-            self = self.unstrand()
-
-
-        kwargs.update({"strand": strand})
-
+        self = self.sort()
         result = pyrange_apply_single(_subseq, self, **kwargs)
 
         return pr.PyRanges(result)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import pandas as pd
 import numpy as np
 
 def _subseq(scdf, **kwargs):
@@ -7,36 +8,48 @@ def _subseq(scdf, **kwargs):
     if scdf.empty:
         return None
 
-    scdf = scdf.copy().reset_index(drop=True)
+    scdf = scdf.copy()
+    print(scdf)
+    scdf.insert(0, "__index__", np.arange(len(scdf)))
 
-    by = kwargs.get("by", scdf.index.get_level_values())
+    by = kwargs.get("by", "__index__")
     start = kwargs["start"] or 0
     end = kwargs["end"]
 
     # no strand is treated the same way as positive strand
     strand = scdf.Strand.iloc[0] if "Strand" in scdf else "+"
 
-    if (strand == "+" and start < 0) or (strand == "-" and start >= 0):
-        g = scdf.sort_values("End").groupby(by).End
-        starts = g.last() - abs(start)
+    gs = scdf.sort_values("Start").groupby(by)[["Start", "__index__"]].agg({"__index__": ["count", "first"], "Start": "first"})
+    gs.columns = ['_'.join(col) if type(col) is tuple else col for col in gs.columns.values]
+    gs = gs.rename(columns={"__index___count": "counts", "__index___first": "__index__", "Start_first": "Start"}).set_index("__index__")
+    ge = scdf.sort_values("End").groupby(by)[["End", "__index__"]].agg({"__index__": "first", "End": "last"}).set_index("__index__")
+    j = gs.join(ge).sort_index()
+    if (strand == "+" and start >= 0) or (strand == "-" and start < 0):
+        starts = j.Start + abs(start)
+        print("start 1")
     else:
-        g = scdf.sort_values("Start").groupby(by).Start
-        starts = g.first() + abs(start)
+        ends = j.End - abs(start)
+        print("start 2")
 
-    if (strand == "-" and end < 0) or (strand == "+" and end >= 0):
-        g = scdf.sort_values("End").groupby(by).End
-        ends = g.last() - abs(end)
+    if (strand == "+" and end >= 0) or (strand == "-" and end < 0):
+        ends = j.Start + abs(end)
+        print("end 1")
     else:
-        g = scdf.sort_values("Start").groupby(by).Start
-        ends = g.first() + abs(end)
+        ends = j.End - abs(end)
+        print("end 2")
 
-    counts = g.counts()
-    scdf.insert("__min__", scdf.shape[1], np.repeat(starts, counts))
-    scdf.insert("__max__", scdf.shape[1], np.repeat(ends, counts))
+    starts = np.repeat(starts, j.counts).reset_index(drop=True)
+    ends = np.repeat(ends, j.counts).reset_index(drop=True)
 
-    r = scdf[~((scdf.Start > scdf.__max__) | (scdf.End < scdf.__min__))]
-    r.Start = np.maximum(r.Start, r.__min__)
-    r.End = np.minimum(r.End, r.__max__)
-    r = r.drop(["__min__", "__max__"], axis=1)
+    scdf.insert(scdf.shape[1], "__min__", starts)
+    scdf.insert(scdf.shape[1], "__max__", ends)
 
-    return scdf
+    print(scdf)
+    r = scdf[~((scdf.Start > scdf.__max__) | (scdf.End < scdf.__min__))].copy()
+    print(r)
+    r.loc[:, "Start"] = np.maximum(r.Start, r.__min__)
+    r.loc[:, "End"] = np.minimum(r.End, r.__max__)
+    print(r)
+    r = r.drop(["__min__", "__max__", "__index__"], axis=1)
+
+    return r
