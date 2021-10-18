@@ -52,7 +52,7 @@ def _subseq(scdf, **kwargs):
     scdf.insert(scdf.shape[1], "__max__", ends)
 
     # print(scdf)
-    r = scdf[~((scdf.Start > scdf.__max__) | (scdf.End < scdf.__min__))].copy()
+    r = scdf[~((scdf.Start >= scdf.__max__) | (scdf.End <= scdf.__min__))].copy()
     # print(r)
     r.loc[:, "Start"] = np.maximum(r.Start, r.__min__)
     r.loc[:, "End"] = np.minimum(r.End, r.__max__)
