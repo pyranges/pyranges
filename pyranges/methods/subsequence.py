@@ -26,8 +26,15 @@ def _subseq(scdf, **kwargs):
     gs = gs[["Start", "__index__"]].agg({"__index__": ["count", "first"], "Start": "first"})
     gs.columns = ['_'.join(col) if type(col) is tuple else col for col in gs.columns.values]
     gs = gs.rename(columns={"__index___count": "counts", "__index___first": "__index__", "Start_first": "Start"}).set_index("__index__")
+    
     ge = scdf.sort_values("End").groupby(by)[["End", "__index__"]].agg({"__index__": "first", "End": "last"}).set_index("__index__")
     j = gs.join(ge).sort_index()
+
+    ## j contains one row per group; columns: counts  Start  End
+    #  counts is the number of exons; Start and End are the boundaries of the whole group
+    print('j')
+    print(j)
+    
     if (strand == "+" and start >= 0) or (strand == "-" and start < 0):
         starts = j.Start + abs(start)
         # print("start 1")
@@ -42,17 +49,29 @@ def _subseq(scdf, **kwargs):
         ends = j.End - abs(end)
         # print("end 2")
 
+    print('pre-starts')
+    print(starts)
+
+    # start and ends define the per-group desired start and end.
+    # they may be out of bounds of the interval, though
+    # here below: repeat them to have one row per interval
     starts = np.repeat(starts, j.counts).reset_index(drop=True)
     ends = np.repeat(ends, j.counts).reset_index(drop=True)
 
+    print('starts')
+    print(starts)
+    print('ends')
+    print(ends)
+    print()
+    
     if strand == "-":
         ends, starts = starts, ends
 
+    # instead of simply using starts and ends as computed above; dealing with out of bounds:
     scdf.insert(scdf.shape[1], "__min__", starts)
     scdf.insert(scdf.shape[1], "__max__", ends)
-
-    # print(scdf)
     r = scdf[~((scdf.Start >= scdf.__max__) | (scdf.End <= scdf.__min__))].copy()
+    # print(scdf)
     # print(r)
     r.loc[:, "Start"] = np.maximum(r.Start, r.__min__)
     r.loc[:, "End"] = np.minimum(r.End, r.__max__)

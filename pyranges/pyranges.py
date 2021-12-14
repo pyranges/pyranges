@@ -4011,6 +4011,7 @@ class PyRanges():
 
         end : int, default None
             End of subregion, 0-based and excluded, counting from the 5' end. 
+            Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
             If None, the existing 3' end is returned.
 
         by : list of str, default None
@@ -4033,6 +4034,81 @@ class PyRanges():
         See also
         --------
         subsequence : analogous to this method, but input coordinates refer to the unspliced transcript
+
+        Examples
+        --------
+        >>> p  = pr.from_dict({"Chromosome": [1, 1, 2, 2, 3],
+        ...                   "Strand": ["+", "+", "-", "-", "+"],
+        ...                   "Start": [1, 40, 10, 70, 140],
+        ...                   "End": [11, 60, 25, 80, 152],
+        ...                   "transcript_id":["t1", "t1", "t2", "t2", "t3"] })
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |         1 |        11 | t1              |
+        |            1 | +            |        40 |        60 | t1              |
+        |            2 | -            |        10 |        25 | t2              |
+        |            2 | -            |        70 |        80 | t2              |
+        |            3 | +            |       140 |       152 | t3              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        # Get the first 15 nucleotides of *each spliced transcript*, grouping exons by transcript_id:
+        >>> p.spliced_subsequence(0, 15, by='transcript_id')
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int64) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |         1 |        11 | t1              |
+        |            1 | +            |        40 |        45 | t1              |
+        |            2 | -            |        20 |        25 | t2              |
+        |            2 | -            |        70 |        80 | t2              |
+        |            3 | +            |       140 |       152 | t3              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.        
+
+        # Get the last 20 nucleotides of each spliced transcript:
+        >>> p.spliced_subsequence(-20, by='transcript_id')
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int64) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |        40 |        60 | t1              |
+        |            2 | -            |        10 |        25 | t2              |
+        |            2 | -            |        70 |        75 | t2              |
+        |            3 | +            |       140 |       155 | t3              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        # Get region from 25 to 60 of each spliced transcript, or their existing subportion:
+        >>> p.spliced_subsequence(25, 60, by='transcript_id')
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |        55 |        60 | t1              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        # Get region of each spliced transcript which excludes their first and last 3 nucleotides:
+        >>> p.spliced_subsequence(3, -3, by='transcript_id')
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |         1 |        11 | t1              |
+        |            1 | +            |        40 |        60 | t1              |
+        |            2 | -            |        10 |        25 | t2              |
+        |            2 | -            |        70 |        80 | t2              |
+        |            3 | +            |       140 |       155 | t3              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
         """
         
         from pyranges.methods.spliced_subsequence import _spliced_subseq
@@ -4386,6 +4462,7 @@ class PyRanges():
 
         end : int, default None
             End of subregion, 0-based and excluded, counting from the 5' end. 
+            Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
             If None, the existing 3' end is returned.
 
         by : list of str, default None
@@ -4407,7 +4484,7 @@ class PyRanges():
 
         See also
         --------
-        spliced_subsequence : analogous to this method, but intronic regions not counted, so that input coordinates refer to the spliced transcript        
+        spliced_subsequence : analogous to this method, but intronic regions are not counted, so that input coordinates refer to the spliced transcript        
 
         Examples
         --------
