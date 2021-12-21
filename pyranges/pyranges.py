@@ -10,7 +10,7 @@ import pyranges as pr
 from pyranges.tostring2 import tostring
 
 from pyranges.methods.intersection import _intersection, _overlap
-from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, pyrange_apply_chunks, _slack, _tes, _tss
+from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, pyrange_apply_chunks, _extend, _tes, _tss
 
 __all__ = ["PyRanges"]
 
@@ -1569,7 +1569,98 @@ class PyRanges():
 
         return len(self) == 0
 
+    
+    def extend(self, ext):
+        """Extend the intervals from the ends.
 
+        Parameters
+        ----------
+
+        ext : int or dict of ints with "3" and/or "5" as keys.
+
+            The number of nucleotides to extend the ends with.
+            If an int is provided, the same extension is applied to both 
+            the start and end of intervals, while a dict input allows to control 
+            differently the two ends. Note also that 5' and 3' extensions take 
+            the strand into account, if the intervals are stranded.
+
+        See Also
+        --------
+        PyRanges.subsequence : obtain subsequences of intervals
+        PyRanges.spliced_subsequence : obtain subsequences of intervals, providing transcript-level coordinates
+
+        Examples
+        --------
+
+        >>> d = {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5], 'End': [6, 9, 7],
+        ...      'Strand': ['+', '+', '-']}
+        >>> gr = pr.from_dict(d)
+        >>> gr
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         3 |         6 | +            |
+        | chr1         |         8 |         9 | +            |
+        | chr1         |         5 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.extend(4)
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         0 |        10 | +            |
+        | chr1         |         4 |        13 | +            |
+        | chr1         |         1 |        11 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.extend({"3": 1})
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         3 |         7 | +            |
+        | chr1         |         8 |        10 | +            |
+        | chr1         |         4 |         7 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.extend({"3": 1, "5": 2})
+        +--------------+-----------+-----------+--------------+
+        | Chromosome   |     Start |       End | Strand       |
+        | (category)   |   (int32) |   (int32) | (category)   |
+        |--------------+-----------+-----------+--------------|
+        | chr1         |         1 |         7 | +            |
+        | chr1         |         6 |        10 | +            |
+        | chr1         |         4 |         9 | -            |
+        +--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> gr.extend(-1)
+        Traceback (most recent call last):
+        ...
+        AssertionError: Some intervals are negative or zero length after applying extend!
+        """
+
+        if isinstance(ext, dict):
+            assert self.stranded, "PyRanges must be stranded to add 5/3-end specific extend."
+
+        kwargs = fill_kwargs({"ext": ext, "strand": self.stranded})
+
+        prg = PyRanges(
+            pyrange_apply_single(_extend, self, **kwargs))
+
+        return prg
+    
+    
+    
 
     # # TODO: use subtract code here instead, easier
     # def no_overlap(self, other, **kwargs):
@@ -2148,7 +2239,7 @@ class PyRanges():
             self.Start__slack = self.Start
             self.End__slack = self.End
 
-            self = self.slack(slack)
+            self = self.extend(slack)
 
         if "suffix" in kwargs and isinstance(kwargs["suffix"], str):
             suffixes = "", kwargs["suffix"]
@@ -3911,85 +4002,8 @@ class PyRanges():
 
 
     def slack(self, slack):
-
-        """Extend the intervals from the ends.
-
-        Parameters
-        ----------
-
-        slack : int or dict of ints with "3" and/or "5" as keys.
-
-            The number of nucleotides to extend the ends with.
-
-        Examples
-        --------
-
-        >>> d = {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5], 'End': [6, 9, 7],
-        ...      'Strand': ['+', '+', '-']}
-        >>> gr = pr.from_dict(d)
-        >>> gr
-        +--------------+-----------+-----------+--------------+
-        | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
-        |--------------+-----------+-----------+--------------|
-        | chr1         |         3 |         6 | +            |
-        | chr1         |         8 |         9 | +            |
-        | chr1         |         5 |         7 | -            |
-        +--------------+-----------+-----------+--------------+
-        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> gr.slack(4)
-        +--------------+-----------+-----------+--------------+
-        | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
-        |--------------+-----------+-----------+--------------|
-        | chr1         |         0 |        10 | +            |
-        | chr1         |         4 |        13 | +            |
-        | chr1         |         1 |        11 | -            |
-        +--------------+-----------+-----------+--------------+
-        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> gr.slack({"3": 1})
-        +--------------+-----------+-----------+--------------+
-        | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
-        |--------------+-----------+-----------+--------------|
-        | chr1         |         3 |         7 | +            |
-        | chr1         |         8 |        10 | +            |
-        | chr1         |         4 |         7 | -            |
-        +--------------+-----------+-----------+--------------+
-        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> gr.slack({"3": 1, "5": 2})
-        +--------------+-----------+-----------+--------------+
-        | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
-        |--------------+-----------+-----------+--------------|
-        | chr1         |         1 |         7 | +            |
-        | chr1         |         6 |        10 | +            |
-        | chr1         |         4 |         9 | -            |
-        +--------------+-----------+-----------+--------------+
-        Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
-
-        >>> gr.slack(-1)
-        Traceback (most recent call last):
-        ...
-        AssertionError: Some intervals are negative or zero length after applying slack!
-        """
-
-        if isinstance(slack, dict):
-            assert self.stranded, "PyRanges must be stranded to add 5/3-end specific slack."
-
-        kwargs = fill_kwargs({"slack": slack, "strand": self.stranded})
-
-        prg = PyRanges(
-            pyrange_apply_single(_slack, self, **kwargs))
-
-        return prg
+        """ Deprecated: this function has been moved to Pyranges.extend"""
+        return self.extend(slack)
 
 
     def spliced_subsequence(self, start=0, end=None, by=None, strand=None, **kwargs):
