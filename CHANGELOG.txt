@@ -1,3 +1,9 @@
+# 0.0.112 (21.12.2021)
+- add subsequence
+- add spliced_subsequence
+- renamed slack to extend
+- fix get_fasta on negative strand intervals, add optional argument for pyfaidx.Fasta input
+
 # 0.0.111 (01.10.2021)
 - require minimum version of NCLS
 

@@ -77,7 +77,7 @@ class GenomicFeaturesMethods():
 
         if not pr.stranded:
             raise Exception(
-                "Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?"
+                "Cannot compute TSSes or TESes without strand info. Perhaps use extend() or subsequence() or spliced_subsequence() instead?"
             )
 
         pr = pr[pr.Feature == "transcript"]
@@ -144,7 +144,7 @@ class GenomicFeaturesMethods():
 
         if not pr.stranded:
             raise Exception(
-                "Cannot compute TSSes or TESes without strand info. Perhaps use slack() instead?"
+                "Cannot compute TSSes or TESes without strand info. Perhaps use extend() or subsequence() or spliced_subsequence() instead?"
             )
 
         pr = pr[pr.Feature == "transcript"]
