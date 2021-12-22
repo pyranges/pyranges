@@ -53,6 +53,7 @@ def _spliced_subseq(scdf, **kwargs):
     #  same for end
     if strand == "-": # and use_strand:        
         start_adjustments = start - cs_start  
+
         adjust_start = start_adjustments > 0
         scdf.loc[adjust_start, "End"] -= start_adjustments[adjust_start].astype(int)
 
