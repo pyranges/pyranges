@@ -1,3 +1,6 @@
+# 0.0.115 (23.12.2021)
+- fix gff3 writer (remove final ;)
+
 # 0.0.114 (21.12.2021)
 - add subsequence
 - add spliced_subsequence
