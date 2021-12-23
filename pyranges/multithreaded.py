@@ -432,15 +432,15 @@ def _tes(df, **kwargs):
     return df
 
 
-def _slack(df, **kwargs):
+def _extend(df, **kwargs):
 
     df = df.copy()
     dtype = df.Start.dtype
-    slack = kwargs["slack"]
+    slack = kwargs["ext"]
 
     assert isinstance(
         slack,
-        (int, dict)), "Slack parameter must be integer or dict, is {}".format(
+        (int, dict)), "Extend parameter must be integer or dict, is {}".format(
             type(slack))
 
     if isinstance(slack, int):
@@ -463,7 +463,7 @@ def _slack(df, **kwargs):
 
     df = df.astype({"Start": dtype, "End": dtype})
 
-    assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying slack!"
+    assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying extend!"
 
     return df
 

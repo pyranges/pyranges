@@ -3,9 +3,7 @@ import sys
 import pyranges as pr
 import pandas as pd
 
-def get_fasta(gr, path):
-
-
+def get_fasta(gr, path=None, pyfaidx_fasta=None):
     """Get fasta sequence.
 
     Parameters
@@ -16,7 +14,12 @@ def get_fasta(gr, path):
 
     path : str
 
-        Path to fasta file
+        Path to fasta file. It will be indexed using pyfaidx if an index is not found
+
+    pyfaidx_fasta : pyfaidx.Fasta
+
+        Alternative method to provide fasta target, as a pyfaidx.Fasta object
+
 
     Returns
     -------
@@ -28,6 +31,7 @@ def get_fasta(gr, path):
     ----
 
     Sorting the PyRanges is likely to improve the speed.
+    Intervals on the negative strand will be reverse complemented.
 
     Warning
     -------
@@ -83,13 +87,23 @@ def get_fasta(gr, path):
         print("pyfaidx must be installed to get fasta sequences. Use `conda install -c bioconda pyfaidx` or `pip install pyfaidx` to install it.")
         sys.exit(1)
 
-    fasta = pyfaidx.Fasta(path, read_ahead=int(1e5))
+    if pyfaidx_fasta is None:
+        pyfaidx_fasta = pyfaidx.Fasta(path, read_ahead=int(1e5))
 
     seqs = []
     for k, df in gr:
-        _fasta = fasta[k]
+        if type(k) is tuple:  #input is Stranded
+            _fasta = pyfaidx_fasta[k[0]]
+            if k[1]=='-':
+                for start, end in zip(df.Start, df.End):
+                    seqs.append( (-_fasta[start:end]).seq ) # reverse complement
+            else:
+                for start, end in zip(df.Start, df.End):
+                    seqs.append(_fasta[start:end].seq)
 
-        for start, end in zip(df.Start, df.End):
-            seqs.append(_fasta[start:end].seq)
+        else:        
+            _fasta = pyfaidx_fasta[k]
+            for start, end in zip(df.Start, df.End):
+                seqs.append(_fasta[start:end].seq)
 
     return pd.concat([pd.Series(s) for s in seqs]).reset_index(drop=True)
