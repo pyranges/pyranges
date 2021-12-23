@@ -258,7 +258,7 @@ def _gff3(df):
         rest_df.loc[~isnull, c] = new_val
         rest_df.loc[isnull, c] = ""
 
-    attribute = rest_df.apply(lambda r: "".join([v for v in r if v]), axis=1)
+    attribute = rest_df.apply(lambda r: "".join([v for v in r if v]), axis=1).str.replace(";$", "", regex=True)
     outdf.insert(outdf.shape[1], "Attribute", attribute)
 
     return outdf
