@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 
 def _subseq(scdf, **kwargs):
+
     if scdf.empty:
         return None
 
@@ -52,6 +53,7 @@ def _subseq(scdf, **kwargs):
     r = scdf[~((scdf.Start >= scdf.__max__) | (scdf.End <= scdf.__min__))].copy()
     r.loc[:, "Start"] = np.maximum(r.Start, r.__min__)
     r.loc[:, "End"] = np.minimum(r.End, r.__max__)
+
     r = r.drop(["__min__", "__max__", "__index__"], axis=1)
 
     return r

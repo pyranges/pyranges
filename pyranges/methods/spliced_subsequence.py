@@ -22,6 +22,7 @@ def _spliced_subseq(scdf, **kwargs):
         assert "Strand" in scdf, "Cannot have strand=True on unstranded pyranges!"
 
     if strand == "-": 
+
         scdf = scdf.sort_values(["Start", "End"], ascending=False)
 
     scdf.insert(scdf.shape[1], "__length__", scdf.End - scdf.Start)
@@ -53,6 +54,7 @@ def _spliced_subseq(scdf, **kwargs):
     #  same for end
     if strand == "-": # and use_strand:        
         start_adjustments = start - cs_start  
+
         adjust_start = start_adjustments > 0
         scdf.loc[adjust_start, "End"] -= start_adjustments[adjust_start].astype(int)
 
