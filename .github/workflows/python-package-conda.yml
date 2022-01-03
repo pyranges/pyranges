@@ -27,6 +27,9 @@ jobs:
         conda config --add channels r
         conda install mamba -n base -c conda-forge
         mamba env update --file environment.yml --name base
+    - name: Install pyranges
+      run: |
+        python setup.py install
     - name: Lint with flake8
       run: |
         conda install flake8

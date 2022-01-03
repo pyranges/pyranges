@@ -14,4 +14,3 @@ dependencies:
 - bedtools
 - pybigwig
 - pysam
-- natsort
