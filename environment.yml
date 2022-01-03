@@ -13,4 +13,4 @@ dependencies:
 - hypothesis
 - bedtools
 - pybigwig
-- pysaw
+- pysam
