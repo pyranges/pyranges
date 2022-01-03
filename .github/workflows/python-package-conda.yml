@@ -22,7 +22,7 @@ jobs:
         echo $CONDA/bin >> $GITHUB_PATH
     - name: Install pyranges
       run: |
-        pip install cython
+        pip install cython==3.0.0a9
         python setup.py install
     - name: Install dependencies
       run: |
