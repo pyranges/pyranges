@@ -8,7 +8,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python-version: ['3.9']
+        python-version: ['3.8']
 
     steps:
     - uses: actions/checkout@v2
@@ -20,6 +20,9 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install pyranges
+      run: |
+        python setup.py install
     - name: Install dependencies
       run: |
         conda config --set always_yes yes --set changeps1 no
@@ -27,9 +30,6 @@ jobs:
         conda config --add channels r
         conda install mamba -n base -c conda-forge
         mamba env update --file environment.yml --name base
-    - name: Install pyranges
-      run: |
-        python setup.py install
     - name: Lint with flake8
       run: |
         conda install flake8
