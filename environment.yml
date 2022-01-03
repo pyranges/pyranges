@@ -8,7 +8,7 @@ dependencies:
 - pandas
 - pytest
 - pytest-cov
-- cython
+# - cython conda cython not working?
 - tabulate
 - hypothesis
 - bedtools
