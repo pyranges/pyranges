@@ -8,6 +8,7 @@ from natsort import natsorted
 
 import os
 
+ray = None
 
 def get_n_args(f):
 
