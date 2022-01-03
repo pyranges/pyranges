@@ -10,7 +10,7 @@ import numpy as np
 from os import environ
 from sys import platform
 
-if environ.get("TRAVIS") or platform == "darwin":
+if environ.get("GITHUB_ACTIONS") or platform == "darwin":
     max_examples = 100
     slow_max_examples = 10
     deadline = None

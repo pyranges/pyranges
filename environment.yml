@@ -3,13 +3,14 @@ channels:
 - bioconda
 - r
 dependencies:
-- cython
-- python=3.6
 - numpy
+- scipy
 - pandas
-- pip:
-    - clustertree
-    - pyranges
-    - sphinx_autorun_ebs
-    - pyrle
-    - sorted_nearest
+- pytest
+- pytest-cov
+- cython
+- tabulate
+- hypothesis
+- bedtools
+- pybigwig
+- pysam
