@@ -26,7 +26,7 @@ jobs:
         conda config --add channels bioconda
         conda config --add channels r
         conda install mamba -n base -c conda-forge
-        mamba create -q -n test-environment python=${{ matrix.python-version }} numpy scipy pandas pytest pytest-cov cython tabulate hypothesis bedtools pybigwig pysam
+        mamba create -q -n test-environment python=${{ matrix.python-version }} numpy scipy pandas pytest pytest-cov cython tabulate hypothesis bedtools pybigwig "pysam>=0.18.0"
     - name: Lint with flake8
       run: |
         conda install flake8
