@@ -22,7 +22,10 @@ jobs:
         echo $CONDA/bin >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-        conda env update --file environment.yml --name base
+        conda config --set always_yes yes --set changeps1 no
+        conda config --add channels bioconda
+        conda config --add channels r
+        conda create -q -n test-environment python=${{ matrix.python-version }} numpy scipy pandas pytest pytest-cov cython tabulate hypothesis bedtools pybigwig pysam
     - name: Lint with flake8
       run: |
         conda install flake8
