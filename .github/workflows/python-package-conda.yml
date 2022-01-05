@@ -20,9 +20,19 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install pyranges
+      run: |
+        pip install cython
+        pip install sorted_nearest
+        python setup.py install
     - name: Install dependencies
       run: |
-        conda env update --file environment.yml --name base
+        conda config --set always_yes yes --set changeps1 no
+        conda config --add channels bioconda
+        conda config --add channels r
+        conda install mamba -n base -c conda-forge
+        mamba env update --file environment.yml --name base
+
     - name: Lint with flake8
       run: |
         conda install flake8
@@ -32,5 +42,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        conda install pytest
-        pytest
+        mamba install pytest pytest-xdist
+        pytest -n 2 tests/
+
