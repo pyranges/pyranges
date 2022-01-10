@@ -1,0 +1,43 @@
+# Applying custom methods to pairs of PyRanges
+
+By using the `apply`, `apply_pair` or `apply_chunks` methods, you can run custom
+methods on the dataframes in your PyRanges. The `apply` and `apply_chunks` methods
+takes a single dataframe, while `apply_pair` takes a pair of dataframes.
+
+```{python tidy=FALSE}
+import pyranges as pr
+chipseq = pr.data.chipseq()
+chipseq_background = pr.data.chipseq_background()
+
+def print_strands(df1, df2):
+    print(df1.Chromosome.iloc[0], df1.Strand.iloc[0], df2.Strand.iloc[0])
+    return df1.head(5)
+
+result = chipseq.apply_pair(chipseq_background, print_strands, strandedness="opposite")
+print(result)
+```
+
+
+```{python tidy=FALSE}
+def set_start_to_zero(df):
+    df.Start = 0
+    return df
+
+print(chipseq.apply(set_start_to_zero))
+```
+
+Keyword arguments can be sent to the function:
+
+```{python tidy=FALSE}
+def _print(df, **kwargs):
+    print("My keyword arguments were:", kwargs.get("value"), "and", kwargs.get("whatever"))
+    return df
+
+chipseq.apply(_print, value=123, whatever="hi there!")
+```
+
+They were printed 24 times since the function was applied once per chromosome.
+
+apply_chunks splits each chromosome into `nb_cpu` chunks and runs each chunk in
+parallel, which is useful for slow row-based operations (like fisher exact, for
+example).

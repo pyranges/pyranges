@@ -1,0 +1,63 @@
+# GenomicFeatures: methods using genomic context
+
+The PyRanges library has a few methods that operate on a genomic context. Their
+functions are found in the `pyranges.gf` namespace and the methods to be used on
+a PyRanges-object are found in the `gr.features` namespace.
+
+`introns` can be used on pyranges annotated with gene_id and exon_id.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.ucsc_bed()
+print(gr)
+print(gr.features.introns(by="transcript")) # default is by gene
+```
+
+`tes/tss` can be used to find the starts and ends of transcripts:
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.ucsc_bed()
+print(gr[gr.Feature == "transcript"])
+print(gr.features.tes()) # default is by gene
+```
+
+
+`tile_genome` splits a PyRanges of chromosome sizes into a tiled genome.
+
+```{python tidy=FALSE}
+import pyranges as pr
+cs = pr.data.chromsizes()
+print(cs)
+# can also do
+# pip install pyranges_db as db
+# cs =  db.ucsc.chromsizes("hg19")
+tile_size = int(1e6)
+print(pr.gf.tile_genome(cs, tile_size, tile_last=False))
+print(pr.gf.tile_genome(cs, tile_size, tile_last=True))
+```
+
+`genome_bounds` removes all intervals in the PyRanges which are outside the
+genome bounds. If the flag clip is used, the parts of the intervals which are
+inside the boundaries are kept.
+
+```{python tidy=FALSE}
+import pyranges as pr
+cs = pr.data.chromsizes()
+gr = pr.data.chipseq()
+print(cs)
+# can also do
+# pip install pyranges_db as db
+# cs =  db.ucsc.chromsizes("hg19")
+print(pr.gf.genome_bounds(gr, cs, clip=True))
+print(pr.gf.genome_bounds(gr, cs))
+```
+
+
+`random` creates a random PyRanges from the PyRanges of chromosome sizes given:
+
+```{python tidy=FALSE}
+pr.random(n=1000, length=100, chromsizes=None, strand=True)
+```
+
+if no chromsize is given, hg19 is used (from pr.data.chromsizes).

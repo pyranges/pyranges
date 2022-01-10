@@ -1,0 +1,43 @@
+# Finding the k closest intervals
+
+With the k_nearest-method, you can search for the k nearest intervals in other that is
+nearest the ones in self.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.chipseq()
+gr2 = pr.data.chipseq_background()
+print(gr.k_nearest(gr2, suffix="_Input"))
+```
+
+The nearest method takes a strandedness option, which can either be
+`"same"`, `"opposite"` or `False`/`None`
+
+```{python tidy=FALSE}
+print(gr.nearest(gr2, suffix="_Input", strandedness="opposite"))
+```
+
+The nearest method takes four further options, namely how, overlap, ties and k.
+How can take the values `None`, `"upstream"`, `"downstream". `"upstream"` and
+`"downstream"` are always in reference to the PyRange the method is called on.
+The default is `None`, which means that PyRanges looks in both directions. The
+overlap argument is a bool which indicates whether you want to include overlaps
+or not. Ties is the method in which you want to resolve ties, that is intervals
+with an equal distance to your query interval. The options are None which means
+that you get all ties. This might be more than k if there are multiple intervals
+with the same distance. The options "first" and "last" gives you the first or
+last interval for each separate distance. The option "different" gives you all
+nearest intervals from k different distances. k is the number of different
+intervals you want to find. It can be a vector with the length of the query
+vector.
+
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.chipseq()
+gr2 = pr.data.chipseq_background()
+gr.k_nearest(gr2, suffix="_Input", k=[1, 2] * 5000).print()
+```
+
+Note that nearest intervals that are upstream of the query interval have a
+negative distance.

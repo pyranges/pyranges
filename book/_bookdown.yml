@@ -1,0 +1,19 @@
+delete_merged_file: true
+
+rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
+"manipulation.Rmd", "concat.Rmd", "piping.Rmd", "printing.Rmd", "iterate.Rmd",
+"sort.Rmd", "summary.Rmd", "single_range_methods.Rmd", "custom_methods.Rmd",
+"intersection.Rmd", "subtract.Rmd", "join.Rmd", "nearest.Rmd", "knearest.Rmd",
+"count_overlaps.Rmd",
+"colocalization.Rmd", "simes.Rmd", "fisher_exact.Rmd", "mcc.Rmd",
+"rowbased_statistics.Rmd", "coverage.Rmd", "runlengths.Rmd",
+"runlength_dict.Rmd", "subsetting_rles.Rmd", "subsetting_pyrles.Rmd",
+"multithreading.Rmd", "genomicfeatures.Rmd", "databases.Rmd"]
+
+ # rmd_files: ["runlengths.Rmd"]
+# rmd_files: ["multithreading.Rmd"]
+
+output_dir: "."
+
+bookdown::html_document2:
+#   css: css.css

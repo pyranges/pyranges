@@ -1,0 +1,39 @@
+# Sorting PyRanges
+
+pyranges are always sorted on chromosome and strand to enable faster operations.
+
+pyranges can in addition be sorted on start and end by using the function sort:
+
+```{python tidy=FALSE}
+import pyranges as pr
+
+import pandas as pd
+
+from io import StringIO
+
+cs = pr.data.chipseq()
+
+print(cs)
+
+cs_sorted = cs.sort()
+
+print(cs)
+```
+
+This will sort them on Chromosome, Strand, Start and then End.
+
+Custom sorting can be done after you are done with the PyRanges-related
+functionality. Then you can extract the underlying dataframes with df and sort
+it:
+
+```{python tidy=FALSE}
+df = cs_sorted.df
+
+print(df.head())
+
+df_sorted = df.sort_values(["Chromosome", "Start", "End"])
+
+print(df_sorted.head(20))
+```
+
+Now the df is sorted and start and end with interleaved strands.

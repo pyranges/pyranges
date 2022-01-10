@@ -1,0 +1,80 @@
+# Loading/Creating PyRanges
+
+A PyRanges object can be built in four ways:
+
+1. from a Pandas dataframe
+2. using the PyRanges constructor with the chromosomes, starts and ends (and optionally strands), individually.
+3. using one of the custom reader functions for genomic data (`read_bed`, `read_bam` or `read_gtf`, `read_gff3`)
+4. from a dict (like the ones produced with `to_example`)
+
+#### Using a DataFrame {-}
+
+If you instantiate a PyRanges object from a dataframe, the dataframe should at
+least contain the columns Chromosome, Start and End. A column called Strand is
+optional. Any other columns in the dataframe are treated as metadata.
+
+```{python tidy=FALSE}
+
+import pandas as pd
+import pyranges as pr
+
+chipseq = pr.get_example_path("chipseq.bed")
+
+df = pd.read_csv(chipseq, header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
+
+print(df.head(2))
+print(df.tail(2))
+
+print(pr.PyRanges(df))
+```
+
+#### Using constructor keywords {-}
+
+The other way to instantiate a PyRanges object is to use the constructor with keywords:
+
+```{python tidy=FALSE}
+gr = pr.PyRanges(chromosomes=df.Chromosome, starts=df.Start, ends=df.End)
+print(gr)
+```
+
+It is possible to make PyRanges objects out of basic Python datatypes:
+
+```{python tidy=FALSE}
+gr = pr.PyRanges(chromosomes="chr1", strands="+", starts=[0, 1, 2], ends=(3, 4, 5))
+print(gr)
+
+gr = pr.PyRanges(chromosomes="chr1 chr2 chr3".split(), strands="+ - +".split(), starts=[0, 1, 2], ends=(3, 4, 5))
+print(gr)
+```
+
+#### Using `read_bed`, `read_gtf`, `read_gff3` or `read_bam` {-}
+
+The pyranges library can create PyRanges from gff3 common file formats, namely gtf/gff, gff3, bed and bam [^].
+
+```{python tidy=FALSE}
+ensembl_path = pr.get_example_path("ensembl.gtf")
+gr = pr.read_gtf(ensembl_path)
+print(gr)
+```
+
+To read bam files the optional bamread-library must be installed. Use `conda
+install -c bioconda bamread` or `pip install bamread` to install it.
+
+`read_bam` takes the arguments `sparse`, `mapq`, `required_flag`, `filter_flag`,
+which have the default values True, 0, 0 and 1540, respectively. With sparse
+True, only the columns `['Chromosome', 'Start', 'End', 'Strand', 'Flag']` are
+fetched. Setting sparse to False additionally gives you the columns `['QueryStart',
+'QueryEnd', 'Name', 'Cigar', 'Quality']`, but is more time and memory-consuming.
+
+All the reader functions also take the flag `as_df`
+
+#### Using `from_dict`
+
+```{python tidy=FALSE}
+f1 = pr.data.f1()
+d = f1.to_example(n=10)
+print(d)
+print(pr.from_dict(d))
+```
+
+[^]: PyRanges uses the pysam library which requires that the bam file must have an index.

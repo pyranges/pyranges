@@ -1,0 +1,52 @@
+# Joining Ranges
+
+You can combine all the intervals that overlap in two PyRanges objects with the join method.
+If you do not use a suffix, the default `_b` is chosen.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.aorta()
+gr2 = pr.data.aorta2()
+print(gr.join(gr2, suffix="_2"))
+```
+
+Both methods also take a strandedness option, which can either be `"same"`, `"opposite"` or `False`/`None`
+
+```{python tidy=FALSE}
+print(gr.join(gr2, strandedness="opposite"))
+```
+
+The join method also takes a how argument, which currently accepts the option
+`"containment"`, `"inner"` (default), `"outer"`, `"left"` and "`right`".
+Containment requires that the intervals in self be completely within the
+intervals in other. The others are similar to SQL-style inner, outer, left and
+right joins.
+
+```{python tidy=FALSE}
+f1 = pr.data.f1()
+f2 = pr.data.f2()
+print(f2.join(f1, how="containment"))
+print(f1.join(f2, how="outer"))
+```
+
+After joining, you can use the method new_position() to find the union or
+intersection of the joined ranges. By default it uses the two first columns containing "Start" and the two first containing "End".
+Otherwise, the columns to be used can be given by the columns argument. 
+
+```{python tidy=FALSE}
+print(f2.join(f1).new_position("intersection"))
+# same as:
+print(f2.join(f1).new_position("intersection", columns=["Start", "End", "Start_b", "End_b"]))
+```
+
+If you want to swap which columns are considered the Start and End, you can use
+the swap argument.
+
+```{python tidy=FALSE}
+gr1, gr2 = pr.data.chipseq(), pr.data.chipseq_background()
+j = gr1.join(gr2)
+print(j)
+j2 = j.new_position("intersection")
+print(j2)
+print(j2.new_position("swap"))
+```

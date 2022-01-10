@@ -1,0 +1,82 @@
+---
+title: "PyRanges documentation"
+author: "Endre Bakken Stovner"
+date: "`r Sys.Date()`"
+site: "bookdown::bookdown_site"
+output:
+  bookdown::gitbook: default
+documentclass: book
+---
+
+# Introduction to PyRanges
+
+PyRanges are collections of intervals that support comparison operations (like
+overlap and intersect) and other methods that are useful for genomic
+analyses. The ranges can have an arbitrary number of meta-data fields, i.e.
+columns associated with them.
+
+The data in PyRanges objects are stored in a pandas dataframe. This means the
+vast Python ecosystem for high-performance scientific computing is available to
+manipulate the data in PyRanges-objects.
+
+
+```{python tidy=FALSE}
+import pyranges as pr
+from pyranges import PyRanges
+
+import pandas as pd
+
+from io import StringIO
+
+f1 = """Chromosome Start End Score Strand
+chr1 4 7 23.8 +
+chr1 6 11 0.13 -
+chr2 0 14 42.42 +"""
+
+df1 = pd.read_csv(StringIO(f1), sep="\s+")
+
+gr1 = PyRanges(df1)
+```
+
+Now we can subset the PyRange in various ways:
+
+```{python}
+print(gr1)
+print(gr1["chr1", 0:5])
+
+print(gr1["chr1", "-", 6:100])
+
+print(gr1.Score)
+```
+
+And we can perform comparison operations with two PyRanges:
+
+```{python}
+f2 = """Chromosome Start End Score Strand
+chr1 5 6 -0.01 -
+chr1 9 12 200 +
+chr3 0 14 21.21 -"""
+
+df2 = pd.read_csv(StringIO(f2), sep="\s+")
+
+gr2 = PyRanges(df2)
+
+print(gr2)
+
+print(gr1.intersect(gr2, strandedness="opposite"))
+
+print(gr1.intersect(gr2, strandedness=False))
+
+```
+
+There are also convenience methods for single PyRanges:
+
+```{python}
+print(gr1.merge())
+```
+
+The underlying dataframe can always be accessed:
+
+```{python}
+print(gr1.df)
+```

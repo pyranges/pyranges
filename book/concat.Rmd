@@ -1,0 +1,20 @@
+# Concatenating PyRanges
+
+A list of PyRanges can be concatenated by using the concat function:
+
+```{python tidy=FALSE}
+import pyranges as pr
+
+import pandas as pd
+
+gr1 = pr.data.f1()
+gr2 = pr.data.f2()
+
+print(gr1)
+
+print(gr2)
+
+concatted = pr.concat([gr1, gr2, gr1])
+
+print(concatted)
+```

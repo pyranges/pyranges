@@ -1,0 +1,47 @@
+# Run Length Encoding dicts
+
+Since you need more than one run length to describe a genome with multiple
+chromosomes, pyranges has a datastructure called PyRles for collections of Rles.
+It can be created from a PyRanges object by invoking the to_rle function.
+
+Rledicts support the arithmetic operations +, -, /, and *.
+
+```{python tidy=FALSE}
+import pyranges as pr
+
+gr = pr.data.chipseq()
+gr_bg = pr.data.chipseq_background()
+
+cs = gr.to_rle()
+print(cs)
+
+bg = gr_bg.to_rle()
+print(bg)
+
+print(cs + bg)
+```
+
+When using arithmetic operations with a stranded and an unstranded PyRle, the
+stranded PyRle is automatically demoted to an unstranded PyRle.
+
+```{python tidy=FALSE}
+
+
+bg_stranded = gr_bg.to_rle(strand=True)
+print(bg_stranded)
+
+print(cs + bg_stranded)
+```
+
+Like Rles, PyGRles supports arithmetic operations with numbers.
+
+```{python tidy=FALSE}
+
+print((0.67 + cs) * 5)
+```
+
+You can subset an Rledict with a pyranges:
+
+```{python tidy=FALSE}
+print(bg[gr_bg])
+```

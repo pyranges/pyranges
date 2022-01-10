@@ -1,0 +1,28 @@
+# Using multiple cores
+
+Most PyRanges and PyRle-operations can be run in parallel. Even user-made
+functions can be run in parallel using the apply, apply_pair or apply_chunks
+methods.
+
+```
+import pyranges as pr
+gr = pr.data.chipseq()
+gr2 = pr.data.chipseq_background()
+gr.intersect(gr3, nb_cpu=5)
+```
+
+PyRanges uses Ray, a "flexible, high-performance distributed execution
+framework" to run in parallel-mode. As Ray is a rather heavy dependency, it is
+not automatically installed with pyranges, but can easily be installed using
+conda or pip.
+
+All pyranges-methods take a flag `nb_cpu`. It lets you run the method with
+nb_cpu cores. As it uses Ray behind the scenes, it will fail if Ray is already
+initialized. To use `nb_cpu` with pyrle methods, you need to use r.add(r2,
+nb_cpu=48), not r + r2.
+
+Note: By default PyRanges uses no extra cores. Unless the data are reasonably
+big or the functions are very long-running, running in parallel-mode is actually
+more time-consuming than single-core mode. Also, if the PyRanges contains a lot
+of text data, there might be less to be gained by using multithreading. This is
+due to how strings are represented in memory in Python and Pandas.
