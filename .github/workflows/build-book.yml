@@ -7,18 +7,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.3.1
 
-      - name: Install and Build # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+      - name: Add conda to system path
         run: |
-          mkdir -p build
-          echo '<a href="https://pyranges.readthedocs.io/en/master/autoapi/pyranges/index.html">The docs have moved to https://pyranges.readthedocs.io/en/master/autoapi/pyranges/index.html</a>' > build/index.html
+          # $CONDA is an environment variable pointing to the root of the miniconda directory
+          echo $CONDA/bin >> $GITHUB_PATH
+  
+      - name: Install dependencies
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels bioconda
+          conda config --add channels r
+          conda install mamba -n base -c conda-forge
+          mamba install -c r r
+          mamba install -c conda-forge r-reticulate
+          mamba install -c conda-forge r-bookdown
+          mamba install -y conda-forge::ncurses
+
+      - name: Build book
+        run: |
+          cd book
+          Rscript compile.R
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.9
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: build # The folder the action should deploy.
+          folder: book  # The folder the action should deploy.
 
-# r, reticulate, bookdown
-# mysql, pyranges_db
-
-# remember to remove suffixes from pyranges code
