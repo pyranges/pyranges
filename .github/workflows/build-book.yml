@@ -11,6 +11,12 @@ jobs:
         run: |
           # $CONDA is an environment variable pointing to the root of the miniconda directory
           echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Install pyranges
+        run: |
+          pip install cython
+          pip install sorted_nearest
+          python setup.py install
   
       - name: Install dependencies
         run: |
