@@ -20,8 +20,10 @@ jobs:
           conda install mamba -n base -c conda-forge
           mamba install -c r r
           mamba install -c conda-forge r-reticulate
-          mamba install -c conda-forge r-bookdown
+          # mamba install -c conda-forge r-bookdown
           mamba install -y conda-forge::ncurses
+          echo 'install.packages("bookdown")' > install.R
+          Rscript install.R
 
       - name: Build book
         run: |
