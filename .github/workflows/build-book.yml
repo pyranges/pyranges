@@ -30,6 +30,7 @@ jobs:
           mamba install -y conda-forge::ncurses
           mamba install -c conda-forge matplotlib
           mamba install -c conda-forge pandoc
+          pip install pybigwig
           echo 'install.packages("bookdown")' > install.R
           Rscript install.R
 
