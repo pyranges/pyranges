@@ -22,6 +22,8 @@ jobs:
           mamba install -c conda-forge r-reticulate
           # mamba install -c conda-forge r-bookdown
           mamba install -y conda-forge::ncurses
+          mamba install -c conda-forge matplotlib
+
           echo 'install.packages("bookdown")' > install.R
           Rscript install.R
 
