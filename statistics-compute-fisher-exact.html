@@ -191,18 +191,18 @@ the package fisher installed.</p>
 ## /usr/share/miniconda/lib/python3.9/site-packages/pyranges-0.0.115-py3.9.egg/pyranges/statistics.py:163: RuntimeWarning: invalid value encountered in true_divide</code></pre>
 <div class="sourceCode" id="cb247"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb247-1"><a href="statistics-compute-fisher-exact.html#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fe)</span></code></pre></div>
 <pre><code>##          OR         P     PLeft    PRight
-## 0  2.023810  0.358723  0.924905  0.206800
-## 1  0.736842  0.600905  0.382731  0.798449
-## 2       inf  0.002199  1.000000  0.002199
-## 3       inf  0.003008  1.000000  0.003008
-## 4  0.267857  0.148878  0.118295  0.977131</code></pre>
+## 0  0.047619  0.066667  0.066667  0.997980
+## 1  0.606061  0.657020  0.467447  0.844353
+## 2  2.363636  0.595556  0.902222  0.471111
+## 3  0.788927  0.802224  0.413398  0.764532
+## 4  0.820513  1.000000  0.544464  0.734860</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
 <div class="sourceCode" id="cb249"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb249-1"><a href="statistics-compute-fisher-exact.html#cb249-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pr.stats.fdr(fe.P))</span></code></pre></div>
-<pre><code>## 0    0.448404
-## 1    0.600905
-## 2    0.010995
-## 3    0.007519
-## 4    0.248131
+<pre><code>## 0    0.333333
+## 1    1.000000
+## 2    1.000000
+## 3    1.000000
+## 4    1.000000
 ## Name: P, dtype: float64</code></pre>
 
 </div>
