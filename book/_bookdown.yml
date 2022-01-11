@@ -8,7 +8,8 @@ rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
 "colocalization.Rmd", "simes.Rmd", "fisher_exact.Rmd", "mcc.Rmd",
 "rowbased_statistics.Rmd", "coverage.Rmd", "runlengths.Rmd",
 "runlength_dict.Rmd", "subsetting_rles.Rmd", "subsetting_pyrles.Rmd",
-"multithreading.Rmd", "genomicfeatures.Rmd", "databases.Rmd"]
+"multithreading.Rmd", "genomicfeatures.Rmd"]
+# , "databases.Rmd"] # not working. Test by itself?
 
  # rmd_files: ["runlengths.Rmd"]
 # rmd_files: ["multithreading.Rmd"]
