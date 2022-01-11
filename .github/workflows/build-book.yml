@@ -17,6 +17,8 @@ jobs:
           pip install cython
           pip install sorted_nearest
           python setup.py install
+          pip install bamread 
+          pip install fisher
   
       - name: Install dependencies
         run: |
