@@ -1,4 +1,4 @@
-delete_merged_file: true
+delete_merged_file: false
 
 rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
 "manipulation.Rmd", "concat.Rmd", "piping.Rmd", "printing.Rmd", "iterate.Rmd",
