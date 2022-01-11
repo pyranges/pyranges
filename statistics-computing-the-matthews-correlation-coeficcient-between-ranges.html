@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="loadingcreating-pyranges.html">
+<link rel="prev" href="statistics-compute-fisher-exact.html">
+<link rel="next" href="statistics-rowbased-operations.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -175,121 +175,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Subsetting PyRanges</h1>
-<h4 class="author"><em>Endre Bakken Stovner</em></h4>
-<h4 class="date"><em>2022-01-11</em></h4>
-</div>
-<div id="introduction-to-pyranges" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction to PyRanges</h1>
-<p>PyRanges are collections of intervals that support comparison operations (like
-overlap and intersect) and other methods that are useful for genomic
-analyses. The ranges can have an arbitrary number of meta-data fields, i.e.
-columns associated with them.</p>
-<p>The data in PyRanges objects are stored in a pandas dataframe. This means the
-vast Python ecosystem for high-performance scientific computing is available to
-manipulate the data in PyRanges-objects.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
-<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyranges <span class="im">import</span> PyRanges</span>
-<span id="cb1-3"><a href="index.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="index.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> StringIO</span>
-<span id="cb1-5"><a href="index.html#cb1-5" aria-hidden="true" tabindex="-1"></a>f1 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></span>
-<span id="cb1-6"><a href="index.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 4 7 23.8 +</span></span>
-<span id="cb1-7"><a href="index.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 6 11 0.13 -</span></span>
-<span id="cb1-8"><a href="index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">chr2 0 14 42.42 +&quot;&quot;&quot;</span></span>
-<span id="cb1-9"><a href="index.html#cb1-9" aria-hidden="true" tabindex="-1"></a>df1 <span class="op">=</span> pd.read_csv(StringIO(f1), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</span>
-<span id="cb1-10"><a href="index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>gr1 <span class="op">=</span> PyRanges(df1)</span></code></pre></div>
-<p>Now we can subset the PyRange in various ways:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1)</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         4 |         7 |       23.8  | +            |
-## | chr1         |         6 |        11 |        0.13 | -            |
-## | chr2         |         0 |        14 |       42.42 | +            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="dv">0</span>:<span class="dv">5</span>])</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         4 |         7 |        23.8 | +            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">6</span>:<span class="dv">100</span>])</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         6 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.Score)</span></code></pre></div>
-<pre><code>## 0    23.80
-## 1     0.13
-## 2    42.42
-## Name: Score, dtype: float64</code></pre>
-<p>And we can perform comparison operations with two PyRanges:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true" tabindex="-1"></a>f2 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></span>
-<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 5 6 -0.01 -</span></span>
-<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 9 12 200 +</span></span>
-<span id="cb10-4"><a href="index.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">chr3 0 14 21.21 -&quot;&quot;&quot;</span></span>
-<span id="cb10-5"><a href="index.html#cb10-5" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.read_csv(StringIO(f2), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</span>
-<span id="cb10-6"><a href="index.html#cb10-6" aria-hidden="true" tabindex="-1"></a>gr2 <span class="op">=</span> PyRanges(df2)</span>
-<span id="cb10-7"><a href="index.html#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr2)</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         9 |        12 |      200    | +            |
-## | chr1         |         5 |         6 |       -0.01 | -            |
-## | chr3         |         0 |        14 |       21.21 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="index.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="va">False</span>))</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<p>There are also convenience methods for single PyRanges:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="index.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.merge())</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+
-## | Chromosome   |     Start |       End | Strand       |
-## | (category)   |   (int32) |   (int32) | (category)   |
-## |--------------+-----------+-----------+--------------|
-## | chr1         |         4 |         7 | +            |
-## | chr1         |         6 |        11 | -            |
-## | chr2         |         0 |        14 | +            |
-## +--------------+-----------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<p>The underlying dataframe can always be accessed:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="index.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.df)</span></code></pre></div>
-<pre><code>##   Chromosome  Start  End  Score Strand
-## 0       chr1      4    7  23.80      +
-## 1       chr1      6   11   0.13      -
-## 2       chr2      0   14  42.42      +</code></pre>
+<div id="statistics-computing-the-matthews-correlation-coeficcient-between-ranges" class="section level1" number="23">
+<h1><span class="header-section-number">23</span> Statistics: computing the Matthews correlation coeficcient between ranges</h1>
+<p>The Matthews correlation coefficient is a correlation coefficient that works
+well when the classes of data are really imbalanced. For this reason it works
+well when you want to compare the correlation between two ranges.</p>
+<p>If you want to compute the MCC between two or more ranges, you can use
+<code>pr.stat.mcc</code>. You need to give the chromosome sizes as a pyrange. You can get
+these using pyranges_db.</p>
+<div class="sourceCode" id="cb251"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb251-1"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb251-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
+<span id="cb251-2"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb251-2" aria-hidden="true" tabindex="-1"></a>gr <span class="op">=</span> pr.data.chipseq()</span>
+<span id="cb251-3"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb251-3" aria-hidden="true" tabindex="-1"></a>gr2 <span class="op">=</span> pr.data.chipseq_background()</span>
+<span id="cb251-4"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb251-4" aria-hidden="true" tabindex="-1"></a>chromsizes <span class="op">=</span> pr.data.chromsizes()</span>
+<span id="cb251-5"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb251-5" aria-hidden="true" tabindex="-1"></a>mcc <span class="op">=</span> pr.stats.mcc([gr, gr2], labels<span class="op">=</span><span class="st">&quot;chip input&quot;</span>.split(), genome<span class="op">=</span>chromsizes, strand<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb251-6"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb251-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mcc)</span></code></pre></div>
+<pre><code>##        T      F Strand      TP      FP          TN      FN       MCC
+## 0   chip   chip      +  125235       0  3095568748       0  1.000000
+## 1   chip   chip      -  122745       0  3095571238       0  1.000000
+## 2   chip  input      +       3  114576  3095454172  125232 -0.000014
+## 4   chip  input      -       0  118126  3095453112  122745 -0.000039
+## 3  input   chip      +       3  125232  3095454172  114576 -0.000014
+## 5  input   chip      -       0  122745  3095453112  118126 -0.000039
+## 6  input  input      +  114579       0  3095579404       0  1.000000
+## 7  input  input      -  118126       0  3095575857       0  1.000000</code></pre>
+<p>If you want to create a symmetric matrix from the result:</p>
+<div class="sourceCode" id="cb253"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb253-1"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb253-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">print</span>(mcc.set_index([<span class="st">&quot;Strand&quot;</span>, <span class="st">&quot;T&quot;</span>, <span class="st">&quot;F&quot;</span>]).MCC.unstack()))</span>
+<span id="cb253-2"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html#cb253-2" aria-hidden="true" tabindex="-1"></a><span class="co"># or just mcc.set_index([&quot;T&quot;, &quot;F&quot;]).MCC.unstack() in the unstranded case</span></span></code></pre></div>
+<pre><code>## F                 chip     input
+## Strand T                        
+## +      chip   1.000000 -0.000014
+##        input -0.000014  1.000000
+## -      chip   1.000000 -0.000039
+##        input -0.000039  1.000000
+## None</code></pre>
 
 </div>
             </section>
@@ -297,8 +215,8 @@ manipulate the data in PyRanges-objects.</p>
           </div>
         </div>
       </div>
-
-<a href="loadingcreating-pyranges.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="statistics-compute-fisher-exact.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="statistics-rowbased-operations.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

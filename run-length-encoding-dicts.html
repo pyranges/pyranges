@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="loadingcreating-pyranges.html">
+<link rel="prev" href="an-introduction-to-rles.html">
+<link rel="next" href="subsetting-rles.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -175,121 +175,142 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Subsetting PyRanges</h1>
-<h4 class="author"><em>Endre Bakken Stovner</em></h4>
-<h4 class="date"><em>2022-01-11</em></h4>
-</div>
-<div id="introduction-to-pyranges" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction to PyRanges</h1>
-<p>PyRanges are collections of intervals that support comparison operations (like
-overlap and intersect) and other methods that are useful for genomic
-analyses. The ranges can have an arbitrary number of meta-data fields, i.e.
-columns associated with them.</p>
-<p>The data in PyRanges objects are stored in a pandas dataframe. This means the
-vast Python ecosystem for high-performance scientific computing is available to
-manipulate the data in PyRanges-objects.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
-<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyranges <span class="im">import</span> PyRanges</span>
-<span id="cb1-3"><a href="index.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="index.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> StringIO</span>
-<span id="cb1-5"><a href="index.html#cb1-5" aria-hidden="true" tabindex="-1"></a>f1 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></span>
-<span id="cb1-6"><a href="index.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 4 7 23.8 +</span></span>
-<span id="cb1-7"><a href="index.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 6 11 0.13 -</span></span>
-<span id="cb1-8"><a href="index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">chr2 0 14 42.42 +&quot;&quot;&quot;</span></span>
-<span id="cb1-9"><a href="index.html#cb1-9" aria-hidden="true" tabindex="-1"></a>df1 <span class="op">=</span> pd.read_csv(StringIO(f1), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</span>
-<span id="cb1-10"><a href="index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>gr1 <span class="op">=</span> PyRanges(df1)</span></code></pre></div>
-<p>Now we can subset the PyRange in various ways:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1)</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         4 |         7 |       23.8  | +            |
-## | chr1         |         6 |        11 |        0.13 | -            |
-## | chr2         |         0 |        14 |       42.42 | +            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="dv">0</span>:<span class="dv">5</span>])</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         4 |         7 |        23.8 | +            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">6</span>:<span class="dv">100</span>])</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         6 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.Score)</span></code></pre></div>
-<pre><code>## 0    23.80
-## 1     0.13
-## 2    42.42
-## Name: Score, dtype: float64</code></pre>
-<p>And we can perform comparison operations with two PyRanges:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true" tabindex="-1"></a>f2 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></span>
-<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 5 6 -0.01 -</span></span>
-<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 9 12 200 +</span></span>
-<span id="cb10-4"><a href="index.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">chr3 0 14 21.21 -&quot;&quot;&quot;</span></span>
-<span id="cb10-5"><a href="index.html#cb10-5" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.read_csv(StringIO(f2), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</span>
-<span id="cb10-6"><a href="index.html#cb10-6" aria-hidden="true" tabindex="-1"></a>gr2 <span class="op">=</span> PyRanges(df2)</span>
-<span id="cb10-7"><a href="index.html#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr2)</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         9 |        12 |      200    | +            |
-## | chr1         |         5 |         6 |       -0.01 | -            |
-## | chr3         |         0 |        14 |       21.21 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="index.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="va">False</span>))</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<p>There are also convenience methods for single PyRanges:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="index.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.merge())</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+
-## | Chromosome   |     Start |       End | Strand       |
-## | (category)   |   (int32) |   (int32) | (category)   |
-## |--------------+-----------+-----------+--------------|
-## | chr1         |         4 |         7 | +            |
-## | chr1         |         6 |        11 | -            |
-## | chr2         |         0 |        14 | +            |
-## +--------------+-----------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<p>The underlying dataframe can always be accessed:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="index.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.df)</span></code></pre></div>
-<pre><code>##   Chromosome  Start  End  Score Strand
-## 0       chr1      4    7  23.80      +
-## 1       chr1      6   11   0.13      -
-## 2       chr2      0   14  42.42      +</code></pre>
+<div id="run-length-encoding-dicts" class="section level1" number="27">
+<h1><span class="header-section-number">27</span> Run Length Encoding dicts</h1>
+<p>Since you need more than one run length to describe a genome with multiple
+chromosomes, pyranges has a datastructure called PyRles for collections of Rles.
+It can be created from a PyRanges object by invoking the to_rle function.</p>
+<p>Rledicts support the arithmetic operations +, -, /, and *.</p>
+<div class="sourceCode" id="cb289"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb289-1"><a href="run-length-encoding-dicts.html#cb289-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
+<span id="cb289-2"><a href="run-length-encoding-dicts.html#cb289-2" aria-hidden="true" tabindex="-1"></a>gr <span class="op">=</span> pr.data.chipseq()</span>
+<span id="cb289-3"><a href="run-length-encoding-dicts.html#cb289-3" aria-hidden="true" tabindex="-1"></a>gr_bg <span class="op">=</span> pr.data.chipseq_background()</span>
+<span id="cb289-4"><a href="run-length-encoding-dicts.html#cb289-4" aria-hidden="true" tabindex="-1"></a>cs <span class="op">=</span> gr.to_rle()</span>
+<span id="cb289-5"><a href="run-length-encoding-dicts.html#cb289-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cs)</span></code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+---------+-------+------+-----------+------+
+## | Runs   | 1541598   | 25   | 57498   | ...   | 25   | 1156833   | 25   |
+## |--------+-----------+------+---------+-------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0     | ...   | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+---------+-------+------+-----------+------+
+## Rle of length 247134924 containing 894 elements (avg. length 276437.275)
+## ...
+## chrY -
+## +--------+-----------+------+----------+-------+------+----------+------+
+## | Runs   | 7046809   | 25   | 358542   | ...   | 25   | 156610   | 25   |
+## |--------+-----------+------+----------+-------+------+----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | ...   | 1.0  | 0.0      | 1.0  |
+## +--------+-----------+------+----------+-------+------+----------+------+
+## Rle of length 22210662 containing 32 elements (avg. length 694083.188)
+## RleDict object with 48 chromosomes/strand pairs.</code></pre>
+<div class="sourceCode" id="cb291"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb291-1"><a href="run-length-encoding-dicts.html#cb291-1" aria-hidden="true" tabindex="-1"></a>bg <span class="op">=</span> gr_bg.to_rle()</span>
+<span id="cb291-2"><a href="run-length-encoding-dicts.html#cb291-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(bg)</span></code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+-----------+-------+------+-----------+------+
+## | Runs   | 1041102   | 25   | 1088232   | ...   | 25   | 1774357   | 25   |
+## |--------+-----------+------+-----------+-------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0       | ...   | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+-----------+-------+------+-----------+------+
+## Rle of length 245614348 containing 724 elements (avg. length 339246.337)
+## ...
+## chrY -
+## +--------+------------+------+--------+-------+------+------------+------+
+## | Runs   | 10629111   | 25   | 3320   | ...   | 25   | 45465323   | 25   |
+## |--------+------------+------+--------+-------+------+------------+------|
+## | Values | 0.0        | 1.0  | 0.0    | ...   | 1.0  | 0.0        | 1.0  |
+## +--------+------------+------+--------+-------+------+------------+------+
+## Rle of length 57402239 containing 10 elements (avg. length 5740223.9)
+## RleDict object with 50 chromosomes/strand pairs.</code></pre>
+<div class="sourceCode" id="cb293"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb293-1"><a href="run-length-encoding-dicts.html#cb293-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cs <span class="op">+</span> bg)</span></code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+----------+-------+------+-----------+------+
+## | Runs   | 1041102   | 25   | 500471   | ...   | 25   | 1156833   | 25   |
+## |--------+-----------+------+----------+-------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | ...   | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+----------+-------+------+-----------+------+
+## Rle of length 247134924 containing 1618 elements (avg. length 152740.991)
+## ...
+## chrY -
+## +--------+-----------+------+----------+-------+------+------------+------+
+## | Runs   | 7046809   | 25   | 358542   | ...   | 25   | 35191552   | 25   |
+## |--------+-----------+------+----------+-------+------+------------+------|
+## | Values | 0.0       | 1.0  | 0.0      | ...   | 1.0  | 0.0        | 1.0  |
+## +--------+-----------+------+----------+-------+------+------------+------+
+## Rle of length 57402239 containing 42 elements (avg. length 1366719.976)
+## RleDict object with 50 chromosomes/strand pairs.</code></pre>
+<p>When using arithmetic operations with a stranded and an unstranded PyRle, the
+stranded PyRle is automatically demoted to an unstranded PyRle.</p>
+<div class="sourceCode" id="cb295"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb295-1"><a href="run-length-encoding-dicts.html#cb295-1" aria-hidden="true" tabindex="-1"></a>bg_stranded <span class="op">=</span> gr_bg.to_rle(strand<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb295-2"><a href="run-length-encoding-dicts.html#cb295-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(bg_stranded)</span></code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+-----------+-------+------+-----------+------+
+## | Runs   | 1041102   | 25   | 1088232   | ...   | 25   | 1774357   | 25   |
+## |--------+-----------+------+-----------+-------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0       | ...   | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+-----------+-------+------+-----------+------+
+## Rle of length 245614348 containing 724 elements (avg. length 339246.337)
+## ...
+## chrY -
+## +--------+------------+------+--------+-------+------+------------+------+
+## | Runs   | 10629111   | 25   | 3320   | ...   | 25   | 45465323   | 25   |
+## |--------+------------+------+--------+-------+------+------------+------|
+## | Values | 0.0        | 1.0  | 0.0    | ...   | 1.0  | 0.0        | 1.0  |
+## +--------+------------+------+--------+-------+------+------------+------+
+## Rle of length 57402239 containing 10 elements (avg. length 5740223.9)
+## RleDict object with 50 chromosomes/strand pairs.</code></pre>
+<div class="sourceCode" id="cb297"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb297-1"><a href="run-length-encoding-dicts.html#cb297-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cs <span class="op">+</span> bg_stranded)</span></code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+----------+-------+------+-----------+------+
+## | Runs   | 1041102   | 25   | 500471   | ...   | 25   | 1156833   | 25   |
+## |--------+-----------+------+----------+-------+------+-----------+------|
+## | Values | 0.0       | 1.0  | 0.0      | ...   | 1.0  | 0.0       | 1.0  |
+## +--------+-----------+------+----------+-------+------+-----------+------+
+## Rle of length 247134924 containing 1618 elements (avg. length 152740.991)
+## ...
+## chrY -
+## +--------+-----------+------+----------+-------+------+------------+------+
+## | Runs   | 7046809   | 25   | 358542   | ...   | 25   | 35191552   | 25   |
+## |--------+-----------+------+----------+-------+------+------------+------|
+## | Values | 0.0       | 1.0  | 0.0      | ...   | 1.0  | 0.0        | 1.0  |
+## +--------+-----------+------+----------+-------+------+------------+------+
+## Rle of length 57402239 containing 42 elements (avg. length 1366719.976)
+## RleDict object with 50 chromosomes/strand pairs.</code></pre>
+<p>Like Rles, PyGRles supports arithmetic operations with numbers.</p>
+<div class="sourceCode" id="cb299"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb299-1"><a href="run-length-encoding-dicts.html#cb299-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((<span class="fl">0.67</span> <span class="op">+</span> cs) <span class="op">*</span> <span class="dv">5</span>)</span></code></pre></div>
+<pre><code>## chr1 +
+## +--------+-----------+------+---------+-------+------+-----------+------+
+## | Runs   | 1541598   | 25   | 57498   | ...   | 25   | 1156833   | 25   |
+## |--------+-----------+------+---------+-------+------+-----------+------|
+## | Values | 3.35      | 8.35 | 3.35    | ...   | 8.35 | 3.35      | 8.35 |
+## +--------+-----------+------+---------+-------+------+-----------+------+
+## Rle of length 247134924 containing 894 elements (avg. length 276437.275)
+## ...
+## chrY -
+## +--------+-----------+------+----------+-------+------+----------+------+
+## | Runs   | 7046809   | 25   | 358542   | ...   | 25   | 156610   | 25   |
+## |--------+-----------+------+----------+-------+------+----------+------|
+## | Values | 3.35      | 8.35 | 3.35     | ...   | 8.35 | 3.35     | 8.35 |
+## +--------+-----------+------+----------+-------+------+----------+------+
+## Rle of length 22210662 containing 32 elements (avg. length 694083.188)
+## RleDict object with 48 chromosomes/strand pairs.</code></pre>
+<p>You can subset an Rledict with a pyranges:</p>
+<div class="sourceCode" id="cb301"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb301-1"><a href="run-length-encoding-dicts.html#cb301-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(bg[gr_bg])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+-----------+-------+
+## | Chromosome   | Start     | End       | ID        | Run       | +2    |
+## | (object)     | (int64)   | (int64)   | (int64)   | (int64)   | ...   |
+## |--------------+-----------+-----------+-----------+-----------+-------|
+## | chr1         | 39036822  | 39036847  | 0         | 25        | ...   |
+## | chr1         | 224145989 | 224146014 | 1         | 25        | ...   |
+## | chr1         | 167802964 | 167802989 | 2         | 25        | ...   |
+## | chr1         | 69101066  | 69101091  | 3         | 25        | ...   |
+## | ...          | ...       | ...       | ...       | ...       | ...   |
+## | chrY         | 11936866  | 11936891  | 1         | 25        | ...   |
+## | chrY         | 10629111  | 10629136  | 2         | 25        | ...   |
+## | chrY         | 10632456  | 10632481  | 3         | 25        | ...   |
+## | chrY         | 11918814  | 11918839  | 4         | 25        | ...   |
+## +--------------+-----------+-----------+-----------+-----------+-------+
+## Stranded PyRanges object has 10,004 rows and 7 columns from 25 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.
+## 2 hidden columns: Value, Strand</code></pre>
 
 </div>
             </section>
@@ -297,8 +318,8 @@ manipulate the data in PyRanges-objects.</p>
           </div>
         </div>
       </div>
-
-<a href="loadingcreating-pyranges.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="an-introduction-to-rles.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="subsetting-rles.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

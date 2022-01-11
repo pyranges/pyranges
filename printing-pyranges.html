@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="loadingcreating-pyranges.html">
+<link rel="prev" href="piping-pyranges.html">
+<link rel="next" href="iterating-over-pyranges.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -175,121 +175,108 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Subsetting PyRanges</h1>
-<h4 class="author"><em>Endre Bakken Stovner</em></h4>
-<h4 class="date"><em>2022-01-11</em></h4>
-</div>
-<div id="introduction-to-pyranges" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction to PyRanges</h1>
-<p>PyRanges are collections of intervals that support comparison operations (like
-overlap and intersect) and other methods that are useful for genomic
-analyses. The ranges can have an arbitrary number of meta-data fields, i.e.
-columns associated with them.</p>
-<p>The data in PyRanges objects are stored in a pandas dataframe. This means the
-vast Python ecosystem for high-performance scientific computing is available to
-manipulate the data in PyRanges-objects.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
-<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyranges <span class="im">import</span> PyRanges</span>
-<span id="cb1-3"><a href="index.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="index.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> StringIO</span>
-<span id="cb1-5"><a href="index.html#cb1-5" aria-hidden="true" tabindex="-1"></a>f1 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></span>
-<span id="cb1-6"><a href="index.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 4 7 23.8 +</span></span>
-<span id="cb1-7"><a href="index.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 6 11 0.13 -</span></span>
-<span id="cb1-8"><a href="index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">chr2 0 14 42.42 +&quot;&quot;&quot;</span></span>
-<span id="cb1-9"><a href="index.html#cb1-9" aria-hidden="true" tabindex="-1"></a>df1 <span class="op">=</span> pd.read_csv(StringIO(f1), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</span>
-<span id="cb1-10"><a href="index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>gr1 <span class="op">=</span> PyRanges(df1)</span></code></pre></div>
-<p>Now we can subset the PyRange in various ways:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1)</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         4 |         7 |       23.8  | +            |
-## | chr1         |         6 |        11 |        0.13 | -            |
-## | chr2         |         0 |        14 |       42.42 | +            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="dv">0</span>:<span class="dv">5</span>])</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         4 |         7 |        23.8 | +            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1[<span class="st">&quot;chr1&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">6</span>:<span class="dv">100</span>])</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         6 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.Score)</span></code></pre></div>
-<pre><code>## 0    23.80
-## 1     0.13
-## 2    42.42
-## Name: Score, dtype: float64</code></pre>
-<p>And we can perform comparison operations with two PyRanges:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true" tabindex="-1"></a>f2 <span class="op">=</span> <span class="st">&quot;&quot;&quot;Chromosome Start End Score Strand</span></span>
-<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 5 6 -0.01 -</span></span>
-<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">chr1 9 12 200 +</span></span>
-<span id="cb10-4"><a href="index.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">chr3 0 14 21.21 -&quot;&quot;&quot;</span></span>
-<span id="cb10-5"><a href="index.html#cb10-5" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.read_csv(StringIO(f2), sep<span class="op">=</span><span class="st">&quot;\s+&quot;</span>)</span>
-<span id="cb10-6"><a href="index.html#cb10-6" aria-hidden="true" tabindex="-1"></a>gr2 <span class="op">=</span> PyRanges(df2)</span>
-<span id="cb10-7"><a href="index.html#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr2)</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         9 |        12 |      200    | +            |
-## | chr1         |         5 |         6 |       -0.01 | -            |
-## | chr3         |         0 |        14 |       21.21 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="st">&quot;opposite&quot;</span>))</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="index.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.intersect(gr2, strandedness<span class="op">=</span><span class="va">False</span>))</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------------+--------------+
-## | Chromosome   |     Start |       End |       Score | Strand       |
-## | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
-## |--------------+-----------+-----------+-------------+--------------|
-## | chr1         |         5 |         6 |       23.8  | +            |
-## | chr1         |         9 |        11 |        0.13 | -            |
-## +--------------+-----------+-----------+-------------+--------------+
-## Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<p>There are also convenience methods for single PyRanges:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="index.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.merge())</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+--------------+
-## | Chromosome   |     Start |       End | Strand       |
-## | (category)   |   (int32) |   (int32) | (category)   |
-## |--------------+-----------+-----------+--------------|
-## | chr1         |         4 |         7 | +            |
-## | chr1         |         6 |        11 | -            |
-## | chr2         |         0 |        14 | +            |
-## +--------------+-----------+-----------+--------------+
-## Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
-<p>The underlying dataframe can always be accessed:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="index.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr1.df)</span></code></pre></div>
-<pre><code>##   Chromosome  Start  End  Score Strand
-## 0       chr1      4    7  23.80      +
-## 1       chr1      6   11   0.13      -
-## 2       chr2      0   14  42.42      +</code></pre>
+<div id="printing-pyranges" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Printing PyRanges</h1>
+<p>There are 10 helper methods for printing PyRanges. These are p/print (regular print),
+mp (merged position print), sp (sorted print), msp (merged position sorted
+print) and rp (raw print).</p>
+<p>Merged means that the information about Chromosome, Start, End and Strand (if
+applicable) are merged into one column for printing. Sorted means that the
+output is sorted on position and Strand. Regular print shows the + strand first
+and - strand second, so if you want to display interleaved intervals from both
+strands, sorted print is the way to do it.</p>
+<p>Raw print (rp) just prints the underlying dict of dataframes.</p>
+<p>All print methods except rp take an n-argument to control how many entries should be displayed.</p>
+<p>The pc, mpc, spc, mspc and rpc also return the pyranges so that print methods
+can be used to display intermediate results in pipes.</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb96-1"><a href="printing-pyranges.html#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
+<span id="cb96-2"><a href="printing-pyranges.html#cb96-2" aria-hidden="true" tabindex="-1"></a>exons <span class="op">=</span> pr.data.exons()</span>
+<span id="cb96-3"><a href="printing-pyranges.html#cb96-3" aria-hidden="true" tabindex="-1"></a>exons.pc(n<span class="op">=</span><span class="dv">2</span>).mpc(n<span class="op">=</span><span class="dv">8</span>).sp()</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-------+
+## | Chromosome   | Start     | End       | +3    |
+## | (category)   | (int32)   | (int32)   | ...   |
+## |--------------+-----------+-----------+-------|
+## | chrX         | 135721701 | 135721963 | ...   |
+## | ...          | ...       | ...       | ...   |
+## | chrY         | 15467254  | 15467278  | ...   |
+## +--------------+-----------+-----------+-------+
+## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.
+## 3 hidden columns: Name, Score, Strand
+## +----------------------------+----------------------------------------+-----------+
+## | - Position -               | Name                                   | Score     |
+## | (Multiple types)           | (object)                               | (int64)   |
+## |----------------------------+----------------------------------------+-----------|
+## | chrX 135721701-135721963 + | NR_038462_exon_0_0_chrX_135721702_f    | 0         |
+## | chrX 135574120-135574598 + | NM_001727_exon_2_0_chrX_135574121_f    | 0         |
+## | chrX 47868945-47869126 +   | NM_205856_exon_4_0_chrX_47868946_f     | 0         |
+## | chrX 77294333-77294480 +   | NM_000052_exon_17_0_chrX_77294334_f    | 0         |
+## | ...                        | ...                                    | ...       |
+## | chrY 15409586-15409728 -   | NR_047633_exon_3_0_chrY_15409587_r     | 0         |
+## | chrY 15478146-15478273 -   | NR_047634_exon_18_0_chrY_15478147_r    | 0         |
+## | chrY 15360258-15361762 -   | NR_047601_exon_0_0_chrY_15360259_r     | 0         |
+## | chrY 15467254-15467278 -   | NM_001258270_exon_13_0_chrY_15467255_r | 0         |
+## +----------------------------+----------------------------------------+-----------+
+## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.
+## +--------------+-----------+-----------+-------+
+## | Chromosome   | Start     | End       | +3    |
+## | (category)   | (int32)   | (int32)   | ...   |
+## |--------------+-----------+-----------+-------|
+## | chrX         | 585078    | 585337    | ...   |
+## | chrX         | 1393647   | 1393735   | ...   |
+## | chrX         | 1393647   | 1393735   | ...   |
+## | chrX         | 1404670   | 1404813   | ...   |
+## | chrX         | 1407411   | 1407535   | ...   |
+## | chrX         | 1407651   | 1407781   | ...   |
+## | chrX         | 1414319   | 1414349   | ...   |
+## | chrX         | 1419383   | 1419519   | ...   |
+## | chrX         | 1424338   | 1424420   | ...   |
+## | chrX         | 1424338   | 1424420   | ...   |
+## | chrX         | 1475113   | 1475229   | ...   |
+## | chrX         | 1510791   | 1511039   | ...   |
+## | chrX         | 1553914   | 1553976   | ...   |
+## | chrX         | 1554586   | 1554651   | ...   |
+## | chrX         | 1734025   | 1734161   | ...   |
+## | ...          | ...       | ...       | ...   |
+## | chrY         | 25336491  | 25336631  | ...   |
+## | chrY         | 26778138  | 26778263  | ...   |
+## | chrY         | 26952215  | 26952307  | ...   |
+## | chrY         | 26979966  | 26980276  | ...   |
+## | chrY         | 26998146  | 26998238  | ...   |
+## | chrY         | 26998798  | 26998850  | ...   |
+## | chrY         | 26999286  | 26999350  | ...   |
+## | chrY         | 27003422  | 27003494  | ...   |
+## | chrY         | 27041834  | 27041906  | ...   |
+## | chrY         | 27197822  | 27197945  | ...   |
+## | chrY         | 27197822  | 27197945  | ...   |
+## | chrY         | 27606238  | 27606322  | ...   |
+## | chrY         | 27606238  | 27606322  | ...   |
+## | chrY         | 59222126  | 59222216  | ...   |
+## | chrY         | 59233166  | 59233257  | ...   |
+## +--------------+-----------+-----------+-------+
+## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome, Start, End and Strand.
+## 3 hidden columns: Name, Score, Strand</code></pre>
+<div class="sourceCode" id="cb98"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb98-1"><a href="printing-pyranges.html#cb98-1" aria-hidden="true" tabindex="-1"></a>exons.<span class="bu">print</span>(n<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb98-2"><a href="printing-pyranges.html#cb98-2" aria-hidden="true" tabindex="-1"></a>            merge_position<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb98-3"><a href="printing-pyranges.html#cb98-3" aria-hidden="true" tabindex="-1"></a>            sort<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb98-4"><a href="printing-pyranges.html#cb98-4" aria-hidden="true" tabindex="-1"></a>            formatting<span class="op">=</span>{<span class="st">&quot;Start&quot;</span>: <span class="st">&quot;{:,}&quot;</span>, <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;</span><span class="sc">{:2.2}</span><span class="st">&quot;</span>},</span>
+<span id="cb98-5"><a href="printing-pyranges.html#cb98-5" aria-hidden="true" tabindex="-1"></a>            chain<span class="op">=</span><span class="va">False</span>)</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome, Start, End and Strand.</code></pre>
+<div class="sourceCode" id="cb100"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb100-1"><a href="printing-pyranges.html#cb100-1" aria-hidden="true" tabindex="-1"></a>f1 <span class="op">=</span> pr.data.f1()</span>
+<span id="cb100-2"><a href="printing-pyranges.html#cb100-2" aria-hidden="true" tabindex="-1"></a>f1.rp()</span></code></pre></div>
+<pre><code>## {(&#39;chr1&#39;, &#39;+&#39;):   Chromosome  Start  End       Name  Score Strand
+## 0       chr1      3    6  interval1      0      +
+## 2       chr1      8    9  interval3      0      +, (&#39;chr1&#39;, &#39;-&#39;):   Chromosome  Start  End       Name  Score Strand
+## 1       chr1      5    7  interval2      0      -}</code></pre>
 
 </div>
             </section>
@@ -297,8 +284,8 @@ manipulate the data in PyRanges-objects.</p>
           </div>
         </div>
       </div>
-
-<a href="loadingcreating-pyranges.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="piping-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="iterating-over-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

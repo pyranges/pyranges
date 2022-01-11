@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Subsetting PyRanges</title>
+  <meta name="description" content="Subsetting PyRanges">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Subsetting PyRanges" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Subsetting PyRanges" />
+  
+  
+  
+
+<meta name="author" content="Endre Bakken Stovner">
+
+
+<meta name="date" content="2022-01-11">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="writing-pyranges-to-disk.html">
+<link rel="next" href="manipulating-the-data-in-pyranges.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to PyRanges</a></li>
+<li class="chapter" data-level="2" data-path="loadingcreating-pyranges.html"><a href="loadingcreating-pyranges.html"><i class="fa fa-check"></i><b>2</b> Loading/Creating PyRanges</a></li>
+<li class="chapter" data-level="3" data-path="writing-pyranges-to-disk.html"><a href="writing-pyranges-to-disk.html"><i class="fa fa-check"></i><b>3</b> Writing PyRanges to disk</a></li>
+<li class="chapter" data-level="4" data-path="subsetting-pyranges.html"><a href="subsetting-pyranges.html"><i class="fa fa-check"></i><b>4</b> Subsetting PyRanges</a></li>
+<li class="chapter" data-level="5" data-path="manipulating-the-data-in-pyranges.html"><a href="manipulating-the-data-in-pyranges.html"><i class="fa fa-check"></i><b>5</b> Manipulating the data in PyRanges</a></li>
+<li class="chapter" data-level="6" data-path="concatenating-pyranges.html"><a href="concatenating-pyranges.html"><i class="fa fa-check"></i><b>6</b> Concatenating PyRanges</a></li>
+<li class="chapter" data-level="7" data-path="piping-pyranges.html"><a href="piping-pyranges.html"><i class="fa fa-check"></i><b>7</b> Piping PyRanges</a></li>
+<li class="chapter" data-level="8" data-path="printing-pyranges.html"><a href="printing-pyranges.html"><i class="fa fa-check"></i><b>8</b> Printing PyRanges</a></li>
+<li class="chapter" data-level="9" data-path="iterating-over-pyranges.html"><a href="iterating-over-pyranges.html"><i class="fa fa-check"></i><b>9</b> Iterating over PyRanges</a></li>
+<li class="chapter" data-level="10" data-path="sorting-pyranges.html"><a href="sorting-pyranges.html"><i class="fa fa-check"></i><b>10</b> Sorting PyRanges</a></li>
+<li class="chapter" data-level="11" data-path="summarizing-pyranges.html"><a href="summarizing-pyranges.html"><i class="fa fa-check"></i><b>11</b> Summarizing PyRanges</a></li>
+<li class="chapter" data-level="12" data-path="methods-for-manipulating-single-pyranges.html"><a href="methods-for-manipulating-single-pyranges.html"><i class="fa fa-check"></i><b>12</b> Methods for manipulating single PyRanges</a></li>
+<li class="chapter" data-level="13" data-path="applying-custom-methods-to-pairs-of-pyranges.html"><a href="applying-custom-methods-to-pairs-of-pyranges.html"><i class="fa fa-check"></i><b>13</b> Applying custom methods to pairs of PyRanges</a></li>
+<li class="chapter" data-level="14" data-path="intersecting-ranges.html"><a href="intersecting-ranges.html"><i class="fa fa-check"></i><b>14</b> Intersecting Ranges</a></li>
+<li class="chapter" data-level="15" data-path="overlapping-ranges.html"><a href="overlapping-ranges.html"><i class="fa fa-check"></i><b>15</b> Overlapping Ranges</a></li>
+<li class="chapter" data-level="16" data-path="joining-ranges.html"><a href="joining-ranges.html"><i class="fa fa-check"></i><b>16</b> Joining Ranges</a></li>
+<li class="chapter" data-level="17" data-path="finding-the-closest-intervals.html"><a href="finding-the-closest-intervals.html"><i class="fa fa-check"></i><b>17</b> Finding the closest intervals</a></li>
+<li class="chapter" data-level="18" data-path="finding-the-k-closest-intervals.html"><a href="finding-the-k-closest-intervals.html"><i class="fa fa-check"></i><b>18</b> Finding the k closest intervals</a></li>
+<li class="chapter" data-level="19" data-path="create-count-matrix-from-multiple-pyranges.html"><a href="create-count-matrix-from-multiple-pyranges.html"><i class="fa fa-check"></i><b>19</b> Create count-matrix from multiple PyRanges</a></li>
+<li class="chapter" data-level="20" data-path="statistics-colocalization-and-co-occurence-measures.html"><a href="statistics-colocalization-and-co-occurence-measures.html"><i class="fa fa-check"></i><b>20</b> Statistics: colocalization and co-occurence measures</a></li>
+<li class="chapter" data-level="21" data-path="statistics-simes-method.html"><a href="statistics-simes-method.html"><i class="fa fa-check"></i><b>21</b> Statistics: Simes method</a></li>
+<li class="chapter" data-level="22" data-path="statistics-compute-fisher-exact.html"><a href="statistics-compute-fisher-exact.html"><i class="fa fa-check"></i><b>22</b> Statistics: compute Fisher exact</a></li>
+<li class="chapter" data-level="23" data-path="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><a href="statistics-computing-the-matthews-correlation-coeficcient-between-ranges.html"><i class="fa fa-check"></i><b>23</b> Statistics: computing the Matthews correlation coeficcient between ranges</a></li>
+<li class="chapter" data-level="24" data-path="statistics-rowbased-operations.html"><a href="statistics-rowbased-operations.html"><i class="fa fa-check"></i><b>24</b> Statistics: rowbased operations</a></li>
+<li class="chapter" data-level="25" data-path="turning-ranges-into-rles.html"><a href="turning-ranges-into-rles.html"><i class="fa fa-check"></i><b>25</b> Turning Ranges into RLEs</a></li>
+<li class="chapter" data-level="26" data-path="an-introduction-to-rles.html"><a href="an-introduction-to-rles.html"><i class="fa fa-check"></i><b>26</b> An introduction to RLEs</a></li>
+<li class="chapter" data-level="27" data-path="run-length-encoding-dicts.html"><a href="run-length-encoding-dicts.html"><i class="fa fa-check"></i><b>27</b> Run Length Encoding dicts</a></li>
+<li class="chapter" data-level="28" data-path="subsetting-rles.html"><a href="subsetting-rles.html"><i class="fa fa-check"></i><b>28</b> Subsetting Rles</a></li>
+<li class="chapter" data-level="29" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>29</b> Subsetting PyRles</a></li>
+<li class="chapter" data-level="30" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>30</b> Using multiple cores</a></li>
+<li class="chapter" data-level="31" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>31</b> GenomicFeatures: methods using genomic context</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Subsetting PyRanges</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="subsetting-pyranges" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Subsetting PyRanges</h1>
+<p>There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.</p>
+<p>For data exploration, the functions head, tail and sample (random choice without
+replacment) are convenient. They take an argument n to denote how many entries
+you want.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="subsetting-pyranges.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
+<span id="cb43-2"><a href="subsetting-pyranges.html#cb43-2" aria-hidden="true" tabindex="-1"></a>gr <span class="op">=</span> pr.data.chipseq()</span>
+<span id="cb43-3"><a href="subsetting-pyranges.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.sample())</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 121175469 | 121175494 | U0         |         0 | -            |
+## | chr2         |  66805364 |  66805389 | U0         |         0 | -            |
+## | chr6         |  40532119 |  40532144 | U0         |         0 | +            |
+## | chr10        |  30183429 |  30183454 | U0         |         0 | -            |
+## | chr10        | 135184283 | 135184308 | U0         |         0 | -            |
+## | chr12        | 126711314 | 126711339 | U0         |         0 | -            |
+## | chr15        |  63464822 |  63464847 | U0         |         0 | +            |
+## | chr16        |  55248817 |  55248842 | U0         |         0 | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 8 rows and 6 columns from 7 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="subsetting-pyranges.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.tail(<span class="dv">4</span>))</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrY         |  15224235 |  15224260 | U0         |         0 | -            |
+## | chrY         |  13517892 |  13517917 | U0         |         0 | -            |
+## | chrY         |   8010951 |   8010976 | U0         |         0 | -            |
+## | chrY         |   7405376 |   7405401 | U0         |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>By subsetting with a list you can select one or more columns:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="subsetting-pyranges.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
+<span id="cb47-2"><a href="subsetting-pyranges.html#cb47-2" aria-hidden="true" tabindex="-1"></a>gr <span class="op">=</span> pr.data.chipseq()</span>
+<span id="cb47-3"><a href="subsetting-pyranges.html#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr)</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
+## | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<div class="sourceCode" id="cb49"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb49-1"><a href="subsetting-pyranges.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[[<span class="st">&quot;Name&quot;</span>]])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+--------------+
+## | Chromosome   | Start     | End       | Name       | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (category)   |
+## |--------------+-----------+-----------+------------+--------------|
+## | chr1         | 212609534 | 212609559 | U0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | +            |
+## | ...          | ...       | ...       | ...        | ...          |
+## | chrY         | 15224235  | 15224260  | U0         | -            |
+## | chrY         | 13517892  | 13517917  | U0         | -            |
+## | chrY         | 8010951   | 8010976   | U0         | -            |
+## | chrY         | 7405376   | 7405401   | U0         | -            |
+## +--------------+-----------+-----------+------------+--------------+
+## Stranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>By subsetting using a boolean vector, you can get specific rows:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb51-1"><a href="subsetting-pyranges.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
+<span id="cb51-2"><a href="subsetting-pyranges.html#cb51-2" aria-hidden="true" tabindex="-1"></a>cpg <span class="op">=</span> pr.data.cpg()</span>
+<span id="cb51-3"><a href="subsetting-pyranges.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cpg[cpg.CpG <span class="op">&gt;</span> <span class="dv">50</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+-----------+
+## | Chromosome   | Start     | End       | CpG       |
+## | (category)   | (int32)   | (int32)   | (int64)   |
+## |--------------+-----------+-----------+-----------|
+## | chrX         | 64181     | 64793     | 62        |
+## | chrX         | 69133     | 70029     | 100       |
+## | chrX         | 148685    | 149461    | 85        |
+## | chrX         | 166504    | 167721    | 96        |
+## | ...          | ...       | ...       | ...       |
+## | chrY         | 21154603  | 21155040  | 61        |
+## | chrY         | 21238448  | 21240005  | 133       |
+## | chrY         | 26351343  | 26352316  | 76        |
+## | chrY         | 27610115  | 27611088  | 76        |
+## +--------------+-----------+-----------+-----------+
+## Unstranded PyRanges object has 530 rows and 4 columns from 2 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome.</code></pre>
+<p>By using strings, tuples and slices, you can subset the PyRanges based on position:</p>
+<p>Chromosome only</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb53-1"><a href="subsetting-pyranges.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrX         | 13843759  | 13843784  | U0         | 0         | +            |
+## | chrX         | 114673546 | 114673571 | U0         | 0         | +            |
+## | chrX         | 131816774 | 131816799 | U0         | 0         | +            |
+## | chrX         | 45504745  | 45504770  | U0         | 0         | +            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrX         | 146694149 | 146694174 | U0         | 0         | -            |
+## | chrX         | 5044527   | 5044552   | U0         | 0         | -            |
+## | chrX         | 15281263  | 15281288  | U0         | 0         | -            |
+## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 282 rows and 6 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>Chromosome and Strand</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb55-1"><a href="subsetting-pyranges.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrX         | 41852946  | 41852971  | U0         | 0         | -            |
+## | chrX         | 69979838  | 69979863  | U0         | 0         | -            |
+## | chrX         | 34824145  | 34824170  | U0         | 0         | -            |
+## | chrX         | 132354117 | 132354142 | U0         | 0         | -            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrX         | 146694149 | 146694174 | U0         | 0         | -            |
+## | chrX         | 5044527   | 5044552   | U0         | 0         | -            |
+## | chrX         | 15281263  | 15281288  | U0         | 0         | -            |
+## | chrX         | 120273723 | 120273748 | U0         | 0         | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 151 rows and 6 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>Chromosome and Slice</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb57-1"><a href="subsetting-pyranges.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrX         | 151324943 | 151324968 | U0         |         0 | +            |
+## | chrX         | 152902449 | 152902474 | U0         |         0 | +            |
+## | chrX         | 153632850 | 153632875 | U0         |         0 | +            |
+## | chrX         | 153874106 | 153874131 | U0         |         0 | +            |
+## | chrX         | 150277236 | 150277261 | U0         |         0 | -            |
+## | chrX         | 151277790 | 151277815 | U0         |         0 | -            |
+## | chrX         | 153037423 | 153037448 | U0         |         0 | -            |
+## | chrX         | 153255924 | 153255949 | U0         |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>Chromosome, Strand and Slice</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb59-1"><a href="subsetting-pyranges.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;-&quot;</span>, <span class="dv">150000000</span>:<span class="dv">160000000</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chrX         | 150277236 | 150277261 | U0         |         0 | -            |
+## | chrX         | 151277790 | 151277815 | U0         |         0 | -            |
+## | chrX         | 153037423 | 153037448 | U0         |         0 | -            |
+## | chrX         | 153255924 | 153255949 | U0         |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>Slice</p>
+<p>Only using slices returns all ranges from all chromosomes and strands within those coordinates.</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb61-1"><a href="subsetting-pyranges.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[<span class="dv">0</span>:<span class="dv">100000</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr2         |     33241 |     33266 | U0         |         0 | +            |
+## | chr2         |     13611 |     13636 | U0         |         0 | -            |
+## | chr2         |     32620 |     32645 | U0         |         0 | -            |
+## | chr3         |     87179 |     87204 | U0         |         0 | +            |
+## | chr4         |     45413 |     45438 | U0         |         0 | -            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 5 rows and 6 columns from 3 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>Note that while the slice-operator is fast and returns seemingly immediately, it
+is inefficient; it builds the interval overlap datastructure anew every query.
+So if you have multiple queries you should build another PyRanges and do an
+intersect-operation.</p>
+<p>Strand</p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb63-1"><a href="subsetting-pyranges.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   | Start     | End       | Name       | Score     | Strand       |
+## | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
+## | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
+## | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
+## | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
+## | ...          | ...       | ...       | ...        | ...       | ...          |
+## | chrY         | 21559181  | 21559206  | U0         | 0         | +            |
+## | chrY         | 11942770  | 11942795  | U0         | 0         | +            |
+## | chrY         | 8316773   | 8316798   | U0         | 0         | +            |
+## | chrY         | 7463444   | 7463469   | U0         | 0         | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 5,050 rows and 6 columns from 24 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+<p>Slice and Strand</p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb65-1"><a href="subsetting-pyranges.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr[<span class="st">&quot;+&quot;</span>, <span class="dv">0</span>:<span class="dv">100000</span>])</span></code></pre></div>
+<pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+
+## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
+## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+## |--------------+-----------+-----------+------------+-----------+--------------|
+## | chr2         |     33241 |     33266 | U0         |         0 | +            |
+## | chr3         |     87179 |     87204 | U0         |         0 | +            |
+## +--------------+-----------+-----------+------------+-----------+--------------+
+## Stranded PyRanges object has 2 rows and 6 columns from 2 chromosomes.
+## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="writing-pyranges-to-disk.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="manipulating-the-data-in-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
