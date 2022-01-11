@@ -4,8 +4,8 @@ mpl$use('TkAgg')
 
 library(reticulate)
 
-use_python("/mnt/work/endrebak/software/anaconda/bin/python")
-
 library(bookdown)
+
+sessionInfo()
 
 render_book("index.Rmd", "bookdown::gitbook")
