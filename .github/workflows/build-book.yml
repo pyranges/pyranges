@@ -45,5 +45,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.9
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: book  # The folder the action should deploy.
+          folder: book/build  # The folder the action should deploy.
 

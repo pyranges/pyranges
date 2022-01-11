@@ -14,7 +14,7 @@ rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
  # rmd_files: ["runlengths.Rmd"]
 # rmd_files: ["multithreading.Rmd"]
 
-output_dir: "."
+output_dir: "build"
 
 bookdown::html_document2:
 #   css: css.css
