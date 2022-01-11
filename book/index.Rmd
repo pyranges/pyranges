@@ -10,6 +10,8 @@ documentclass: book
 
 # Introduction to PyRanges
 
+This is the PyRanges' tutorial. For docs, see: https://pyranges.readthedocs.io/en/latest/ 
+
 PyRanges are collections of intervals that support comparison operations (like
 overlap and intersect) and other methods that are useful for genomic
 analyses. The ranges can have an arbitrary number of meta-data fields, i.e.
