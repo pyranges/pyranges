@@ -296,280 +296,244 @@ more PyRanges returns empty dfs.</p>
 <span id="cb112-4"><a href="iterating-over-pyranges.html#cb112-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(key)</span>
 <span id="cb112-5"><a href="iterating-over-pyranges.html#cb112-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(grs)</span></code></pre></div>
 <pre><code>## (&#39;chr1&#39;, &#39;+&#39;)
-## [Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome     Start       End Strand
-## 1       chr1  21432812  21432912      +
-## 2       chr1  95045176  95045276      +]
+## [  Chromosome     Start       End Strand
+## 9       chr1  78901883  78901983      +,    Chromosome     Start       End Strand
+## 15       chr1  77123011  77123111      +,    Chromosome     Start       End Strand
+## 14       chr1  43313216  43313316      +
+## 16       chr1  21537656  21537756      +]
 ## (&#39;chr1&#39;, &#39;-&#39;)
-## [Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome      Start        End Strand
-## 0       chr1  200426847  200426947      -
-## 3       chr1  200102063  200102163      -]
+## [   Chromosome     Start       End Strand
+## 10       chr1  91682232  91682332      -
+## 11       chr1  22390062  22390162      -,    Chromosome     Start       End Strand
+## 14       chr1  25415878  25415978      -,    Chromosome      Start        End Strand
+## 15       chr1  139586949  139587049      -
+## 17       chr1  163707001  163707101      -]
 ## (&#39;chr2&#39;, &#39;+&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome      Start        End Strand
-## 2       chr2  160702529  160702629      +
-## 3       chr2  158479386  158479486      +
-## 4       chr2  136652776  136652876      +, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: []]
-## (&#39;chr2&#39;, &#39;-&#39;)
-## [Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome      Start        End Strand
-## 4       chr2  172992005  172992105      -]
-## (&#39;chr3&#39;, &#39;+&#39;)
-## [   Chromosome     Start       End Strand
-## 21       chr3  28749101  28749201      +
-## 22       chr3   7898088   7898188      +,    Chromosome      Start        End Strand
-## 20       chr3  197393212  197393312      +, Empty DataFrame
+## Index: [],    Chromosome     Start       End Strand
+## 11       chr2  71413643  71413743      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
 ## (&#39;chr3&#39;, &#39;-&#39;)
-## [Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome      Start        End Strand
-## 20       chr3  112878545  112878645      -]
+## [   Chromosome      Start        End Strand
+## 20       chr3   23220923   23221023      -
+## 21       chr3  171874976  171875076      -
+## 22       chr3  127345230  127345330      -,    Chromosome      Start        End Strand
+## 16       chr3   38918800   38918900      -
+## 17       chr3   48958106   48958206      -
+## 18       chr3  174381532  174381632      -,   Chromosome      Start        End Strand
+## 4       chr3  182725970  182726070      -
+## 5       chr3  114128060  114128160      -
+## 6       chr3   76465820   76465920      -]
 ## (&#39;chr4&#39;, &#39;+&#39;)
-## [Empty DataFrame
+## [  Chromosome      Start        End Strand
+## 2       chr4  121184930  121185030      +
+## 3       chr4  135694380  135694480      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome     Start       End Strand
-## 18       chr4  66746609  66746709      +]
+## Index: [],   Chromosome      Start        End Strand
+## 8       chr4  176990919  176991019      +]
+## (&#39;chr4&#39;, &#39;-&#39;)
+## [  Chromosome      Start        End Strand
+## 1       chr4  128407932  128408032      -,    Chromosome     Start       End Strand
+## 24       chr4  55012884  55012984      -,   Chromosome      Start        End Strand
+## 7       chr4  170602957  170603057      -]
 ## (&#39;chr5&#39;, &#39;+&#39;)
-## [   Chromosome     Start       End Strand
-## 24       chr5  42518418  42518518      +, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome      Start        End Strand
-## 19       chr5  127293910  127294010      +]
-## (&#39;chr6&#39;, &#39;+&#39;)
-## [Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome     Start       End Strand
-## 22       chr6  40973884  40973984      +]
-## (&#39;chr6&#39;, &#39;-&#39;)
-## [   Chromosome     Start       End Strand
-## 16       chr6  42910942  42911042      -,    Chromosome      Start        End Strand
-## 17       chr6    9234511    9234611      -
-## 18       chr6  112232786  112232886      -, Empty DataFrame
+## [  Chromosome      Start        End Strand
+## 8       chr5  161673901  161674001      +,   Chromosome    Start      End Strand
+## 4       chr5  3068940  3069040      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
-## (&#39;chr7&#39;, &#39;+&#39;)
+## (&#39;chr5&#39;, &#39;-&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome      Start        End Strand
-## 13       chr7  111387231  111387331      +, Empty DataFrame
+## Index: [],   Chromosome     Start       End Strand
+## 5       chr5  88227301  88227401      -,    Chromosome      Start        End Strand
+## 21       chr5  116761061  116761161      -]
+## (&#39;chr6&#39;, &#39;+&#39;)
+## [   Chromosome     Start       End Strand
+## 13       chr6  54038683  54038783      +
+## 14       chr6  95965085  95965185      +, Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [], Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: []]
+## (&#39;chr6&#39;, &#39;-&#39;)
+## [   Chromosome      Start        End Strand
+## 15       chr6  127849728  127849828      -, Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [],    Chromosome     Start       End Strand
+## 18       chr6  95470497  95470597      -]
+## (&#39;chr7&#39;, &#39;+&#39;)
+## [   Chromosome      Start        End Strand
+## 23       chr7  157719940  157720040      +, Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
 ## (&#39;chr7&#39;, &#39;-&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
+## Index: [], Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
 ## Index: [],    Chromosome      Start        End Strand
-## 12       chr7  110280645  110280745      -, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: []]
+## 22       chr7  114925887  114925987      -]
 ## (&#39;chr8&#39;, &#39;+&#39;)
-## [  Chromosome      Start        End Strand
-## 8       chr8  107263434  107263534      +, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome     Start       End Strand
-## 15       chr8   5626959   5627059      +
-## 16       chr8  87084623  87084723      +]
-## (&#39;chr8&#39;, &#39;-&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome     Start       End Strand
-## 5       chr8  17267446  17267546      -, Empty DataFrame
+## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: []]
+## Index: [],   Chromosome      Start        End Strand
+## 2       chr8  116575415  116575515      +
+## 3       chr8   68539597   68539697      +]
 ## (&#39;chr9&#39;, &#39;+&#39;)
-## [  Chromosome      Start        End Strand
-## 6       chr9  115886344  115886444      +
-## 7       chr9   95633661   95633761      +, Empty DataFrame
+## [Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [],    Chromosome      Start        End Strand
+## 12       chr9  116842217  116842317      +
+## 13       chr9  123009191  123009291      +,    Chromosome      Start        End Strand
+## 13       chr9  129996610  129996710      +]
+## (&#39;chr9&#39;, &#39;-&#39;)
+## [   Chromosome     Start       End Strand
+## 18       chr9  42559143  42559243      -, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
-## (&#39;chr9&#39;, &#39;-&#39;)
+## (&#39;chr10&#39;, &#39;+&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome     Start       End Strand
-## 14       chr9  31812183  31812283      -, Empty DataFrame
+## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: []]
+## Index: [],   Chromosome     Start       End Strand
+## 1      chr10  46365987  46366087      +]
 ## (&#39;chr10&#39;, &#39;-&#39;)
-## [Empty DataFrame
+## [   Chromosome     Start       End Strand
+## 12      chr10  77866806  77866906      -, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome     Start       End Strand
-## 15      chr10  46193948  46194048      -
-## 16      chr10  64263179  64263279      -, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: []]
+## Index: [],   Chromosome     Start       End Strand
+## 0      chr10  24819870  24819970      -]
 ## (&#39;chr11&#39;, &#39;+&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome      Start        End Strand
-## 23      chr11  126866573  126866673      +]
-## (&#39;chr12&#39;, &#39;+&#39;)
-## [   Chromosome     Start       End Strand
-## 19      chr12  27852551  27852651      +,   Chromosome     Start       End Strand
-## 6      chr12  20519659  20519759      +
-## 7      chr12   9927192   9927292      +,    Chromosome     Start       End Strand
-## 17      chr12  42331624  42331724      +]
-## (&#39;chr12&#39;, &#39;-&#39;)
-## [   Chromosome     Start       End Strand
-## 18      chr12  54281350  54281450      -, Empty DataFrame
+## Index: [],   Chromosome      Start        End Strand
+## 2      chr11   12149988   12150088      +
+## 3      chr11  111013598  111013698      +,    Chromosome     Start       End Strand
+## 19      chr11  37776736  37776836      +]
+## (&#39;chr11&#39;, &#39;-&#39;)
+## [   Chromosome      Start        End Strand
+## 19      chr11  111814539  111814639      -, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
-## (&#39;chr13&#39;, &#39;+&#39;)
-## [   Chromosome     Start       End Strand
-## 11      chr13  95948229  95948329      +,    Chromosome      Start        End Strand
-## 19      chr13  113575180  113575280      +,    Chromosome     Start       End Strand
-## 11      chr13   1750093   1750193      +
-## 13      chr13  23149930  23150030      +]
-## (&#39;chr13&#39;, &#39;-&#39;)
-## [   Chromosome     Start       End Strand
-## 10      chr13  64185846  64185946      -
-## 12      chr13  46070146  46070246      -, Empty DataFrame
+## (&#39;chr12&#39;, &#39;+&#39;)
+## [  Chromosome      Start        End Strand
+## 4      chr12   18289263   18289363      +
+## 5      chr12  108211715  108211815      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome    Start      End Strand
-## 12      chr13  2050278  2050378      -]
-## (&#39;chr14&#39;, &#39;+&#39;)
+## Index: [],    Chromosome     Start       End Strand
+## 24      chr12  16744339  16744439      +]
+## (&#39;chr13&#39;, &#39;+&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: [],    Chromosome     Start       End Strand
-## 24      chr14  16211962  16212062      +, Empty DataFrame
+## 8       chr13  69912333  69912433      +
+## 10      chr13  50907161  50907261      +, Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: []]
+## (&#39;chr13&#39;, &#39;-&#39;)
+## [Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [],   Chromosome     Start       End Strand
+## 9      chr13  21529544  21529644      -, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
 ## (&#39;chr15&#39;, &#39;+&#39;)
-## [   Chromosome     Start       End Strand
-## 20      chr15  28251477  28251577      +,    Chromosome     Start       End Strand
-## 22      chr15  82295285  82295385      +, Empty DataFrame
+## [Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [],   Chromosome     Start       End Strand
+## 6      chr15  17287546  17287646      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
 ## (&#39;chr15&#39;, &#39;-&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
+## Index: [],   Chromosome     Start       End Strand
+## 7      chr15  20421957  20422057      -, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome     Start       End Strand
-## 24      chr15  90042692  90042792      -]
+## Index: []]
 ## (&#39;chr16&#39;, &#39;+&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome     Start       End Strand
-## 0      chr16  51139614  51139714      +,   Chromosome     Start       End Strand
-## 8      chr16  76658793  76658893      +]
-## (&#39;chr16&#39;, &#39;-&#39;)
-## [Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome     Start       End Strand
-## 7      chr16  25667663  25667763      -]
-## (&#39;chr17&#39;, &#39;+&#39;)
-## [Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome    Start      End Strand
-## 8      chr17  2614615  2614715      +, Empty DataFrame
+## Index: [],    Chromosome     Start       End Strand
+## 20      chr16  64387109  64387209      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
+## (&#39;chr16&#39;, &#39;-&#39;)
+## [   Chromosome     Start       End Strand
+## 24      chr16  58211024  58211124      -, Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [],    Chromosome     Start       End Strand
+## 9       chr16  32763157  32763257      -
+## 10      chr16  71111412  71111512      -]
 ## (&#39;chr17&#39;, &#39;-&#39;)
 ## [   Chromosome     Start       End Strand
-## 23      chr17  35548738  35548838      -, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
+## 17      chr17  54630874  54630974      -,    Chromosome     Start       End Strand
+## 19      chr17  14894477  14894577      -, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
 ## (&#39;chr18&#39;, &#39;+&#39;)
 ## [  Chromosome     Start       End Strand
-## 1      chr18  62128020  62128120      +,    Chromosome     Start       End Strand
-## 9       chr18  60474091  60474191      +
-## 11      chr18  40996772  40996872      +,    Chromosome     Start       End Strand
-## 10      chr18  25589075  25589175      +]
-## (&#39;chr18&#39;, &#39;-&#39;)
-## [  Chromosome     Start       End Strand
-## 0      chr18  46019332  46019432      -,    Chromosome     Start       End Strand
-## 10      chr18  14301758  14301858      -,   Chromosome     Start       End Strand
-## 9      chr18  21574195  21574295      -]
-## (&#39;chr19&#39;, &#39;+&#39;)
-## [  Chromosome     Start       End Strand
-## 9      chr19  55752132  55752232      +, Empty DataFrame
+## 0      chr18  15185403  15185503      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
-## (&#39;chr19&#39;, &#39;-&#39;)
+## (&#39;chr19&#39;, &#39;+&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: [],    Chromosome     Start       End Strand
-## 21      chr19  56094878  56094978      -, Empty DataFrame
+## 22      chr19  34184458  34184558      +
+## 23      chr19  20380555  20380655      +,    Chromosome     Start       End Strand
+## 23      chr19  47351212  47351312      +]
+## (&#39;chr19&#39;, &#39;-&#39;)
+## [   Chromosome     Start       End Strand
+## 16      chr19  22826941  22827041      -, Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]
-## (&#39;chr20&#39;, &#39;+&#39;)
-## [   Chromosome     Start       End Strand
-## 13      chr20  31234951  31235051      +
-## 14      chr20  42425547  42425647      +, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome     Start       End Strand
-## 6      chr20  19161334  19161434      +]
 ## (&#39;chr20&#39;, &#39;-&#39;)
-## [   Chromosome     Start       End Strand
-## 15      chr20  22672553  22672653      -, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [],   Chromosome    Start      End Strand
-## 5      chr20  8280285  8280385      -]
-## (&#39;chr21&#39;, &#39;+&#39;)
 ## [Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: [],    Chromosome    Start      End Strand
-## 23      chr21  8407613  8407713      +,    Chromosome    Start      End Strand
-## 14      chr21  6532798  6532898      +]
-## (&#39;chr22&#39;, &#39;+&#39;)
+## 20      chr20  3725276  3725376      -]
+## (&#39;chrX&#39;, &#39;+&#39;)
+## [Empty DataFrame
+## Columns: [Chromosome, Start, End, Strand]
+## Index: [],    Chromosome     Start       End Strand
+## 21       chrX  67819564  67819664      +,    Chromosome    Start      End Strand
+## 11       chrX  7400690  7400790      +]
+## (&#39;chrX&#39;, &#39;-&#39;)
 ## [Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: [], Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [],    Chromosome     Start       End Strand
-## 21      chr22  28824138  28824238      +]
-## (&#39;chrX&#39;, &#39;+&#39;)
-## [  Chromosome     Start       End Strand
-## 2       chrX  26430416  26430516      +
-## 3       chrX   6981813   6981913      +,   Chromosome     Start       End Strand
-## 1       chrX  46573554  46573654      +, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: []]
-## (&#39;chrX&#39;, &#39;-&#39;)
-## [  Chromosome      Start        End Strand
-## 4       chrX  134920171  134920271      -
-## 5       chrX   18015051   18015151      -, Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
-## Columns: [Chromosome, Start, End, Strand]
-## Index: []]
+## Index: [],    Chromosome      Start        End Strand
+## 12       chrX  147019154  147019254      -]
 ## (&#39;chrY&#39;, &#39;+&#39;)
-## [   Chromosome     Start       End Strand
-## 17       chrY  20321266  20321366      +, Empty DataFrame
+## [  Chromosome     Start       End Strand
+## 7       chrY  50096401  50096501      +,   Chromosome     Start       End Strand
+## 0       chrY  13511383  13511483      +, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
-## Index: [], Empty DataFrame
+## Index: []]
+## (&#39;chrY&#39;, &#39;-&#39;)
+## [  Chromosome     Start       End Strand
+## 6       chrY  23164860  23164960      -,   Chromosome     Start       End Strand
+## 1       chrY  23751710  23751810      -, Empty DataFrame
 ## Columns: [Chromosome, Start, End, Strand]
 ## Index: []]</code></pre>
 
