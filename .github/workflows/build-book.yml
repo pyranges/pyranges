@@ -11,7 +11,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt upgrade
-          sudo apt --yes install mysql-client
+          sudo apt --yes install mysql-client-8.0
 
       - name: Add conda to system path
         run: |
