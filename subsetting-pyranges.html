@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Subsetting PyRanges</title>
-  <meta name="description" content="Subsetting PyRanges">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Subsetting PyRanges" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Subsetting PyRanges" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2022-01-11">
+<meta name="date" content="2022-01-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -167,7 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Subsetting PyRanges</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">PyRanges documentation</a>
           </h1>
         </div>
 
@@ -188,16 +188,16 @@ you want.</p>
 ## | Chromosome   |     Start |       End | Name       |     Score | Strand       |
 ## | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
 ## |--------------+-----------+-----------+------------+-----------+--------------|
-## | chr2         |  76001210 |  76001235 | U0         |         0 | -            |
-## | chr4         | 167248385 | 167248410 | U0         |         0 | +            |
-## | chr5         | 167939402 | 167939427 | U0         |         0 | +            |
-## | chr6         |  42293368 |  42293393 | U0         |         0 | +            |
-## | chr12        |   5655651 |   5655676 | U0         |         0 | +            |
-## | chr13        | 103974200 | 103974225 | U0         |         0 | +            |
-## | chr14        |  34997840 |  34997865 | U0         |         0 | +            |
-## | chrX         |  28519432 |  28519457 | U0         |         0 | -            |
+## | chr1         |  48579206 |  48579231 | U0         |         0 | -            |
+## | chr5         |   6210067 |   6210092 | U0         |         0 | +            |
+## | chr5         | 156301959 | 156301984 | U0         |         0 | -            |
+## | chr6         |  27503212 |  27503237 | U0         |         0 | -            |
+## | chr7         |  18381768 |  18381793 | U0         |         0 | -            |
+## | chr10        |  98938587 |  98938612 | U0         |         0 | -            |
+## | chr20        |  38776618 |  38776643 | U0         |         0 | +            |
+## | chrX         |  41197151 |  41197176 | U0         |         0 | -            |
 ## +--------------+-----------+-----------+------------+-----------+--------------+
-## Stranded PyRanges object has 8 rows and 6 columns from 8 chromosomes.
+## Stranded PyRanges object has 8 rows and 6 columns from 7 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.</code></pre>
 <div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="subsetting-pyranges.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.tail(<span class="dv">4</span>))</span></code></pre></div>
 <pre><code>## +--------------+-----------+-----------+------------+-----------+--------------+

@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Subsetting PyRanges</title>
-  <meta name="description" content="Subsetting PyRanges">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Subsetting PyRanges" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Subsetting PyRanges" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2022-01-11">
+<meta name="date" content="2022-01-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -167,7 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Subsetting PyRanges</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">PyRanges documentation</a>
           </h1>
         </div>
 
@@ -191,17 +191,17 @@ the package fisher installed.</p>
 ## /usr/share/miniconda/lib/python3.9/site-packages/pyranges-0.0.115-py3.9.egg/pyranges/statistics.py:163: RuntimeWarning: invalid value encountered in true_divide</code></pre>
 <div class="sourceCode" id="cb247"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb247-1"><a href="statistics-compute-fisher-exact.html#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fe)</span></code></pre></div>
 <pre><code>##          OR         P     PLeft    PRight
-## 0  0.047619  0.066667  0.066667  0.997980
-## 1  0.606061  0.657020  0.467447  0.844353
-## 2  2.363636  0.595556  0.902222  0.471111
-## 3  0.788927  0.802224  0.413398  0.764532
-## 4  0.820513  1.000000  0.544464  0.734860</code></pre>
+## 0  0.294118  0.107049  0.063916  0.985392
+## 1  0.803571  1.000000  0.505971  0.742859
+## 2  0.923077  1.000000  0.600380  0.684409
+## 3  0.278638  0.032493  0.024519  0.994350
+## 4  0.814286  1.000000  0.495180  0.736701</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
 <div class="sourceCode" id="cb249"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb249-1"><a href="statistics-compute-fisher-exact.html#cb249-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pr.stats.fdr(fe.P))</span></code></pre></div>
-<pre><code>## 0    0.333333
+<pre><code>## 0    0.267624
 ## 1    1.000000
 ## 2    1.000000
-## 3    1.000000
+## 3    0.162464
 ## 4    1.000000
 ## Name: P, dtype: float64</code></pre>
 

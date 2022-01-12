@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Subsetting PyRanges</title>
-  <meta name="description" content="Subsetting PyRanges">
+  <title>PyRanges documentation</title>
+  <meta name="description" content="PyRanges documentation">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Subsetting PyRanges" />
+  <meta property="og:title" content="PyRanges documentation" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Subsetting PyRanges" />
+  <meta name="twitter:title" content="PyRanges documentation" />
   
   
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Endre Bakken Stovner">
 
 
-<meta name="date" content="2022-01-11">
+<meta name="date" content="2022-01-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -167,7 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Subsetting PyRanges</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">PyRanges documentation</a>
           </h1>
         </div>
 
@@ -187,21 +187,21 @@ fast row-based version of rankdata.</p>
 <span id="cb255-6"><a href="statistics-rowbased-operations.html#cb255-6" aria-hidden="true" tabindex="-1"></a>d2 <span class="op">=</span> np.random.randint(<span class="dv">0</span>, high<span class="op">=</span><span class="dv">20</span>, size<span class="op">=</span>size)</span>
 <span id="cb255-7"><a href="statistics-rowbased-operations.html#cb255-7" aria-hidden="true" tabindex="-1"></a>spearman <span class="op">=</span> pr.stats.rowbased_spearman(d1, d2) <span class="co"># or rowbased_pearson(d1, d2)</span></span>
 <span id="cb255-8"><a href="statistics-rowbased-operations.html#cb255-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(spearman[:<span class="dv">5</span>])</span></code></pre></div>
-<pre><code>## [ 0.3         0.66688593 -0.61558701 -0.35909242  0.05129892]</code></pre>
+<pre><code>## [ 0.46169026  0.52704628  0.35909242 -0.45883147 -0.89442719]</code></pre>
 <div class="sourceCode" id="cb257"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb257-1"><a href="statistics-rowbased-operations.html#cb257-1" aria-hidden="true" tabindex="-1"></a>ranks <span class="op">=</span> pr.stats.rowbased_rankdata(d1) <span class="co"># similar to scipy.stats.rankdata</span></span>
 <span id="cb257-2"><a href="statistics-rowbased-operations.html#cb257-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ranks)</span></code></pre></div>
 <pre><code>##        0    1    2    3    4
-## 0    4.0  5.0  2.0  1.0  3.0
-## 1    1.0  3.0  5.0  2.0  4.0
-## 2    3.0  1.5  1.5  4.0  5.0
-## 3    2.0  3.0  5.0  1.0  4.0
-## 4    5.0  4.0  2.0  1.0  3.0
+## 0    4.5  2.0  3.0  1.0  4.5
+## 1    1.5  3.5  3.5  1.5  5.0
+## 2    3.0  2.0  1.0  5.0  4.0
+## 3    2.0  4.0  2.0  2.0  5.0
+## 4    5.0  2.0  3.0  1.0  4.0
 ## ..   ...  ...  ...  ...  ...
-## 995  2.0  5.0  3.0  4.0  1.0
-## 996  3.0  4.0  1.5  5.0  1.5
-## 997  3.0  4.0  5.0  1.5  1.5
-## 998  2.0  4.0  4.0  1.0  4.0
-## 999  5.0  1.5  3.0  1.5  4.0
+## 995  5.0  3.0  2.0  4.0  1.0
+## 996  2.5  2.5  1.0  4.0  5.0
+## 997  2.0  1.0  5.0  4.0  3.0
+## 998  4.0  3.0  5.0  1.0  2.0
+## 999  2.0  5.0  3.0  4.0  1.0
 ## 
 ## [1000 rows x 5 columns]</code></pre>
 
