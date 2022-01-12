@@ -12,6 +12,7 @@ The genes-methods all take a boolean flag `head`. If true, it only fetches a few
 (The below commands are intentionally commented out for now since they require several dependencies that I do not want to require to build the book.)
 
 ```{python tidy=FALSE}
+print("Intentionally commented out! Try the commands yourself instead.")
 # import pyranges_db as pr_db
 # 
 # genomes = pr_db.ucsc.genomes()
