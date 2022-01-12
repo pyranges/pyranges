@@ -1,6 +1,7 @@
 delete_merged_file: false
 
-rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
+rmd_files: ["index.Rmd",
+"creating.Rmd", "writing.Rmd", "subset.Rmd",
 "manipulation.Rmd", "concat.Rmd", "piping.Rmd", "printing.Rmd", "iterate.Rmd",
 "sort.Rmd", "summary.Rmd", "single_range_methods.Rmd", "custom_methods.Rmd",
 "intersection.Rmd", "subtract.Rmd", "join.Rmd", "nearest.Rmd", "knearest.Rmd",
@@ -9,7 +10,7 @@ rmd_files: ["index.Rmd", "creating.Rmd", "writing.Rmd", "subset.Rmd",
 "rowbased_statistics.Rmd", "coverage.Rmd", "runlengths.Rmd",
 "runlength_dict.Rmd", "subsetting_rles.Rmd", "subsetting_pyrles.Rmd",
 "multithreading.Rmd", "genomicfeatures.Rmd"]
-# , "databases.Rmd"] # not working. Test by itself?
+"databases.Rmd"]
 
  # rmd_files: ["runlengths.Rmd"]
 # rmd_files: ["multithreading.Rmd"]
