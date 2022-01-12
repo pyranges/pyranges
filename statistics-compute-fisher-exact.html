@@ -158,6 +158,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="29" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>29</b> Subsetting PyRles</a></li>
 <li class="chapter" data-level="30" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>30</b> Using multiple cores</a></li>
 <li class="chapter" data-level="31" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>31</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="32" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>32</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -191,17 +192,17 @@ the package fisher installed.</p>
 ## /usr/share/miniconda/lib/python3.9/site-packages/pyranges-0.0.115-py3.9.egg/pyranges/statistics.py:163: RuntimeWarning: invalid value encountered in true_divide</code></pre>
 <div class="sourceCode" id="cb247"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb247-1"><a href="statistics-compute-fisher-exact.html#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fe)</span></code></pre></div>
 <pre><code>##          OR         P     PLeft    PRight
-## 0  0.294118  0.107049  0.063916  0.985392
-## 1  0.803571  1.000000  0.505971  0.742859
-## 2  0.923077  1.000000  0.600380  0.684409
-## 3  0.278638  0.032493  0.024519  0.994350
-## 4  0.814286  1.000000  0.495180  0.736701</code></pre>
+## 0  0.972222  1.000000  0.620747  0.652569
+## 1  0.333333  0.249881  0.145479  0.965552
+## 2  1.909091  0.476752  0.891398  0.311049
+## 3  0.333333  0.096384  0.051679  0.986081
+## 4  0.836601  1.000000  0.500000  0.724388</code></pre>
 <p>You can get the false-discovery rate corrected fdr with <code>pyranges.stats.fdr</code>:</p>
 <div class="sourceCode" id="cb249"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb249-1"><a href="statistics-compute-fisher-exact.html#cb249-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pr.stats.fdr(fe.P))</span></code></pre></div>
-<pre><code>## 0    0.267624
-## 1    1.000000
-## 2    1.000000
-## 3    0.162464
+<pre><code>## 0    1.000000
+## 1    0.624702
+## 2    0.794587
+## 3    0.481922
 ## 4    1.000000
 ## Name: P, dtype: float64</code></pre>
 

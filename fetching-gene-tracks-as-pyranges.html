@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="sorting-pyranges.html">
-<link rel="next" href="methods-for-manipulating-single-pyranges.html">
+<link rel="prev" href="genomicfeatures-methods-using-genomic-context.html">
+
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -176,92 +176,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="summarizing-pyranges" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> Summarizing PyRanges</h1>
-<p>The summary-function gives a summary of the lengths of the intervals in a PyRange:</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb122-1"><a href="summarizing-pyranges.html#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyranges <span class="im">as</span> pr</span>
-<span id="cb122-2"><a href="summarizing-pyranges.html#cb122-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb122-3"><a href="summarizing-pyranges.html#cb122-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> StringIO</span>
-<span id="cb122-4"><a href="summarizing-pyranges.html#cb122-4" aria-hidden="true" tabindex="-1"></a>gr <span class="op">=</span> pr.data.exons()</span>
-<span id="cb122-5"><a href="summarizing-pyranges.html#cb122-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr)</span></code></pre></div>
-<pre><code>## +--------------+-----------+-----------+-------+
-## | Chromosome   | Start     | End       | +3    |
-## | (category)   | (int32)   | (int32)   | ...   |
-## |--------------+-----------+-----------+-------|
-## | chrX         | 135721701 | 135721963 | ...   |
-## | chrX         | 135574120 | 135574598 | ...   |
-## | chrX         | 47868945  | 47869126  | ...   |
-## | chrX         | 77294333  | 77294480  | ...   |
-## | ...          | ...       | ...       | ...   |
-## | chrY         | 15409586  | 15409728  | ...   |
-## | chrY         | 15478146  | 15478273  | ...   |
-## | chrY         | 15360258  | 15361762  | ...   |
-## | chrY         | 15467254  | 15467278  | ...   |
-## +--------------+-----------+-----------+-------+
-## Stranded PyRanges object has 1,000 rows and 6 columns from 2 chromosomes.
-## For printing, the PyRanges was sorted on Chromosome and Strand.
-## 3 hidden columns: Name, Score, Strand</code></pre>
-<div class="sourceCode" id="cb124"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb124-1"><a href="summarizing-pyranges.html#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.summary())</span></code></pre></div>
-<pre><code>## +-------+------------+--------------------+--------------------+-----------------------+
-## |       |    pyrange |   coverage_forward |   coverage_reverse |   coverage_unstranded |
-## |-------+------------+--------------------+--------------------+-----------------------|
-## | count |   1000     |            452     |            421     |               873     |
-## | mean  |    304.292 |            314.066 |            314.458 |               314.255 |
-## | std   |    640.013 |            732.655 |            587.486 |               666.23  |
-## | min   |      4     |             15     |              4     |                 4     |
-## | 25%   |     88     |             84.75  |             94     |                88     |
-## | 50%   |    127     |            123     |            138     |               127     |
-## | 75%   |    195.5   |            183     |            212     |               199     |
-## | max   |   6063     |           6063     |           5322     |              6063     |
-## | sum   | 304292     |         141958     |         132387     |            274345     |
-## +-------+------------+--------------------+--------------------+-----------------------+
-## None</code></pre>
-<p>The column <code>coverage_stranded</code> tells you how the data looks when merging all
-overlapping features (taking strand into account), and <code>coverage_unstranded</code> is
-the same, but all features are merged independent of their strand.</p>
-<p>To only get the length in bp of a PyRanges, use the length()-function.
-It takes an argument as_dict=False, which returns the lengths as a vector.</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb126-1"><a href="summarizing-pyranges.html#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.lengths())</span></code></pre></div>
-<pre><code>## 0       262
-## 1       478
-## 2       181
-## 3       147
-## 4       584
-##        ... 
-## 995      64
-## 996     142
-## 997     127
-## 998    1504
-## 999      24
-## Length: 1000, dtype: int32</code></pre>
-<div class="sourceCode" id="cb128"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb128-1"><a href="summarizing-pyranges.html#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.lengths(as_dict<span class="op">=</span><span class="va">False</span>))</span></code></pre></div>
-<pre><code>## 0       262
-## 1       478
-## 2       181
-## 3       147
-## 4       584
-##        ... 
-## 995      64
-## 996     142
-## 997     127
-## 998    1504
-## 999      24
-## Length: 1000, dtype: int32</code></pre>
-<p>To get the length of the PyRanges in bp, use the <code>length</code> property.
-To get the non-overlapping nucleotides, use the merge()-function first.</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb130-1"><a href="summarizing-pyranges.html#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.length)</span></code></pre></div>
-<pre><code>## 304292</code></pre>
-<div class="sourceCode" id="cb132"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb132-1"><a href="summarizing-pyranges.html#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gr.merge().length)</span></code></pre></div>
-<pre><code>## 274345</code></pre>
+<div id="fetching-gene-tracks-as-pyranges" class="section level1" number="32">
+<h1><span class="header-section-number">32</span> Fetching gene tracks as PyRanges</h1>
+<p>PyRanges can fetch data from UCSC, GENCODE, Ensembl and the GWAS catalog through
+the pyranges_db add-on package. It can be installed with <code>pip install pyranges_db</code>.</p>
+<p>Each database contains at least two methods, namely genes and genomes. UCSC and
+Ensembl also has the method chromosome_sizes.</p>
+<p>The genes-methods all take a boolean flag <code>head</code>. If true, it only fetches a few thousand rows of data.</p>
+<p>(The below commands are intentionally commented out for now since they require several dependencies that I do not want to require to build the book.)</p>
+<div class="sourceCode" id="cb349"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb349-1"><a href="fetching-gene-tracks-as-pyranges.html#cb349-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Intentionally commented out! Try the commands yourself instead.&quot;</span>)</span>
+<span id="cb349-2"><a href="fetching-gene-tracks-as-pyranges.html#cb349-2" aria-hidden="true" tabindex="-1"></a><span class="co"># import pyranges_db as pr_db</span></span>
+<span id="cb349-3"><a href="fetching-gene-tracks-as-pyranges.html#cb349-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-4"><a href="fetching-gene-tracks-as-pyranges.html#cb349-4" aria-hidden="true" tabindex="-1"></a><span class="co"># genomes = pr_db.ucsc.genomes()</span></span>
+<span id="cb349-5"><a href="fetching-gene-tracks-as-pyranges.html#cb349-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-6"><a href="fetching-gene-tracks-as-pyranges.html#cb349-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(genomes.head())</span></span>
+<span id="cb349-7"><a href="fetching-gene-tracks-as-pyranges.html#cb349-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-8"><a href="fetching-gene-tracks-as-pyranges.html#cb349-8" aria-hidden="true" tabindex="-1"></a><span class="co"># chr_sizes = pr_db.ucsc.chromosome_sizes(&quot;hg38&quot;)</span></span>
+<span id="cb349-9"><a href="fetching-gene-tracks-as-pyranges.html#cb349-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-10"><a href="fetching-gene-tracks-as-pyranges.html#cb349-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(chr_sizes)</span></span>
+<span id="cb349-11"><a href="fetching-gene-tracks-as-pyranges.html#cb349-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-12"><a href="fetching-gene-tracks-as-pyranges.html#cb349-12" aria-hidden="true" tabindex="-1"></a><span class="co"># genes = pr_db.ucsc.genes(&quot;hg38&quot;, head=True)</span></span>
+<span id="cb349-13"><a href="fetching-gene-tracks-as-pyranges.html#cb349-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-14"><a href="fetching-gene-tracks-as-pyranges.html#cb349-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print(genes)</span></span>
+<span id="cb349-15"><a href="fetching-gene-tracks-as-pyranges.html#cb349-15" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-16"><a href="fetching-gene-tracks-as-pyranges.html#cb349-16" aria-hidden="true" tabindex="-1"></a><span class="co"># gwas = pr_db.gwas_catalog.gwas_catalog(nrows=500)</span></span>
+<span id="cb349-17"><a href="fetching-gene-tracks-as-pyranges.html#cb349-17" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb349-18"><a href="fetching-gene-tracks-as-pyranges.html#cb349-18" aria-hidden="true" tabindex="-1"></a><span class="co"># print(gwas)</span></span></code></pre></div>
+<pre><code>## Intentionally commented out! Try the commands yourself instead.</code></pre>
 
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>This is the same behavior as bedtools intersect.<a href="intersecting-ranges.html#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>This is the same behavior as Bioconductor GenomicRanges intersect.<a href="intersecting-ranges.html#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="sorting-pyranges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="methods-for-manipulating-single-pyranges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="genomicfeatures-methods-using-genomic-context.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

@@ -158,6 +158,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="29" data-path="subsetting-pyrles.html"><a href="subsetting-pyrles.html"><i class="fa fa-check"></i><b>29</b> Subsetting PyRles</a></li>
 <li class="chapter" data-level="30" data-path="using-multiple-cores.html"><a href="using-multiple-cores.html"><i class="fa fa-check"></i><b>30</b> Using multiple cores</a></li>
 <li class="chapter" data-level="31" data-path="genomicfeatures-methods-using-genomic-context.html"><a href="genomicfeatures-methods-using-genomic-context.html"><i class="fa fa-check"></i><b>31</b> GenomicFeatures: methods using genomic context</a></li>
+<li class="chapter" data-level="32" data-path="fetching-gene-tracks-as-pyranges.html"><a href="fetching-gene-tracks-as-pyranges.html"><i class="fa fa-check"></i><b>32</b> Fetching gene tracks as PyRanges</a></li>
 </ul>
 
       </nav>
@@ -190,83 +191,83 @@ column containing the p-values.</p>
 ## | Chromosome   | Start     | End       | Strand       | +2    |
 ## | (category)   | (int32)   | (int32)   | (category)   | ...   |
 ## |--------------+-----------+-----------+--------------+-------|
-## | chr1         | 66701571  | 66701671  | +            | ...   |
-## | chr1         | 12318564  | 12318664  | +            | ...   |
-## | chr1         | 145990020 | 145990120 | +            | ...   |
-## | chr1         | 82607255  | 82607355  | +            | ...   |
+## | chr1         | 27293486  | 27293586  | +            | ...   |
+## | chr1         | 127383507 | 127383607 | +            | ...   |
+## | chr1         | 225512616 | 225512716 | +            | ...   |
+## | chr1         | 176131037 | 176131137 | +            | ...   |
 ## | ...          | ...       | ...       | ...          | ...   |
-## | chrY         | 48290880  | 48290980  | -            | ...   |
-## | chrY         | 36102076  | 36102176  | -            | ...   |
-## | chrY         | 5497030   | 5497130   | -            | ...   |
-## | chrY         | 39698755  | 39698855  | -            | ...   |
+## | chrY         | 38491895  | 38491995  | -            | ...   |
+## | chrY         | 26337904  | 26338004  | -            | ...   |
+## | chrY         | 40786076  | 40786176  | -            | ...   |
+## | chrY         | 26500663  | 26500763  | -            | ...   |
 ## +--------------+-----------+-----------+--------------+-------+
 ## Stranded PyRanges object has 1,000 rows and 6 columns from 24 chromosomes.
 ## For printing, the PyRanges was sorted on Chromosome and Strand.
 ## 2 hidden columns: P, Cluster</code></pre>
 <div class="sourceCode" id="cb241"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb241-1"><a href="statistics-simes-method.html#cb241-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pr.stats.simes(gr.df, <span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;P&quot;</span>))</span></code></pre></div>
 <pre><code>##     Cluster     Simes
-## 0         0  0.153657
-## 1         1  0.053830
-## 2         2  0.746866
-## 3         3  0.894862
-## 4         4  0.526075
-## 5         5  0.616893
-## 6         6  0.142651
-## 7         7  0.786187
-## 8         8  0.614054
-## 9         9  0.890614
-## 10       10  0.395517
-## 11       11  0.287347
-## 12       12  0.243556
-## 13       13  0.673257
-## 14       14  0.654965
-## 15       15  0.812887
-## 16       16  0.653823
-## 17       17  0.349907
-## 18       18  0.230738
-## 19       19  0.470626</code></pre>
+## 0         0  0.294263
+## 1         1  0.194612
+## 2         2  0.138653
+## 3         3  0.242226
+## 4         4  0.547232
+## 5         5  0.831406
+## 6         6  0.474479
+## 7         7  0.862408
+## 8         8  0.551776
+## 9         9  0.114838
+## 10       10  0.426132
+## 11       11  0.055800
+## 12       12  0.540235
+## 13       13  0.880630
+## 14       14  0.492563
+## 15       15  0.276158
+## 16       16  0.266277
+## 17       17  0.667854
+## 18       18  0.916523
+## 19       19  0.102858</code></pre>
 <div class="sourceCode" id="cb243"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb243-1"><a href="statistics-simes-method.html#cb243-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pr.stats.simes(gr.df, [<span class="st">&quot;Cluster&quot;</span>, <span class="st">&quot;Strand&quot;</span>], <span class="st">&quot;P&quot;</span>))</span></code></pre></div>
 <pre><code>##     Cluster Strand     Simes
-## 0         0      +  0.100373
-## 1         0      -  0.167625
-## 2         1      +  0.911039
-## 3         1      -  0.021110
-## 4         2      +  0.789329
-## 5         2      -  0.659357
-## 6         3      +  0.711562
-## 7         3      -  0.563174
-## 8         4      +  0.377083
-## 9         4      -  0.307704
-## 10        5      +  0.475752
-## 11        5      -  0.558588
-## 12        6      +  0.570618
-## 13        6      -  0.073785
-## 14        7      +  0.468688
-## 15        7      -  0.975110
-## 16        8      +  0.823760
-## 17        8      -  0.411508
-## 18        9      +  0.634395
-## 19        9      -  0.934993
-## 20       10      +  0.988089
-## 21       10      -  0.171391
-## 22       11      +  0.365338
-## 23       11      -  0.190156
-## 24       12      +  0.144145
-## 25       12      -  0.985721
-## 26       13      +  0.764068
-## 27       13      -  0.438957
-## 28       14      +  0.570939
-## 29       14      -  0.567636
-## 30       15      +  0.784364
-## 31       15      -  0.438864
-## 32       16      +  0.810324
-## 33       16      -  0.364925
-## 34       17      +  0.267417
-## 35       17      -  0.498173
-## 36       18      +  0.607826
-## 37       18      -  0.126253
-## 38       19      +  0.870825
-## 39       19      -  0.174804</code></pre>
+## 0         0      +  0.815705
+## 1         0      -  0.122011
+## 2         1      +  0.647093
+## 3         1      -  0.111207
+## 4         2      +  0.195375
+## 5         2      -  0.043096
+## 6         3      +  0.998096
+## 7         3      -  0.159766
+## 8         4      +  0.539287
+## 9         4      -  0.442816
+## 10        5      +  0.875164
+## 11        5      -  0.423856
+## 12        6      +  0.468396
+## 13        6      -  0.414288
+## 14        7      +  0.934276
+## 15        7      -  0.688575
+## 16        8      +  0.425527
+## 17        8      -  0.523601
+## 18        9      +  0.955002
+## 19        9      -  0.061247
+## 20       10      +  0.213066
+## 21       10      -  0.759273
+## 22       11      +  0.023644
+## 23       11      -  0.211788
+## 24       12      +  0.598323
+## 25       12      -  0.401967
+## 26       13      +  0.607969
+## 27       13      -  0.617153
+## 28       14      +  0.468841
+## 29       14      -  0.321674
+## 30       15      +  0.155036
+## 31       15      -  0.345685
+## 32       16      +  0.313127
+## 33       16      -  0.211012
+## 34       17      +  0.444700
+## 35       17      -  0.594878
+## 36       18      +  0.911100
+## 37       18      -  0.776099
+## 38       19      +  0.370946
+## 39       19      -  0.051429</code></pre>
 
 </div>
             </section>
