@@ -23,6 +23,7 @@ jobs:
           python setup.py install
           pip install bamread 
           pip install fisher
+          pip install pyranges_db
   
       - name: Install dependencies
         run: |
