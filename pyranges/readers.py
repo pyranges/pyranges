@@ -428,9 +428,6 @@ def read_gtf_restricted(f,
 
     dfs = []
     for df in df_iter:
-        # Since Start is 1-indexed
-        df.Start -= 1
-
         if sum(df.Score == ".") == len(df):
             cols_to_concat = "Chromosome Start End Strand Feature".split()
         else:

@@ -1,3 +1,6 @@
+# 0.0.116 (02.03.2022)
+- fix one-off parsing error in read_gtf_restricted (@SamBryce-Smith)
+
 # 0.0.115 (23.12.2021)
 - fix gff3 writer (remove final ;)
 
