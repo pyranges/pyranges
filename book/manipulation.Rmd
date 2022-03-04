@@ -1,0 +1,59 @@
+# Manipulating the data in PyRanges
+
+PyRanges is a thin wrapper around genomic data contained in pandas dataframes.
+This dataframe is accessible with the df attribute of the PyRanges object.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.chipseq()
+print(gr)
+print(gr.df.head(5))
+```
+
+To access a column of this dataframe, you can ask for the name directly from the
+PyRanges object.
+
+```{python tidy=FALSE}
+print(gr.Start.head())
+```
+
+You can directly insert a column by setting the attribute on the PyRanges object:
+
+```{python tidy=FALSE}
+gr.stupid_example = "Hi There!"
+print(gr)
+gr = gr.drop("stupid_example")
+print(gr)
+```
+
+And as you can see, you can drop columns from the PyRanges using drop. Using
+drop by itself removes all metadata-columns.
+
+To insert a dataframe into a PyRanges object, you can use insert. Insert supports an optional insertion index loc:
+
+```{python tidy=FALSE}
+df = pd.DataFrame({"A1": [1, 2] * 5000, "A2": [3, 4, 5, 6] * 2500})
+print(df.head())
+print(gr.insert(df))
+print(gr.insert(df, loc=3))
+```
+
+To rename the columns you can use the set_columns() method.
+
+If you want to remove duplicates based on position, you can use drop_duplicate_positions:
+
+```{python tidy=FALSE}
+print(gr.drop_duplicate_positions(strand=False)) # defaults to True
+```
+
+All columns, including Chromosome, Start, End and Strand can be changed in any
+way you please and more metadata-columns can be added by setting it on the
+PyRanges object.
+
+```{python tidy=FALSE}
+import pandas as pd
+gr.Name = gr.Chromosome.astype(str) + "_" + pd.Series(range(len(gr)), index=gr.Chromosome.index).astype(str)
+print(gr)
+gr.Strand = "."
+print(gr)
+```

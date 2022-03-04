@@ -1,0 +1,24 @@
+# Statistics: compute Fisher exact
+
+You can use pyranges to compute Fisher Exact quickly. To do so you need to have
+the package fisher installed.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.random(1000)
+import numpy as np
+
+n1 = np.random.randint(0, high=20, size=1000)
+d2 = np.random.randint(0, high=20, size=1000)
+n2 = np.random.randint(0, high=20, size=1000)
+d1 = np.random.randint(0, high=20, size=1000)
+
+fe = pr.stats.fisher_exact(n1, n2, d1, d2).head()
+print(fe)
+```
+
+You can get the false-discovery rate corrected fdr with `pyranges.stats.fdr`:
+
+```{python tidy=FALSE}
+print(pr.stats.fdr(fe.P))
+```

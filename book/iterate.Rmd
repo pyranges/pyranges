@@ -1,0 +1,73 @@
+# Iterating over PyRanges
+
+PyRanges can be iterated over by a simple for loop, and the data is guaranteed
+to come back in natsorted order:
+
+```{python tidy=FALSE}
+import pyranges as pr
+
+import pandas as pd
+
+exons = pr.data.exons()
+cpg = pr.data.cpg()
+
+for k, df in cpg:
+    print(k)
+    print(df.head(3))
+```
+
+If the data is unstranded, the key is just the chromosome names, but if the data
+is stranded the key is a tuple of the chromosome and strand:
+
+```{python tidy=FALSE}
+for k, df in exons:
+    print(k)
+    print(df.head(3))
+```
+
+If you would like to iterate over the chromosomes in a stranded PyRange the idiom is
+
+```{python tidy=FALSE}
+for c in exons.chromosomes:
+    print(c)
+    df = exons[c].df
+    print(df.head())
+```
+
+
+but notice that we need the .df accessor, because subsetting a PyRange always
+returns a PyRange.
+
+There are three more ways to iterate over a pyrange, namely the keys, values and
+items methods. These return a list, not a custom object like the python dict.
+
+If you want to create a new PyRange while iterating over it, the idiom is
+
+
+```{python tidy=FALSE}
+d = {}
+for k, df in exons:
+    print(k)
+    d[k] = df.head(3)
+
+new_gr = pr.PyRanges(d)
+print(new_gr)
+```
+
+Note that this is basically the same as using the apply method of the PyRange,
+only that the for loops are never multithreaded.
+
+To iterate over multiple pyranges you can use pr.itergrs. It iterates
+over multiple pyranges at the same time, returning the dfs belonging to the same
+Chromosome or Chromosome/Strand at each iteration. Missing entries in one or
+more PyRanges returns empty dfs.
+
+```{python tidy=FALSE}
+import pyranges as pr
+
+l = pr.random(25), pr.random(25), pr.random(25)
+
+for key, grs in pr.itergrs(l, keys=True, strand=True):
+    print(key)
+    print(grs)
+```

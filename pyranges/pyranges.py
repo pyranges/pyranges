@@ -1569,7 +1569,7 @@ class PyRanges():
 
         return len(self) == 0
 
-    
+
     def extend(self, ext):
         """Extend the intervals from the ends.
 
@@ -1579,9 +1579,9 @@ class PyRanges():
         ext : int or dict of ints with "3" and/or "5" as keys.
 
             The number of nucleotides to extend the ends with.
-            If an int is provided, the same extension is applied to both 
-            the start and end of intervals, while a dict input allows to control 
-            differently the two ends. Note also that 5' and 3' extensions take 
+            If an int is provided, the same extension is applied to both
+            the start and end of intervals, while a dict input allows to control
+            differently the two ends. Note also that 5' and 3' extensions take
             the strand into account, if the intervals are stranded.
 
         See Also
@@ -1658,9 +1658,9 @@ class PyRanges():
             pyrange_apply_single(_extend, self, **kwargs))
 
         return prg
-    
-    
-    
+
+
+
 
     # # TODO: use subtract code here instead, easier
     # def no_overlap(self, other, **kwargs):
@@ -3137,10 +3137,6 @@ class PyRanges():
 
            Change of coordinates.
 
-        suffixes : tuple of str, default ("", "_b")
-
-           Suffixes of coordinate-columns to switch.
-
         columns : tuple of str, default None, i.e. auto
 
            The name of the coordinate columns. By default uses the two first columns containing
@@ -4008,12 +4004,12 @@ class PyRanges():
 
     def spliced_subsequence(self, start=0, end=None, by=None, strand=None, **kwargs):
         """ Get subsequences of the intervals, using coordinates mapping to spliced transcripts (without introns)
-        
+
         The returned intervals are subregions of self, cut according to specifications.
         Start and end are relative to the 5' end: 0 means the leftmost nucleotide for + strand
         intervals, while it means the rightmost one for - strand.
         This method also allows to manipulate groups of intervals (e.g. exons belonging to same transcripts)
-        through the 'by' argument. When using it, start and end refer to the spliced transcript coordinates, 
+        through the 'by' argument. When using it, start and end refer to the spliced transcript coordinates,
         meaning that introns are in the count.
 
         Parameters
@@ -4024,7 +4020,7 @@ class PyRanges():
             Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
 
         end : int, default None
-            End of subregion, 0-based and excluded, counting from the 5' end. 
+            End of subregion, 0-based and excluded, counting from the 5' end.
             Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
             If None, the existing 3' end is returned.
 
@@ -4082,7 +4078,7 @@ class PyRanges():
         |            3 | +            |       140 |       152 | t3              |
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.        
+        For printing, the PyRanges was sorted on Chromosome and Strand.
 
         # Get the last 20 nucleotides of each spliced transcript:
         >>> p.spliced_subsequence(-20, by='transcript_id')
@@ -4124,11 +4120,11 @@ class PyRanges():
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
-        
+
         from pyranges.methods.spliced_subsequence import _spliced_subseq
         if strand is None:
             strand=True if self.stranded else False
-        
+
         kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
         kwargs = fill_kwargs(kwargs)
 
@@ -4136,15 +4132,15 @@ class PyRanges():
         result = pyrange_apply_single(_spliced_subseq, self, **kwargs)
 
         return pr.PyRanges(result)
-        
+
     def spliced_subsequence(self, start=0, end=None, by=None, strand=None, **kwargs):
         """ Get subsequences of the intervals, using coordinates mapping to spliced transcripts (without introns)
-        
+
         The returned intervals are subregions of self, cut according to specifications.
         Start and end are relative to the 5' end: 0 means the leftmost nucleotide for + strand
         intervals, while it means the rightmost one for - strand.
         This method also allows to manipulate groups of intervals (e.g. exons belonging to same transcripts)
-        through the 'by' argument. When using it, start and end refer to the spliced transcript coordinates, 
+        through the 'by' argument. When using it, start and end refer to the spliced transcript coordinates,
         meaning that introns are in the count.
 
         Parameters
@@ -4155,7 +4151,7 @@ class PyRanges():
             Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
 
         end : int, default None
-            End of subregion, 0-based and excluded, counting from the 5' end. 
+            End of subregion, 0-based and excluded, counting from the 5' end.
             If None, the existing 3' end is returned.
 
         by : list of str, default None
@@ -4179,11 +4175,11 @@ class PyRanges():
         --------
         subsequence : analogous to this method, but input coordinates refer to the unspliced transcript
         """
-        
+
         from pyranges.methods.spliced_subsequence import _spliced_subseq
         if strand is None:
             strand=True if self.stranded else False
-        
+
         kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
         kwargs = fill_kwargs(kwargs)
 
@@ -4191,7 +4187,7 @@ class PyRanges():
         result = pyrange_apply_single(_spliced_subseq, self, **kwargs)
 
         return pr.PyRanges(result)
-            
+
     def split(self, strand=None, between=False, nb_cpu=1):
 
         """Split into non-overlapping intervals.
@@ -4512,12 +4508,12 @@ class PyRanges():
 
     def subsequence(self, start=0, end=None, by=None, strand=None, **kwargs):
         """ Get subsequences of the intervals.
-        
+
         The returned intervals are subregions of self, cut according to specifications.
         Start and end are relative to the 5' end: 0 means the leftmost nucleotide for + strand
         intervals, while it means the rightmost one for - strand.
         This method also allows to manipulate groups of intervals (e.g. exons belonging to same transcripts)
-        through the 'by' argument. When using it, start and end refer to the unspliced transcript coordinates, 
+        through the 'by' argument. When using it, start and end refer to the unspliced transcript coordinates,
         meaning that introns are included in the count.
 
         Parameters
@@ -4528,7 +4524,7 @@ class PyRanges():
             Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
 
         end : int, default None
-            End of subregion, 0-based and excluded, counting from the 5' end. 
+            End of subregion, 0-based and excluded, counting from the 5' end.
             Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
 
             If None, the existing 3' end is returned.
@@ -4552,7 +4548,7 @@ class PyRanges():
 
         See also
         --------
-        spliced_subsequence : analogous to this method, but intronic regions are not counted, so that input coordinates refer to the spliced transcript        
+        spliced_subsequence : analogous to this method, but intronic regions are not counted, so that input coordinates refer to the spliced transcript
 
 
         Examples

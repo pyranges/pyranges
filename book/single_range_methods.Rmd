@@ -1,0 +1,87 @@
+# Methods for manipulating single PyRanges
+
+There are several methods for manipulating the contents of a PyRanges.
+
+`merge` creates a union of all the intervals in the ranges:
+
+The merge-method also takes the flag count to let you know the number of intervals that were merged.
+
+```{python tidy=FALSE}
+import pyranges as pr
+f1 = pr.data.f1()
+print(f1.merge(count=True))
+```
+
+Cluster finds which intervals overlap, but gives each interval a cluster ID instead of merging them:
+
+```{python tidy=FALSE}
+import pyranges as pr
+f1 = pr.data.f1()
+print(f1.cluster())
+print(f1.cluster(strand=True))
+print(f1.cluster(slack=2, strand=True, count=True))
+```
+
+It also takes an flag count.
+
+Both cluster and merge take the argument slack, so that you can merge features
+which are not directly overlapping. If you set slack to -1 you avoid merging bookended features.
+To only merge features overlapping by at least X, set slack to -X.
+
+To cluster or merge only those rows which have the same values for a certain column, you can use the argument by to cluster and merge.
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.ensembl_gtf()
+print(gr)
+print(gr.cluster(by="gene_id"))
+```
+
+If you want to split a pyrange on the overlapping intervals, you can use split:
+
+```{python tidy=FALSE}
+import pyranges as pr
+f1 = pr.data.f1()
+print(f1)
+print(f1.split())
+```
+
+`five_end` finds the starts of the regions (taking direction of transcription
+into account).
+
+```{python tidy=FALSE}
+f1.five_end()
+print(f1.five_end())
+```
+
+`three_end` finds the ends of the regions (taking direction of transcription into account).
+
+```{python tidy=FALSE}
+f1.three_end()
+print(f1.three_end())
+```
+
+`extend` (also aliased `slack`) extends the starts and ends of your interval:
+
+```{python tidy=FALSE}
+print(f1.slack(5))
+print(f1.slack({"5": 2, "3": -1}))
+```
+
+`window` splits your data into windows:
+
+```{python tidy=FALSE}
+exons = pr.data.exons()
+print(exons)
+print(exons.window(5))
+```
+
+If you want to all windows to start at a multiple of window_size, use the tile function:
+
+You can use the overlap flag to see how many basepairs each tile overlapped with
+the underlying interval.
+
+```{python tidy=FALSE}
+print(exons.tile(5))
+print(exons.tile(5, overlap=True))
+```

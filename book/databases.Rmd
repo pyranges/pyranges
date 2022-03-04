@@ -1,0 +1,33 @@
+# Fetching gene tracks as PyRanges
+
+PyRanges can fetch data from UCSC, GENCODE, Ensembl and the GWAS catalog through
+the pyranges_db add-on package. It can be installed with `pip install
+pyranges_db`.
+
+Each database contains at least two methods, namely genes and genomes. UCSC and
+Ensembl also has the method chromosome_sizes.
+
+The genes-methods all take a boolean flag `head`. If true, it only fetches a few thousand rows of data.
+
+(The below commands are intentionally commented out for now since they require several dependencies that I do not want to require to build the book.)
+
+```{python tidy=FALSE}
+print("Intentionally commented out! Try the commands yourself instead.")
+# import pyranges_db as pr_db
+# 
+# genomes = pr_db.ucsc.genomes()
+# 
+# print(genomes.head())
+# 
+# chr_sizes = pr_db.ucsc.chromosome_sizes("hg38")
+# 
+# print(chr_sizes)
+# 
+# genes = pr_db.ucsc.genes("hg38", head=True)
+# 
+# print(genes)
+# 
+# gwas = pr_db.gwas_catalog.gwas_catalog(nrows=500)
+# 
+# print(gwas)
+```

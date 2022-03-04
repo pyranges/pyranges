@@ -190,6 +190,7 @@ def grow_string_representation(df, columns_dtypes):
 
     total_columns = len(df.columns)
 
+    i = 3
     for i, c in enumerate(df.columns[3:], 3):
 
         new_build_df = pd.concat([build_df, df[c]], axis=1)

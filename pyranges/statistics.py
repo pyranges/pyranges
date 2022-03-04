@@ -778,7 +778,7 @@ class StatisticsMethods():
 
         return jc
 
-    def relative_distance(self, other):
+    def relative_distance(self, other, **kwargs):
 
         """Compute spatial correllation between two sets.
 
@@ -873,7 +873,6 @@ class StatisticsMethods():
 
         self = self.pr
 
-        kwargs = {}
         kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges.fill_kwargs(kwargs)
 

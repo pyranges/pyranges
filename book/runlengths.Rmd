@@ -1,0 +1,49 @@
+# An introduction to RLEs
+
+Rles are runlengths - a datastructure that can compactly describe the coverage
+of a genome (or some other score that is associated with each nucleotide). It is
+used for efficient genomewide arithmetic operations on these scores.
+
+```{python tidy=FALSE}
+from pyrle import Rle
+
+runs = [10, 10, 10, 10]
+values = [0, 1, 0, 0]
+
+r1 = Rle(runs, values)
+print(r1)
+
+runs2 = [11, 9, 20]
+values2 = [100, 0, 100]
+
+r2 = Rle(runs2, values2)
+print(r2)
+
+print(r1 + r2)
+
+print(r1 * r2)
+
+print(r1.runs)
+print(r1.values)
+
+r1 = r1 + 5
+print(r1)
+
+print(r2 / r1)
+```
+
+Rles have two helper-methods, `numbers_only` and `defragment`. The former
+replaces NaN with zero and infinity with large finite numbers, while the latter
+merges consecutive runs of duplicate values in the Rle (which might occur when
+manually manipulating the values vector).
+
+```{python tidy=FALSE}
+import numpy as np
+from pyrle import Rle
+runs2 = [11, 9, 20]
+values2 = [100, 0, 100]
+r2 = Rle(runs2, values2)
+r2.values = np.array([1, 1, 1], dtype=np.double)
+print(r2)
+print(r2.defragment())
+```

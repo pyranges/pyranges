@@ -1,0 +1,20 @@
+# Inserting columns based on overlap
+
+If you want to insert columns from one PyRange, based on where it overlaps with
+another, you can use the insert method.
+
+It takes the arguments strandedness (`"same"`, `"opposite"` or `False`/`None`),
+how (`"first"`, `"containment"`, `False`/`None`), `suffix` and `overlap_only`.
+
+If the overlap_only-flag is True, the only rows in the PyRange which are kept
+are those where the insertion and insertee-PyRanges overlap.
+
+```{python tidy=FALSE}
+import pyranges as pr
+exons, cpg = pr.data.exons(), pr.data.cpg()
+print(cpg)
+print(exons.insert(cpg, "CpG"))
+print(exons.insert(cpg, "CpG", overlap_only=True))
+```
+
+Read more about the strandedness and how flags under joining PyRanges.

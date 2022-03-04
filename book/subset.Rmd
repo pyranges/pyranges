@@ -1,0 +1,102 @@
+# Subsetting PyRanges
+
+There are many ways to subset a PyRanges object. Each returns a new PyRanges object and does not change the old one.
+
+For data exploration, the functions head, tail and sample (random choice without
+replacment) are convenient. They take an argument n to denote how many entries
+you want.
+
+```{python}
+
+import pyranges as pr
+
+gr = pr.data.chipseq()
+print(gr.sample())
+print(gr.tail(4))
+```
+
+By subsetting with a list you can select one or more columns:
+
+```{python}
+
+import pyranges as pr
+
+gr = pr.data.chipseq()
+print(gr)
+print(gr[["Name"]])
+```
+
+By subsetting using a boolean vector, you can get specific rows:
+
+```{python}
+
+import pyranges as pr
+
+cpg = pr.data.cpg()
+print(cpg[cpg.CpG > 50])
+```
+
+
+By using strings, tuples and slices, you can subset the PyRanges based on position:
+
+Chromosome only
+
+
+```{python tidy=FALSE}
+
+print(gr["chrX"])
+```
+
+Chromosome and Strand
+
+
+```{python tidy=FALSE}
+
+print(gr["chrX", "-"])
+```
+
+Chromosome and Slice
+
+
+```{python tidy=FALSE}
+
+print(gr["chrX", 150000000:160000000])
+```
+
+Chromosome, Strand and Slice
+
+
+```{python tidy=FALSE}
+
+print(gr["chrX", "-", 150000000:160000000])
+```
+
+Slice
+
+Only using slices returns all ranges from all chromosomes and strands within those coordinates.
+
+```{python tidy=FALSE}
+
+print(gr[0:100000])
+```
+
+Note that while the slice-operator is fast and returns seemingly immediately, it
+is inefficient; it builds the interval overlap datastructure anew every query.
+So if you have multiple queries you should build another PyRanges and do an
+intersect-operation.
+
+Strand
+
+
+```{python tidy=FALSE}
+
+print(gr["+"])
+```
+
+Slice and Strand
+
+
+```{python tidy=FALSE}
+
+print(gr["+", 0:100000])
+```

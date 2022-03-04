@@ -1,0 +1,49 @@
+name: Build and Deploy
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.1
+
+      - name: Add conda to system path
+        run: |
+          # $CONDA is an environment variable pointing to the root of the miniconda directory
+          echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Install pyranges
+        run: |
+          pip install cython
+          pip install sorted_nearest
+          python setup.py install
+          pip install bamread 
+          pip install fisher
+  
+      - name: Install dependencies
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels bioconda
+          conda config --add channels r
+          conda install mamba -n base -c conda-forge
+          mamba install -c r r
+          mamba install -c conda-forge r-reticulate
+          # mamba install -c conda-forge r-bookdown
+          mamba install -y conda-forge::ncurses
+          mamba install -c conda-forge matplotlib
+          mamba install -c conda-forge pandoc
+          mamba install -c bioconda pybigwig
+          echo 'install.packages("bookdown")' > install.R
+          Rscript install.R
+
+      - name: Build book
+        run: |
+          cd book
+          Rscript compile.R
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.9
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: book/build  # The folder the action should deploy.
+

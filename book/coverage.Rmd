@@ -1,0 +1,20 @@
+# Turning Ranges into RLEs
+
+Ranges can be turned into dicts of run length encodings with the to_rle function:
+
+```{python tidy=FALSE}
+import pyranges as pr
+gr = pr.data.aorta()
+print(gr)
+print(gr.to_rle())
+print(gr.to_rle(strand=True))
+print(gr.to_rle(strand=True, rpm=True))
+```
+
+To get the RPM-normalized coverage, use the rpm argument.
+
+You can also create coverage for an any numeric value in your PyRanges:
+
+```{python tidy=FALSE}
+print(gr.to_rle("Score"))
+```

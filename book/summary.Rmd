@@ -1,0 +1,37 @@
+# Summarizing PyRanges
+
+The summary-function gives a summary of the lengths of the intervals in a PyRange:
+
+```{python tidy=FALSE}
+import pyranges as pr
+
+import pandas as pd
+
+from io import StringIO
+
+gr = pr.data.exons()
+
+print(gr)
+
+print(gr.summary())
+```
+
+The column `coverage_stranded` tells you how the data looks when merging all
+overlapping features (taking strand into account), and `coverage_unstranded` is
+the same, but all features are merged independent of their strand.
+
+To only get the length in bp of a PyRanges, use the length()-function.
+It takes an argument as_dict=False, which returns the lengths as a vector.
+
+```{python tidy=FALSE}
+print(gr.lengths())
+print(gr.lengths(as_dict=False))
+```
+
+To get the length of the PyRanges in bp, use the `length` property.
+To get the non-overlapping nucleotides, use the merge()-function first.
+
+```{python tidy=FALSE}
+print(gr.length)
+print(gr.merge().length)
+```
