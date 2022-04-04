@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 
@@ -28,7 +29,6 @@ def _insert_distance(ocdf, dist, suffix):
 
 
 def _overlapping_for_nearest(scdf, ocdf, suffix):
-
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
     scdf2, ocdf2 = _both_dfs(scdf, ocdf, how="first")
@@ -82,8 +82,10 @@ def _previous_nonoverlapping(left_starts, right_ends):
 
 def _nearest(scdf, ocdf, **kwargs):
 
-    if scdf.empty or ocdf.empty:
+    if scdf.empty:
         return None
+    if ocdf.empty:
+        return scdf
 
     overlap = kwargs["overlap"]
     how = kwargs["how"]
