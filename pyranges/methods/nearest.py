@@ -28,7 +28,7 @@ def _insert_distance(ocdf, dist, suffix):
 
 
 def _overlapping_for_nearest(scdf, ocdf, suffix):
-  
+
     nearest_df = pd.DataFrame(columns="Chromosome Start End Strand".split())
 
     scdf2, ocdf2 = _both_dfs(scdf, ocdf, how="first")
