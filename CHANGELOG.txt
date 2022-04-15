@@ -1,3 +1,6 @@
+# 0.0.117 (15.04.2022)
+- fix error in null_types when a variable is pandas.StringDtype (@mkanai)
+
 # 0.0.116 (02.03.2022)
 - fix one-off parsing error in read_gtf_restricted (@SamBryce-Smith)
 
