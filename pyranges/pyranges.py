@@ -4052,6 +4052,7 @@ class PyRanges():
         ...                   "Start": [1, 40, 10, 70, 140],
         ...                   "End": [11, 60, 25, 80, 152],
         ...                   "transcript_id":["t1", "t1", "t2", "t2", "t3"] })
+        >>> p
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
         |   (category) | (category)   |   (int32) |   (int32) | (object)        |
@@ -4571,6 +4572,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get the first 10 nucleotides (at the 5') of *each interval* (each line of the dataframe):
         >>> p.subsequence(0, 10)
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4585,6 +4587,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get the first 10 nucleotides of *each transcript*, grouping exons by transcript_id:
         >>> p.subsequence(0, 10, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4597,6 +4600,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 3 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get the last 20 nucleotides of each transcript:
         >>> p.subsequence(-20, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4610,6 +4614,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get region from 30 to 330 of each transcript, or their existing subportion:
         >>> p.subsequence(30, 300, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+

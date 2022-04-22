@@ -129,10 +129,11 @@ def from_string(s, int64=False):
     return PyRanges(df, int64=int64)
 
 
-from pyranges.get_fasta import get_fasta
+from pyranges.get_fasta import get_fasta, get_sequence, get_spliced_sequence
 
 get_fasta = get_fasta
-
+get_sequence = get_sequence
+get_spliced_sequence = get_spliced_sequence
 
 import pyranges.genomicfeatures as gf
 
