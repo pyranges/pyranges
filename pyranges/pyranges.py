@@ -4090,7 +4090,7 @@ class PyRanges():
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |        10 |        25 | t2              |
         |            2 | -            |        70 |        75 | t2              |
-        |            3 | +            |       140 |       155 | t3              |
+        |            3 | +            |       140 |       152 | t3              |
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
@@ -4116,7 +4116,7 @@ class PyRanges():
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |        10 |        25 | t2              |
         |            2 | -            |        70 |        80 | t2              |
-        |            3 | +            |       140 |       155 | t3              |
+        |            3 | +            |       140 |       152 | t3              |
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
@@ -4130,8 +4130,14 @@ class PyRanges():
         kwargs = fill_kwargs(kwargs)
 
         self = self.sort()
-        result = pyrange_apply_single(_spliced_subseq, self, **kwargs)
-
+        result = pyrange_apply_single(_spliced_subseq, self, **kwargs) 
+        #result=pd.DataFrame() #debug
+        # for k,v in self: #debug
+        #     result=pd.concat(  [result,
+        #                         _spliced_subseq(v, kwargs)
+        #     ],
+        #                        ignore_index=True)
+                   
         return pr.PyRanges(result)
 
     def spliced_subsequence(self, start=0, end=None, by=None, strand=None, **kwargs):
@@ -4142,7 +4148,7 @@ class PyRanges():
         intervals, while it means the rightmost one for - strand.
         This method also allows to manipulate groups of intervals (e.g. exons belonging to same transcripts)
         through the 'by' argument. When using it, start and end refer to the spliced transcript coordinates,
-        meaning that introns are in the count.
+        meaning that introns are ignored in the count.
 
         Parameters
         ----------

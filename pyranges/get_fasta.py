@@ -1,4 +1,3 @@
-
 import sys
 import pyranges as pr
 import pandas as pd
@@ -34,8 +33,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     ``conda install -c bioconda pyfaidx`` or ``pip install pyfaidx``.
 
     Sorting the PyRanges is likely to improve the speed.
-    Intervals on the negative strand will be reverse complemented.    
-    
+    Intervals on the negative strand will be reverse complemented.        
 
     Warning
     -------
@@ -44,7 +42,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
 
     See also
     --------
-    get_spliced_sequence : obtain mRNA sequences, by joining exons belonging to the same transcript
+    get_transcript_sequence : obtain mRNA sequences, by joining exons belonging to the same transcript
 
 
     Examples
@@ -122,9 +120,9 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
 
 def get_fasta(*args, **kwargs):
     """ Deprecated: this function has been moved to Pyranges.get_sequence"""
-
+    return get_sequence(*args, **kwargs)
     
-def get_spliced_sequence(gr, by, path=None, pyfaidx_fasta=None):
+def get_transcript_sequence(gr, by, path=None, pyfaidx_fasta=None):
     """Get the sequence of mRNAs, e.g. joining intervals corresponding to exons of the same transcript
 
     Parameters
@@ -196,7 +194,7 @@ def get_spliced_sequence(gr, by, path=None, pyfaidx_fasta=None):
     >>> _ = tmp_handle.write("AAACCCTTTGGGAAACCCTTTGGG\\n")
     >>> tmp_handle.close()
   
-    >>> seq = pr.get_spliced_sequence(gr, path="temp.fasta", by='transcript')
+    >>> seq = pr.get_transcript_sequence(gr, path="temp.fasta", by='transcript')
     >>> seq
 
       transcript Sequence

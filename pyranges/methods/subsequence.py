@@ -27,6 +27,8 @@ def _subseq(scdf, **kwargs):
     j = gs.join(ge).sort_index()
     # j contains one row per group; columns: counts  Start  End
     #  counts is the number of exons; Start and End are the boundaries of the whole group
+    print('TTTT')
+    print( j )
     
     if (strand == "+" and start >= 0) or (strand == "-" and start < 0):
         starts = j.Start + abs(start)
@@ -38,11 +40,15 @@ def _subseq(scdf, **kwargs):
     else:
         ends = j.End - abs(end)
 
+        
     # start and ends define the desired start and end, with one row per group (transcript).
     # they may be out of bounds of the interval, though (this is dealt with later)
+
+    #### Bug solved: here it assumed that exons of the same transcripts are in consecutive rows, can't do that!
     # Here below: repeat the desired start and end to have one row per interval
     starts = np.repeat(starts, j.counts).reset_index(drop=True)
     ends = np.repeat(ends, j.counts).reset_index(drop=True)
+    
     
     if strand == "-":
         ends, starts = starts, ends
