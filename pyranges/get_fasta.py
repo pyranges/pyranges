@@ -122,7 +122,7 @@ def get_fasta(*args, **kwargs):
     """ Deprecated: this function has been moved to Pyranges.get_sequence"""
     return get_sequence(*args, **kwargs)
     
-def get_transcript_sequence(gr, by, path=None, pyfaidx_fasta=None):
+def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     """Get the sequence of mRNAs, e.g. joining intervals corresponding to exons of the same transcript
 
     Parameters
@@ -131,7 +131,7 @@ def get_transcript_sequence(gr, by, path=None, pyfaidx_fasta=None):
 
         Coordinates.
 
-    by : list of str
+    group_by : str or list of str
     
         intervals are grouped by this/these ID column(s): these are exons belonging to same transcript
 
@@ -148,7 +148,7 @@ def get_transcript_sequence(gr, by, path=None, pyfaidx_fasta=None):
     -------
     DataFrame
 
-        Pandas DataFrame with a column for Sequence, plus ID column(s) provided with "by"
+        Pandas DataFrame with a column for Sequence, plus ID column(s) provided with "group_by"
 
     Note
     ----
@@ -194,7 +194,7 @@ def get_transcript_sequence(gr, by, path=None, pyfaidx_fasta=None):
     >>> _ = tmp_handle.write("AAACCCTTTGGGAAACCCTTTGGG\\n")
     >>> tmp_handle.close()
   
-    >>> seq = pr.get_transcript_sequence(gr, path="temp.fasta", by='transcript')
+    >>> seq = pr.get_transcript_sequence(gr, path="temp.fasta", group_by='transcript')
     >>> seq
 
       transcript Sequence
@@ -208,12 +208,12 @@ def get_transcript_sequence(gr, by, path=None, pyfaidx_fasta=None):
 
     if gr.stranded:
         is_minus = z.Strand=='-'
-        zm = z[is_minus][::-1].groupby(by, as_index=False).agg({'Sequence':''.join})
-        zp = z[~is_minus].groupby(by, as_index=False).agg({'Sequence':''.join})
+        zm = z[is_minus][::-1].groupby(group_by, as_index=False).agg({'Sequence':''.join})
+        zp = z[~is_minus].groupby(group_by, as_index=False).agg({'Sequence':''.join})
         return ( pd.concat( (zp, zm), ignore_index=True) )
 
     else:
-        return ( z.groupby(by, as_index=False).agg({'Sequence':''.join}) )  
+        return ( z.groupby(group_by, as_index=False).agg({'Sequence':''.join}) )  
             
 
 

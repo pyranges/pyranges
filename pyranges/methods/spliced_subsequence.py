@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-
 import pandas as pd
 import numpy as np
-#from easyterm import write
 
 def _spliced_subseq(scdf, **kwargs):
     if scdf.empty:
