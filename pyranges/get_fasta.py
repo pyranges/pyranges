@@ -201,19 +201,30 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     0         t1     AAAC
     1         t2  AAATCCC
 
+    To write to a file in fasta format:
+    >>> with open('outfile.fasta', 'w') as fw:
+    ...     nchars=60
+    ...     for row in seq.itertuples():
+    ...         s = '\\n'.join([ row.Sequence[i:i+nchars] for i in range(0, len(row.Sequence), nchars)])
+    ...         fw.write(f'>{row.transcript}\\n{s}\\n')
+
     """
-    gr = gr.sort()
-    z = gr.df
-    z['Sequence'] = get_sequence(gr, path=path, pyfaidx_fasta=pyfaidx_fasta)
+
 
     if gr.stranded:
-        is_minus = z.Strand=='-'
-        zm = z[is_minus][::-1].groupby(group_by, as_index=False).agg({'Sequence':''.join})
-        zp = z[~is_minus].groupby(group_by, as_index=False).agg({'Sequence':''.join})
-        return ( pd.concat( (zp, zm), ignore_index=True) )
-
+        gr = gr.sort('5')        
+        #is_minus = z.Strand=='-'
+        #zm = z[is_minus][::-1].groupby(group_by, as_index=False).agg({'Sequence':''.join})
+        #zp = z[~is_minus].groupby(group_by, as_index=False).agg({'Sequence':''.join})
+        #return ( pd.concat( (zp, zm), ignore_index=True) )
+        #return z.groupby(group_by, as_index=False).agg({'Sequence':''.join}).res
     else:
-        return ( z.groupby(group_by, as_index=False).agg({'Sequence':''.join}) )  
+        gr = gr.sort()
+    
+    z = gr.df
+    z['Sequence'] = get_sequence(gr, path=path, pyfaidx_fasta=pyfaidx_fasta)
+    
+    return z.groupby(group_by, as_index=False).agg({'Sequence':''.join}) 
             
 
 
