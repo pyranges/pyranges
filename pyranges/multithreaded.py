@@ -454,13 +454,59 @@ def _extend(df, **kwargs):
         five_end_slack = slack.get("5")
         three_end_slack = slack.get("3")
 
-        if five_end_slack:
-            df.loc[df.Strand == "+", "Start"] -= five_end_slack
-            df.loc[df.Strand == "-", "End"] += five_end_slack
+        if   five_end_slack and strand=='+':
+            df.loc[:, "Start"] -= five_end_slack
+        elif five_end_slack and strand=='-':
+            df.loc[:, "End"] += five_end_slack
 
-        if three_end_slack:
-            df.loc[df.Strand == "-", "Start"] -= three_end_slack
-            df.loc[df.Strand == "+", "End"] += three_end_slack
+        if   three_end_slack and strand=='-':
+            df.loc[:, "Start"] -= three_end_slack
+        elif three_end_slack and strand=='+':
+            df.loc[:, "End"] += three_end_slack
+
+    df = df.astype({"Start": dtype, "End": dtype})
+
+    assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying extend!"
+
+    return df
+
+def _extend_grp(df, **kwargs):
+
+    df = df.copy()
+    dtype = df.Start.dtype
+    slack = kwargs["ext"]
+    by = kwargs["group_by"]
+    g=df.groupby(by)
+    
+    assert isinstance(
+        slack,
+        (int, dict)), "Extend parameter must be integer or dict, is {}".format(
+            type(slack))
+
+
+    minstarts_pos=g.Start.idxmin()
+    maxends_pos=g.End.idxmax()    
+    
+    if isinstance(slack, int):
+        df.loc[minstarts_pos, "Start"] = df.Start - slack
+        df.loc[df.Start < 0, "Start"] = 0
+        df.loc[maxends_pos, "End"] = df.End + slack
+
+    else:
+        strand = df.Strand.iloc[0]
+        slack_dict = slack
+        five_end_slack = slack.get("5")
+        three_end_slack = slack.get("3")
+
+        if   five_end_slack and strand=='+':
+            df.loc[minstarts_pos, "Start"] -= five_end_slack
+        elif five_end_slack and strand=='-':
+            df.loc[maxends_pos, "End"] += five_end_slack
+
+        if   three_end_slack and strand=='-':
+            df.loc[minstarts_pos, "Start"] -= three_end_slack
+        elif three_end_slack and strand=='+':
+            df.loc[maxends_pos, "End"] += three_end_slack
 
     df = df.astype({"Start": dtype, "End": dtype})
 
