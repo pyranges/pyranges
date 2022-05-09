@@ -365,8 +365,7 @@ def to_rows(anno):
 
     for l in anno:
         rowdicts.append({k: v
-                         for k, v in [kv.replace('"', '').split(None, 1)
-                                      # l[:-1] removes final ";" cheaply
+                         for k, v in [kv.replace('""', '"NA"').replace('"', '').split(None, 1)
                                       for kv in l[:-1].split("; ")]})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
