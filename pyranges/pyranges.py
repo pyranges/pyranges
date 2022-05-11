@@ -3657,7 +3657,7 @@ class PyRanges():
         ...
         ValueError: Cannot take a larger sample than population when 'replace=False'
         """
-        sample = np.random.choice(len(self), size=n, replace=False)
+        sample = np.random.choice(len(self), size=n, replace=replace)
         subsetter = np.zeros(len(self), dtype=np.bool)
         subsetter[sample] = True
         return self[subsetter]
