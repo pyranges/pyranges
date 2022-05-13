@@ -22,15 +22,9 @@ def _sort(df, **kwargs):
         
         else:
             by = kwargs["by"]
-            # print("sorting by", by)
-            # print("by " * 100)
-            # print(by)
             return df.sort_values(by)
     else:
-        # print("else " * 100)
-        # print(df)
         df = sort_one_by_one(df, "Start", "End")
-        # df = df.sort_values("Start End".split())
         return df
 
 

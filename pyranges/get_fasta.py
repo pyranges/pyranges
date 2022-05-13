@@ -33,7 +33,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     ``conda install -c bioconda pyfaidx`` or ``pip install pyfaidx``.
 
     Sorting the PyRanges is likely to improve the speed.
-    Intervals on the negative strand will be reverse complemented.        
+    Intervals on the negative strand will be reverse complemented.
 
     Warning
     -------
@@ -213,11 +213,6 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
 
     if gr.stranded:
         gr = gr.sort('5')        
-        #is_minus = z.Strand=='-'
-        #zm = z[is_minus][::-1].groupby(group_by, as_index=False).agg({'Sequence':''.join})
-        #zp = z[~is_minus].groupby(group_by, as_index=False).agg({'Sequence':''.join})
-        #return ( pd.concat( (zp, zm), ignore_index=True) )
-        #return z.groupby(group_by, as_index=False).agg({'Sequence':''.join}).res
     else:
         gr = gr.sort()
     
@@ -225,7 +220,3 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     z['Sequence'] = get_sequence(gr, path=path, pyfaidx_fasta=pyfaidx_fasta)
     
     return z.groupby(group_by, as_index=False).agg({'Sequence':''.join}) 
-            
-
-
-                

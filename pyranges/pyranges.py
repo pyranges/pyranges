@@ -4669,7 +4669,6 @@ class PyRanges():
         kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
         kwargs = fill_kwargs(kwargs)
 
-        #self = self.sort()
         result = pyrange_apply_single(_subseq, self, **kwargs)
 
         return pr.PyRanges(result)

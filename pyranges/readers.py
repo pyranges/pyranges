@@ -51,22 +51,22 @@ def read_bed(f, as_df=False, nrows=None):
     | Chromosome   |     Start |       End | Name       |     Score | Strand       |
     | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
     |--------------+-----------+-----------+------------+-----------+--------------|
-    | chr1         |      9938 |     10138 | H3K27me3   |         7 | +            |
-    | chr1         |      9952 |     10152 | H3K27me3   |         5 | +            |
-    | chr1         |      9915 |     10115 | H3K27me3   |         5 | -            |
-    | chr1         |      9950 |     10150 | H3K27me3   |         8 | -            |
-    | chr1         |      9977 |     10177 | H3K27me3   |         7 | -            |
+    | chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |
+    | chr1         |      9953 |     10152 | H3K27me3   |         5 | +            |
+    | chr1         |      9916 |     10115 | H3K27me3   |         5 | -            |
+    | chr1         |      9951 |     10150 | H3K27me3   |         8 | -            |
+    | chr1         |      9978 |     10177 | H3K27me3   |         7 | -            |
     +--------------+-----------+-----------+------------+-----------+--------------+
     Stranded PyRanges object has 5 rows and 6 columns from 1 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
 
     >>> pr.read_bed(path, as_df=True, nrows=5)
       Chromosome  Start    End      Name  Score Strand
-    0       chr1   9915  10115  H3K27me3      5      -
-    1       chr1   9938  10138  H3K27me3      7      +
-    2       chr1   9950  10150  H3K27me3      8      -
-    3       chr1   9952  10152  H3K27me3      5      +
-    4       chr1   9977  10177  H3K27me3      7      -
+    0       chr1   9916  10115  H3K27me3      5      -
+    1       chr1   9939  10138  H3K27me3      7      +
+    2       chr1   9951  10150  H3K27me3      8      -
+    3       chr1   9953  10152  H3K27me3      5      +
+    4       chr1   9978  10177  H3K27me3      7      -
 
     """
 
@@ -97,7 +97,7 @@ def read_bed(f, as_df=False, nrows=None):
         sep="\t")
 
     df.columns = columns[:df.shape[1]]
-    
+
     if not as_df:
         return PyRanges(df)
     else:

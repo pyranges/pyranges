@@ -454,12 +454,12 @@ def _extend(df, **kwargs):
         five_end_slack = slack.get("5")
         three_end_slack = slack.get("3")
 
-        if   five_end_slack and strand=='+':
+        if five_end_slack and strand=='+':
             df.loc[:, "Start"] -= five_end_slack
         elif five_end_slack and strand=='-':
             df.loc[:, "End"] += five_end_slack
 
-        if   three_end_slack and strand=='-':
+        if three_end_slack and strand=='-':
             df.loc[:, "Start"] -= three_end_slack
         elif three_end_slack and strand=='+':
             df.loc[:, "End"] += three_end_slack

@@ -9,7 +9,6 @@ def _spliced_subseq(scdf, **kwargs):
     orig_order=scdf.index.copy()
     
     by = kwargs.get("by") if kwargs.get("by") else "__i__"
-    #else "__index__"
     if not type(by) is list: 
         by=[by]              
     start = kwargs.get("start") if kwargs.get("start") else 0
@@ -22,13 +21,6 @@ def _spliced_subseq(scdf, **kwargs):
     #  to pyrange_apply_single as True, which updates it to '-' or '+' before calling _spliced_subseq
     if strand:
         assert "Strand" in scdf, "Cannot have strand=True on unstranded pyranges!"
-
-    ### intervals are already sorted beforehand from the 5'
-    #if strand == "-": 
-    #    scdf = scdf.sort_values(["Start", "End"], ascending=False)
-    # add this if we can remove self.sort() from def spliced_subsequence in pyranges.py  :
-    #else:   
-        #scdf = scdf.sort_values( by + ["Start", "End"], ascending=True) 
         
     scdf.insert(scdf.shape[1], "__length__", scdf.End - scdf.Start)
     scdf.insert(scdf.shape[1], "__i__",  scdf.index)
