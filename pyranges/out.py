@@ -32,6 +32,7 @@ def _bed(df, keep):
     outdf = _fill_missing(df, all_columns)
 
     noncanonical = set(df.columns) - set(all_columns)
+    noncanonical = [c for c in df.columns if c in noncanonical]
 
     if keep:
         return pd.concat([outdf, df.get(noncanonical)], axis=1)
