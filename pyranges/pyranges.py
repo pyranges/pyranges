@@ -10,7 +10,7 @@ import pyranges as pr
 from pyranges.tostring2 import tostring
 
 from pyranges.methods.intersection import _intersection, _overlap
-from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, pyrange_apply_chunks, _extend, _tes, _tss
+from pyranges.multithreaded import pyrange_apply, pyrange_apply_single, pyrange_apply_chunks, _extend, _extend_grp, _tes, _tss
 
 __all__ = ["PyRanges"]
 
@@ -930,6 +930,81 @@ class PyRanges():
         return new_self
 
 
+    def boundaries(self, group_by, agg=None):
+        
+        """Return the boundaries of groups of intervals (e.g. transcripts)
+
+        Parameters
+        ----------
+
+        group_by : str or list of str
+
+            Name(s) of column(s) to group intervals
+
+        agg : dict or None
+        
+            Defines how to aggregate metadata columns. Provided as 
+            dictionary of column names -> functions, function names or list of such, 
+            as accepted by the Pandas.DataFrame.agg method.
+
+
+        Returns
+        -------
+        PyRanges
+            One interval per group, with the min(Start) and max(End) of the group
+       
+
+        Examples
+        --------
+
+        >>> d = {"Chromosome": [1, 1, 1], "Start": [1, 60, 110], "End": [40, 68, 130], "transcript_id": ["tr1", "tr1", "tr2"], "meta":[1,2,3] }
+        >>> gr = pr.from_dict(d)
+        >>> gr.length=gr.lengths()
+        >>> gr
+        +--------------+-----------+-----------+-----------------+-----------+-----------+
+        |   Chromosome |     Start |       End | transcript_id   |      meta |    length |
+        |   (category) |   (int32) |   (int32) | (object)        |   (int64) |   (int32) |
+        |--------------+-----------+-----------+-----------------+-----------+-----------|
+        |            1 |         1 |        40 | tr1             |         1 |        39 |
+        |            1 |        60 |        68 | tr1             |         2 |         8 |
+        |            1 |       110 |       130 | tr2             |         3 |        20 |
+        +--------------+-----------+-----------+-----------------+-----------+-----------+
+        Unstranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+
+        >>> gr.boundaries("transcript_id")
+        +--------------+-----------+-----------+-----------------+
+        |   Chromosome |     Start |       End | transcript_id   |
+        |   (category) |   (int32) |   (int32) | (object)        |
+        |--------------+-----------+-----------+-----------------|
+        |            1 |         1 |        68 | tr1             |
+        |            1 |       110 |       130 | tr2             |
+        +--------------+-----------+-----------+-----------------+
+        Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        <BLANKLINE>
+        
+        >>> gr.boundaries("transcript_id", agg={"length":"sum", "meta":",".join})
+        +--------------+-----------+-----------+-----------------+------------+-----------+
+        |   Chromosome |     Start |       End | transcript_id   | meta       |    length |
+        |   (category) |   (int32) |   (int32) | (object)        | (object)   |   (int32) |
+        |--------------+-----------+-----------+-----------------+------------+-----------|
+        |            1 |         1 |        68 | tr1             | a,b        |        47 |
+        |            1 |       110 |       130 | tr2             | c          |        20 |
+        +--------------+-----------+-----------+-----------------+------------+-----------+
+        Unstranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        
+        """
+        from pyranges.methods.boundaries import _bounds
+        
+        kwargs = {"group_by": group_by, "agg": agg, "strand": self.stranded}
+        kwargs = fill_kwargs(kwargs)
+        
+        result = pyrange_apply_single(_bounds, self, **kwargs)
+        return pr.PyRanges(result)        
+        
+    
     @property
     def chromosomes(self):
 
@@ -1570,7 +1645,7 @@ class PyRanges():
         return len(self) == 0
 
 
-    def extend(self, ext):
+    def extend(self, ext, group_by=None):
         """Extend the intervals from the ends.
 
         Parameters
@@ -1583,6 +1658,11 @@ class PyRanges():
             the start and end of intervals, while a dict input allows to control
             differently the two ends. Note also that 5' and 3' extensions take
             the strand into account, if the intervals are stranded.
+
+        group_by : str or list of str, default: None
+
+            group intervals by these column name(s), so that the extension is applied 
+            only to the left-most and/or right-most interval.
 
         See Also
         --------
@@ -1653,9 +1733,14 @@ class PyRanges():
             assert self.stranded, "PyRanges must be stranded to add 5/3-end specific extend."
 
         kwargs = fill_kwargs({"ext": ext, "strand": self.stranded})
-
-        prg = PyRanges(
-            pyrange_apply_single(_extend, self, **kwargs))
+        
+        if group_by is None:        
+            prg = PyRanges(
+                pyrange_apply_single(_extend, self, **kwargs))
+        else:
+            kwargs['group_by']=group_by
+            prg = PyRanges(
+                pyrange_apply_single(_extend_grp, self, **kwargs))            
 
         return prg
 
@@ -3657,7 +3742,7 @@ class PyRanges():
         ...
         ValueError: Cannot take a larger sample than population when 'replace=False'
         """
-        sample = np.random.choice(len(self), size=n, replace=False)
+        sample = np.random.choice(len(self), size=n, replace=replace)
         subsetter = np.zeros(len(self), dtype=np.bool)
         subsetter[sample] = True
         return self[subsetter]
@@ -3881,7 +3966,9 @@ class PyRanges():
         ----------
         by : str or list of str, default None
 
-            Columns to sort by. Default is Start and End.
+            Column(s) to sort by. Default is Start and End.
+            Special value "5" can be provided to sort by 5': intervals on + strand are sorted in ascending order, while
+            those on - strand are sorted in descending order.
 
         nb_cpu: int, default 1
 
@@ -3966,7 +4053,13 @@ class PyRanges():
         kwargs = {"strand": self.stranded}
         kwargs["sparse"] = {"self": False}
         if by:
+            assert (
+                ('5' not in by or
+                 ( ((type(by) is str and by=='5') or
+                    (type(by) is not str and '5' in by)) and
+                     self.stranded))), "Only stranded PyRanges can be sorted by 5'! "      
             kwargs["by"] = by
+
         kwargs = fill_kwargs(kwargs)
         return PyRanges(
             pyrange_apply_single(_sort, self, **kwargs))
@@ -4010,7 +4103,7 @@ class PyRanges():
         intervals, while it means the rightmost one for - strand.
         This method also allows to manipulate groups of intervals (e.g. exons belonging to same transcripts)
         through the 'by' argument. When using it, start and end refer to the spliced transcript coordinates,
-        meaning that introns are in the count.
+        meaning that introns are ignored in the count.
 
         Parameters
         ----------
@@ -4052,6 +4145,7 @@ class PyRanges():
         ...                   "Start": [1, 40, 10, 70, 140],
         ...                   "End": [11, 60, 25, 80, 152],
         ...                   "transcript_id":["t1", "t1", "t2", "t2", "t3"] })
+        >>> p
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
         |   (category) | (category)   |   (int32) |   (int32) | (object)        |
@@ -4089,7 +4183,7 @@ class PyRanges():
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |        10 |        25 | t2              |
         |            2 | -            |        70 |        75 | t2              |
-        |            3 | +            |       140 |       155 | t3              |
+        |            3 | +            |       140 |       152 | t3              |
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
@@ -4115,7 +4209,7 @@ class PyRanges():
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |        10 |        25 | t2              |
         |            2 | -            |        70 |        80 | t2              |
-        |            3 | +            |       140 |       155 | t3              |
+        |            3 | +            |       140 |       152 | t3              |
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
@@ -4128,64 +4222,9 @@ class PyRanges():
         kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
         kwargs = fill_kwargs(kwargs)
 
-        self = self.sort()
-        result = pyrange_apply_single(_spliced_subseq, self, **kwargs)
-
-        return pr.PyRanges(result)
-
-    def spliced_subsequence(self, start=0, end=None, by=None, strand=None, **kwargs):
-        """ Get subsequences of the intervals, using coordinates mapping to spliced transcripts (without introns)
-
-        The returned intervals are subregions of self, cut according to specifications.
-        Start and end are relative to the 5' end: 0 means the leftmost nucleotide for + strand
-        intervals, while it means the rightmost one for - strand.
-        This method also allows to manipulate groups of intervals (e.g. exons belonging to same transcripts)
-        through the 'by' argument. When using it, start and end refer to the spliced transcript coordinates,
-        meaning that introns are in the count.
-
-        Parameters
-        ----------
-
-        start : int
-            Start of subregion, 0-based and included, counting from the 5' end.
-            Use a negative int to count from the 3'  (e.g. -1 is the last nucleotide)
-
-        end : int, default None
-            End of subregion, 0-based and excluded, counting from the 5' end.
-            If None, the existing 3' end is returned.
-
-        by : list of str, default None
-            intervals are grouped by this/these ID column(s) beforehand, e.g. exons belonging to same transcripts
-
-        strand : bool, default None, i.e. auto
-            Whether to do operations on chromosome/strand pairs or chromosomes. If None, will use
-            chromosome/strand pairs if the PyRanges is stranded.
-
-        Returns
-        -------
-
-        PyRanges
-            Subregion of self, subsequenced as specified by arguments
-
-        Note
-        ----
-        If the request goes out of bounds (e.g. requesting 100 nts for a 90nt region), only the existing portion is returned
-
-        See also
-        --------
-        subsequence : analogous to this method, but input coordinates refer to the unspliced transcript
-        """
-
-        from pyranges.methods.spliced_subsequence import _spliced_subseq
-        if strand is None:
-            strand=True if self.stranded else False
-
-        kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
-        kwargs = fill_kwargs(kwargs)
-
-        self = self.sort()
-        result = pyrange_apply_single(_spliced_subseq, self, **kwargs)
-
+        self = self.sort('5')
+        result = pyrange_apply_single(_spliced_subseq, self, **kwargs) 
+                   
         return pr.PyRanges(result)
 
     def split(self, strand=None, between=False, nb_cpu=1):
@@ -4571,6 +4610,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get the first 10 nucleotides (at the 5') of *each interval* (each line of the dataframe):
         >>> p.subsequence(0, 10)
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4585,6 +4625,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get the first 10 nucleotides of *each transcript*, grouping exons by transcript_id:
         >>> p.subsequence(0, 10, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4597,6 +4638,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 3 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get the last 20 nucleotides of each transcript:
         >>> p.subsequence(-20, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4610,6 +4652,7 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+
         Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
+
         # Get region from 30 to 330 of each transcript, or their existing subportion:
         >>> p.subsequence(30, 300, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4626,7 +4669,6 @@ class PyRanges():
         kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
         kwargs = fill_kwargs(kwargs)
 
-        self = self.sort()
         result = pyrange_apply_single(_subseq, self, **kwargs)
 
         return pr.PyRanges(result)
@@ -5372,6 +5414,12 @@ class PyRanges():
 
             Whether to return the PyRanges after writing.
 
+
+        Note
+        ----
+
+        The output encodes intervals just like PyRanges: 0-based, Start included and End excluded.
+
         Examples
         --------
 
@@ -5393,9 +5441,26 @@ class PyRanges():
         else:
             return result
 
-    def to_gff3(self, path=None, compression="infer", chain=False):
+    def to_gff3(self, path=None, compression="infer", chain=False, map_cols=None):
 
-        """Write to General Feature Format.
+        """Write to General Feature Format 3.
+
+        The GFF format consists of a tab-separated file without header.
+        GFF contains a fixed amount of columns, indicated below (names before ":"). 
+        For each of these, PyRanges will use the corresponding column (names after ":"). 
+
+        ``seqname: Chromosome
+        source: Source
+        type: Feature
+        start: Start
+        end: End
+        score: Score
+        strand: Strand
+        phase: Frame
+        attribute: auto-filled``
+
+        Columns which are not mapped to GFF columns are appended as a field 
+        in the attribute string (i.e. the last field).
 
         Parameters
         ----------
@@ -5411,16 +5476,14 @@ class PyRanges():
 
             Whether to return the PyRanges after writing.
 
+        map_cols: dict, default None
+        
+            Override mapping between GFF and PyRanges fields for any number of columns.
+            Format: ``{gff_column : pyranges_column}``
+            If a mapping is found for the "attribute"` column, this not auto-filled
+
         Notes
         -----
-
-        GTF uses a different naming-convention for columns than PyRanges.
-        This is the mapping between column names:
-
-        ``{"seqname": "Chromosome", "source": "Source", "type": "Feature", "start": "Start", "end": "End", "score": "Score", "strand": "Strand", "phase": "Frame", "attributes": "Attribute"}``
-
-        All other columns are appended as a field in the attribute string.
-
         Nonexisting columns will be added with a '.' to represent the missing values.
 
         See Also
@@ -5446,20 +5509,63 @@ class PyRanges():
         1	.	exon	4	6	.	.	.	Gene=2;function=c
         1	.	exon	6	9	.	.	.	Gene=3;function=def
         <BLANKLINE>
+
+        >>> gr.the_frame = [0, 2, 1]
+        >>> gr.tag = ['mRNA', 'CDS', 'CDS']
+        >>> gr
+        +--------------+-----------+-----------+------------+-----------+------------+-------------+------------+
+        |   Chromosome |     Start |       End | Feature    |      Gene | function   |   the_frame | tag        |
+        |   (category) |   (int32) |   (int32) | (object)   |   (int64) | (object)   |     (int64) | (object)   |
+        |--------------+-----------+-----------+------------+-----------+------------+-------------+------------|
+        |            1 |         1 |         4 | gene       |         1 | a b        |           0 | mRNA       |
+        |            1 |         3 |         6 | exon       |         2 | c          |           2 | CDS        |
+        |            1 |         5 |         9 | exon       |         3 | def        |           1 | CDS        |
+        +--------------+-----------+-----------+------------+-----------+------------+-------------+------------+
+        Unstranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome.
+        <BLANKLINE>
+
+        >>> print(gr.to_gff3(map_cols={'phase':'the_frame', 'feature':'tag'}))
+        1	.	mRNA	2	4	.	.	0	Gene=1;function=a b
+        1	.	CDS	4	6	.	.	2	Gene=2;function=c
+        1	.	CDS	6	9	.	.	1	Gene=3;function=def
+        <BLANKLINE>
+
+        >>> print(gr.to_gff3(map_cols={'attribute':'Gene'}))
+
+
+
         """
 
         from pyranges.out import _to_gff3
 
-        result = _to_gff3(self, path, compression=compression)
+        result = _to_gff3(self, path, compression=compression, map_cols=map_cols)
 
         if path and chain:
             return self
         else:
             return result
 
-    def to_gtf(self, path=None, compression="infer", chain=False):
+    def to_gtf(self, path=None, compression="infer", chain=False, map_cols=None):
 
         """Write to Gene Transfer Format.
+
+        The GTF format consists of a tab-separated file without header.
+        It contains a fixed amount of columns, indicated below (names before ":"). 
+        For each of these, PyRanges will use the corresponding column (names after ":"). 
+
+        ``seqname: Chromosome
+        source: Source
+        type: Feature
+        start: Start
+        end: End
+        score: Score
+        strand: Strand
+        frame: Frame
+        attribute: auto-filled``
+
+        Columns which are not mapped to GTF columns are appended as a field 
+        in the attribute string (i.e. the last field).
 
         Parameters
         ----------
@@ -5475,16 +5581,14 @@ class PyRanges():
 
             Whether to return the PyRanges after writing.
 
+        map_cols: dict, default None
+        
+            Override mapping between GTF and PyRanges fields for any number of columns.
+            Format: ``{gtf_column : pyranges_column}``
+            If a mapping is found for the "attribute"` column, this not auto-filled
+
         Notes
         -----
-
-        GTF uses a different naming-convention for columns than PyRanges.
-        This is the mapping between column names:
-
-        ``{"seqname": "Chromosome", "source": "Source", "feature": "Feature", "start": "Start", "end": "End", "score": "Score", "strand": "Strand", "frame": "Frame", "attribute": "Attribute"}``
-
-        All other columns are appended as a field in the attribute string.
-
         Nonexisting columns will be added with a '.' to represent the missing values.
 
         See Also
@@ -5510,11 +5614,18 @@ class PyRanges():
         1	.	exon	4	6	.	.	.	name "Eric"; prices "Premium";
         1	.	exon	6	9	.	.	.	name "Endre"; prices "Fine European";
         <BLANKLINE>
+
+
+        >>> print(gr.to_gtf(map_cols={"feature":"name", "attribute":"prices"}))
+        1	.	Tim	2	4	.	.	.	prices "Cheap";
+        1	.	Eric	4	6	.	.	.	prices "Premium";
+        1	.	Endre	6	9	.	.	.	prices "Fine European";
+        <BLANKLINE>
         """
 
         from pyranges.out import _to_gtf
 
-        result = _to_gtf(self, path, compression=compression)
+        result = _to_gtf(self, path, compression=compression, map_cols=map_cols)
 
         if path and chain:
             return self

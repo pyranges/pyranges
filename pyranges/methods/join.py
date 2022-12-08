@@ -86,8 +86,8 @@ def _both_dfs(scdf, ocdf, how=False):
         sh.index = [-1]
         oh.index = [-1]
 
-        scdf = scdf.append(sh)
-        ocdf = ocdf.append(oh)
+        scdf = pd.concat([scdf, sh])
+        ocdf = pd.concat([ocdf, oh])
 
         scdf = scdf.reindex(_self_indexes)
         ocdf = ocdf.reindex(_other_indexes)
