@@ -5,6 +5,24 @@ import csv
 
 from natsort import natsorted
 
+_gtf_columns={"seqname": "Chromosome",
+             "source": "Source",
+             "feature": "Feature",
+             "start": "Start",
+             "end": "End",
+             "score": "Score",
+             "strand": "Strand",
+             "frame": "Frame",
+             #"attribute": "Attribute"  # filled with all others columns
+}
+
+_gff3_columns=_gtf_columns.copy()
+_gff3_columns['phase'] = _gff3_columns.pop('frame')
+
+_ordered_gtf_columns= ["seqname", "source", "feature", "start", "end", "score", "strand", "frame", "attribute"]
+_ordered_gff3_columns=["seqname", "source", "feature", "start", "end", "score", "strand", "phase", "attribute"]
+
+
 
 def _fill_missing(df, all_columns):
 
@@ -40,42 +58,48 @@ def _bed(df, keep):
         return outdf
 
 
-def _gtf(df):
+def _gtf(df, mapping):
 
-    all_columns = "Chromosome   Source   Feature    Start     End       Score    Strand   Frame".split(
-    )
+    pr_col2gff_col={v:k for k, v in mapping.items()}
+    
+    df=df.rename(columns=pr_col2gff_col) #copying here
+    df.loc[:, "start"] = df.start + 1
+    all_columns = _ordered_gtf_columns[:-1]
     columns = list(df.columns)
-
-    df = df.copy()
-
-    df.loc[:, "Start"] = df.Start + 1
-
+ 
     outdf = _fill_missing(df, all_columns)
+    
+    if 'attribute' in df.columns:
+        attribute = mapping['attribute'] + ' "' + df.attribute + '";'
+    else:
+        # gotten all needed columns, need to join the rest
+        rest = set(df.columns) - set(all_columns)
+        rest = sorted(rest, key=columns.index)
+        rest_df = df.get(rest).copy()
+        for c in rest_df:
+            col = rest_df[c]
+            isnull = col.isnull()
+            col = col.astype(str).str.replace("nan", "")
+            new_val = c + ' "' + col + '";'
+            rest_df.loc[:, c] = rest_df[c].astype(str)
+            rest_df.loc[~isnull, c] = new_val
+            rest_df.loc[isnull, c] = ""
 
-    # gotten all needed columns, need to join the rest
-    rest = set(df.columns) - set(all_columns)
-    rest = sorted(rest, key=columns.index)
-    rest_df = df.get(rest).copy()
-    for c in rest_df:
-        col = rest_df[c]
-        isnull = col.isnull()
-        col = col.astype(str).str.replace("nan", "")
-        new_val = c + ' "' + col + '";'
-        rest_df.loc[:, c] = rest_df[c].astype(str)
-        rest_df.loc[~isnull, c] = new_val
-        rest_df.loc[isnull, c] = ""
-
-    attribute = rest_df.apply(lambda r: " ".join([v for v in r if v]), axis=1)
-    outdf.insert(outdf.shape[1], "Attribute", attribute)
+        attribute = rest_df.apply(lambda r: " ".join([v for v in r if v]), axis=1)
+    outdf.insert(outdf.shape[1], "attribute", attribute)
 
     return outdf
 
 
-def _to_gtf(self, path=None, compression="infer"):
+def _to_gtf(self, path=None, compression="infer", map_cols=None):
 
+    mapping=_gtf_columns.copy()
+    if map_cols:
+        mapping.update(map_cols)
+    
     gr = self
 
-    outdfs = [_gtf(v) for k, v in sorted(gr.dfs.items())]
+    outdfs = [_gtf(v, mapping) for k, v in sorted(gr.dfs.items())]
 
     if path:
         mode = "w+"
@@ -203,13 +227,15 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=N
 
         bw.addEntries(chromosomes, starts, ends=ends, values=values)
 
-
-
-def _to_gff3(self, path=None, compression="infer"):
+def _to_gff3(self, path=None, compression="infer", map_cols=None):
+    
+    mapping=_gff3_columns.copy()
+    if map_cols:
+        mapping.update(map_cols)
 
     gr = self
-
-    outdfs = [_gff3(v) for k, v in sorted(gr.dfs.items())]
+    
+    outdfs = [_gff3(v, mapping) for k, v in sorted(gr.dfs.items())]
 
     if path:
         mode = "w+"
@@ -230,37 +256,42 @@ def _to_gff3(self, path=None, compression="infer"):
             for outdf in outdfs
         ])
 
-def _gff3(df):
 
-    all_columns = "Chromosome   Source   Feature    Start     End       Score    Strand   Frame".split(
-    )
+
+
+def _gff3(df, mapping):
+    
+    pr_col2gff_col={v:k for k, v in mapping.items()}
+    
+    df=df.rename(columns=pr_col2gff_col) #copying here
+    df.loc[:, "start"] = df.start + 1
+    all_columns = _ordered_gff3_columns[:-1]
     columns = list(df.columns)
 
-    df = df.copy()
-
-    df.loc[:, "Start"] = df.Start + 1
-
     outdf = _fill_missing(df, all_columns)
+    
+    if 'attribute' in mapping:
+        attribute = mapping['attribute'] + '=' + df.attribute        
+    else:
+        # gotten all needed columns, need to join the rest
+        rest = set(df.columns) - set(all_columns)
+        rest = sorted(rest, key=columns.index)
+        rest_df = df.get(rest).copy()
+        total_cols = rest_df.shape[1]
+        for i, c in enumerate(rest_df, 1):
+            col = rest_df[c]
+            isnull = col.isnull()
+            col = col.astype(str).str.replace("nan", "")
+            if i != total_cols:
+                new_val = c + '=' + col + ';'
+            else:
+                new_val = c + '=' + col
+            rest_df.loc[:, c] = rest_df[c].astype(str)
+            rest_df.loc[~isnull, c] = new_val
+            rest_df.loc[isnull, c] = ""
 
-    # gotten all needed columns, need to join the rest
-    rest = set(df.columns) - set(all_columns)
-    rest = sorted(rest, key=columns.index)
-    rest_df = df.get(rest).copy()
-    total_cols = rest_df.shape[1]
-    for i, c in enumerate(rest_df, 1):
-        col = rest_df[c]
-        isnull = col.isnull()
-        col = col.astype(str).str.replace("nan", "")
-        if i != total_cols:
-            new_val = c + '=' + col + ';'
-        else:
-            new_val = c + '=' + col
-        rest_df.loc[:, c] = rest_df[c].astype(str)
-        rest_df.loc[~isnull, c] = new_val
-        rest_df.loc[isnull, c] = ""
-
-    attribute = rest_df.apply(lambda r: "".join([v for v in r if v]), axis=1).str.replace(";$", "", regex=True)
-    outdf.insert(outdf.shape[1], "Attribute", attribute)
+        attribute = rest_df.apply(lambda r: "".join([v for v in r if v]), axis=1).str.replace(";$", "", regex=True)
+    outdf.insert(outdf.shape[1], "attribute", attribute)
 
     return outdf
 
