@@ -373,7 +373,7 @@ def to_rows(anno):
 
     for l in anno:
         rowdicts.append({k: v
-                         for k, v in [kv.replace('"', '').split(None, 1)
+                         for k, v in [kv.replace('""', '"NA"').replace('"', '').split(None, 1)
                                       # rstrip: allows for GFF not having a last ";", or having final spaces
                                       for kv in l.rstrip('; ').split("; ")]})
 
