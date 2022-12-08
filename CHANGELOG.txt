@@ -1,3 +1,15 @@
+# 0.0.118 (08.12.2022)
+@marco-mariotti:
+- bug fix on subsequence and spliced_subsequences, occurring when different groups of intervals overlapped, making the not contiguous in the sorted df
+- expanded sort: now accepts "5" for sorting ascending on + stand, descending on - strand
+- expanded gtf/gff readers
+- expanded gtf/gff writer, now accepts a map_cols argument
+- new method: boundaries to get boundaries of group of intervals
+- expanded extend, now optionally accepts a group_by argument
+- changed name of get_fasta to get_sequence
+- new method: get_transcript_sequence
+- docstring modified in a few places
+
 # 0.0.117 (09.05.2022)
 - if gtf file contains empty attribute, parse it as NA
 
