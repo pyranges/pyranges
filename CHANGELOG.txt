@@ -1,3 +1,6 @@
+# 0.0.120 (08.12.2022)
+- fix error in null_types when a variable is pandas.StringDtype (@mkanai)
+
 # 0.0.119 (08.12.2022)
 - Use pd.concat instead of deprecated df.append (@aallahyar)
 - Keep order of non-canonical columns when writing BED (@fairliereese)
