@@ -1004,7 +1004,89 @@ class PyRanges():
         result = pyrange_apply_single(_bounds, self, **kwargs)
         return pr.PyRanges(result)        
         
-    
+    def calculate_frame(p, groupby=['transcript_id']):
+        """Determine the frame of each genomic interval.
+
+        Parameters
+        ----------
+        p : PyRanges object 
+
+        groupby : str or list of str
+       
+            Column(s) to group by to calculate the frame for each transcript. Default is transcript_id.
+  
+        Returns
+        -------
+        PyRanges With extra column Frame
+  
+        Examples
+        --------
+        >>> p= pr.from_dict({"Chromosome": [1,1,1,2,2],
+        ...                  "Strand": ["+","+","+","-","-"],
+        ...                  "Start": [1,31,52,101,201],
+        ...                  "End": [10,45,90,130,218],
+        ...                  "transcript_id": ["t1","t1","t1","t2","t2"] })
+        >>> p
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |         1 |        10 | t1              |
+        |            1 | +            |        31 |        45 | t1              |
+        |            1 | +            |        52 |        90 | t1              |
+        |            2 | -            |       101 |       130 | t2              |
+        |            2 | -            |       201 |       218 | t2              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 5 rows and 5 columns from 2 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> calculate_frame(p)
+        +--------------+--------------+-----------+-----------+-----------------+-----------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |     Frame |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |   (int32) |
+        |--------------+--------------+-----------+-----------+-----------------+-----------|
+        |            1 | +            |         1 |        10 | t1              |         0 |
+        |            1 | +            |        31 |        45 | t1              |         0 |
+        |            1 | +            |        52 |        90 | t1              |         2 |
+        |            2 | -            |       101 |       130 | t2              |         0 |
+        |            2 | -            |       201 |       218 | t2              |         2 |
+        +--------------+--------------+-----------+-----------+-----------------+-----------+
+        Stranded PyRanges object has 5 rows and 6 columns from 2 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+         
+        """
+        #Column to save the initial index
+        p=p.as_df()
+        p['__index__']=p.index
+        p=pr.PyRanges(p)
+  
+        #Filtering columns
+        sorted_p=p[['Chromosome','Start','End','Strand','transcript_id']]
+  
+        #Sorting by 5' (Intervals on + are sorted by ascending order and - are sorted by descending order)
+        sorted_p=p.sort(by='5')
+        sorted_p=sorted_p.as_df()
+  
+        #Creating a column saving the length for the intervals (for selenoprofiles and ensembl)
+        sorted_p['Length']=sorted_p['End']-sorted_p['Start']
+  
+        #Creating a column saving the cummulative length for the intervals
+        sorted_p['CumLength']=sorted_p.groupby(groupby)['Length'].cumsum()
+  
+        #Creating a frame column
+        sorted_p['Frame']=(sorted_p['CumLength']-sorted_p['Length'])%3
+   
+        #Appending the Frame of sorted_p by the index of p
+        sorted_p.sort_values(by='__index__',inplace=True)
+        p=p.as_df()
+        p['Frame']=sorted_p['Frame']
+  
+        #Drop __index__ column
+        p.drop('__index__', axis=1, inplace=True)
+        p=pr.PyRanges(p)
+  
+        return p
+
     @property
     def chromosomes(self):
 
@@ -4159,7 +4241,7 @@ class PyRanges():
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get the first 15 nucleotides of *each spliced transcript*, grouping exons by transcript_id:
+          # Get the first 15 nucleotides of *each spliced transcript*, grouping exons by transcript_id:
         >>> p.spliced_subsequence(0, 15, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4174,7 +4256,7 @@ class PyRanges():
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get the last 20 nucleotides of each spliced transcript:
+          # Get the last 20 nucleotides of each spliced transcript:
         >>> p.spliced_subsequence(-20, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4188,7 +4270,7 @@ class PyRanges():
         Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get region from 25 to 60 of each spliced transcript, or their existing subportion:
+          # Get region from 25 to 60 of each spliced transcript, or their existing subportion:
         >>> p.spliced_subsequence(25, 60, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4199,7 +4281,7 @@ class PyRanges():
         Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get region of each spliced transcript which excludes their first and last 3 nucleotides:
+          # Get region of each spliced transcript which excludes their first and last 3 nucleotides:
         >>> p.spliced_subsequence(3, -3, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4227,6 +4309,7 @@ class PyRanges():
                    
         return pr.PyRanges(result)
 
+    
     def split(self, strand=None, between=False, nb_cpu=1):
 
         """Split into non-overlapping intervals.
