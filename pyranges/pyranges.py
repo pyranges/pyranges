@@ -1007,7 +1007,7 @@ class PyRanges():
     def calculate_frame(self, by=None):
         """Assess the frame of each genomic interval, assuming all are coding sequences.
         
-        The returned PyRanges contains a Frame column which determines the first nucleotide 
+        The returned PyRanges contains a "Frame" column which determines the first nucleotide 
         to start translation. Resulting values are in range between 0 and 2 included. 'by' argument
         allows to calculate the Frame for each transcript.
        
