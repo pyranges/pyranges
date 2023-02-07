@@ -1043,7 +1043,7 @@ class PyRanges():
         Stranded PyRanges object has 5 rows and 5 columns from 2 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> p.calculate_frame(by='transcript_id')
+        >>> p.calculate_frame(by=['transcript_id'])
         +--------------+--------------+-----------+-----------+-----------------+-----------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |     Frame |
         |   (category) | (category)   |   (int32) |   (int32) | (object)        |   (int32) |
