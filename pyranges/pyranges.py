@@ -1004,7 +1004,7 @@ class PyRanges():
         result = pyrange_apply_single(_bounds, self, **kwargs)
         return pr.PyRanges(result)        
         
-    def calculate_frame(self, by=None):
+    def calculate_frame(self, by):
         """Assess the frame of each genomic interval, assuming all are coding sequences.
 
         The input Pyranges contains an added "Frame" column, which determines the base of the CDS that is the first base of a codon.  
