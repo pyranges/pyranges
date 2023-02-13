@@ -1062,10 +1062,10 @@ class PyRanges():
         self.__index__=np.arange(len(self))
 
         #Filtering for desired columns
-        if type(by)==list:
+        if type(by) is list:
           l=by
         else:
-          l=by.split()
+          l=[by]
 
         sorted_p=self[['Strand','__index__']+l]
   
