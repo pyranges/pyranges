@@ -1006,21 +1006,22 @@ class PyRanges():
         
     def calculate_frame(self, by=None):
         """Assess the frame of each genomic interval, assuming all are coding sequences.
-        
-        The returned PyRanges contains a "Frame" column which determines the first nucleotide 
-        to start translation. Resulting values are in range between 0 and 2 included. 'by' argument
-        allows to calculate the Frame for each transcript.
+
+        The input Pyranges contains an added "Frame" column, which determines the base of the CDS that is the first base of a codon.  
+        Resulting values are in range between "0" and "2" included. "0" indicates that the first base of the CDS is the first base of a codon, 
+        "1" indicates the second base and "2" indicates the third base of the CDS.
+        "by" argument allows to calculate the frame for each transcript.
        
         Parameters
         ----------
-        by : list of str
+        by : str or list of str
        
             Column(s) to group by to calculate the frame for each transcript. 
   
         Returns
         -------
         PyRanges 
-            PyRanges with a "Frame" column added.
+            The function does not return anything because it adds a "Frame" column inplace.
   
         Examples
         --------
@@ -1056,13 +1057,17 @@ class PyRanges():
         +--------------+--------------+-----------+-----------+-----------------+-----------+
         Stranded PyRanges object has 5 rows and 6 columns from 2 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-         
         """
         #Column to save the initial index
         self.__index__=np.arange(len(self))
 
         #Filtering for desired columns
-        sorted_p=self[['Strand','__index__']+by]
+        if type(by)==list:
+          l=by
+        else:
+          l=by.split()
+
+        sorted_p=self[['Strand','__index__']+l]
   
         #Sorting by 5' (Intervals on + are sorted by ascending order and - are sorted by descending order)
         sorted_p=sorted_p.sort(by='5')
@@ -1082,9 +1087,8 @@ class PyRanges():
         self.Frame=sorted_p.Frame
   
         #Drop __index__ column
-        self=self.drop(drop='__index__')
-  
-        return self
+        _todrop = [d for d in self.columns if d=='__index__']
+        self.apply(lambda df: df.drop(_todrop, axis=1, inplace=True))
 
     @property
     def chromosomes(self):
