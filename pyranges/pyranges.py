@@ -1005,23 +1005,23 @@ class PyRanges():
         return pr.PyRanges(result)        
         
     def calculate_frame(self, by):
-        """Assess the frame of each genomic interval, assuming all are coding sequences. 
+        """Calculate the frame of each genomic interval, assuming all are coding sequences (CDS), and add it as column inplace.
   
-        The input Pyranges contains an added "Frame" column, which determines the base of the CDS that is the first base of a codon.  
-        Resulting values are in range between "0" and "2" included. "0" indicates that the first base of the CDS is the first base of a codon, 
-        "1" indicates the second base and "2" indicates the third base of the CDS.
-        "by" argument allows to calculate the frame for each transcript.
+        After this, the input Pyranges will contain an added "Frame" column, which determines the base of the CDS that is the first base of a codon.  
+        Resulting values are in range between 0 and 2 included. 0 indicates that the first base of the CDS is the first base of a codon, 
+        1 indicates the second base and 2 indicates the third base of the CDS.      
+        While the 5'-most interval of each transcript has always 0 frame, the following ones may have any of these values.
    
         Parameters
         ----------
         by : str or list of str
 
-            Column(s) to group by to calculate the frame for each transcript.
+            Column(s) to group by the intervals: coding exons belonging to the same transcript have the same values in this/these column(s). 
   
         Returns
         -------
-        PyRanges
-            The function does not return anything because it adds a "Frame" column inplace.
+        None
+            The "Frame" column is added inplace.
 
   
         Examples
@@ -1046,6 +1046,7 @@ class PyRanges():
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
         >>> p.calculate_frame(by=['transcript_id'])
+        >>> p        
         +--------------+--------------+-----------+-----------+-----------------+-----------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |     Frame |
         |   (category) | (category)   |   (int32) |   (int32) | (object)        |   (int32) |
