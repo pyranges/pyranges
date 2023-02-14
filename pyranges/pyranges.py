@@ -1004,7 +1004,6 @@ class PyRanges():
         result = pyrange_apply_single(_bounds, self, **kwargs)
         return pr.PyRanges(result)        
         
-    
     @property
     def chromosomes(self):
 
@@ -4159,7 +4158,7 @@ class PyRanges():
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get the first 15 nucleotides of *each spliced transcript*, grouping exons by transcript_id:
+          # Get the first 15 nucleotides of *each spliced transcript*, grouping exons by transcript_id:
         >>> p.spliced_subsequence(0, 15, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4174,7 +4173,7 @@ class PyRanges():
         Stranded PyRanges object has 5 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get the last 20 nucleotides of each spliced transcript:
+          # Get the last 20 nucleotides of each spliced transcript:
         >>> p.spliced_subsequence(-20, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4188,7 +4187,7 @@ class PyRanges():
         Stranded PyRanges object has 4 rows and 5 columns from 3 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get region from 25 to 60 of each spliced transcript, or their existing subportion:
+          # Get region from 25 to 60 of each spliced transcript, or their existing subportion:
         >>> p.spliced_subsequence(25, 60, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4199,7 +4198,7 @@ class PyRanges():
         Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        # Get region of each spliced transcript which excludes their first and last 3 nucleotides:
+          # Get region of each spliced transcript which excludes their first and last 3 nucleotides:
         >>> p.spliced_subsequence(3, -3, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
@@ -4227,6 +4226,7 @@ class PyRanges():
                    
         return pr.PyRanges(result)
 
+    
     def split(self, strand=None, between=False, nb_cpu=1):
 
         """Split into non-overlapping intervals.
