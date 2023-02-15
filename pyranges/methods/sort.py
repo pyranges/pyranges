@@ -1,16 +1,30 @@
+import pandas as pd
+
 def _sort(df, **kwargs):
 
     if "by" in kwargs:
         by = kwargs["by"]
-        # print("sorting by", by)
-        # print("by " * 100)
-        # print(by)
-        return df.sort_values(by)
+        if type(kwargs["by"]) is str:
+            by=[by]
+        else:
+            by=[f for f in by] #making sure it's a list
+            
+        if '5' in by:
+            i = by.index('5')
+            byp = by.copy()
+            byp[i:i+1] = ['Start', 'End']
+            byn = by.copy()
+            byn[i:i+1] = ['End', 'Start']            
+            byna=[False if j in (i,i+1) else True   for j,f in enumerate(byn)] 
+
+            return pd.concat( [df[df.Strand=='+'].sort_values(byp, ascending=True),
+                               df[df.Strand=='-'].sort_values(byn, ascending=byna)] )
+        
+        else:
+            by = kwargs["by"]
+            return df.sort_values(by)
     else:
-        # print("else " * 100)
-        # print(df)
         df = sort_one_by_one(df, "Start", "End")
-        # df = df.sort_values("Start End".split())
         return df
 
 

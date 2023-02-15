@@ -67,6 +67,7 @@ def read_bed(f, as_df=False, nrows=None):
     2       chr1   9951  10150  H3K27me3      8      -
     3       chr1   9953  10152  H3K27me3      5      +
     4       chr1   9978  10177  H3K27me3      7      -
+
     """
 
     columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split(
@@ -275,6 +276,13 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
 
         Whether to handle (potential) duplicate attributes or just keep last one.
 
+    Note
+    ----
+
+    The GTF format encodes both Start and End as 1-based included.
+    PyRanges (and also the DF returned by this function, if as_df=True), instead 
+    encodes intervals as 0-based, Start included and End excluded.
+
     See Also
     --------
 
@@ -365,9 +373,9 @@ def to_rows(anno):
 
     for l in anno:
         rowdicts.append({k: v
-                         for k, v in [kv.replace('"', '').split(None, 1)
-                                      # l[:-1] removes final ";" cheaply
-                                      for kv in l[:-1].split("; ")]})
+                         for k, v in [kv.replace('""', '"NA"').replace('"', '').split(None, 1)
+                                      # rstrip: allows for GFF not having a last ";", or having final spaces
+                                      for kv in l.rstrip('; ').split("; ")]})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -377,8 +385,8 @@ def to_rows_keep_duplicates(anno):
     for l in anno:
         rowdict = {}
 
-        # l[:-1] removes final ";" cheaply
-        for k, v in (kv.replace('"', '').split(None, 1) for kv in l[:-1].split("; ")):
+        # rstrip: allows for GFF not having a last ";", or having final spaces
+        for k, v in (kv.replace('"', '').split(None, 1) for kv in l.rstrip('; ').split("; ")):
 
             if k not in rowdict:
                 rowdict[k] = v
@@ -457,8 +465,9 @@ def to_rows_gff3(anno):
     rowdicts = []
 
     for l in list(anno):
-        l = (it.split("=") for it in l.split(";"))
-        rowdicts.append({k: v for k, v in l})
+        # stripping last white char if present
+        lx = (it.split("=") for it in l.rstrip('; ').split(";"))
+        rowdicts.append({k: v for k, v in lx})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -484,6 +493,13 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
     nrows : int, default None
 
         Number of rows to read. Default None, i.e. all.
+
+    Notes
+    -----
+
+    The gff3 format encodes both Start and End as 1-based included.
+    PyRanges (and also the DF returned by this function, if as_df=True), instead 
+    encodes intervals as 0-based, Start included and End excluded.
 
     See Also
     --------

@@ -60,13 +60,15 @@ def null_types(h):
 
         if "int" in d or "float" in d:
             null = -1
-        elif d == "str" or d == "object":
+        elif "string" in d or d == "object":
             null = "-1"
         elif d == "category":
             tmp_cat = h2[n].copy()
             tmp_cat = tmp_cat.cat.add_categories("-1")
             h2[n] = tmp_cat
             null = "-1"
+        else:
+            raise Exception("Unknown dtype {} in a column {}".format(d, n))
 
         h2.loc[:, n] = null
 
@@ -84,8 +86,8 @@ def _both_dfs(scdf, ocdf, how=False):
         sh.index = [-1]
         oh.index = [-1]
 
-        scdf = scdf.append(sh)
-        ocdf = ocdf.append(oh)
+        scdf = pd.concat([scdf, sh])
+        ocdf = pd.concat([ocdf, oh])
 
         scdf = scdf.reindex(_self_indexes)
         ocdf = ocdf.reindex(_other_indexes)

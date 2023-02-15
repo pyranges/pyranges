@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import pandas as pd
 import numpy as np
 
@@ -8,8 +6,11 @@ def _spliced_subseq(scdf, **kwargs):
         return None
 
     scdf = scdf.copy()
-
-    by = kwargs.get("by") if kwargs.get("by") else "__index__"
+    orig_order=scdf.index.copy()
+    
+    by = kwargs.get("by") if kwargs.get("by") else "__i__"
+    if not type(by) is list: 
+        by=[by]              
     start = kwargs.get("start") if kwargs.get("start") else 0
     end = kwargs.get("end") if kwargs.get("end") else scdf.End.max()
 
@@ -20,41 +21,43 @@ def _spliced_subseq(scdf, **kwargs):
     #  to pyrange_apply_single as True, which updates it to '-' or '+' before calling _spliced_subseq
     if strand:
         assert "Strand" in scdf, "Cannot have strand=True on unstranded pyranges!"
-
-    if strand == "-": 
-
-        scdf = scdf.sort_values(["Start", "End"], ascending=False)
-
+        
     scdf.insert(scdf.shape[1], "__length__", scdf.End - scdf.Start)
-    scdf.insert(scdf.shape[1], "__index__", np.arange(len(scdf)))
-    g = scdf.groupby(by)
-
-    minstart_idx = g.__index__.first()
-    cumsum_lengths = g.__length__.cumsum()
+    scdf.insert(scdf.shape[1], "__i__",  scdf.index)
     
-    if start < 0 or (end is not None and end < 0):
-        exon_count = g.__index__.count()
-        # transc_len has one row per group (transcript) with total sum of exon length
-        transc_len= cumsum_lengths.iloc[ g.__index__.last() ].values
+    g = scdf.groupby(by)
+    scdf.insert(scdf.shape[1], "__cumsum__",  g.__length__.cumsum())
+
+    minstart_idx = g.__i__.first()
+            
+    if start < 0 or (end is not None and end < 0):        
+        #len_per_transc is total sum of exon length per transcript 
+        len_per_transc=scdf.loc[ g.__i__.last(), by+['__cumsum__'] ].rename(
+            columns={'__cumsum__':'__totexonlen__'})
+        
+        # exp_len_per_transc has same rows of scdf with total sum of exon length
+        # had to add bits to keep the order of rows right, or merge would destroy it
+        if kwargs.get("by"):
+            exp_len_per_transc=(scdf.loc[:,by+['__i__']].merge(len_per_transc, on=by).set_index('__i__').loc[scdf.index]  )
+        else:
+            exp_len_per_transc=(scdf.loc[:,by].merge(len_per_transc, on=by).set_index('__i__').loc[scdf.index]  )            
         
         if start < 0:
-            actual_start=transc_len + start 
-            start = np.repeat(actual_start, exon_count) 
+            start=exp_len_per_transc['__totexonlen__'] + start
+            
         if end is not None and end < 0:
-            actual_end = transc_len + end
-            end = np.repeat(actual_end, exon_count) 
-        
-    cs_start = cumsum_lengths.shift(1, fill_value=0).values
-    cs_start[minstart_idx] = 0
-    
-    cs_end = cumsum_lengths.values
+            end = exp_len_per_transc['__totexonlen__'] + end                                  
 
+    cs_start = g.__cumsum__.shift(1, fill_value=0) 
+    cs_start.loc[minstart_idx] = 0
+
+    cs_end = scdf['__cumsum__']
+        
     ## NOTE
     #  here below, start is a scalar if originally provided > 0, or a Series if < 0
     #  same for end
     if strand == "-": # and use_strand:        
-        start_adjustments = start - cs_start  
-
+        start_adjustments = start - cs_start          
         adjust_start = start_adjustments > 0
         scdf.loc[adjust_start, "End"] -= start_adjustments[adjust_start].astype(int)
 
@@ -66,11 +69,12 @@ def _spliced_subseq(scdf, **kwargs):
         adjust_start = start_adjustments > 0
         scdf.loc[adjust_start, "Start"] += start_adjustments[adjust_start].astype(int)
 
-        end_adjustments = cs_end - end
+        end_adjustments = cs_end - end        
         adjust_end = end_adjustments > 0
         scdf.loc[adjust_end, "End"] -= end_adjustments[adjust_end] 
 
+    scdf = scdf.loc[orig_order]
     scdf = scdf[(scdf.Start < scdf.End) & (scdf.Start >= 0) & (scdf.End > 0)]
-
-    return scdf.drop(["__index__", "__length__"], axis=1).sort_index()
+     
+    return scdf.drop(["__i__", "__length__", "__cumsum__"], axis=1)
 
