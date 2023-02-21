@@ -1044,6 +1044,13 @@ class PyRanges():
         PyRanges
             PyRanges with an ID-column "Cluster" added.
 
+        Warning
+        -------
+        
+        Bookended intervals (i.e. the End of a PyRanges interval is the Start of
+        another one) are by default considered to overlap.
+        Avoid this with slack=-1.
+
         See also
         --------
 
