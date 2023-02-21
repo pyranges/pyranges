@@ -1048,7 +1048,8 @@ class PyRanges():
         Warning
         -------
         
-        Bookended intervals are by default considered to overlap.
+        Bookended intervals (i.e. the End of a PyRanges interval is the Start of
+        another one) are by default considered to overlap.
         Avoid this with slack=-1.
 
         See also
