@@ -305,6 +305,11 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
 
     Parameters
     ----------
+
+    gr : PyRanges
+
+        Input intervals
+
     chromsizes : dict or PyRanges or pyfaidx.Fasta
 
         Dict or PyRanges describing the lengths of the chromosomes.
