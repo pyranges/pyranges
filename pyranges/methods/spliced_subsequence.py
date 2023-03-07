@@ -64,22 +64,22 @@ def _spliced_subseq(scdf, **kwargs):
     if strand == "-": # and use_strand:        
         start_adjustments = start - cs_start          
         adjust_start = start_adjustments > 0
-        scdf.loc[adjust_start, "End"] -= start_adjustments[adjust_start].astype(int)
+        scdf.loc[adjust_start, "End"] -= start_adjustments[adjust_start].astype(scdf.End.dtype)
 
         end_adjustments = cs_end - end
         adjust_end = end_adjustments > 0
-        scdf.loc[adjust_end, "Start"] += end_adjustments[adjust_end]
+        scdf.loc[adjust_end, "Start"] += end_adjustments[adjust_end].astype(scdf.Start.dtype)
     else:
         start_adjustments = start - cs_start
         adjust_start = start_adjustments > 0
-        scdf.loc[adjust_start, "Start"] += start_adjustments[adjust_start].astype(int)
+        scdf.loc[adjust_start, "Start"] += start_adjustments[adjust_start].astype(scdf.Start.dtype)
 
         end_adjustments = cs_end - end        
         adjust_end = end_adjustments > 0
-        scdf.loc[adjust_end, "End"] -= end_adjustments[adjust_end] 
+        scdf.loc[adjust_end, "End"] -= end_adjustments[adjust_end].astype(scdf.End.dtype)
 
     scdf = scdf.loc[orig_order]
     scdf = scdf[(scdf.Start < scdf.End)]
-     
+
     return scdf.drop(["__i__", "__length__", "__cumsum__"], axis=1)
 
