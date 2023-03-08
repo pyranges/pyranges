@@ -13,26 +13,35 @@ def _subseq(scdf, **kwargs):
     by = kwargs.get("by") if kwargs.get("by") else "__i__"
     if not type(by) is list:
         by=[by]
-    start = kwargs.get("start") if kwargs.get("start") else 0
-    end = kwargs.get("end") if kwargs.get("end") else scdf.End.max()
 
-    # no strand is treated the same way as positive strand
-    strand = scdf.Strand.iloc[0] if "Strand" in scdf else "+"    
+    strand = kwargs.get("strand")
+    # at this point, strand is False if:
+    #   1. subsequence was called with strand=False or
+    #   2. it was called with strand=None and self is not stranded
+    # or it can be '+' or '-' if:
+    #   1. it was input as True to subsequence and passed  to pyrange_apply_single as True,
+    #      which updates it to '-' or '+' before calling _subseq, or
+    #   2. it was called with strand=None and self is stranded
+    if strand!='-':
+        strand='+'
+    # now, unstranded or strand==None cases are treated like all intervals are on the + strand
 
     # creating j which holds the boundaries per group
     # j contains one row per group; columns: Start  End (+ by columns); indexed by __i__    
     agg_dict={"__i__": "first", "Start": "min", "End": "max"}
     for b in by:
         agg_dict[b]="first"
-
     
     if kwargs.get("by"):
-        j=scdf.groupby(by)[ ["Start", "End", "__i__"] + by ].agg(agg_dict).set_index("__i__")
+        j=scdf.groupby(by, dropna=False)[ ["Start", "End", "__i__"] + by ].agg(agg_dict).set_index("__i__")
     else:
-        j=scdf.groupby(by)[ ["Start", "End", "__i__"]  ].agg(agg_dict).set_index("__i__")
+        j=scdf.groupby(by, dropna=False)[ ["Start", "End", "__i__"]  ].agg(agg_dict).set_index("__i__")
         j.insert(0, "__i__",  j.index)
         j.index.name = None
-    
+
+    start = kwargs.get("start") if kwargs.get("start") else 0
+    end = kwargs.get("end") if kwargs.get("end") else (j.End-j.Start).max()
+
     # below we add columns starts, ends to j
     # start and ends define the desired start and end, with one row per group (transcript).
     # they may be out of bounds of the interval, though (this is dealt with later)    
