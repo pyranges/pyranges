@@ -1072,19 +1072,20 @@ class PyRanges():
   
         #Sorting by 5' (Intervals on + are sorted by ascending order and - are sorted by descending order)
         sorted_p=sorted_p.sort(by='5')
-        sorted_p=sorted_p.as_df()
-  
+        
         #Creating a column saving the length for the intervals (for selenoprofiles and ensembl)
-        sorted_p['Length']=sorted_p['End']-sorted_p['Start']
+        sorted_p.__length__=sorted_p.End-sorted_p.Start
   
         #Creating a column saving the cummulative length for the intervals
-        sorted_p['CumLength']=sorted_p.groupby(by)['Length'].cumsum()
+        for k, df in sorted_p:
+          sorted_p.dfs[k]['__cumsum__'] = df.groupby(by=by).__length__.cumsum()
   
         #Creating a frame column
-        sorted_p['Frame']=(sorted_p['CumLength']-sorted_p['Length'])%3
+        sorted_p.Frame=(sorted_p.__cumsum__-sorted_p.__length__)%3
   
         #Appending the Frame of sorted_p by the index of p
-        sorted_p.sort_values(by='__index__',inplace=True)
+        sorted_p=sorted_p.apply(lambda df: df.sort_values(by='__index__')
+
         self.Frame=sorted_p.Frame
   
         #Drop __index__ column
