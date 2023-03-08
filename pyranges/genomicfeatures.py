@@ -256,7 +256,8 @@ class GenomicFeaturesMethods():
         return pr.PyRanges(result)
 
 def _outside_bounds(df, **kwargs):
-
+    
+    df = df.copy()
     chromsizes = kwargs.get("chromsizes")
 
     if not isinstance(chromsizes, dict):
@@ -265,30 +266,66 @@ def _outside_bounds(df, **kwargs):
 
     size = int(chromsizes[df.Chromosome.iloc[0]])
     clip = kwargs.get("clip", False)
+    only_right = kwargs.get("only_right", False)
 
-    ends_outside = df.End > size
+    ends_outright = df.End > size
+    if not only_right:
+        starts_outleft = df.Start < 0
+
     if not clip:  # i.e. remove
-        df = df[~ends_outside]
+        if only_right:
+            df = df[~ends_outright]
+        else:
+            df = df[~ends_outright & ~starts_outleft]
+
     else:
-        starts_inside = df.Start <= size
-        df.loc[ends_outside & starts_inside, "End"] = size
+        starts_outright = df.Start >= size
+
+        if only_right:
+            df.loc[ends_outright, "End"] = size
+
+            # removing intervals completely out of bounds
+            df = df[~starts_outright]
+
+        else:
+            ends_outleft = df.End <= 0
+
+            df.loc[ends_outright, "End"] = size
+            df.loc[starts_outleft, "Start"] = 0
+
+            # removing intervals completely out of bounds:
+            df = df[~starts_outright & ~ends_outleft]
 
     return df
 
 
-def genome_bounds(gr, chromsizes, clip=False):
+def genome_bounds(gr, chromsizes, clip=False, only_right=False):
 
     """Remove or clip intervals outside of genome bounds.
 
     Parameters
     ----------
-    chromsizes : dict or PyRanges
+
+    gr : PyRanges
+
+        Input intervals
+
+    chromsizes : dict or PyRanges or pyfaidx.Fasta
 
         Dict or PyRanges describing the lengths of the chromosomes.
+        pyfaidx.Fasta object is also accepted since it conveniently loads chromosome length
 
     clip : bool, default False
 
-        Part of interval within bounds.
+        Returns the portions of intervals within bounds,
+        instead of dropping intervals entirely if they are even partially
+        out of bounds
+
+    only_right : bool, default False
+
+        If True, remove or clip only intervals that are out-of-bounds on the right,
+        and do not alter those out-of-bounds on the left (whose Start is < 0)
+
 
     Examples
     --------
@@ -344,13 +381,32 @@ def genome_bounds(gr, chromsizes, clip=False):
     KeyError: '3'
     """
 
-    if not isinstance(chromsizes, dict):
+
+    if isinstance(chromsizes, pr.PyRanges):
         chromsizes = {
             k: v
             for k, v in zip(chromsizes.Chromosome, chromsizes.End)
         }
 
-    return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip)
+    elif isinstance(chromsizes, dict):
+        pass
+
+    else:
+
+        try:
+            import pyfaidx
+            if isinstance(chromsizes, pyfaidx.Fasta):
+                chromsizes={
+                    k: len(chromsizes[k])
+                    for k in chromsizes.keys()
+                }
+        except:
+            pass
+
+    assert isinstance(chromsizes, dict), \
+            "ERROR chromsizes must be a dictionary, or a PyRanges, or a pyfaidx.Fasta object"
+
+    return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right)
 
 
 
