@@ -1004,7 +1004,94 @@ class PyRanges():
         result = pyrange_apply_single(_bounds, self, **kwargs)
         return pr.PyRanges(result)        
         
-    
+    def calculate_frame(self, by):
+        """Calculate the frame of each genomic interval, assuming all are coding sequences (CDS), and add it as column inplace.
+  
+        After this, the input Pyranges will contain an added "Frame" column, which determines the base of the CDS that is the first base of a codon.  
+        Resulting values are in range between 0 and 2 included. 0 indicates that the first base of the CDS is the first base of a codon, 
+        1 indicates the second base and 2 indicates the third base of the CDS.      
+        While the 5'-most interval of each transcript has always 0 frame, the following ones may have any of these values.
+   
+        Parameters
+        ----------
+        by : str or list of str
+
+            Column(s) to group by the intervals: coding exons belonging to the same transcript have the same values in this/these column(s). 
+  
+        Returns
+        -------
+        None
+            The "Frame" column is added inplace.
+
+  
+        Examples
+        --------
+        >>> p= pr.from_dict({"Chromosome": [1,1,1,2,2],
+        ...                  "Strand": ["+","+","+","-","-"],
+        ...                  "Start": [1,31,52,101,201],
+        ...                  "End": [10,45,90,130,218],
+        ...                  "transcript_id": ["t1","t1","t1","t2","t2"] })
+        >>> p
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |         1 |        10 | t1              |
+        |            1 | +            |        31 |        45 | t1              |
+        |            1 | +            |        52 |        90 | t1              |
+        |            2 | -            |       101 |       130 | t2              |
+        |            2 | -            |       201 |       218 | t2              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 5 rows and 5 columns from 2 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+
+        >>> p.calculate_frame(by=['transcript_id'])
+        >>> p        
+        +--------------+--------------+-----------+-----------+-----------------+-----------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |     Frame |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |   (int32) |
+        |--------------+--------------+-----------+-----------+-----------------+-----------|
+        |            1 | +            |         1 |        10 | t1              |         0 |
+        |            1 | +            |        31 |        45 | t1              |         0 |
+        |            1 | +            |        52 |        90 | t1              |         2 |
+        |            2 | -            |       101 |       130 | t2              |         2 |
+        |            2 | -            |       201 |       218 | t2              |         0 |
+        +--------------+--------------+-----------+-----------+-----------------+-----------+
+        Stranded PyRanges object has 5 rows and 6 columns from 2 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
+  
+        """
+        #Column to save the initial index
+        self.__index__=np.arange(len(self))
+
+        #Filtering for desired columns
+        if type(by) is list:
+          l=by
+        else:
+          l=[by]
+        sorted_p=self[['Strand','__index__']+l]
+  
+        #Sorting by 5' (Intervals on + are sorted by ascending order and - are sorted by descending order)
+        sorted_p=sorted_p.sort(by='5')
+        
+        #Creating a column saving the length for the intervals (for selenoprofiles and ensembl)
+        sorted_p.__length__=sorted_p.End-sorted_p.Start
+  
+        #Creating a column saving the cummulative length for the intervals
+        for k, df in sorted_p:
+          sorted_p.dfs[k]['__cumsum__'] = df.groupby(by=by).__length__.cumsum()
+  
+        #Creating a frame column
+        sorted_p.Frame=(sorted_p.__cumsum__-sorted_p.__length__)%3
+  
+        #Appending the Frame of sorted_p by the index of p
+        sorted_p=sorted_p.apply(lambda df: df.sort_values(by='__index__')
+
+        self.Frame=sorted_p.Frame
+  
+        #Drop __index__ column
+        self.apply(lambda df: df.drop('__index__', axis=1, inplace=True))
+
     @property
     def chromosomes(self):
 
