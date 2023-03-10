@@ -1084,7 +1084,7 @@ class PyRanges():
         sorted_p.Frame=(sorted_p.__cumsum__-sorted_p.__length__)%3
   
         #Appending the Frame of sorted_p by the index of p
-        sorted_p=sorted_p.apply(lambda df: df.sort_values(by='__index__')
+        sorted_p=sorted_p.apply(lambda df: df.sort_values(by='__index__'))
 
         self.Frame=sorted_p.Frame
   
