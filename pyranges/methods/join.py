@@ -53,11 +53,20 @@ def _both_indexes(scdf, ocdf, how=False):
 def null_types(h):
     h2 = h.copy()
     for n, d in zip(h, h.dtypes):
+
         if n in ["Chromosome", "Strand"]:
             continue
 
         d = str(d)
 
+        # for bools, turn into a category so we can add an
+        # "unknown" null value ("-1")
+        if "bool" in d:
+            h2[n] = h2[n].astype("category")
+            d = "category"
+
+        # use numerical -1 for numbers
+        # or string "-1" for strings, objects, and cats
         if "int" in d or "float" in d:
             null = -1
         elif "string" in d or d == "object":
