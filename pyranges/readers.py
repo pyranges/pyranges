@@ -361,6 +361,9 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
     else:
         return df
 
+def parse_kv_fields(l):
+    # rstrip: allows for GFF not having a last ";", or having final spaces
+    return [kv.replace('""', '"NA"').replace('"', '').split(None, 1) for kv in l.rstrip('; ').split("; ")]
 
 def to_rows(anno):
     rowdicts = []
@@ -372,10 +375,7 @@ def to_rows(anno):
         raise Exception("Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(l=l))
 
     for l in anno:
-        rowdicts.append({k: v
-                         for k, v in [kv.replace('""', '"NA"').replace('"', '').split(None, 1)
-                                      # rstrip: allows for GFF not having a last ";", or having final spaces
-                                      for kv in l.rstrip('; ').split("; ")]})
+        rowdicts.append({k: v for k, v in parse_kv_fields(l)})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -386,7 +386,7 @@ def to_rows_keep_duplicates(anno):
         rowdict = {}
 
         # rstrip: allows for GFF not having a last ";", or having final spaces
-        for k, v in (kv.replace('"', '').split(None, 1) for kv in l.rstrip('; ').split("; ")):
+        for k, v in tuple(parse_kv_fields(l)):
 
             if k not in rowdict:
                 rowdict[k] = v
