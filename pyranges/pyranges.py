@@ -2917,6 +2917,49 @@ class PyRanges():
 
             return pd.concat(_lengths).reset_index(drop=True)
 
+
+
+    def make_stranded(self, method='to_plus'):
+
+        """Returns a PyRanges copy which is ensured to be stranded.
+
+        Parameters
+        ----------
+
+        method : {"to_plus", "remove"}, default "to_plus"
+        
+            If "to_plus" (default), if a Strand column is present and contains any invalid values 
+            (anything other than "+" or "-"), they are turned into "+". 
+            If "remove", rows with invalid Strand value are omitted
+
+        Returns
+        -------
+        PyRanges
+
+            A stranded PyRanges 
+
+        """
+        
+        if self.stranded:
+            return self.copy()
+        
+        elif not hasattr(self, 'Strand'):
+            return pr.PyRanges( self.df.assign(Strand='+') )
+        
+        elif method=='to_plus':
+            return pr.PyRanges(
+                self.df.assign(Strand=
+                               lambda x:x.Strand.cat.set_categories(['+', '-']).fillna('+')
+                               ))
+        
+        elif method=='remove':
+            d=self.df
+            return pr.PyRanges( d[d.Strand.cat.isin(['+', '-'])] )
+        
+        else:
+            raise Exception(f'make_stranded ERROR method must be "to_plus" or "remove", got {method} instead')
+        
+
     def max_disjoint(self, strand=None, slack=0, **kwargs):
 
         """Find the maximal disjoint set of intervals.
