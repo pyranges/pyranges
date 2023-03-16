@@ -4088,58 +4088,65 @@ class PyRanges():
         Examples
         --------
 
-        >>> gr = pr.data.f1()
-        >>> gr
-        +--------------+-----------+-----------+------------+-----------+--------------+
-        | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-        |--------------+-----------+-----------+------------+-----------+--------------|
-        | chr1         |         3 |         6 | interval1  |         0 | +            |
-        | chr1         |         8 |         9 | interval3  |         0 | +            |
-        | chr1         |         5 |         7 | interval2  |         0 | -            |
-        +--------------+-----------+-----------+------------+-----------+--------------+
-        Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
+        >>> p  = pr.from_dict({"Chromosome": [1, 1, 1, 1, 1, 1],
+        ...                    "Strand": ["+", "+", "-", "-", "+", "+"],
+        ...                    "Start": [40, 1, 10, 70, 140, 160],
+        ...                    "End": [60, 11, 25, 80, 152, 190],
+        ...                    "transcript_id":["t3", "t3", "t2", "t2", "t1", "t1"] })
+
+        By default, intervals are sorted by position:
+
+        >>> p.sort()
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |         1 |        11 | t3              |
+        |            1 | +            |        40 |        60 | t3              |
+        |            1 | +            |       140 |       152 | t1              |
+        |            1 | +            |       160 |       190 | t1              |
+        |            1 | -            |        10 |        25 | t2              |
+        |            1 | -            |        70 |        80 | t2              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 6 rows and 5 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> gr.split(between=True)
-        +--------------+-----------+-----------+------------+
-        | Chromosome   |     Start |       End | Strand     |
-        | (object)     |   (int32) |   (int32) | (object)   |
-        |--------------+-----------+-----------+------------|
-        | chr1         |         3 |         6 | +          |
-        | chr1         |         6 |         8 | +          |
-        | chr1         |         8 |         9 | +          |
-        | chr1         |         5 |         7 | -          |
-        +--------------+-----------+-----------+------------+
-        Stranded PyRanges object has 4 rows and 4 columns from 1 chromosomes.
+        (Note how sorting takes place within Chromosome-Strand pairs.)
+        
+        To sort according to a specified column:
+
+        >>> p.sort(by='transcript_id')
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |       140 |       152 | t1              |
+        |            1 | +            |       160 |       190 | t1              |
+        |            1 | +            |        40 |        60 | t3              |
+        |            1 | +            |         1 |        11 | t3              |
+        |            1 | -            |        10 |        25 | t2              |
+        |            1 | -            |        70 |        80 | t2              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 6 rows and 5 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> gr.split(strand=False)
-        +--------------+-----------+-----------+
-        | Chromosome   |     Start |       End |
-        | (object)     |   (int32) |   (int32) |
-        |--------------+-----------+-----------|
-        | chr1         |         3 |         5 |
-        | chr1         |         5 |         6 |
-        | chr1         |         6 |         7 |
-        | chr1         |         8 |         9 |
-        +--------------+-----------+-----------+
-        Unstranded PyRanges object has 4 rows and 3 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome.
+        If the special value "5" is provided, intervals are sorted 
+        according to their five-prime end:
 
-        >>> gr.split(strand=False, between=True)
-        +--------------+-----------+-----------+
-        | Chromosome   |     Start |       End |
-        | (object)     |   (int32) |   (int32) |
-        |--------------+-----------+-----------|
-        | chr1         |         3 |         5 |
-        | chr1         |         5 |         6 |
-        | chr1         |         6 |         7 |
-        | chr1         |         7 |         8 |
-        | chr1         |         8 |         9 |
-        +--------------+-----------+-----------+
-        Unstranded PyRanges object has 5 rows and 3 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome.
+        >>> p.sort("5")
+        +--------------+--------------+-----------+-----------+-----------------+
+        |   Chromosome | Strand       |     Start |       End | transcript_id   |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |--------------+--------------+-----------+-----------+-----------------|
+        |            1 | +            |         1 |        11 | t3              |
+        |            1 | +            |        40 |        60 | t3              |
+        |            1 | +            |       140 |       152 | t1              |
+        |            1 | +            |       160 |       190 | t1              |
+        |            1 | -            |        70 |        80 | t2              |
+        |            1 | -            |        10 |        25 | t2              |
+        +--------------+--------------+-----------+-----------+-----------------+
+        Stranded PyRanges object has 6 rows and 5 columns from 1 chromosomes.
+        For printing, the PyRanges was sorted on Chromosome and Strand.
 
         """
 
