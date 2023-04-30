@@ -7,16 +7,7 @@ from itertools import product
 
 import numpy as np
 
-from tests.hypothesis_helper import dfs_min2, dfs_no_min
-
-from os import environ
-
-if environ.get("TRAVIS"):
-    max_examples = 10
-    deadline = None
-else:
-    max_examples = 100
-    deadline = None
+from tests.hypothesis_helper import dfs_min2, dfs_no_min, max_examples, deadline
 
 strandedness = [False, "same", "opposite"]
 

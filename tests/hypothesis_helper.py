@@ -10,8 +10,8 @@ import numpy as np
 from os import environ
 from sys import platform
 
-if environ.get("GITHUB_ACTIONS") or platform == "darwin":
-    max_examples = 10
+if environ.get("TOX"):
+    max_examples = 3
     slow_max_examples = 2
     deadline = None
 else:
