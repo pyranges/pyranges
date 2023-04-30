@@ -25,7 +25,6 @@ def test_stranded():
 
 
 def test_unstrand():
-
     exons = pr.data.exons()
 
     cpg = pr.data.cpg()

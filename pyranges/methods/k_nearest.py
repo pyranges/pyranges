@@ -3,14 +3,19 @@ import pandas as pd
 
 from time import time
 
-from sorted_nearest import k_nearest_previous_nonoverlapping, k_nearest_next_nonoverlapping, get_all_ties
+from sorted_nearest import (
+    k_nearest_previous_nonoverlapping,
+    k_nearest_next_nonoverlapping,
+    get_all_ties,
+)
 
 try:
     dummy = profile
 except NameError:
     profile = lambda x: x
-def nearest_previous_idx(d1, d2, k, ties=None):
 
+
+def nearest_previous_idx(d1, d2, k, ties=None):
     d1s = d1.Start.sort_values()
     d2e = d2.End.sort_values()
 
@@ -26,7 +31,8 @@ def nearest_previous_idx(d1, d2, k, ties=None):
     d1s = d1s.iloc[valid]
 
     lidx, ridx_pos, dist = k_nearest_previous_nonoverlapping(
-        d1s.values, d2e.values, d1s.index.values, ix, k, ties)
+        d1s.values, d2e.values, d1s.index.values, ix, k, ties
+    )
 
     dist += 1
 
@@ -37,7 +43,6 @@ def nearest_previous_idx(d1, d2, k, ties=None):
 
 # @profile
 def nearest_next_idx(d1, d2, k, ties=None):
-
     d1e = d1.End.sort_values()
     d2s = d2.Start.sort_values()
 
@@ -47,14 +52,15 @@ def nearest_next_idx(d1, d2, k, ties=None):
     # end = time()
     # print("np next", end - start)
 
-    #- print(ix)
+    # - print(ix)
     valid = ix < len(d2s)
     ix = ix[valid]
 
     d1e = d1e.iloc[valid]
 
     lidx, ridx_pos, dist = k_nearest_next_nonoverlapping(
-        d1e.values, d2s.values, d1e.index.values, ix, k, ties)
+        d1e.values, d2s.values, d1e.index.values, ix, k, ties
+    )
 
     dist += 1
 
@@ -64,7 +70,6 @@ def nearest_next_idx(d1, d2, k, ties=None):
 
 
 def nearest(d1, d2, **kwargs):
-
     suffix = kwargs.get("suffix", "_b")
     ties = kwargs.get("ties", None)
 
@@ -106,9 +111,7 @@ def nearest(d1, d2, **kwargs):
     return df
 
 
-
 def nearest_previous(d1, d2, **kwargs):
-
     suffix = kwargs.get("suffix", "_b")
     ties = kwargs.get("ties", None)
 
@@ -133,7 +136,6 @@ def nearest_previous(d1, d2, **kwargs):
 
 
 def nearest_next(d1, d2, **kwargs):
-
     suffix = kwargs.get("suffix", "_b")
     ties = kwargs.get("ties", None)
 
@@ -147,13 +149,11 @@ def nearest_next(d1, d2, **kwargs):
     df = d1.join(d2, rsuffix=suffix)
     df.insert(df.shape[1], "Distance", dist)
 
-
     return df
 
 
 # @profile
 def _nearest(d1, d2, **kwargs):
-
     if d1.empty or d2.empty:
         return None
 
@@ -168,10 +168,12 @@ def _nearest(d1, d2, **kwargs):
         strand = d1.Strand.iloc[0]
         # strand = strand_dict[strand]
 
-        __nearest = {("+", "upstream"): nearest_previous,
-                     ("-", "upstream"): nearest_next,
-                     ("+", "downstream"): nearest_next,
-                     ("-", "downstream"): nearest_previous}[strand, how]
+        __nearest = {
+            ("+", "upstream"): nearest_previous,
+            ("-", "upstream"): nearest_next,
+            ("+", "downstream"): nearest_next,
+            ("-", "downstream"): nearest_previous,
+        }[strand, how]
     elif how in ["upstream", "downstream"] and not kwargs["stranded"]:
         __nearest = {"upstream": nearest_previous, "downstream": nearest_next}[how]
     else:
@@ -183,9 +185,9 @@ def _nearest(d1, d2, **kwargs):
 
 
 if __name__ == "__main__":
-
     import pyranges as pr
     import numpy as np
+
     np.random.seed(0)
     chrM = pr.data.chromsizes()
     # chrM = chrM[chrM.Chromosome == "chrM"]
@@ -200,6 +202,7 @@ if __name__ == "__main__":
     gr2.ID = np.arange(len(gr2))
 
     from time import time
+
     start = time()
     ks = np.array([1, 2] * half_size, dtype=int)
     result = gr.k_nearest(gr2, k=ks, strandedness=None, overlap=True, ties="different")

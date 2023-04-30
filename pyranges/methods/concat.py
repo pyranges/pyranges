@@ -5,7 +5,6 @@ from collections import defaultdict
 
 
 def concat(pyranges, strand=None):
-
     if not pyranges:
         return None
 
@@ -18,9 +17,9 @@ def concat(pyranges, strand=None):
         strand = all(strand_info)
 
     if strand:
-        assert all([
-            gr.stranded for gr in pyranges
-        ]), "Cannot do stranded concat, not all pyranges contain strand info."
+        assert all(
+            [gr.stranded for gr in pyranges]
+        ), "Cannot do stranded concat, not all pyranges contain strand info."
 
         for gr in pyranges:
             for k, df in gr.dfs.items():
@@ -37,8 +36,7 @@ def concat(pyranges, strand=None):
     for k, v in grs_per_chromosome.items():
         new_pyrange[k] = pd.concat(v, sort=False)
 
-    res = pr.multithreaded.process_results(new_pyrange.values(),
-                                           new_pyrange.keys())
+    res = pr.multithreaded.process_results(new_pyrange.values(), new_pyrange.keys())
 
     if any(strand_info) and not all(strand_info):
         new_res = {}
@@ -50,4 +48,4 @@ def concat(pyranges, strand=None):
     else:
         res = pr.PyRanges(res)
 
-    return  res
+    return res

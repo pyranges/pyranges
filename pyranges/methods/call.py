@@ -30,7 +30,6 @@ def _handle_eval_return(self, result, col, as_pyranges, subset):
 
 
 def _call(self, f, strand=None, as_pyranges=True, **kwargs):
-
     if strand is None:
         strand = self.stranded
 
