@@ -6,7 +6,6 @@ from tabulate import tabulate
 
 
 def _summary(self, to_stdout=True, return_df=False):
-
     lengths = {}
     total_lengths = {}
     lengths["pyrange"] = self.lengths(as_dict=True)
@@ -40,7 +39,7 @@ def _summary(self, to_stdout=True, return_df=False):
     summary = pd.concat([summary, df])
 
     if to_stdout:
-        str_repr = tabulate(summary, headers=summary.columns, tablefmt='psql')
+        str_repr = tabulate(summary, headers=summary.columns, tablefmt="psql")
         print(str_repr)
 
     if return_df:

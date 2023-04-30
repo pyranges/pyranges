@@ -6,6 +6,7 @@ from collections import defaultdict
 
 try:
     import mkl
+
     mkl.set_num_threads(1)
 except ImportError:
     pass
@@ -30,11 +31,10 @@ from natsort import natsorted
 get_example_path = data.get_example_path
 
 
-
 from pyranges.multioverlap import count_overlaps
 
-def from_dict(d, int64=False):
 
+def from_dict(d, int64=False):
     """Create a PyRanges from dict.
 
     Parameters
@@ -79,7 +79,6 @@ def from_dict(d, int64=False):
 
 
 def from_string(s, int64=False):
-
     """Create a PyRanges from multiline string.
 
     Parameters
@@ -124,6 +123,7 @@ def from_string(s, int64=False):
     """
 
     from io import StringIO
+
     df = pd.read_csv(StringIO(s), sep=r"\s+", index_col=None)
 
     return PyRanges(df, int64=int64)
@@ -139,7 +139,6 @@ import pyranges.genomicfeatures as gf
 
 
 def itergrs(prs, strand=None, keys=False):
-
     r"""Iterate over multiple PyRanges at once.
 
     Parameters
@@ -250,7 +249,6 @@ def itergrs(prs, strand=None, keys=False):
 
 
 def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
-
     """Return PyRanges with random intervals.
 
     Parameters
@@ -323,29 +321,30 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
 
     if chromsizes is None:
         from pyranges import data
+
         chromsizes = data.chromsizes()
         df = chromsizes.df
     elif isinstance(chromsizes, dict):
-        df = pd.DataFrame({"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())})
+        df = pd.DataFrame(
+            {"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())}
+        )
     else:
         df = chromsizes.df
 
     p = df.End / df.End.sum()
 
-    n_per_chrom = pd.Series(np.random.choice(
-        df.index, size=n, p=p)).value_counts(sort=False).to_frame()
+    n_per_chrom = (
+        pd.Series(np.random.choice(df.index, size=n, p=p))
+        .value_counts(sort=False)
+        .to_frame()
+    )
     n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
     n_per_chrom.columns = "Count Chromosome".split()
 
     random_dfs = []
     for _, (count, chrom) in n_per_chrom.iterrows():
-        r = np.random.randint(
-            0, df[df.Chromosome == chrom].End - length, size=count)
-        _df = pd.DataFrame({
-            "Chromosome": chrom,
-            "Start": r,
-            "End": r + length
-        })
+        r = np.random.randint(0, df[df.Chromosome == chrom].End - length, size=count)
+        _df = pd.DataFrame({"Chromosome": chrom, "Start": r, "End": r + length})
         random_dfs.append(_df)
 
     random_df = pd.concat(random_dfs)
@@ -358,10 +357,12 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
 
 from pyranges.readers import read_bam, read_bed, read_bigwig, read_gff3
 from pyranges.readers import read_gtf
+
 read_gff = read_gtf
 
 
 from pyranges import statistics
+
 stats = statistics
 """Namespace for statistcal functions.
 
@@ -371,7 +372,6 @@ pyranges.statistics : statistcal methods for genomics."""
 
 
 def to_bigwig(gr, path, chromosome_sizes):
-
     """Write df to bigwig.
 
     Must contain the columns Chromosome, Start, End and Score. All others are ignored.
@@ -523,11 +523,16 @@ def to_bigwig(gr, path, chromosome_sizes):
     try:
         import pyBigWig
     except ModuleNotFoundError:
-        print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
+        print(
+            "pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it."
+        )
         import sys
+
         sys.exit(1)
 
-    assert len(gr.strands) <= 1, "Can only write one strand at a time. Use an unstranded PyRanges or subset on strand first."
+    assert (
+        len(gr.strands) <= 1
+    ), "Can only write one strand at a time. Use an unstranded PyRanges or subset on strand first."
     assert np.sum(gr.lengths()) == gr.merge().length, "Intervals must not overlap."
 
     df = gr.df
@@ -550,21 +555,24 @@ def to_bigwig(gr, path, chromosome_sizes):
 
     bw.addEntries(chromosomes, starts, ends=ends, values=values)
 
-def version_info():
 
+def version_info():
     import importlib
+
     def update_version_info(version_info, library):
         if importlib.util.find_spec(library):
-             version = importlib.import_module(library).__version__
+            version = importlib.import_module(library).__version__
         else:
             version = "not installed"
 
         version_info[library] = version
 
-    version_info = {"pyranges version": pr.__version__,
-                    "pandas version": pd.__version__,
-                    "numpy version": np.__version__,
-                    "python version": sys.version_info}
+    version_info = {
+        "pyranges version": pr.__version__,
+        "pandas version": pd.__version__,
+        "numpy version": np.__version__,
+        "python version": sys.version_info,
+    }
 
     update_version_info(version_info, "ncls")
     update_version_info(version_info, "sorted_nearest")
@@ -579,4 +587,18 @@ def version_info():
     print(version_info)
 
 
-__all__ = ["from_string", "from_dict", "to_bigwig", "count_overlaps", "random", "itergrs", "read_gtf", "read_bam", "read_bed", "read_gff3", "concat", "PyRanges", "version_info"]
+__all__ = [
+    "from_string",
+    "from_dict",
+    "to_bigwig",
+    "count_overlaps",
+    "random",
+    "itergrs",
+    "read_gtf",
+    "read_bam",
+    "read_bed",
+    "read_gff3",
+    "concat",
+    "PyRanges",
+    "version_info",
+]

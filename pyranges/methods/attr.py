@@ -4,7 +4,6 @@ import pandas as pd
 
 
 def _setattr(self, column_name, column, pos=False):
-
     if not len(self):
         return
 
@@ -29,7 +28,6 @@ def _setattr(self, column_name, column, pos=False):
 
     dfs = {}
     for k, df in self.items():
-
         end_length += len(df)
 
         if already_exists:
@@ -56,11 +54,10 @@ def _setattr(self, column_name, column, pos=False):
     else:
         int64 = True if self.dtypes["Start"] == np.int64 else False
         # will merge the dfs, then split on keys again to ensure they are correct
-        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df, int64=int64).dfs 
+        self.__dict__["dfs"] = pr.PyRanges(pr.PyRanges(dfs).df, int64=int64).dfs
 
 
 def _getattr(self, name):
-
     if name in self.columns:
         return pd.concat([df[name] for df in self.values()])
     else:

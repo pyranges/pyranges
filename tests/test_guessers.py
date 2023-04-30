@@ -1,4 +1,3 @@
-
 # import pytest
 
 # from io import StringIO
@@ -36,8 +35,6 @@
 
 #     delim = guess_delim(gtf_file).encode()
 #     assert delim == " ".encode() # this is the wrong guess
-
-
 
 
 # def test_guess_strand(bed_df, number_unique):

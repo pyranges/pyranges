@@ -32,7 +32,8 @@ datatype = st.sampled_from([pd.Series, np.array, list])
 feature_data = st.sampled_from(["ensembl_gtf", "gencode_gtf", "ucsc_bed"])
 
 chromosomes = st.sampled_from(
-    ["chr{}".format(str(e)) for e in list(range(1, 23)) + "X Y M".split()])
+    ["chr{}".format(str(e)) for e in list(range(1, 23)) + "X Y M".split()]
+)
 chromosomes_small = st.sampled_from(["chr1"])
 cs = st.one_of(chromosomes, chromosomes_small)
 
@@ -42,8 +43,9 @@ runlengths = data_frames(
         column("Runs", st.integers(min_value=1, max_value=int(1e7))),
         # must have a min/max on floats because R S4vectors translates too big ones into inf.
         # which is unequal to eg -1.79769e+308 so the tests fail
-        column("Values", st.integers(min_value=-int(1e7), max_value=int(1e7)))
-    ])
+        column("Values", st.integers(min_value=-int(1e7), max_value=int(1e7))),
+    ],
+)
 
 better_dfs_no_min = data_frames(
     index=indexes(dtype=np.int64, min_size=0, unique=True, elements=lengths),
@@ -53,8 +55,9 @@ better_dfs_no_min = data_frames(
         column("End", elements=small_lengths),
         # column("Name", elements=names),
         # column("Score", elements=scores),
-        column("Strand", strands)
-    ])
+        column("Strand", strands),
+    ],
+)
 
 better_dfs_min = data_frames(
     index=indexes(dtype=np.int64, min_size=1, unique=True, elements=lengths),
@@ -64,8 +67,9 @@ better_dfs_min = data_frames(
         column("End", elements=small_lengths),
         # column("Name", elements=names),
         # column("Score", elements=scores),
-        column("Strand", strands)
-    ])
+        column("Strand", strands),
+    ],
+)
 
 better_dfs_min_2 = data_frames(
     index=indexes(dtype=np.int64, min_size=2, unique=True, elements=lengths),
@@ -75,8 +79,9 @@ better_dfs_min_2 = data_frames(
         column("End", elements=small_lengths),
         # column("Name", elements=names),
         # column("Score", elements=scores),
-        column("Strand", single_strand)
-    ])
+        column("Strand", single_strand),
+    ],
+)
 
 better_dfs_min_single_chromosome = data_frames(
     index=indexes(dtype=np.int64, min_size=1, unique=True, elements=lengths),
@@ -86,16 +91,18 @@ better_dfs_min_single_chromosome = data_frames(
         column("End", elements=small_lengths),
         # column("Name", elements=names),
         # column("Score", elements=scores),
-        column("Strand", strands)
-    ])
+        column("Strand", strands),
+    ],
+)
 
 runlengths_same_length_integers = data_frames(
     index=indexes(dtype=np.int64, min_size=1, unique=True),
     columns=[
         column("Runs", st.integers(min_value=1, max_value=int(1e4))),
         column("Values", st.integers(min_value=1, max_value=int(1e4))),
-        column("Values2", st.integers(min_value=1, max_value=int(1e4)))
-    ])
+        column("Values2", st.integers(min_value=1, max_value=int(1e4))),
+    ],
+)
 
 
 @st.composite
@@ -234,7 +241,6 @@ def dfs_min_with_gene_id(draw):  # nosec
 
 @st.composite
 def df_data(draw):
-
     df = draw(better_dfs_min)
     df.loc[:, "End"] += df.Start
 
@@ -263,7 +269,6 @@ def dfs_min_single_chromosome(draw):
 
 @st.composite
 def genomicfeature(draw):
-
     dataset_name = draw(feature_data)
     print("dataset name " * 5, dataset_name)
     dataset = getattr(pr.data, dataset_name)()
@@ -271,8 +276,7 @@ def genomicfeature(draw):
 
     # subsetter = draw(arrays(np.bool, shape=len(dataset)))
     gene_ids = list(dataset.gene_id.drop_duplicates())
-    genes = draw(
-        st.lists(st.sampled_from(gene_ids), unique="True", min_size=1))
+    genes = draw(st.lists(st.sampled_from(gene_ids), unique="True", min_size=1))
     dataset = dataset[dataset.gene_id.isin(genes)]
 
     return dataset
@@ -280,7 +284,6 @@ def genomicfeature(draw):
 
 @st.composite
 def selector(draw):
-
     df = draw(better_dfs_min)
     h = df.head(1)
     chromosome = h["Chromosome"].iloc[0]
@@ -297,7 +300,7 @@ def selector(draw):
         (True, True): slice(start, end),
         (True, False): slice(start, None),
         (False, True): slice(None, end),
-        (False, False): slice(None, None)
+        (False, False): slice(None, None),
     }[start_bool, end_bool]
 
     to_return = []

@@ -4,7 +4,6 @@ from sorted_nearest import max_disjoint
 
 
 def _max_disjoint(df, **kwargs):
-
     if df.empty:
         return None
 

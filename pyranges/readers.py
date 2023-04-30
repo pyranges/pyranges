@@ -13,7 +13,6 @@ from pyranges.version import __version__
 
 
 def read_bed(f, as_df=False, nrows=None):
-
     """Return bed file as PyRanges.
 
     This is a reader for files that follow the bed format. They can have from
@@ -70,11 +69,11 @@ def read_bed(f, as_df=False, nrows=None):
 
     """
 
-    columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split(
-    )
+    columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split()
 
     if f.endswith(".gz"):
         import gzip
+
         first_start = gzip.open(f).readline().split()[1]
     else:
         first_start = open(f).readline().split()[1]
@@ -88,15 +87,13 @@ def read_bed(f, as_df=False, nrows=None):
 
     df = pd.read_csv(
         f,
-        dtype={
-            "Chromosome": "category",
-            "Strand": "category"
-        },
+        dtype={"Chromosome": "category", "Strand": "category"},
         nrows=nrows,
         header=header,
-        sep="\t")
+        sep="\t",
+    )
 
-    df.columns = columns[:df.shape[1]]
+    df.columns = columns[: df.shape[1]]
 
     if not as_df:
         return PyRanges(df)
@@ -105,7 +102,6 @@ def read_bed(f, as_df=False, nrows=None):
 
 
 def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1540):
-
     """Return bam file as PyRanges.
 
     Parameters
@@ -184,12 +180,25 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     try:
         import bamread
     except ModuleNotFoundError as e:
-        print("bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it.")
+        print(
+            "bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it."
+        )
         sys.exit(1)
 
-    if bamread.__version__ in ["0.0.1", "0.0.2", "0.0.3", "0.0.4",
-                               "0.0.5", "0.0.6", "0.0.7", "0.0.8", "0.0.9"]:
-        print("bamread not recent enough. Must be 0.0.10 or higher. Use `conda install -c bioconda 'bamread>=0.0.10'` or `pip install bamread>=0.0.10` to install it.")
+    if bamread.__version__ in [
+        "0.0.1",
+        "0.0.2",
+        "0.0.3",
+        "0.0.4",
+        "0.0.5",
+        "0.0.6",
+        "0.0.7",
+        "0.0.8",
+        "0.0.9",
+    ]:
+        print(
+            "bamread not recent enough. Must be 0.0.10 or higher. Use `conda install -c bioconda 'bamread>=0.0.10'` or `pip install bamread>=0.0.10` to install it."
+        )
         sys.exit(1)
 
     if sparse:
@@ -198,7 +207,9 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
         try:
             df = bamread.read_bam_full(f, mapq, required_flag, filter_flag)
         except AttributeError:
-            print("bamread version 0.0.6 or higher is required to read bam non-sparsely.")
+            print(
+                "bamread version 0.0.6 or higher is required to read bam non-sparsely."
+            )
 
     if as_df:
         return df
@@ -209,19 +220,19 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
 
 
 def _fetch_gene_transcript_exon_id(attribute, annotation=None):
-
-    no_quotes = attribute.str.replace('"', '').str.replace("'", "")
+    no_quotes = attribute.str.replace('"', "").str.replace("'", "")
 
     df = no_quotes.str.extract(
         "gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?",
-        expand=True)  # .iloc[:, [1, 2, 3]]
+        expand=True,
+    )  # .iloc[:, [1, 2, 3]]
 
     df.columns = "gene_id transcript_id exon_number exon_id".split()
 
     if annotation == "ensembl":
         newdf = []
         for c in "gene_id transcript_id exon_id".split():
-            r = df[c].astype(str).str.extract(r'(\d+)').astype(float)
+            r = df[c].astype(str).str.extract(r"(\d+)").astype(float)
             newdf.append(r)
 
         newdf = pd.concat(newdf, axis=1)
@@ -232,9 +243,9 @@ def _fetch_gene_transcript_exon_id(attribute, annotation=None):
 
 
 def skiprows(f):
-
     try:
         import gzip
+
         fh = gzip.open(f)
         for i, l in enumerate(fh):
             if l.decode()[0] != "#":
@@ -251,7 +262,6 @@ def skiprows(f):
 
 
 def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
-
     """Read files in the Gene Transfer Format.
 
     Parameters
@@ -280,7 +290,7 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
     ----
 
     The GTF format encodes both Start and End as 1-based included.
-    PyRanges (and also the DF returned by this function, if as_df=True), instead 
+    PyRanges (and also the DF returned by this function, if as_df=True), instead
     encodes intervals as 0-based, Start included and End excluded.
 
     See Also
@@ -324,15 +334,9 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
 
 
 def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
+    dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    dtypes = {
-        "Chromosome": "category",
-        "Feature": "category",
-        "Strand": "category"
-    }
-
-    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split(
-    )
+    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
 
     df_iter = pd.read_csv(
         f,
@@ -342,7 +346,8 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
         dtype=dtypes,
         chunksize=int(1e5),
         skiprows=skiprows,
-        nrows=nrows)
+        nrows=nrows,
+    )
 
     _to_rows = to_rows_keep_duplicates if duplicate_attr else to_rows
 
@@ -367,15 +372,25 @@ def to_rows(anno):
     try:
         l = anno.head(1)
         for l in l:
-            l.replace('"', '').replace(";", "").split()
+            l.replace('"', "").replace(";", "").split()
     except AttributeError:
-        raise Exception("Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(l=l))
+        raise Exception(
+            "Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(
+                l=l
+            )
+        )
 
     for l in anno:
-        rowdicts.append({k: v
-                         for k, v in [kv.replace('""', '"NA"').replace('"', '').split(None, 1)
-                                      # rstrip: allows for GFF not having a last ";", or having final spaces
-                                      for kv in l.rstrip('; ').split("; ")]})
+        rowdicts.append(
+            {
+                k: v
+                for k, v in [
+                    kv.replace('""', '"NA"').replace('"', "").split(None, 1)
+                    # rstrip: allows for GFF not having a last ";", or having final spaces
+                    for kv in l.rstrip("; ").split("; ")
+                ]
+            }
+        )
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
@@ -386,8 +401,9 @@ def to_rows_keep_duplicates(anno):
         rowdict = {}
 
         # rstrip: allows for GFF not having a last ";", or having final spaces
-        for k, v in (kv.replace('"', '').split(None, 1) for kv in l.rstrip('; ').split("; ")):
-
+        for k, v in (
+            kv.replace('"', "").split(None, 1) for kv in l.rstrip("; ").split("; ")
+        ):
             if k not in rowdict:
                 rowdict[k] = v
             elif k in rowdict and isinstance(rowdict[k], list):
@@ -395,18 +411,14 @@ def to_rows_keep_duplicates(anno):
             else:
                 rowdict[k] = [rowdict[k], v]
 
-        rowdicts.append({
-            k: ','.join(v) if isinstance(v, list) else v
-            for k, v in rowdict.items()
-        })
+        rowdicts.append(
+            {k: ",".join(v) if isinstance(v, list) else v for k, v in rowdict.items()}
+        )
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
 
-def read_gtf_restricted(f,
-                        skiprows,
-                        as_df=False,
-                        nrows=None):
+def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
     feature - feature type name, e.g. Gene, Variation, Similarity
@@ -415,12 +427,9 @@ def read_gtf_restricted(f,
     score - A floating point value.
     strand - defined as + (forward) or - (reverse).
     # frame - One of '0', '1' or '2'. '0' indicates that the first base of the feature is the first base of a codon, '1' that the second base is the first base of a codon, and so on..
-    attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
-    dtypes = {
-        "Chromosome": "category",
-        "Feature": "category",
-        "Strand": "category"
-    }
+    attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature.
+    """
+    dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     df_iter = pd.read_csv(
         f,
@@ -432,15 +441,15 @@ def read_gtf_restricted(f,
         dtype=dtypes,
         chunksize=int(1e5),
         skiprows=skiprows,
-        nrows=nrows)
+        nrows=nrows,
+    )
 
     dfs = []
     for df in df_iter:
         if sum(df.Score == ".") == len(df):
             cols_to_concat = "Chromosome Start End Strand Feature".split()
         else:
-            cols_to_concat = "Chromosome Start End Strand Feature Score".split(
-            )
+            cols_to_concat = "Chromosome Start End Strand Feature Score".split()
 
         extract = _fetch_gene_transcript_exon_id(df.Attribute)
         extract.columns = "gene_id transcript_id exon_number exon_id".split()
@@ -466,14 +475,13 @@ def to_rows_gff3(anno):
 
     for l in list(anno):
         # stripping last white char if present
-        lx = (it.split("=") for it in l.rstrip('; ').split(";"))
+        lx = (it.split("=") for it in l.rstrip("; ").split(";"))
         rowdicts.append({k: v for k, v in lx})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
 
 def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
-
     """Read files in the General Feature Format.
 
     Parameters
@@ -498,7 +506,7 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
     -----
 
     The gff3 format encodes both Start and End as 1-based included.
-    PyRanges (and also the DF returned by this function, if as_df=True), instead 
+    PyRanges (and also the DF returned by this function, if as_df=True), instead
     encodes intervals as 0-based, Start included and End excluded.
 
     See Also
@@ -512,14 +520,9 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
     if not full:
         return read_gtf_restricted(f, _skiprows, as_df=as_df, nrows=nrows)
 
-    dtypes = {
-        "Chromosome": "category",
-        "Feature": "category",
-        "Strand": "category"
-    }
+    dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split(
-    )
+    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
 
     df_iter = pd.read_csv(
         f,
@@ -530,7 +533,8 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
         dtype=dtypes,
         chunksize=int(1e5),
         skiprows=_skiprows,
-        nrows=nrows)
+        nrows=nrows,
+    )
 
     dfs = []
     for df in df_iter:
@@ -550,12 +554,14 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
 
 
 def read_bigwig(f, as_df=False):
-
     try:
         import pyBigWig
     except ModuleNotFoundError:
-        print("bwread must be installed to read bigwigs. Use `conda install -c bioconda bwread` or `pip install bwread` to install it.")
+        print(
+            "bwread must be installed to read bigwigs. Use `conda install -c bioconda bwread` or `pip install bwread` to install it."
+        )
         import sys
+
         sys.exit(1)
 
     """Read bigwig files.
@@ -608,6 +614,13 @@ def read_bigwig(f, as_df=False):
         outstarts = pd.Series(outstarts)
         outends = pd.Series(outends)
         outvalues = pd.Series(outvalues)
-        dfs[chromosome] = pd.DataFrame({"Chromosome": chromosome, "Start": outstarts, "End": outends, "Value": outvalues})
+        dfs[chromosome] = pd.DataFrame(
+            {
+                "Chromosome": chromosome,
+                "Start": outstarts,
+                "End": outends,
+                "Value": outvalues,
+            }
+        )
 
     return pr.PyRanges(dfs)

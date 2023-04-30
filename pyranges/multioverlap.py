@@ -2,8 +2,7 @@ import pyranges as pr
 import numpy as np
 
 
-def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
-
+def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     """Count overlaps in multiple pyranges.
 
     Parameters
@@ -134,7 +133,13 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     For printing, the PyRanges was sorted on Chromosome.
     """
 
-    kwargs = {"as_pyranges": False, "nb_cpu": nb_cpu, "strandedness": strandedness, "how": how, "nb_cpu": nb_cpu}
+    kwargs = {
+        "as_pyranges": False,
+        "nb_cpu": nb_cpu,
+        "strandedness": strandedness,
+        "how": how,
+        "nb_cpu": nb_cpu,
+    }
     names = list(grs.keys())
 
     if features is None:
@@ -145,7 +150,6 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     from pyranges.methods.intersection import _count_overlaps
 
     for name, gr in grs.items():
-
         gr = gr.drop()
 
         kwargs["name"] = name
