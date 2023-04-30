@@ -39,46 +39,31 @@ def fdr(p_vals):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.random(10) / 100
-
-    >>> gr = pr.random(10)
-    >>> gr.PValue = x
+    >>> d = {'Chromosome': ['chr3', 'chr6', 'chr13'], 'Start': [146419383, 39800100, 24537618], 'End': [146419483, 39800200, 24537718], 'Strand': ['-', '+', '-'], 'PValue': [0.0039591368855297175, 0.0037600512992788937, 0.0075061166500909205]}
+    >>> gr = pr.from_dict(d)
     >>> gr
-    +--------------+-----------+-----------+--------------+----------------------+
-    | Chromosome   | Start     | End       | Strand       | PValue               |
-    | (category)   | (int32)   | (int32)   | (category)   | (float64)            |
-    |--------------+-----------+-----------+--------------+----------------------|
-    | chr1         | 176601938 | 176602038 | +            | 0.005488135039273248 |
-    | chr1         | 155082851 | 155082951 | -            | 0.007151893663724195 |
-    | chr2         | 211134424 | 211134524 | -            | 0.006027633760716439 |
-    | chr9         | 78826761  | 78826861  | -            | 0.005448831829968969 |
-    | ...          | ...       | ...       | ...          | ...                  |
-    | chr16        | 52216522  | 52216622  | +            | 0.004375872112626925 |
-    | chr17        | 8085927   | 8086027   | -            | 0.008917730007820798 |
-    | chr19        | 17333425  | 17333525  | +            | 0.009636627605010294 |
-    | chr22        | 16728001  | 16728101  | +            | 0.003834415188257777 |
-    +--------------+-----------+-----------+--------------+----------------------+
-    Stranded PyRanges object has 10 rows and 5 columns from 9 chromosomes.
+    +--------------+-----------+-----------+--------------+-------------+
+    | Chromosome   |     Start |       End | Strand       |      PValue |
+    | (category)   |   (int32) |   (int32) | (category)   |   (float64) |
+    |--------------+-----------+-----------+--------------+-------------|
+    | chr3         | 146419383 | 146419483 | -            |  0.00395914 |
+    | chr6         |  39800100 |  39800200 | +            |  0.00376005 |
+    | chr13        |  24537618 |  24537718 | -            |  0.00750612 |
+    +--------------+-----------+-----------+--------------+-------------+
+    Stranded PyRanges object has 3 rows and 5 columns from 3 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
 
     >>> gr.FDR = pr.stats.fdr(gr.PValue)
     >>> gr.print(formatting={"PValue": "{:.4f}", "FDR": "{:.4}"})
     +--------------+-----------+-----------+--------------+-------------+-------------+
-    | Chromosome   | Start     | End       | Strand       | PValue      | FDR         |
-    | (category)   | (int32)   | (int32)   | (category)   | (float64)   | (float64)   |
+    | Chromosome   |     Start |       End | Strand       |      PValue |         FDR |
+    | (category)   |   (int32) |   (int32) | (category)   |   (float64) |   (float64) |
     |--------------+-----------+-----------+--------------+-------------+-------------|
-    | chr1         | 176601938 | 176602038 | +            | 0.0055      | 0.01098     |
-    | chr1         | 155082851 | 155082951 | -            | 0.0072      | 0.00894     |
-    | chr2         | 211134424 | 211134524 | -            | 0.0060      | 0.01005     |
-    | chr9         | 78826761  | 78826861  | -            | 0.0054      | 0.01362     |
-    | ...          | ...       | ...       | ...          | ...         | ...         |
-    | chr16        | 52216522  | 52216622  | +            | 0.0044      | 0.01459     |
-    | chr17        | 8085927   | 8086027   | -            | 0.0089      | 0.009909    |
-    | chr19        | 17333425  | 17333525  | +            | 0.0096      | 0.009637    |
-    | chr22        | 16728001  | 16728101  | +            | 0.0038      | 0.03834     |
+    | chr3         | 146419383 | 146419483 | -            |      0.004  |    0.005939 |
+    | chr6         |  39800100 |  39800200 | +            |      0.0038 |    0.01128  |
+    | chr13        |  24537618 |  24537718 | -            |      0.0075 |    0.007506 |
     +--------------+-----------+-----------+--------------+-------------+-------------+
-    Stranded PyRanges object has 10 rows and 6 columns from 9 chromosomes.
+    Stranded PyRanges object has 3 rows and 6 columns from 3 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
@@ -209,31 +194,28 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
 
     Examples
     --------
-    >>> np.random.seed(0)
-    >>> chromsizes = {"chrM": 16000}
-    >>> grs = [pr.random(chromsizes=chromsizes) for _ in range(3)]
-    >>> labels = ["a", "b", "c"]
-    >>> mcc = pr.stats.mcc(grs, labels=labels, genome=chromsizes)
+    >>> grs = [pr.data.aorta(), pr.data.aorta(), pr.data.aorta2()]
+    >>> mcc = pr.stats.mcc(grs, labels="abc", genome={"chr1": 2100000})
     >>> mcc
-       T  F     TP  FP  TN  FN       MCC
-    0  a  a  15920   0  80   0  1.000000
-    1  a  b  15875  65  15  45  0.213109
-    3  a  c  15896  72   8  24  0.155496
-    2  b  a  15875  45  15  65  0.213109
-    5  b  b  15940   0  60   0  1.000000
-    6  b  c  15916  52   8  24  0.180354
-    4  c  a  15896  24   8  72  0.155496
-    7  c  b  15916  24   8  52  0.180354
-    8  c  c  15968   0  32   0  1.000000
+       T  F   TP   FP       TN   FN      MCC
+    0  a  a  728    0  2099272    0  1.00000
+    1  a  b  728    0  2099272    0  1.00000
+    3  a  c  457  485  2098787  271  0.55168
+    2  b  a  728    0  2099272    0  1.00000
+    5  b  b  728    0  2099272    0  1.00000
+    6  b  c  457  485  2098787  271  0.55168
+    4  c  a  457  271  2098787  485  0.55168
+    7  c  b  457  271  2098787  485  0.55168
+    8  c  c  942    0  2099058    0  1.00000
 
     To create a symmetric matrix (useful for heatmaps of correlations):
 
-    >>> mcc.set_index(["T", "F"]).MCC.unstack()
-    F         a         b         c
-    T
-    a  1.000000  0.213109  0.155496
-    b  0.213109  1.000000  0.180354
-    c  0.155496  0.180354  1.000000"""
+    >>> mcc.set_index(["T", "F"]).MCC.unstack().rename_axis(None, axis=0)
+    F        a        b        c
+    a  1.00000  1.00000  0.55168
+    b  1.00000  1.00000  0.55168
+    c  0.55168  0.55168  1.00000
+    """
 
     import sys
     from itertools import combinations_with_replacement, chain
@@ -420,15 +402,13 @@ def rowbased_spearman(x, y):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.randint(10, size=(10, 10))
-    >>> y = np.random.randint(10, size=(10, 10))
+    >>> x = np.array([[7, 2, 9], [3, 6, 0], [0, 6, 3]])
+    >>> y = np.array([[5, 3, 2], [9, 6, 0], [7, 3, 5]])
 
     Perform Spearman's correlation pairwise on each row in 10x10 matrixes:
 
     >>> pr.stats.rowbased_spearman(x, y)
-    array([ 0.07523548, -0.24838724,  0.03703774,  0.24194052,  0.04778621,
-           -0.23913505,  0.12923138,  0.26840486,  0.13292204, -0.29846295])
+    array([-0.5,  0.5, -1. ])
     """
 
     x = np.asarray(x)
@@ -468,15 +448,13 @@ def rowbased_pearson(x, y):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.randint(10, size=(10, 10))
-    >>> y = np.random.randint(10, size=(10, 10))
+    >>> x = np.array([[7, 2, 9], [3, 6, 0], [0, 6, 3]])
+    >>> y = np.array([[5, 3, 2], [9, 6, 0], [7, 3, 5]])
 
     Perform Pearson's correlation pairwise on each row in 10x10 matrixes:
 
     >>> pr.stats.rowbased_pearson(x, y)
-    array([ 0.20349603, -0.01667236, -0.01448763, -0.00442322,  0.06527234,
-           -0.36710862,  0.14978726,  0.32360286,  0.17209191, -0.08902829])
+    array([-0.09078413,  0.65465367, -1.        ])
     """
 
     # Thanks to https://github.com/dengemann
@@ -521,17 +499,13 @@ def rowbased_rankdata(data):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.randint(10, size=(3, 10))
-    >>> x
-    array([[5, 0, 3, 3, 7, 9, 3, 5, 2, 4],
-           [7, 6, 8, 8, 1, 6, 7, 7, 8, 1],
-           [5, 9, 8, 9, 4, 3, 0, 3, 5, 0]])
+    >>> x = np.random.randint(10, size=(3, 4))
+    >>> x = np.array([[3, 7, 6, 0], [1, 3, 8, 9], [5, 9, 3, 5]])
     >>> pr.stats.rowbased_rankdata(x)
-         0    1    2    3    4     5    6    7    8    9
-    0  7.5  1.0  4.0  4.0  9.0  10.0  4.0  7.5  2.0  6.0
-    1  6.0  3.5  9.0  9.0  1.5   3.5  6.0  6.0  9.0  1.5
-    2  6.5  9.5  8.0  9.5  5.0   3.5  1.5  3.5  6.5  1.5
+         0    1    2    3
+    0  2.0  4.0  3.0  1.0
+    1  1.0  2.0  3.0  4.0
+    2  2.5  4.0  1.0  2.5
     """
 
     dc = np.asarray(data).copy()
@@ -640,13 +614,13 @@ def simes(df, groupby, pcol, keep_position=False):
 
     >>> gr.apply(lambda df:
     ... pr.stats.simes(df, "Gene", "PValue", keep_position=True))
-    +--------------+-----------+-----------+-------------+------------+------------+
-    |   Chromosome |     Start |       End |       Simes | Strand     | Gene       |
-    |     (object) |   (int32) |   (int32) |   (float64) | (object)   | (object)   |
-    |--------------+-----------+-----------+-------------+------------+------------|
-    |            1 |        10 |        20 |      0.0001 | +          | P53        |
-    |            2 |        60 |        90 |      1e-07  | -          | FOX        |
-    +--------------+-----------+-----------+-------------+------------+------------+
+    +--------------+-----------+-----------+-------------+--------------+------------+
+    |   Chromosome |     Start |       End |       Simes | Strand       | Gene       |
+    |   (category) |   (int32) |   (int32) |   (float64) | (category)   | (object)   |
+    |--------------+-----------+-----------+-------------+--------------+------------|
+    |            1 |        10 |        20 |      0.0001 | +            | P53        |
+    |            2 |        60 |        90 |      1e-07  | -            | FOX        |
+    +--------------+-----------+-----------+-------------+--------------+------------+
     Stranded PyRanges object has 2 rows and 6 columns from 2 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
@@ -768,7 +742,7 @@ class StatisticsMethods:
 
         kwargs = {}
         kwargs["sparse"] = {"self": True, "other": True}
-        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
         reference_length = self.merge(strand=strand).length
@@ -827,7 +801,7 @@ class StatisticsMethods:
         self = self.pr
 
         kwargs["sparse"] = {"self": True, "other": True}
-        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
         intersection_sum = sum(
@@ -943,7 +917,7 @@ class StatisticsMethods:
         self = self.pr
 
         kwargs["sparse"] = {"self": True, "other": True}
-        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        kwargs = pr.pyranges_main.fill_kwargs(kwargs)
 
         result = pyrange_apply(
             _relative_distance, self, other, **kwargs

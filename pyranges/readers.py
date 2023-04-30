@@ -4,12 +4,11 @@ import sys
 
 import pandas as pd
 
-from pyranges.pyranges import PyRanges
+from pyranges.pyranges_main import PyRanges
 
 from io import StringIO
 
 import pyranges as pr
-from pyranges.version import __version__
 
 
 def read_bed(f, as_df=False, nrows=None):
@@ -142,39 +141,39 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     --------
 
     >>> path = pr.get_example_path("control.bam")
-    >>> pr.read_bam(path)
+    >>> pr.read_bam(path).sort()
     +--------------+-----------+-----------+--------------+------------+
     | Chromosome   | Start     | End       | Strand       | Flag       |
     | (category)   | (int32)   | (int32)   | (category)   | (uint16)   |
     |--------------+-----------+-----------+--------------+------------|
-    | chr1         | 887771    | 887796    | +            | 16         |
-    | chr1         | 994660    | 994685    | +            | 16         |
-    | chr1         | 1770383   | 1770408   | +            | 16         |
-    | chr1         | 1995141   | 1995166   | +            | 16         |
+    | chr1         | 1041102   | 1041127   | +            | 0          |
+    | chr1         | 2129359   | 2129384   | +            | 0          |
+    | chr1         | 2239108   | 2239133   | +            | 0          |
+    | chr1         | 2318805   | 2318830   | +            | 0          |
     | ...          | ...       | ...       | ...          | ...        |
-    | chrY         | 57402214  | 57402239  | +            | 16         |
-    | chrY         | 10643526  | 10643551  | -            | 0          |
-    | chrY         | 11776321  | 11776346  | -            | 0          |
-    | chrY         | 20557165  | 20557190  | -            | 0          |
+    | chrY         | 10632456  | 10632481  | -            | 16         |
+    | chrY         | 11918814  | 11918839  | -            | 16         |
+    | chrY         | 11936866  | 11936891  | -            | 16         |
+    | chrY         | 57402214  | 57402239  | -            | 16         |
     +--------------+-----------+-----------+--------------+------------+
     Stranded PyRanges object has 10,000 rows and 5 columns from 25 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
 
     >>> pr.read_bam(path, sparse=False, as_df=True)
-         Chromosome    Start      End Strand  Flag  QueryStart  QueryEnd Name Cigar Quality
-    0          chr1   887771   887796      +    16           0        25   U0   25M    None
-    1          chr1   994660   994685      +    16           0        25   U0   25M    None
-    2          chr1  1041102  1041127      -     0           0        25   U0   25M    None
-    3          chr1  1770383  1770408      +    16           0        25   U0   25M    None
-    4          chr1  1995141  1995166      +    16           0        25   U0   25M    None
-    ...         ...      ...      ...    ...   ...         ...       ...  ...   ...     ...
-    9995       chrM     3654     3679      -     0           0        25   U0   25M    None
-    9996       chrM     3900     3925      +    16           0        25   U0   25M    None
-    9997       chrM    13006    13031      +    16           0        25   U0   25M    None
-    9998       chrM    14257    14282      -     0           0        25   U0   25M    None
-    9999       chrM    14257    14282      -     0           0        25   U0   25M    None
+         Chromosome    Start      End Strand  Flag  QueryStart  QueryEnd QuerySequence Name Cigar Quality
+    0          chr1   887771   887796      -    16           0        25          None   U0   25M    None
+    1          chr1   994660   994685      -    16           0        25          None   U0   25M    None
+    2          chr1  1041102  1041127      +     0           0        25          None   U0   25M    None
+    3          chr1  1770383  1770408      -    16           0        25          None   U0   25M    None
+    4          chr1  1995141  1995166      -    16           0        25          None   U0   25M    None
+    ...         ...      ...      ...    ...   ...         ...       ...           ...  ...   ...     ...
+    9995       chrM     3654     3679      +     0           0        25          None   U0   25M    None
+    9996       chrM     3900     3925      -    16           0        25          None   U0   25M    None
+    9997       chrM    13006    13031      -    16           0        25          None   U0   25M    None
+    9998       chrM    14257    14282      +     0           0        25          None   U0   25M    None
+    9999       chrM    14257    14282      +     0           0        25          None   U0   25M    None
     <BLANKLINE>
-    [10000 rows x 10 columns]
+    [10000 rows x 11 columns]
     """
 
     try:

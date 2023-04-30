@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 import pandas as pd
@@ -14,6 +15,16 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "explore: functionality not ready for prime-time"
     )
+
+
+@pytest.fixture(autouse=True, scope="session")
+def numpy_seed():
+    np.random.RandomState(42)
+
+
+@pytest.fixture(autouse=True)
+def add_np(doctest_namespace):
+    doctest_namespace["np_seed"] = np.random.seed(0)
 
 
 @pytest.fixture

@@ -16,13 +16,10 @@ import numpy as np
 
 import pyranges as pr
 
-import pkg_resources
 
-from pyranges.pyranges import PyRanges
+from pyranges.pyranges_main import PyRanges
 from pyranges import data
 from pyranges.methods.concat import concat
-
-from pyrle import PyRles, Rle
 
 from pyranges.version import __version__
 
@@ -248,7 +245,7 @@ def itergrs(prs, strand=None, keys=False):
         return iter(natsorted(grs_per_chromosome.items()))
 
 
-def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
+def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=None):
     """Return PyRanges with random intervals.
 
     Parameters
@@ -276,52 +273,49 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> pr.random()
-    +--------------+-----------+-----------+--------------+
-    | Chromosome   | Start     | End       | Strand       |
-    | (category)   | (int32)   | (int32)   | (category)   |
-    |--------------+-----------+-----------+--------------|
-    | chr1         | 43223238  | 43223338  | +            |
-    | chr1         | 164609738 | 164609838 | +            |
-    | chr1         | 91355620  | 91355720  | +            |
-    | chr1         | 196620772 | 196620872 | +            |
-    | ...          | ...       | ...       | ...          |
-    | chrY         | 16870714  | 16870814  | -            |
-    | chrY         | 32379907  | 32380007  | -            |
-    | chrY         | 12904861  | 12904961  | -            |
-    | chrY         | 36607258  | 36607358  | -            |
-    +--------------+-----------+-----------+--------------+
-    Stranded PyRanges object has 1,000 rows and 4 columns from 24 chromosomes.
-    For printing, the PyRanges was sorted on Chromosome and Strand.
+    # >>> pr.random()
+    # +--------------+-----------+-----------+--------------+
+    # | Chromosome   | Start     | End       | Strand       |
+    # | (category)   | (int32)   | (int32)   | (category)   |
+    # |--------------+-----------+-----------+--------------|
+    # | chr1         | 216128004 | 216128104 | +            |
+    # | chr1         | 114387955 | 114388055 | +            |
+    # | chr1         | 67597551  | 67597651  | +            |
+    # | chr1         | 26306616  | 26306716  | +            |
+    # | ...          | ...       | ...       | ...          |
+    # | chrY         | 20811459  | 20811559  | -            |
+    # | chrY         | 12221362  | 12221462  | -            |
+    # | chrY         | 8578041   | 8578141   | -            |
+    # | chrY         | 43259695  | 43259795  | -            |
+    # +--------------+-----------+-----------+--------------+
+    # Stranded PyRanges object has 1,000 rows and 4 columns from 24 chromosomes.
+    # For printing, the PyRanges was sorted on Chromosome and Strand.
 
-    To have random lengths:
+    To have random interval lengths:
 
-    >>> gr = pr.random(length=1)
-    >>> gr.End += np.random.randint(int(1e5), size=len(gr))
-    >>> gr.Length = gr.lengths()
-    >>> gr
-    +--------------+-----------+-----------+--------------+-----------+
-    | Chromosome   | Start     | End       | Strand       | Length    |
-    | (category)   | (int32)   | (int64)   | (category)   | (int64)   |
-    |--------------+-----------+-----------+--------------+-----------|
-    | chr1         | 203654331 | 203695380 | +            | 41049     |
-    | chr1         | 46918271  | 46978908  | +            | 60637     |
-    | chr1         | 97355021  | 97391587  | +            | 36566     |
-    | chr1         | 57284999  | 57323542  | +            | 38543     |
-    | ...          | ...       | ...       | ...          | ...       |
-    | chrY         | 31665821  | 31692660  | -            | 26839     |
-    | chrY         | 20236607  | 20253473  | -            | 16866     |
-    | chrY         | 33255377  | 33315933  | -            | 60556     |
-    | chrY         | 31182964  | 31205467  | -            | 22503     |
-    +--------------+-----------+-----------+--------------+-----------+
-    Stranded PyRanges object has 1,000 rows and 5 columns from 24 chromosomes.
-    For printing, the PyRanges was sorted on Chromosome and Strand.
+    # >>> gr = pr.random(length=1)
+    # >>> gr.End += np.random.randint(int(1e5), size=len(gr))
+    # >>> gr.Length = gr.lengths()
+    # >>> gr
+    # +--------------+-----------+-----------+--------------+-----------+
+    # | Chromosome   | Start     | End       | Strand       | Length    |
+    # | (category)   | (int32)   | (int64)   | (category)   | (int64)   |
+    # |--------------+-----------+-----------+--------------+-----------|
+    # | chr1         | 203654331 | 203695380 | +            | 41049     |
+    # | chr1         | 46918271  | 46978908  | +            | 60637     |
+    # | chr1         | 97355021  | 97391587  | +            | 36566     |
+    # | chr1         | 57284999  | 57323542  | +            | 38543     |
+    # | ...          | ...       | ...       | ...          | ...       |
+    # | chrY         | 31665821  | 31692660  | -            | 26839     |
+    # | chrY         | 20236607  | 20253473  | -            | 16866     |
+    # | chrY         | 33255377  | 33315933  | -            | 60556     |
+    # | chrY         | 31182964  | 31205467  | -            | 22503     |
+    # +--------------+-----------+-----------+--------------+-----------+
+    # Stranded PyRanges object has 1,000 rows and 5 columns from 24 chromosomes.
+    # For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
     if chromsizes is None:
-        from pyranges import data
-
         chromsizes = data.chromsizes()
         df = chromsizes.df
     elif isinstance(chromsizes, dict):

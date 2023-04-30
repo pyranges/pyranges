@@ -289,11 +289,11 @@ class PyRanges:
         -------
 
         >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [0, 100, 250], "End": [10, 125, 251]})
-        >>> gr.Start = np.array([1, 1, 2])
+        >>> gr.Start = np.array([1, 1, 2], dtype=np.int32)
         >>> gr
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int64) |   (int32) |
+        |   (category) |   (int32) |   (int32) |
         |--------------+-----------+-----------|
         |            1 |         1 |        10 |
         |            1 |         1 |       125 |
@@ -342,14 +342,8 @@ class PyRanges:
         --------
 
         >>> gr = pr.data.ensembl_gtf()
-        >>> gr.columns
-        Index(['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand',
-            'Frame', 'gene_biotype', 'gene_id', 'gene_name', 'gene_source',
-            'gene_version', 'tag', 'transcript_biotype', 'transcript_id',
-            'transcript_name', 'transcript_source', 'transcript_support_level',
-            'transcript_version', 'exon_id', 'exon_number', 'exon_version',
-            '(assigned', 'previous', 'protein_id', 'protein_version', 'ccds_id'],
-            dtype='object')
+        >>> list(gr.columns)
+        ['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand', 'Frame', 'gene_biotype', 'gene_id', 'gene_name', 'gene_source', 'gene_version', 'tag', 'transcript_biotype', 'transcript_id', 'transcript_name', 'transcript_source', 'transcript_support_level', 'transcript_version', 'exon_id', 'exon_number', 'exon_version', '(assigned', 'previous', 'protein_id', 'protein_version', 'ccds_id']
 
         >>> gr = gr[["Source", "Feature", "gene_id"]]
         >>> gr
@@ -466,11 +460,11 @@ class PyRanges:
         ...     print(k)
         ...     print(v)
         ('1', '+')
-        Chromosome  Start  End Strand
+          Chromosome  Start  End Strand
         0          1      0   10      +
         1          1    100  125      +
         ('1', '-')
-        Chromosome  Start  End Strand
+          Chromosome  Start  End Strand
         2          1    250  251      -
         """
 
@@ -941,18 +935,18 @@ class PyRanges:
         Examples
         --------
 
-        >>> d = {"Chromosome": [1, 1, 1], "Start": [1, 60, 110], "End": [40, 68, 130], "transcript_id": ["tr1", "tr1", "tr2"], "meta":[1,2,3] }
+        >>> d = {"Chromosome": [1, 1, 1], "Start": [1, 60, 110], "End": [40, 68, 130], "transcript_id": ["tr1", "tr1", "tr2"], "meta": ["a", "b", "c"]}
         >>> gr = pr.from_dict(d)
         >>> gr.length=gr.lengths()
         >>> gr
-        +--------------+-----------+-----------+-----------------+-----------+-----------+
-        |   Chromosome |     Start |       End | transcript_id   |      meta |    length |
-        |   (category) |   (int32) |   (int32) | (object)        |   (int64) |   (int32) |
-        |--------------+-----------+-----------+-----------------+-----------+-----------|
-        |            1 |         1 |        40 | tr1             |         1 |        39 |
-        |            1 |        60 |        68 | tr1             |         2 |         8 |
-        |            1 |       110 |       130 | tr2             |         3 |        20 |
-        +--------------+-----------+-----------+-----------------+-----------+-----------+
+        +--------------+-----------+-----------+-----------------+------------+-----------+
+        |   Chromosome |     Start |       End | transcript_id   | meta       |    length |
+        |   (category) |   (int32) |   (int32) | (object)        | (object)   |   (int32) |
+        |--------------+-----------+-----------+-----------------+------------+-----------|
+        |            1 |         1 |        40 | tr1             | a          |        39 |
+        |            1 |        60 |        68 | tr1             | b          |         8 |
+        |            1 |       110 |       130 | tr2             | c          |        20 |
+        +--------------+-----------+-----------+-----------------+------------+-----------+
         Unstranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
 
@@ -966,9 +960,8 @@ class PyRanges:
         +--------------+-----------+-----------+-----------------+
         Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
-        <BLANKLINE>
 
-        >>> gr.boundaries("transcript_id", agg={"length":"sum", "meta":",".join})
+        >>> gr.boundaries("transcript_id", agg={"length":"sum", "meta": ",".join})
         +--------------+-----------+-----------+-----------------+------------+-----------+
         |   Chromosome |     Start |       End | transcript_id   | meta       |    length |
         |   (category) |   (int32) |   (int32) | (object)        | (object)   |   (int32) |
@@ -1036,9 +1029,9 @@ class PyRanges:
         |   (category) | (category)   |   (int32) |   (int32) | (object)        |   (int32) |
         |--------------+--------------+-----------+-----------+-----------------+-----------|
         |            1 | +            |         1 |        10 | t1              |         0 |
-        |            1 | +            |        31 |        45 | t1              |         0 |
-        |            1 | +            |        52 |        90 | t1              |         2 |
-        |            2 | -            |       101 |       130 | t2              |         2 |
+        |            1 | +            |        31 |        45 | t1              |         9 |
+        |            1 | +            |        52 |        90 | t1              |        23 |
+        |            2 | -            |       101 |       130 | t2              |        17 |
         |            2 | -            |       201 |       218 | t2              |         0 |
         +--------------+--------------+-----------+-----------+-----------------+-----------+
         Stranded PyRanges object has 5 rows and 6 columns from 2 chromosomes.
@@ -1049,7 +1042,7 @@ class PyRanges:
         self.__index__ = np.arange(len(self))
 
         # Filtering for desired columns
-        lst = lst if type(by) is list else [by]
+        lst = by if type(by) is list else [by]
         sorted_p = self[["Strand", "__index__"] + lst]
 
         # Sorting by 5' (Intervals on + are sorted by ascending order and - are sorted by descending order)
@@ -1899,7 +1892,7 @@ class PyRanges:
         | (category)   |   (int32) |   (int32) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         4 | +            |
-        | chr1         |         7 |         8 | -            |
+        | chr1         |         6 |         7 | -            |
         +--------------+-----------+-----------+--------------+
         Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
@@ -1966,7 +1959,7 @@ class PyRanges:
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
-        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter = np.zeros(len(self), dtype=np.bool_)
         subsetter[:n] = True
         return self[subsetter]
 
@@ -2163,12 +2156,12 @@ class PyRanges:
         ...                    "End": [3, 9, 11], "ID": ["a", "b", "c"]})
         >>> gr
         +--------------+-----------+-----------+------------+
-        |   Chromosome |     Start |       End | ID         |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
         |--------------+-----------+-----------+------------|
-        |         chr1 |         1 |         3 | a          |
-        |         chr1 |         4 |         9 | b          |
-        |         chr1 |        10 |        11 | c          |
+        | chr1         |         1 |         3 | a          |
+        | chr1         |         4 |         9 | b          |
+        | chr1         |        10 |        11 | c          |
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
@@ -2176,35 +2169,35 @@ class PyRanges:
         >>> gr2 = pr.from_dict({"Chromosome": ["chr1"] * 3, "Start": [2, 2, 9], "End": [3, 9, 10]})
         >>> gr2
         +--------------+-----------+-----------+
-        |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        | Chromosome   |     Start |       End |
+        | (category)   |   (int32) |   (int32) |
         |--------------+-----------+-----------|
-        |         chr1 |         2 |         3 |
-        |         chr1 |         2 |         9 |
-        |         chr1 |         9 |        10 |
+        | chr1         |         2 |         3 |
+        | chr1         |         2 |         9 |
+        | chr1         |         9 |        10 |
         +--------------+-----------+-----------+
         Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
 
         >>> gr.intersect(gr2)
         +--------------+-----------+-----------+------------+
-        |   Chromosome |     Start |       End | ID         |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
         |--------------+-----------+-----------+------------|
-        |         chr1 |         2 |         3 | a          |
-        |         chr1 |         2 |         3 | a          |
-        |         chr1 |         4 |         9 | b          |
+        | chr1         |         2 |         3 | a          |
+        | chr1         |         2 |         3 | a          |
+        | chr1         |         4 |         9 | b          |
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
 
         >>> gr.intersect(gr2, how="first")
         +--------------+-----------+-----------+------------+
-        |   Chromosome |     Start |       End | ID         |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
         |--------------+-----------+-----------+------------|
-        |         chr1 |         2 |         3 | a          |
-        |         chr1 |         4 |         9 | b          |
+        | chr1         |         2 |         3 | a          |
+        | chr1         |         4 |         9 | b          |
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
@@ -2384,7 +2377,7 @@ class PyRanges:
         >>> f1.join(f2, how="right")
         +--------------+-----------+-----------+------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------+-----------+-----------+------------|
         | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
         | chr1         |        -1 |        -1 | -1         |         1 |         2 | a          |
@@ -2706,9 +2699,8 @@ class PyRanges:
         |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int32) |
         |--------------+-----------+-----------+-----------+-----------+-----------+------------|
         |            1 |         5 |         6 |         1 |         3 |         1 |         -3 |
-        |            1 |         5 |         6 |         1 |         3 |         0 |         -3 |
         +--------------+-----------+-----------+-----------+-----------+-----------+------------+
-        Unstranded PyRanges object has 2 rows and 7 columns from 1 chromosomes.
+        Unstranded PyRanges object has 1 rows and 7 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
         """
 
@@ -2981,6 +2973,7 @@ class PyRanges:
         Examples
         --------
         >>> gr = pr.data.f1()
+        >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
         | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
@@ -3528,7 +3521,7 @@ class PyRanges:
 
         how : {"first", "containment", False, None}, default "first"
 
-            What intervals to report. By default reports every interval in self with overlap once.
+            What intervals to report. By default, reports every interval in self with overlap once.
             "containment" reports all intervals where the overlapping is contained within it.
 
         invert : bool, default False
@@ -3559,12 +3552,12 @@ class PyRanges:
         ...                    "End": [3, 9, 11], "ID": ["a", "b", "c"]})
         >>> gr
         +--------------+-----------+-----------+------------+
-        |   Chromosome |     Start |       End | ID         |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
         |--------------+-----------+-----------+------------|
-        |         chr1 |         1 |         3 | a          |
-        |         chr1 |         4 |         9 | b          |
-        |         chr1 |        10 |        11 | c          |
+        | chr1         |         1 |         3 | a          |
+        | chr1         |         4 |         9 | b          |
+        | chr1         |        10 |        11 | c          |
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
@@ -3723,12 +3716,12 @@ class PyRanges:
 
         >>> gr.print(formatting={"Start": "{:,}", "Score": "{:.2f}"})
         +--------------+-----------+-----------+------------+-------------+--------------+
-        | Chromosome   |     Start |       End | Name       |       Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (float64) | (category)   |
+        | Chromosome   | Start     |       End | Name       |       Score | Strand       |
+        | (category)   | (int32)   |   (int32) | (object)   |   (float64) | (category)   |
         |--------------+-----------+-----------+------------+-------------+--------------|
-        | chr1         |         3 |         6 | i1         |         1.1 | +            |
-        | chr1         |         8 |         9 | i3         |         2.4 | +            |
-        | chr1         |     5,000 |      7000 | i2         |         6   | -            |
+        | chr1         | 3         |         6 | i1         |         1.1 | +            |
+        | chr1         | 8         |         9 | i3         |         2.4 | +            |
+        | chr1         | 5,000     |      7000 | i2         |         6   | -            |
         +--------------+-----------+-----------+------------+-------------+--------------+
         Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
@@ -3884,7 +3877,7 @@ class PyRanges:
         ValueError: Cannot take a larger sample than population when 'replace=False'
         """
         sample = np.random.choice(len(self), size=n, replace=replace)
-        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter = np.zeros(len(self), dtype=np.bool_)
         subsetter[sample] = True
         return self[subsetter]
 
@@ -3909,7 +3902,7 @@ class PyRanges:
 
         how : {None, "first", "last", "containment"}, default None, i.e. all
 
-            What intervals to report. By default reports all overlapping intervals. "containment"
+            What intervals to report. By default, reports all overlapping intervals. "containment"
             reports intervals where the overlapping is contained within it.
 
         nb_cpu: int, default 1
@@ -3936,12 +3929,12 @@ class PyRanges:
         ...                    "End": [3, 9, 11], "ID": ["a", "b", "c"]})
         >>> gr
         +--------------+-----------+-----------+------------+
-        |   Chromosome |     Start |       End | ID         |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
         |--------------+-----------+-----------+------------|
-        |         chr1 |         1 |         3 | a          |
-        |         chr1 |         4 |         9 | b          |
-        |         chr1 |        10 |        11 | c          |
+        | chr1         |         1 |         3 | a          |
+        | chr1         |         4 |         9 | b          |
+        | chr1         |        10 |        11 | c          |
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
@@ -3949,12 +3942,12 @@ class PyRanges:
         >>> gr2 = pr.from_dict({"Chromosome": ["chr1"] * 3, "Start": [2, 2, 9], "End": [3, 9, 10]})
         >>> gr2
         +--------------+-----------+-----------+
-        |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        | Chromosome   |     Start |       End |
+        | (category)   |   (int32) |   (int32) |
         |--------------+-----------+-----------|
-        |         chr1 |         2 |         3 |
-        |         chr1 |         2 |         9 |
-        |         chr1 |         9 |        10 |
+        | chr1         |         2 |         3 |
+        | chr1         |         2 |         9 |
+        | chr1         |         9 |        10 |
         +--------------+-----------+-----------+
         Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
@@ -4047,12 +4040,12 @@ class PyRanges:
         ...                    "End": [3, 9, 11], "ID": ["a", "b", "c"]})
         >>> gr
         +--------------+-----------+-----------+------------+
-        |   Chromosome |     Start |       End | ID         |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        | Chromosome   |     Start |       End | ID         |
+        | (category)   |   (int32) |   (int32) | (object)   |
         |--------------+-----------+-----------+------------|
-        |         chr1 |         1 |         3 | a          |
-        |         chr1 |         4 |         9 | b          |
-        |         chr1 |        10 |        11 | c          |
+        | chr1         |         1 |         3 | a          |
+        | chr1         |         4 |         9 | b          |
+        | chr1         |        10 |        11 | c          |
         +--------------+-----------+-----------+------------+
         Unstranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
@@ -4060,12 +4053,12 @@ class PyRanges:
         >>> gr2 = pr.from_dict({"Chromosome": ["chr1"] * 3, "Start": [2, 2, 9], "End": [3, 9, 10]})
         >>> gr2
         +--------------+-----------+-----------+
-        |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        | Chromosome   |     Start |       End |
+        | (category)   |   (int32) |   (int32) |
         |--------------+-----------+-----------|
-        |         chr1 |         2 |         3 |
-        |         chr1 |         2 |         9 |
-        |         chr1 |         9 |        10 |
+        | chr1         |         2 |         3 |
+        | chr1         |         2 |         9 |
+        | chr1         |         9 |        10 |
         +--------------+-----------+-----------+
         Unstranded PyRanges object has 3 rows and 3 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
@@ -4308,7 +4301,7 @@ class PyRanges:
         >>> p.spliced_subsequence(0, 15, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int64) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        11 | t1              |
         |            1 | +            |        40 |        45 | t1              |
@@ -4323,7 +4316,7 @@ class PyRanges:
         >>> p.spliced_subsequence(-20, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int64) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |        70 |        75 | t2              |
@@ -4348,7 +4341,7 @@ class PyRanges:
         >>> p.spliced_subsequence(3, -3, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int64) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         4 |        11 | t1              |
         |            1 | +            |        40 |        57 | t1              |
@@ -5051,7 +5044,7 @@ class PyRanges:
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
-        subsetter = np.zeros(len(self), dtype=np.bool)
+        subsetter = np.zeros(len(self), dtype=np.bool_)
         subsetter[(len(self) - n) :] = True
         return self[subsetter]
 
@@ -5270,7 +5263,7 @@ class PyRanges:
         | Chromosome   |     Start |       End | Strand       |
         | (category)   |   (int32) |   (int32) | (category)   |
         |--------------+-----------+-----------+--------------|
-        | chr1         |         5 |         6 | +            |
+        | chr1         |         4 |         5 | +            |
         | chr1         |         6 |         7 | -            |
         +--------------+-----------+-----------+--------------+
         Stranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
@@ -5372,17 +5365,21 @@ class PyRanges:
         Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> print(gr.to_bed())
+        >>> gr.to_bed()
+        'chr1\t1\t5\t.\t.\t+\t1\nchr1\t6\t8\t.\t.\t-\t2\n'
+
+        # File contents:
         chr1	1	5	.	.	+	1
         chr1	6	8	.	.	-	2
-        <BLANKLINE>
 
         Does not include noncanonical bed-column `Gene`:
 
-        >>> print(gr.to_bed(keep=False))
+        >>> gr.to_bed(keep=False)
+        'chr1\t1\t5\t.\t.\t+\nchr1\t6\t8\t.\t.\t-\n'
+
+        # File contents:
         chr1	1	5	.	.	+
         chr1	6	8	.	.	-
-        <BLANKLINE>
 
         >>> gr.to_bed("test.bed", chain=True)
         +--------------+-----------+-----------+--------------+-----------+
@@ -5581,12 +5578,14 @@ class PyRanges:
 
         >>> d = {"Chromosome": [1] * 3, "Start": [1, 3, 5], "End": [4, 6, 9], "Feature": ["gene", "exon", "exon"]}
         >>> gr = pr.from_dict(d)
-        >>> print(gr.to_csv(sep="\t"))
+        >>> gr.to_csv(sep="\t")
+        'Chromosome\tStart\tEnd\tFeature\n1\t1\t4\tgene\n1\t3\t6\texon\n1\t5\t9\texon\n'
+
+        # The file contents
         Chromosome	Start	End	Feature
         1	1	4	gene
         1	3	6	exon
         1	5	9	exon
-        <BLANKLINE>
         """
 
         from pyranges.out import _to_csv
@@ -5612,7 +5611,7 @@ class PyRanges:
         score: Score
         strand: Strand
         phase: Frame
-        attribute: auto-filled``
+        attribute: autofilled``
 
         Columns which are not mapped to GFF columns are appended as a field
         in the attribute string (i.e. the last field).
@@ -5651,19 +5650,23 @@ class PyRanges:
 
         >>> d = {"Chromosome": [1] * 3, "Start": [1, 3, 5], "End": [4, 6, 9], "Feature": ["gene", "exon", "exon"]}
         >>> gr = pr.from_dict(d)
-        >>> print(gr.to_gff3())
+        >>> gr.to_gff3()
+        '1\\t.\\tgene\\t2\\t4\\t.\\t.\\t.\\t\\n1\\t.\\texon\\t4\\t6\\t.\\t.\\t.\\t\\n1\\t.\\texon\\t6\\t9\\t.\\t.\\t.\\t\\n'
+
+        # How the file would look
         1	.	gene	2	4	.	.	.
         1	.	exon	4	6	.	.	.
         1	.	exon	6	9	.	.	.
-        <BLANKLINE>
 
         >>> gr.Gene = [1, 2, 3]
         >>> gr.function = ["a b", "c", "def"]
-        >>> print(gr.to_gff3())
+        >>> gr.to_gff3()
+        '1\\t.\\tgene\\t2\\t4\\t.\\t.\\t.\\tGene=1;function=a b\\n1\\t.\\texon\\t4\\t6\\t.\\t.\\t.\\tGene=2;function=c\\n1\\t.\\texon\\t6\\t9\\t.\\t.\\t.\\tGene=3;function=def\\n'
+
+        # How the file would look
         1	.	gene	2	4	.	.	.	Gene=1;function=a b
         1	.	exon	4	6	.	.	.	Gene=2;function=c
         1	.	exon	6	9	.	.	.	Gene=3;function=def
-        <BLANKLINE>
 
         >>> gr.the_frame = [0, 2, 1]
         >>> gr.tag = ['mRNA', 'CDS', 'CDS']
@@ -5678,18 +5681,22 @@ class PyRanges:
         +--------------+-----------+-----------+------------+-----------+------------+-------------+------------+
         Unstranded PyRanges object has 3 rows and 8 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
-        <BLANKLINE>
 
-        >>> print(gr.to_gff3(map_cols={'phase':'the_frame', 'feature':'tag'}))
+        >>> gr.to_gff3(map_cols={'phase':'the_frame', 'feature':'tag'})
+        '1\\t.\\tmRNA\\t2\\t4\\t.\\t.\\t0\\tFeature=gene;Gene=1;function=a b\\n1\\t.\\tCDS\\t4\\t6\\t.\\t.\\t2\\tFeature=exon;Gene=2;function=c\\n1\\t.\\tCDS\\t6\\t9\\t.\\t.\\t1\\tFeature=exon;Gene=3;function=def\\n'
+
+        # How the file would look
         1	.	mRNA	2	4	.	.	0	Gene=1;function=a b
         1	.	CDS	4	6	.	.	2	Gene=2;function=c
         1	.	CDS	6	9	.	.	1	Gene=3;function=def
-        <BLANKLINE>
 
-        >>> print(gr.to_gff3(map_cols={'attribute':'Gene'}))
+        >>> gr.to_gff3(map_cols={'attribute':'Gene'})
+        '1\\t.\\tgene\\t2\\t4\\t.\\t.\\t.\\tGene=1\\n1\\t.\\texon\\t4\\t6\\t.\\t.\\t.\\tGene=1\\n1\\t.\\texon\\t6\\t9\\t.\\t.\\t.\\tGene=1\\n'
 
-
-
+        # How the file would look
+        1	.	gene	2	4	.	.	.	Gene=1
+        1	.	exon	4	6	.	.	.	Gene=1
+        1	.	exon	6	9	.	.	.	Gene=1
         """
 
         from pyranges.out import _to_gff3
@@ -5755,26 +5762,32 @@ class PyRanges:
 
         >>> d = {"Chromosome": [1] * 3, "Start": [1, 3, 5], "End": [4, 6, 9], "Feature": ["gene", "exon", "exon"]}
         >>> gr = pr.from_dict(d)
-        >>> print(gr.to_gtf())
+        >>> gr.to_gtf()  # the raw string output
+        '1\\t.\\tgene\\t2\\t4\\t.\\t.\\t.\\t\\n1\\t.\\texon\\t4\\t6\\t.\\t.\\t.\\t\\n1\\t.\\texon\\t6\\t9\\t.\\t.\\t.\\t\\n'
+
+        # What the file contents look like:
         1	.	gene	2	4	.	.	.
         1	.	exon	4	6	.	.	.
         1	.	exon	6	9	.	.	.
-        <BLANKLINE>
 
         >>> gr.name = ["Tim", "Eric", "Endre"]
         >>> gr.prices = ["Cheap", "Premium", "Fine European"]
-        >>> print(gr.to_gtf())
+        >>> gr.to_gtf()  # the raw string output
+        '1\\t.\\tgene\\t2\\t4\\t.\\t.\\t.\\tname "Tim"; prices "Cheap";\\n1\\t.\\texon\\t4\\t6\\t.\\t.\\t.\\tname "Eric"; prices "Premium";\\n1\\t.\\texon\\t6\\t9\\t.\\t.\\t.\\tname "Endre"; prices "Fine European";\\n'
+
+        # What the file contents look like:
         1	.	gene	2	4	.	.	.	name "Tim"; prices "Cheap";
         1	.	exon	4	6	.	.	.	name "Eric"; prices "Premium";
         1	.	exon	6	9	.	.	.	name "Endre"; prices "Fine European";
-        <BLANKLINE>
 
 
-        >>> print(gr.to_gtf(map_cols={"feature":"name", "attribute":"prices"}))
+        >>> gr.to_gtf(map_cols={"feature":"name", "attribute":"prices"})  # the raw string output
+        '1\\t.\\tTim\\t2\\t4\\t.\\t.\\t.\\tprices "Cheap";\\n1\\t.\\tEric\\t4\\t6\\t.\\t.\\t.\\tprices "Premium";\\n1\\t.\\tEndre\\t6\\t9\\t.\\t.\\t.\\tprices "Fine European";\\n'
+
+        # What the file contents look like:
         1	.	Tim	2	4	.	.	.	prices "Cheap";
         1	.	Eric	4	6	.	.	.	prices "Premium";
         1	.	Endre	6	9	.	.	.	prices "Fine European";
-        <BLANKLINE>
         """
 
         from pyranges.out import _to_gtf
@@ -5991,6 +6004,7 @@ class PyRanges:
         Examples
         --------
 
+        >>> import pyranges as pr
         >>> gr = pr.from_dict({"Chromosome": [1], "Start": [895], "End": [1259]})
         >>> gr
         +--------------+-----------+-----------+
@@ -6013,8 +6027,8 @@ class PyRanges:
         Unstranded PyRanges object has 2 rows and 3 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome.
 
-        >>> gr = pr.data.ensembl_gtf()[["Feature", "gene_name"]]
-        >>> gr
+        >>> gr2 = pr.data.ensembl_gtf()[["Feature", "gene_name"]]
+        >>> gr2
         +--------------+--------------+-----------+-----------+--------------+-------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
         | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |
@@ -6032,7 +6046,8 @@ class PyRanges:
         Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
-        >>> gr.window(1000)
+        >>> gr2 = pr.data.ensembl_gtf()[["Feature", "gene_name"]]
+        >>> gr2.window(1000)
         +--------------+--------------+-----------+-----------+--------------+-------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
         | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |

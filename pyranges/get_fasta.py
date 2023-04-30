@@ -180,8 +180,8 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
 
     >>> gr = pr.from_dict({"Chromosome": ['chr1', 'chr1', 'chr1'],
     ...                    "Start": [0, 9, 18], "End": [4, 13, 21],
-                           "Strand":['+', '-', '-'],
-                           "transcript": ['t1', 't2', 't2']})
+    ...                    "Strand":['+', '-', '-'],
+    ...                    "transcript": ['t1', 't2', 't2']})
     >>> gr
     +--------------+-----------+-----------+--------------+--------------+
     | Chromosome   |     Start |       End | Strand       | transcript   |
@@ -202,18 +202,16 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
 
     >>> seq = pr.get_transcript_sequence(gr, path="temp.fasta", group_by='transcript')
     >>> seq
-
       transcript Sequence
     0         t1     AAAC
     1         t2  AAATCCC
 
     To write to a file in fasta format:
-    >>> with open('outfile.fasta', 'w') as fw:
-    ...     nchars=60
-    ...     for row in seq.itertuples():
-    ...         s = '\\n'.join([ row.Sequence[i:i+nchars] for i in range(0, len(row.Sequence), nchars)])
-    ...         fw.write(f'>{row.transcript}\\n{s}\\n')
-
+    # with open('outfile.fasta', 'w') as fw:
+    #     nchars=60
+    #     for row in seq.itertuples():
+    #         s = '\\n'.join([ row.Sequence[i:i+nchars] for i in range(0, len(row.Sequence), nchars)])
+    #         fw.write(f'>{row.transcript}\\n{s}\\n')
     """
 
     if gr.stranded:

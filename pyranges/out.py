@@ -283,7 +283,7 @@ def _to_gff3(self, path=None, compression="infer", map_cols=None):
         return "".join(
             [
                 outdf.to_csv(
-                    index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE
+                    index=False, header=False, sep="\t", quoting=csv.QUOTE_MINIMAL
                 )
                 for outdf in outdfs
             ]
@@ -301,7 +301,9 @@ def _gff3(df, mapping):
     outdf = _fill_missing(df, all_columns)
 
     if "attribute" in mapping:
-        attribute = mapping["attribute"] + "=" + df.attribute
+        attribute_name = mapping["attribute"]
+        attribute_value = df.attribute.iloc[0]
+        attribute = f"{attribute_name}={attribute_value}"
     else:
         # gotten all needed columns, need to join the rest
         rest = set(df.columns) - set(all_columns)

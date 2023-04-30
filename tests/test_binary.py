@@ -224,7 +224,7 @@ def test_coverage(gr, gr2, strandedness):
         header=None,
         usecols=[0, 1, 2, 3, 4, 5, 6, 9],
         names="Chromosome Start End Name Score Strand NumberOverlaps FractionOverlaps".split(),
-        dtype={"FractionOverlap": np.float},
+        dtype={"FractionOverlap": np.float_},
         sep="\t",
     )
 
