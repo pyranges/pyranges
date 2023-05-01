@@ -1282,7 +1282,7 @@ class PyRanges:
         >>> f2.columns
         Index(['Chromosome', 'Start', 'End', 'Name', 'Score', 'Strand'], dtype='object')
 
-        >>> f2.columns = f2.columns.str.replace("Sco|re", "NYAN")
+        >>> f2.columns = f2.columns.str.replace("Sco|re", "NYAN", regex=True)
         >>> f2
         +--------------+-----------+-----------+------------+------------+--------------+
         | Chromosome   |     Start |       End | Name       |   NYANNYAN | Strand       |
@@ -2377,7 +2377,7 @@ class PyRanges:
         >>> f1.join(f2, how="right")
         +--------------+-----------+-----------+------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
-        | (category)   |   (int64) |   (int64) | (object)   |   (int64) |   (int64) | (object)   |
+        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
         |--------------+-----------+-----------+------------+-----------+-----------+------------|
         | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
         | chr1         |        -1 |        -1 | -1         |         1 |         2 | a          |
@@ -2804,7 +2804,7 @@ class PyRanges:
 
         result = pr.PyRanges(new_result)
 
-        if not result.__IX__.is_monotonic:
+        if not result.__IX__.is_monotonic_increasing:
             result = result.sort("__IX__")
 
         result = result.drop(like="__IX__|__k__")

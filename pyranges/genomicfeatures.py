@@ -591,7 +591,7 @@ def _introns2(df, exons, **kwargs):
         introns.Feature.dtype.name == "category"
         and not "intron" in introns.Feature.cat.categories
     ):
-        introns.Feature.cat.add_categories(["intron"], inplace=True)
+        introns.Feature.cat.add_categories(["intron"])
     introns.loc[:, "Feature"] = "intron"
 
     introns = introns[original_order]

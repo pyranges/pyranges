@@ -167,7 +167,9 @@ def test_cluster(gr, strand):
         result_df.Cluster.replace(cluster_ids, inplace=True)
 
         bedtools_df.Cluster = bedtools_df.Cluster.astype("int32")
-        assert_df_equal(result_df.drop("Cluster", axis=1), bedtools_df.drop("Cluster", axis=1))
+        assert_df_equal(
+            result_df.drop("Cluster", axis=1), bedtools_df.drop("Cluster", axis=1)
+        )
     else:
         assert bedtools_df.empty == result.df.empty
 
