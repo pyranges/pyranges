@@ -2,8 +2,7 @@ import pyranges as pr
 import numpy as np
 
 
-def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
-
+def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     """Count overlaps in multiple pyranges.
 
     Parameters
@@ -91,7 +90,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     >>> pr.count_overlaps(grs)
     +--------------+-----------+-----------+-----------+-----------+-----------+
     | Chromosome   | Start     | End       | a         | b         | c         |
-    | (object)     | (int32)   | (int32)   | (int32)   | (int32)   | (int32)   |
+    | (object)     | (int32)   | (int32)   | (int64)   | (int64)   | (int64)   |
     |--------------+-----------+-----------+-----------+-----------+-----------|
     | chr1         | 6         | 8         | 1         | 0         | 0         |
     | chr1         | 8         | 10        | 1         | 0         | 1         |
@@ -123,7 +122,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     >>> pr.count_overlaps(grs, gr)
     +--------------+-----------+-----------+-----------+-----------+-----------+
     | Chromosome   |     Start |       End |         a |         b |         c |
-    | (category)   |   (int32) |   (int32) |   (int32) |   (int32) |   (int32) |
+    | (category)   |   (int32) |   (int32) |   (int64) |   (int64) |   (int64) |
     |--------------+-----------+-----------+-----------+-----------+-----------|
     | chr1         |         0 |        10 |         1 |         0 |         1 |
     | chr1         |        10 |        20 |         2 |         2 |         2 |
@@ -134,7 +133,13 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     For printing, the PyRanges was sorted on Chromosome.
     """
 
-    kwargs = {"as_pyranges": False, "nb_cpu": nb_cpu, "strandedness": strandedness, "how": how, "nb_cpu": nb_cpu}
+    kwargs = {
+        "as_pyranges": False,
+        "nb_cpu": nb_cpu,
+        "strandedness": strandedness,
+        "how": how,
+        "nb_cpu": nb_cpu,
+    }
     names = list(grs.keys())
 
     if features is None:
@@ -145,7 +150,6 @@ def count_overlaps(grs, features=None, strandedness=None, how=None,  nb_cpu=1):
     from pyranges.methods.intersection import _count_overlaps
 
     for name, gr in grs.items():
-
         gr = gr.drop()
 
         kwargs["name"] = name

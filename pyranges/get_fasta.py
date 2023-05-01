@@ -2,6 +2,7 @@ import sys
 import pyranges as pr
 import pandas as pd
 
+
 def get_sequence(gr, path=None, pyfaidx_fasta=None):
     """Get the sequence of the intervals from a fasta file
 
@@ -29,7 +30,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     Note
     ----
 
-    This function requires the library pyfaidx, it can be installed with 
+    This function requires the library pyfaidx, it can be installed with
     ``conda install -c bioconda pyfaidx`` or ``pip install pyfaidx``.
 
     Sorting the PyRanges is likely to improve the speed.
@@ -91,26 +92,30 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     try:
         import pyfaidx
     except ModuleNotFoundError as e:
-        print("pyfaidx must be installed to get fasta sequences. Use `conda install -c bioconda pyfaidx` or `pip install pyfaidx` to install it.")
+        print(
+            "pyfaidx must be installed to get fasta sequences. Use `conda install -c bioconda pyfaidx` or `pip install pyfaidx` to install it."
+        )
         sys.exit(1)
 
     if pyfaidx_fasta is None:
         if path is None:
-            raise Exception('ERROR get_sequence : you must provide a fasta path or pyfaidx_fasta object')
+            raise Exception(
+                "ERROR get_sequence : you must provide a fasta path or pyfaidx_fasta object"
+            )
         pyfaidx_fasta = pyfaidx.Fasta(path, read_ahead=int(1e5))
 
     seqs = []
     for k, df in gr:
-        if type(k) is tuple:  #input is Stranded
+        if type(k) is tuple:  # input is Stranded
             _fasta = pyfaidx_fasta[k[0]]
-            if k[1]=='-':
+            if k[1] == "-":
                 for start, end in zip(df.Start, df.End):
-                    seqs.append( (-_fasta[start:end]).seq ) # reverse complement
+                    seqs.append((-_fasta[start:end]).seq)  # reverse complement
             else:
                 for start, end in zip(df.Start, df.End):
                     seqs.append(_fasta[start:end].seq)
 
-        else:        
+        else:
             _fasta = pyfaidx_fasta[k]
             for start, end in zip(df.Start, df.End):
                 seqs.append(_fasta[start:end].seq)
@@ -119,9 +124,10 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
 
 
 def get_fasta(*args, **kwargs):
-    """ Deprecated: this function has been moved to Pyranges.get_sequence"""
+    """Deprecated: this function has been moved to Pyranges.get_sequence"""
     return get_sequence(*args, **kwargs)
-    
+
+
 def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     """Get the sequence of mRNAs, e.g. joining intervals corresponding to exons of the same transcript
 
@@ -132,7 +138,7 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
         Coordinates.
 
     group_by : str or list of str
-    
+
         intervals are grouped by this/these ID column(s): these are exons belonging to same transcript
 
     path : str
@@ -153,11 +159,11 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     Note
     ----
 
-    This function requires the library pyfaidx, it can be installed with 
+    This function requires the library pyfaidx, it can be installed with
     ``conda install -c bioconda pyfaidx`` or ``pip install pyfaidx``.
 
     Sorting the PyRanges is likely to improve the speed.
-    Intervals on the negative strand will be reverse complemented.       
+    Intervals on the negative strand will be reverse complemented.
 
     Warning
     -------
@@ -174,8 +180,8 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
 
     >>> gr = pr.from_dict({"Chromosome": ['chr1', 'chr1', 'chr1'],
     ...                    "Start": [0, 9, 18], "End": [4, 13, 21],
-                           "Strand":['+', '-', '-'],
-                           "transcript": ['t1', 't2', 't2']})
+    ...                    "Strand":['+', '-', '-'],
+    ...                    "transcript": ['t1', 't2', 't2']})
     >>> gr
     +--------------+-----------+-----------+--------------+--------------+
     | Chromosome   |     Start |       End | Strand       | transcript   |
@@ -193,30 +199,27 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     >>> _ = tmp_handle.write(">chr1\\n")
     >>> _ = tmp_handle.write("AAACCCTTTGGGAAACCCTTTGGG\\n")
     >>> tmp_handle.close()
-  
+
     >>> seq = pr.get_transcript_sequence(gr, path="temp.fasta", group_by='transcript')
     >>> seq
-
       transcript Sequence
     0         t1     AAAC
     1         t2  AAATCCC
 
     To write to a file in fasta format:
-    >>> with open('outfile.fasta', 'w') as fw:
-    ...     nchars=60
-    ...     for row in seq.itertuples():
-    ...         s = '\\n'.join([ row.Sequence[i:i+nchars] for i in range(0, len(row.Sequence), nchars)])
-    ...         fw.write(f'>{row.transcript}\\n{s}\\n')
-
+    # with open('outfile.fasta', 'w') as fw:
+    #     nchars=60
+    #     for row in seq.itertuples():
+    #         s = '\\n'.join([ row.Sequence[i:i+nchars] for i in range(0, len(row.Sequence), nchars)])
+    #         fw.write(f'>{row.transcript}\\n{s}\\n')
     """
 
-
     if gr.stranded:
-        gr = gr.sort('5')        
+        gr = gr.sort("5")
     else:
         gr = gr.sort()
-    
+
     z = gr.df
-    z['Sequence'] = get_sequence(gr, path=path, pyfaidx_fasta=pyfaidx_fasta)
-    
-    return z.groupby(group_by, as_index=False).agg({'Sequence':''.join}) 
+    z["Sequence"] = get_sequence(gr, path=path, pyfaidx_fasta=pyfaidx_fasta)
+
+    return z.groupby(group_by, as_index=False).agg({"Sequence": "".join})

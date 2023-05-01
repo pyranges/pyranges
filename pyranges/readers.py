@@ -4,16 +4,14 @@ import sys
 
 import pandas as pd
 
-from pyranges.pyranges import PyRanges
+from pyranges.pyranges_main import PyRanges
 
 from io import StringIO
 
 import pyranges as pr
-from pyranges.version import __version__
 
 
 def read_bed(f, as_df=False, nrows=None):
-
     """Return bed file as PyRanges.
 
     This is a reader for files that follow the bed format. They can have from
@@ -70,11 +68,11 @@ def read_bed(f, as_df=False, nrows=None):
 
     """
 
-    columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split(
-    )
+    columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split()
 
     if f.endswith(".gz"):
         import gzip
+
         first_start = gzip.open(f).readline().split()[1]
     else:
         first_start = open(f).readline().split()[1]
@@ -88,15 +86,13 @@ def read_bed(f, as_df=False, nrows=None):
 
     df = pd.read_csv(
         f,
-        dtype={
-            "Chromosome": "category",
-            "Strand": "category"
-        },
+        dtype={"Chromosome": "category", "Strand": "category"},
         nrows=nrows,
         header=header,
-        sep="\t")
+        sep="\t",
+    )
 
-    df.columns = columns[:df.shape[1]]
+    df.columns = columns[: df.shape[1]]
 
     if not as_df:
         return PyRanges(df)
@@ -105,7 +101,6 @@ def read_bed(f, as_df=False, nrows=None):
 
 
 def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1540):
-
     """Return bam file as PyRanges.
 
     Parameters
@@ -146,50 +141,63 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     --------
 
     >>> path = pr.get_example_path("control.bam")
-    >>> pr.read_bam(path)
+    >>> pr.read_bam(path).sort()
     +--------------+-----------+-----------+--------------+------------+
     | Chromosome   | Start     | End       | Strand       | Flag       |
     | (category)   | (int32)   | (int32)   | (category)   | (uint16)   |
     |--------------+-----------+-----------+--------------+------------|
-    | chr1         | 887771    | 887796    | +            | 16         |
-    | chr1         | 994660    | 994685    | +            | 16         |
-    | chr1         | 1770383   | 1770408   | +            | 16         |
-    | chr1         | 1995141   | 1995166   | +            | 16         |
+    | chr1         | 1041102   | 1041127   | +            | 0          |
+    | chr1         | 2129359   | 2129384   | +            | 0          |
+    | chr1         | 2239108   | 2239133   | +            | 0          |
+    | chr1         | 2318805   | 2318830   | +            | 0          |
     | ...          | ...       | ...       | ...          | ...        |
-    | chrY         | 57402214  | 57402239  | +            | 16         |
-    | chrY         | 10643526  | 10643551  | -            | 0          |
-    | chrY         | 11776321  | 11776346  | -            | 0          |
-    | chrY         | 20557165  | 20557190  | -            | 0          |
+    | chrY         | 10632456  | 10632481  | -            | 16         |
+    | chrY         | 11918814  | 11918839  | -            | 16         |
+    | chrY         | 11936866  | 11936891  | -            | 16         |
+    | chrY         | 57402214  | 57402239  | -            | 16         |
     +--------------+-----------+-----------+--------------+------------+
     Stranded PyRanges object has 10,000 rows and 5 columns from 25 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
 
     >>> pr.read_bam(path, sparse=False, as_df=True)
-         Chromosome    Start      End Strand  Flag  QueryStart  QueryEnd Name Cigar Quality
-    0          chr1   887771   887796      +    16           0        25   U0   25M    None
-    1          chr1   994660   994685      +    16           0        25   U0   25M    None
-    2          chr1  1041102  1041127      -     0           0        25   U0   25M    None
-    3          chr1  1770383  1770408      +    16           0        25   U0   25M    None
-    4          chr1  1995141  1995166      +    16           0        25   U0   25M    None
-    ...         ...      ...      ...    ...   ...         ...       ...  ...   ...     ...
-    9995       chrM     3654     3679      -     0           0        25   U0   25M    None
-    9996       chrM     3900     3925      +    16           0        25   U0   25M    None
-    9997       chrM    13006    13031      +    16           0        25   U0   25M    None
-    9998       chrM    14257    14282      -     0           0        25   U0   25M    None
-    9999       chrM    14257    14282      -     0           0        25   U0   25M    None
+         Chromosome    Start      End Strand  Flag  QueryStart  QueryEnd QuerySequence Name Cigar Quality
+    0          chr1   887771   887796      -    16           0        25          None   U0   25M    None
+    1          chr1   994660   994685      -    16           0        25          None   U0   25M    None
+    2          chr1  1041102  1041127      +     0           0        25          None   U0   25M    None
+    3          chr1  1770383  1770408      -    16           0        25          None   U0   25M    None
+    4          chr1  1995141  1995166      -    16           0        25          None   U0   25M    None
+    ...         ...      ...      ...    ...   ...         ...       ...           ...  ...   ...     ...
+    9995       chrM     3654     3679      +     0           0        25          None   U0   25M    None
+    9996       chrM     3900     3925      -    16           0        25          None   U0   25M    None
+    9997       chrM    13006    13031      -    16           0        25          None   U0   25M    None
+    9998       chrM    14257    14282      +     0           0        25          None   U0   25M    None
+    9999       chrM    14257    14282      +     0           0        25          None   U0   25M    None
     <BLANKLINE>
-    [10000 rows x 10 columns]
+    [10000 rows x 11 columns]
     """
 
     try:
         import bamread
     except ModuleNotFoundError as e:
-        print("bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it.")
+        print(
+            "bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it."
+        )
         sys.exit(1)
 
-    if bamread.__version__ in ["0.0.1", "0.0.2", "0.0.3", "0.0.4",
-                               "0.0.5", "0.0.6", "0.0.7", "0.0.8", "0.0.9"]:
-        print("bamread not recent enough. Must be 0.0.10 or higher. Use `conda install -c bioconda 'bamread>=0.0.10'` or `pip install bamread>=0.0.10` to install it.")
+    if bamread.__version__ in [
+        "0.0.1",
+        "0.0.2",
+        "0.0.3",
+        "0.0.4",
+        "0.0.5",
+        "0.0.6",
+        "0.0.7",
+        "0.0.8",
+        "0.0.9",
+    ]:
+        print(
+            "bamread not recent enough. Must be 0.0.10 or higher. Use `conda install -c bioconda 'bamread>=0.0.10'` or `pip install bamread>=0.0.10` to install it."
+        )
         sys.exit(1)
 
     if sparse:
@@ -198,7 +206,9 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
         try:
             df = bamread.read_bam_full(f, mapq, required_flag, filter_flag)
         except AttributeError:
-            print("bamread version 0.0.6 or higher is required to read bam non-sparsely.")
+            print(
+                "bamread version 0.0.6 or higher is required to read bam non-sparsely."
+            )
 
     if as_df:
         return df
@@ -209,19 +219,19 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
 
 
 def _fetch_gene_transcript_exon_id(attribute, annotation=None):
-
-    no_quotes = attribute.str.replace('"', '').str.replace("'", "")
+    no_quotes = attribute.str.replace('"', "").str.replace("'", "")
 
     df = no_quotes.str.extract(
         "gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?",
-        expand=True)  # .iloc[:, [1, 2, 3]]
+        expand=True,
+    )  # .iloc[:, [1, 2, 3]]
 
     df.columns = "gene_id transcript_id exon_number exon_id".split()
 
     if annotation == "ensembl":
         newdf = []
         for c in "gene_id transcript_id exon_id".split():
-            r = df[c].astype(str).str.extract(r'(\d+)').astype(float)
+            r = df[c].astype(str).str.extract(r"(\d+)").astype(float)
             newdf.append(r)
 
         newdf = pd.concat(newdf, axis=1)
@@ -232,9 +242,9 @@ def _fetch_gene_transcript_exon_id(attribute, annotation=None):
 
 
 def skiprows(f):
-
     try:
         import gzip
+
         fh = gzip.open(f)
         for i, l in enumerate(fh):
             if l.decode()[0] != "#":
@@ -251,7 +261,6 @@ def skiprows(f):
 
 
 def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
-
     """Read files in the Gene Transfer Format.
 
     Parameters
@@ -280,7 +289,7 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
     ----
 
     The GTF format encodes both Start and End as 1-based included.
-    PyRanges (and also the DF returned by this function, if as_df=True), instead 
+    PyRanges (and also the DF returned by this function, if as_df=True), instead
     encodes intervals as 0-based, Start included and End excluded.
 
     See Also
@@ -324,15 +333,9 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
 
 
 def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
+    dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    dtypes = {
-        "Chromosome": "category",
-        "Feature": "category",
-        "Strand": "category"
-    }
-
-    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split(
-    )
+    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
 
     df_iter = pd.read_csv(
         f,
@@ -342,7 +345,8 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
         dtype=dtypes,
         chunksize=int(1e5),
         skiprows=skiprows,
-        nrows=nrows)
+        nrows=nrows,
+    )
 
     _to_rows = to_rows_keep_duplicates if duplicate_attr else to_rows
 
@@ -370,9 +374,13 @@ def to_rows(anno):
     try:
         l = anno.head(1)
         for l in l:
-            l.replace('"', '').replace(";", "").split()
+            l.replace('"', "").replace(";", "").split()
     except AttributeError:
-        raise Exception("Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(l=l))
+        raise Exception(
+            "Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(
+                l=l
+            )
+        )
 
     for l in anno:
         rowdicts.append({k: v for k, v in parse_kv_fields(l)})
@@ -387,7 +395,6 @@ def to_rows_keep_duplicates(anno):
 
         # rstrip: allows for GFF not having a last ";", or having final spaces
         for k, v in tuple(parse_kv_fields(l)):
-
             if k not in rowdict:
                 rowdict[k] = v
             elif k in rowdict and isinstance(rowdict[k], list):
@@ -395,18 +402,14 @@ def to_rows_keep_duplicates(anno):
             else:
                 rowdict[k] = [rowdict[k], v]
 
-        rowdicts.append({
-            k: ','.join(v) if isinstance(v, list) else v
-            for k, v in rowdict.items()
-        })
+        rowdicts.append(
+            {k: ",".join(v) if isinstance(v, list) else v for k, v in rowdict.items()}
+        )
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
 
-def read_gtf_restricted(f,
-                        skiprows,
-                        as_df=False,
-                        nrows=None):
+def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
     feature - feature type name, e.g. Gene, Variation, Similarity
@@ -415,12 +418,9 @@ def read_gtf_restricted(f,
     score - A floating point value.
     strand - defined as + (forward) or - (reverse).
     # frame - One of '0', '1' or '2'. '0' indicates that the first base of the feature is the first base of a codon, '1' that the second base is the first base of a codon, and so on..
-    attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature."""
-    dtypes = {
-        "Chromosome": "category",
-        "Feature": "category",
-        "Strand": "category"
-    }
+    attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature.
+    """
+    dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     df_iter = pd.read_csv(
         f,
@@ -432,15 +432,15 @@ def read_gtf_restricted(f,
         dtype=dtypes,
         chunksize=int(1e5),
         skiprows=skiprows,
-        nrows=nrows)
+        nrows=nrows,
+    )
 
     dfs = []
     for df in df_iter:
         if sum(df.Score == ".") == len(df):
             cols_to_concat = "Chromosome Start End Strand Feature".split()
         else:
-            cols_to_concat = "Chromosome Start End Strand Feature Score".split(
-            )
+            cols_to_concat = "Chromosome Start End Strand Feature Score".split()
 
         extract = _fetch_gene_transcript_exon_id(df.Attribute)
         extract.columns = "gene_id transcript_id exon_number exon_id".split()
@@ -466,14 +466,13 @@ def to_rows_gff3(anno):
 
     for l in list(anno):
         # stripping last white char if present
-        lx = (it.split("=") for it in l.rstrip('; ').split(";"))
+        lx = (it.split("=") for it in l.rstrip("; ").split(";"))
         rowdicts.append({k: v for k, v in lx})
 
     return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
 
 
 def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
-
     """Read files in the General Feature Format.
 
     Parameters
@@ -498,7 +497,7 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
     -----
 
     The gff3 format encodes both Start and End as 1-based included.
-    PyRanges (and also the DF returned by this function, if as_df=True), instead 
+    PyRanges (and also the DF returned by this function, if as_df=True), instead
     encodes intervals as 0-based, Start included and End excluded.
 
     See Also
@@ -512,14 +511,9 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
     if not full:
         return read_gtf_restricted(f, _skiprows, as_df=as_df, nrows=nrows)
 
-    dtypes = {
-        "Chromosome": "category",
-        "Feature": "category",
-        "Strand": "category"
-    }
+    dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
-    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split(
-    )
+    names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
 
     df_iter = pd.read_csv(
         f,
@@ -530,7 +524,8 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
         dtype=dtypes,
         chunksize=int(1e5),
         skiprows=_skiprows,
-        nrows=nrows)
+        nrows=nrows,
+    )
 
     dfs = []
     for df in df_iter:
@@ -550,12 +545,14 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
 
 
 def read_bigwig(f, as_df=False):
-
     try:
         import pyBigWig
     except ModuleNotFoundError:
-        print("bwread must be installed to read bigwigs. Use `conda install -c bioconda bwread` or `pip install bwread` to install it.")
+        print(
+            "bwread must be installed to read bigwigs. Use `conda install -c bioconda bwread` or `pip install bwread` to install it."
+        )
         import sys
+
         sys.exit(1)
 
     """Read bigwig files.
@@ -608,6 +605,13 @@ def read_bigwig(f, as_df=False):
         outstarts = pd.Series(outstarts)
         outends = pd.Series(outends)
         outvalues = pd.Series(outvalues)
-        dfs[chromosome] = pd.DataFrame({"Chromosome": chromosome, "Start": outstarts, "End": outends, "Value": outvalues})
+        dfs[chromosome] = pd.DataFrame(
+            {
+                "Chromosome": chromosome,
+                "Start": outstarts,
+                "End": outends,
+                "Value": outvalues,
+            }
+        )
 
     return pr.PyRanges(dfs)

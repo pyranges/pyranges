@@ -6,24 +6,33 @@ from tabulate import tabulate
 
 
 def get_terminal_size():
-
     return shutil.get_terminal_size().columns
 
 
 def show_pos_merge_position(self, df, first_df):
-
     if "Strand" in df:
-        pos = df.Chromosome.astype(str) + " " + df.Start.astype(
-            str) + "-" + df.End.astype(str) + " " + df.Strand.astype(str)
+        pos = (
+            df.Chromosome.astype(str)
+            + " "
+            + df.Start.astype(str)
+            + "-"
+            + df.End.astype(str)
+            + " "
+            + df.Strand.astype(str)
+        )
     else:
-        pos = df.Chromosome.astype(str) + " " + df.Start.astype(
-            str) + "-" + df.End.astype(str)
+        pos = (
+            df.Chromosome.astype(str)
+            + " "
+            + df.Start.astype(str)
+            + "-"
+            + df.End.astype(str)
+        )
 
     return pos
 
 
 def increase_string_width(self, df, first_df, merge_position):
-
     # TODO: increase until no longer fits the screen
     # instead of decreasing. Takes long time with 60k+ cols
 
@@ -61,8 +70,7 @@ def increase_string_width(self, df, first_df, merge_position):
 
     h = [c + "\n(" + str(t) + ")" for c, t in zip(columns, list(dtypes))]
 
-    str_repr = tabulate(
-        df.get(columns), headers=h, tablefmt='psql', showindex=False)
+    str_repr = tabulate(df.get(columns), headers=h, tablefmt="psql", showindex=False)
     table_width = len(str_repr.split("\n", 1)[0])
 
     for _, c in enumerate(df.columns):
@@ -78,7 +86,8 @@ def increase_string_width(self, df, first_df, merge_position):
         new_build_df = pd.concat([build_df, df[c]], axis=1)
 
         new_str_repr = tabulate(
-            new_build_df, headers=h, tablefmt='psql', showindex=False)
+            new_build_df, headers=h, tablefmt="psql", showindex=False
+        )
 
         table_width = len(new_str_repr.split("\n", 1)[0])
         # print("1", table_width, get_terminal_size())
@@ -95,11 +104,13 @@ def increase_string_width(self, df, first_df, merge_position):
     hidden_cols = set(df.columns) - (set(columns).union(never_add))
     n_hidden_cols = len(hidden_cols)
     stranded = "Stranded" if self.stranded else "Unstranded"
-    str1 = "{} PyRanges object has {:,} rows and {:,} columns from {} chromosomes.".format(
-        stranded, n_intervals, len(self.columns), n_chromosomes)
+    str1 = (
+        "{} PyRanges object has {:,} rows and {:,} columns from {} chromosomes.".format(
+            stranded, n_intervals, len(self.columns), n_chromosomes
+        )
+    )
 
     if n_hidden_cols:
-
         # try to add ... as last col
         ddd = pd.Series("...", index=build_df.index)
         ddd.name = "...\n..."
@@ -107,7 +118,8 @@ def increase_string_width(self, df, first_df, merge_position):
 
         new_build_df = pd.concat([build_df, ddd], axis=1)
         new_str_repr = tabulate(
-            new_build_df, headers=h, tablefmt='psql', showindex=False)
+            new_build_df, headers=h, tablefmt="psql", showindex=False
+        )
         table_width = len(new_str_repr.split("\n", 1)[0])
 
         if table_width <= terminal_width:
@@ -122,13 +134,15 @@ def increase_string_width(self, df, first_df, merge_position):
             h[-2] = ddd.name
             new_build_df = pd.concat([build_df, ddd], axis=1)
             str_repr = tabulate(
-                new_build_df, headers=h, tablefmt='psql', showindex=False)
+                new_build_df, headers=h, tablefmt="psql", showindex=False
+            )
 
         # add hidden col info
         columns = list(df.columns)
         first_hidden_idx = columns.index(first_hidden)
-        str2 = "Hidden columns: {}".format(", ".join(
-            columns[first_hidden_idx:first_hidden_idx + 10]))
+        str2 = "Hidden columns: {}".format(
+            ", ".join(columns[first_hidden_idx : first_hidden_idx + 10])
+        )
         if (n_hidden_cols - 10) > 0:
             str2 += "... (+ {} more.)".format(n_hidden_cols - 10)
             str_repr = "\n".join([str_repr, str1, str2])
@@ -145,15 +159,16 @@ def increase_string_width(self, df, first_df, merge_position):
         untraditional_strands = set(strands) - set("+-")
         more_than_10 = ", ..." if len(untraditional_strands) > 9 else ""
         from itertools import islice
+
         untraditional_strands = islice(untraditional_strands, 10)
         str_repr += "\n(Considered unstranded due to the values {}{} being present in the Strand column.)".format(
-            ", ".join((str(x) for x in untraditional_strands)), more_than_10)
+            ", ".join((str(x) for x in untraditional_strands)), more_than_10
+        )
 
     return str_repr
 
 
 def tostring(self, n=8, merge_position=False):
-
     entries = n
     half_entries = int(entries / 2)
 
@@ -164,7 +179,6 @@ def tostring(self, n=8, merge_position=False):
     # keys = natsorted(list(self.dfs.keys()))
 
     if len(self.keys()) == 1:
-
         first_key = self.keys()[0]
         # last_key = list(self.dfs.keys())[-1]
         first_df = self.dfs[first_key]
@@ -203,7 +217,6 @@ def tostring(self, n=8, merge_position=False):
         # m.index = ["..."]
         # print((len(h) + len(t)) < entries, len(self) >= entries)
         if (len(h) + len(t)) < entries:
-
             keys_covered = set()
             # iterate from front until have three
             heads = []
@@ -255,7 +268,6 @@ def tostring(self, n=8, merge_position=False):
 
 
 def sort_tostring(self, n=30, merge_position=False):
-
     sort_cols = "Start End".split()
     if self.stranded:
         sort_cols.append("Strand")
@@ -270,7 +282,6 @@ def sort_tostring(self, n=30, merge_position=False):
         current_len = 0
 
         for chromosome in self.chromosomes:
-
             df = self[chromosome].df.sort_values(sort_cols)
             current_len += len(df)
             dfs.append(df.head(half_n))
@@ -283,7 +294,6 @@ def sort_tostring(self, n=30, merge_position=False):
         current_len = 0
         dfs = []
         for chromosome in reversed(self.chromosomes):
-
             df = self[chromosome].df.sort_values(sort_cols)
             current_len += len(df)
             dfs.append(df.tail(half_n))

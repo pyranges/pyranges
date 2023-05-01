@@ -1,7 +1,7 @@
 import pandas as pd
 
-def _split(df, **kwargs):
 
+def _split(df, **kwargs):
     """Blah blah.
 
     Example

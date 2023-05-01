@@ -10,10 +10,19 @@ from pyranges.methods.statistics import _relative_distance
 
 from collections import defaultdict
 
-__all__ = ["simes", "fisher_exact", "StatisticsMethods", "fdr", "rowbased_rankdata", "rowbased_pearson", "rowbased_spearman", "mcc"]
+__all__ = [
+    "simes",
+    "fisher_exact",
+    "StatisticsMethods",
+    "fdr",
+    "rowbased_rankdata",
+    "rowbased_pearson",
+    "rowbased_spearman",
+    "mcc",
+]
+
 
 def fdr(p_vals):
-
     """Adjust p-values with Benjamini-Hochberg.
 
     Parameters
@@ -30,50 +39,36 @@ def fdr(p_vals):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.random(10) / 100
-
-    >>> gr = pr.random(10)
-    >>> gr.PValue = x
+    >>> d = {'Chromosome': ['chr3', 'chr6', 'chr13'], 'Start': [146419383, 39800100, 24537618], 'End': [146419483, 39800200, 24537718], 'Strand': ['-', '+', '-'], 'PValue': [0.0039591368855297175, 0.0037600512992788937, 0.0075061166500909205]}
+    >>> gr = pr.from_dict(d)
     >>> gr
-    +--------------+-----------+-----------+--------------+----------------------+
-    | Chromosome   | Start     | End       | Strand       | PValue               |
-    | (category)   | (int32)   | (int32)   | (category)   | (float64)            |
-    |--------------+-----------+-----------+--------------+----------------------|
-    | chr1         | 176601938 | 176602038 | +            | 0.005488135039273248 |
-    | chr1         | 155082851 | 155082951 | -            | 0.007151893663724195 |
-    | chr2         | 211134424 | 211134524 | -            | 0.006027633760716439 |
-    | chr9         | 78826761  | 78826861  | -            | 0.005448831829968969 |
-    | ...          | ...       | ...       | ...          | ...                  |
-    | chr16        | 52216522  | 52216622  | +            | 0.004375872112626925 |
-    | chr17        | 8085927   | 8086027   | -            | 0.008917730007820798 |
-    | chr19        | 17333425  | 17333525  | +            | 0.009636627605010294 |
-    | chr22        | 16728001  | 16728101  | +            | 0.003834415188257777 |
-    +--------------+-----------+-----------+--------------+----------------------+
-    Stranded PyRanges object has 10 rows and 5 columns from 9 chromosomes.
+    +--------------+-----------+-----------+--------------+-------------+
+    | Chromosome   |     Start |       End | Strand       |      PValue |
+    | (category)   |   (int32) |   (int32) | (category)   |   (float64) |
+    |--------------+-----------+-----------+--------------+-------------|
+    | chr3         | 146419383 | 146419483 | -            |  0.00395914 |
+    | chr6         |  39800100 |  39800200 | +            |  0.00376005 |
+    | chr13        |  24537618 |  24537718 | -            |  0.00750612 |
+    +--------------+-----------+-----------+--------------+-------------+
+    Stranded PyRanges object has 3 rows and 5 columns from 3 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
 
     >>> gr.FDR = pr.stats.fdr(gr.PValue)
     >>> gr.print(formatting={"PValue": "{:.4f}", "FDR": "{:.4}"})
     +--------------+-----------+-----------+--------------+-------------+-------------+
-    | Chromosome   | Start     | End       | Strand       | PValue      | FDR         |
-    | (category)   | (int32)   | (int32)   | (category)   | (float64)   | (float64)   |
+    | Chromosome   |     Start |       End | Strand       |      PValue |         FDR |
+    | (category)   |   (int32) |   (int32) | (category)   |   (float64) |   (float64) |
     |--------------+-----------+-----------+--------------+-------------+-------------|
-    | chr1         | 176601938 | 176602038 | +            | 0.0055      | 0.01098     |
-    | chr1         | 155082851 | 155082951 | -            | 0.0072      | 0.00894     |
-    | chr2         | 211134424 | 211134524 | -            | 0.0060      | 0.01005     |
-    | chr9         | 78826761  | 78826861  | -            | 0.0054      | 0.01362     |
-    | ...          | ...       | ...       | ...          | ...         | ...         |
-    | chr16        | 52216522  | 52216622  | +            | 0.0044      | 0.01459     |
-    | chr17        | 8085927   | 8086027   | -            | 0.0089      | 0.009909    |
-    | chr19        | 17333425  | 17333525  | +            | 0.0096      | 0.009637    |
-    | chr22        | 16728001  | 16728101  | +            | 0.0038      | 0.03834     |
+    | chr3         | 146419383 | 146419483 | -            |      0.004  |    0.005939 |
+    | chr6         |  39800100 |  39800200 | +            |      0.0038 |    0.01128  |
+    | chr13        |  24537618 |  24537718 | -            |      0.0075 |    0.007506 |
     +--------------+-----------+-----------+--------------+-------------+-------------+
-    Stranded PyRanges object has 10 rows and 6 columns from 9 chromosomes.
+    Stranded PyRanges object has 3 rows and 6 columns from 3 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
     from scipy.stats import rankdata
+
     ranked_p_values = rankdata(p_vals)
     fdr = p_vals * len(p_vals) / ranked_p_values
     fdr[fdr > 1] = 1
@@ -82,7 +77,6 @@ def fdr(p_vals):
 
 
 def fisher_exact(tp, fp, fn, tn, pseudocount=0):
-
     """Fisher's exact for contingency tables.
 
     Computes the hypotheses two-sided, less and greater at the same time.
@@ -145,12 +139,14 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
     1  0.000000  0.000067  0.000034  1.000000
     """
 
-
     try:
         from fisher import pvalue_npy
     except:
         import sys
-        print("fisher needs to be installed to use fisher exact. pip install fisher or conda install -c bioconda fisher.")
+
+        print(
+            "fisher needs to be installed to use fisher exact. pip install fisher or conda install -c bioconda fisher."
+        )
         sys.exit(-1)
 
     tp = np.array(tp, dtype=np.uint)
@@ -160,7 +156,9 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
 
     left, right, twosided = pvalue_npy(tp, fp, fn, tn)
 
-    OR = ((tp + pseudocount) / (fp + pseudocount)) / ((fn + pseudocount) / (tn + pseudocount))
+    OR = ((tp + pseudocount) / (fp + pseudocount)) / (
+        (fn + pseudocount) / (tn + pseudocount)
+    )
 
     df = pd.DataFrame({"OR": OR, "P": twosided, "PLeft": left, "PRight": right})
 
@@ -168,7 +166,6 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
 
 
 def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
-
     """Compute Matthew's correlation coefficient for PyRanges overlaps.
 
     Parameters
@@ -197,31 +194,28 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
 
     Examples
     --------
-    >>> np.random.seed(0)
-    >>> chromsizes = {"chrM": 16000}
-    >>> grs = [pr.random(chromsizes=chromsizes) for _ in range(3)]
-    >>> labels = ["a", "b", "c"]
-    >>> mcc = pr.stats.mcc(grs, labels=labels, genome=chromsizes)
+    >>> grs = [pr.data.aorta(), pr.data.aorta(), pr.data.aorta2()]
+    >>> mcc = pr.stats.mcc(grs, labels="abc", genome={"chr1": 2100000})
     >>> mcc
-       T  F     TP  FP  TN  FN       MCC
-    0  a  a  15920   0  80   0  1.000000
-    1  a  b  15875  65  15  45  0.213109
-    3  a  c  15896  72   8  24  0.155496
-    2  b  a  15875  45  15  65  0.213109
-    5  b  b  15940   0  60   0  1.000000
-    6  b  c  15916  52   8  24  0.180354
-    4  c  a  15896  24   8  72  0.155496
-    7  c  b  15916  24   8  52  0.180354
-    8  c  c  15968   0  32   0  1.000000
+       T  F   TP   FP       TN   FN      MCC
+    0  a  a  728    0  2099272    0  1.00000
+    1  a  b  728    0  2099272    0  1.00000
+    3  a  c  457  485  2098787  271  0.55168
+    2  b  a  728    0  2099272    0  1.00000
+    5  b  b  728    0  2099272    0  1.00000
+    6  b  c  457  485  2098787  271  0.55168
+    4  c  a  457  271  2098787  485  0.55168
+    7  c  b  457  271  2098787  485  0.55168
+    8  c  c  942    0  2099058    0  1.00000
 
     To create a symmetric matrix (useful for heatmaps of correlations):
 
-    >>> mcc.set_index(["T", "F"]).MCC.unstack()
-    F         a         b         c
-    T
-    a  1.000000  0.213109  0.155496
-    b  0.213109  1.000000  0.180354
-    c  0.155496  0.180354  1.000000"""
+    >>> mcc.set_index(["T", "F"]).MCC.unstack().rename_axis(None, axis=0)
+    F        a        b        c
+    a  1.00000  1.00000  0.55168
+    b  1.00000  1.00000  0.55168
+    c  0.55168  0.55168  1.00000
+    """
 
     import sys
     from itertools import combinations_with_replacement, chain
@@ -250,9 +244,14 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
             g_cs = set(genome.chromosomes)
             surplus = g_cs - gr_cs
             if len(surplus):
-                print("The following chromosomes are in the genome, but not the PyRanges:", ", ".join(surplus), file=sys.stderr)
+                print(
+                    "The following chromosomes are in the genome, but not the PyRanges:",
+                    ", ".join(surplus),
+                    file=sys.stderr,
+                )
 
         if strand:
+
             def make_stranded(df):
                 df = df.copy()
                 df2 = df.copy()
@@ -278,20 +277,32 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
             print(lt, lf, file=sys.stderr)
 
         if lt == lf:
-
             if not strand:
                 tp = t.length
                 fn = 0
                 tn = genome_length - tp
                 fp = 0
-                rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1})
+                rowdicts.append(
+                    {"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1}
+                )
             else:
                 for strand in "+ -".split():
                     tp = t[strand].length
                     fn = 0
                     tn = genome_length - tp
                     fp = 0
-                    rowdicts.append({"T": lt, "F": lf, "Strand": strand, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1})
+                    rowdicts.append(
+                        {
+                            "T": lt,
+                            "F": lf,
+                            "Strand": strand,
+                            "TP": tp,
+                            "FP": fp,
+                            "TN": tn,
+                            "FN": fn,
+                            "MCC": 1,
+                        }
+                    )
             continue
 
         else:
@@ -304,8 +315,30 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                     fn = t[strand].length - tp
                     tn = genome_length - (tp + fp + fn)
                     mcc = _mcc(tp, fp, tn, fn)
-                    rowdicts.append({"T": lt, "F": lf, "Strand": strand, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
-                    rowdicts.append({"T": lf, "F": lt, "Strand": strand, "TP": tp, "FP": fn, "TN": tn, "FN": fp, "MCC": mcc})
+                    rowdicts.append(
+                        {
+                            "T": lt,
+                            "F": lf,
+                            "Strand": strand,
+                            "TP": tp,
+                            "FP": fp,
+                            "TN": tn,
+                            "FN": fn,
+                            "MCC": mcc,
+                        }
+                    )
+                    rowdicts.append(
+                        {
+                            "T": lf,
+                            "F": lt,
+                            "Strand": strand,
+                            "TP": tp,
+                            "FP": fn,
+                            "TN": tn,
+                            "FN": fp,
+                            "MCC": mcc,
+                        }
+                    )
             else:
                 tp = tp_gr.length
                 fp = f.length - tp
@@ -313,8 +346,28 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                 tn = genome_length - (tp + fp + fn)
                 mcc = _mcc(tp, fp, tn, fn)
 
-                rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": mcc})
-                rowdicts.append({"T": lf, "F": lt, "TP": tp, "FP": fn, "TN": tn, "FN": fp, "MCC": mcc})
+                rowdicts.append(
+                    {
+                        "T": lt,
+                        "F": lf,
+                        "TP": tp,
+                        "FP": fp,
+                        "TN": tn,
+                        "FN": fn,
+                        "MCC": mcc,
+                    }
+                )
+                rowdicts.append(
+                    {
+                        "T": lf,
+                        "F": lt,
+                        "TP": tp,
+                        "FP": fn,
+                        "TN": tn,
+                        "FN": fp,
+                        "MCC": mcc,
+                    }
+                )
 
     df = pd.DataFrame.from_dict(rowdicts).sort_values(["T", "F"])
 
@@ -322,7 +375,6 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
 
 
 def rowbased_spearman(x, y):
-
     """Fast row-based Spearman's correlation.
 
     Parameters
@@ -350,15 +402,13 @@ def rowbased_spearman(x, y):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.randint(10, size=(10, 10))
-    >>> y = np.random.randint(10, size=(10, 10))
+    >>> x = np.array([[7, 2, 9], [3, 6, 0], [0, 6, 3]])
+    >>> y = np.array([[5, 3, 2], [9, 6, 0], [7, 3, 5]])
 
     Perform Spearman's correlation pairwise on each row in 10x10 matrixes:
 
     >>> pr.stats.rowbased_spearman(x, y)
-    array([ 0.07523548, -0.24838724,  0.03703774,  0.24194052,  0.04778621,
-           -0.23913505,  0.12923138,  0.26840486,  0.13292204, -0.29846295])
+    array([-0.5,  0.5, -1. ])
     """
 
     x = np.asarray(x)
@@ -371,7 +421,6 @@ def rowbased_spearman(x, y):
 
 
 def rowbased_pearson(x, y):
-
     """Fast row-based Pearson's correlation.
 
     Parameters
@@ -399,15 +448,13 @@ def rowbased_pearson(x, y):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.randint(10, size=(10, 10))
-    >>> y = np.random.randint(10, size=(10, 10))
+    >>> x = np.array([[7, 2, 9], [3, 6, 0], [0, 6, 3]])
+    >>> y = np.array([[5, 3, 2], [9, 6, 0], [7, 3, 5]])
 
     Perform Pearson's correlation pairwise on each row in 10x10 matrixes:
 
     >>> pr.stats.rowbased_pearson(x, y)
-    array([ 0.20349603, -0.01667236, -0.01448763, -0.00442322,  0.06527234,
-           -0.36710862,  0.14978726,  0.32360286,  0.17209191, -0.08902829])
+    array([-0.09078413,  0.65465367, -1.        ])
     """
 
     # Thanks to https://github.com/dengemann
@@ -426,15 +473,13 @@ def rowbased_pearson(x, y):
     r_num = np.add.reduce(xm * ym, axis=-1)
     r_den = np.sqrt(ss(xm, axis=-1) * ss(ym, axis=-1))
 
-    with np.errstate(divide='ignore', invalid="ignore"):
-
+    with np.errstate(divide="ignore", invalid="ignore"):
         r = r_num / r_den
 
     return r
 
 
 def rowbased_rankdata(data):
-
     """Rank order of entries in each row.
 
     Same as SciPy rankdata with method=mean.
@@ -454,17 +499,13 @@ def rowbased_rankdata(data):
     Examples
     --------
 
-    >>> np.random.seed(0)
-    >>> x = np.random.randint(10, size=(3, 10))
-    >>> x
-    array([[5, 0, 3, 3, 7, 9, 3, 5, 2, 4],
-           [7, 6, 8, 8, 1, 6, 7, 7, 8, 1],
-           [5, 9, 8, 9, 4, 3, 0, 3, 5, 0]])
+    >>> x = np.random.randint(10, size=(3, 4))
+    >>> x = np.array([[3, 7, 6, 0], [1, 3, 8, 9], [5, 9, 3, 5]])
     >>> pr.stats.rowbased_rankdata(x)
-         0    1    2    3    4     5    6    7    8    9
-    0  7.5  1.0  4.0  4.0  9.0  10.0  4.0  7.5  2.0  6.0
-    1  6.0  3.5  9.0  9.0  1.5   3.5  6.0  6.0  9.0  1.5
-    2  6.5  9.5  8.0  9.5  5.0   3.5  1.5  3.5  6.5  1.5
+         0    1    2    3
+    0  2.0  4.0  3.0  1.0
+    1  1.0  2.0  3.0  4.0
+    2  2.5  4.0  1.0  2.5
     """
 
     dc = np.asarray(data).copy()
@@ -493,13 +534,16 @@ def rowbased_rankdata(data):
 
     ranks = []
     for _nonzero, nzdf in obs.groupby(nonzero, sort=False):
-
         nz = np.apply_along_axis(lambda r: np.nonzero(r)[0], 1, nzdf)
 
         _count = np.column_stack([nz, np.ones(len(nz)) * len_r])
         _dense = dense.reindex(nzdf.index).values
 
-        _result = 0.5 * (np.take_along_axis(_count, _dense, 1) + np.take_along_axis(_count, _dense - 1, 1) + 1)
+        _result = 0.5 * (
+            np.take_along_axis(_count, _dense, 1)
+            + np.take_along_axis(_count, _dense - 1, 1)
+            + 1
+        )
 
         result = pd.DataFrame(_result, index=nzdf.index)
         ranks.append(result)
@@ -510,7 +554,6 @@ def rowbased_rankdata(data):
 
 
 def simes(df, groupby, pcol, keep_position=False):
-
     """Apply Simes method for giving dependent events a p-value.
 
     Parameters
@@ -571,13 +614,13 @@ def simes(df, groupby, pcol, keep_position=False):
 
     >>> gr.apply(lambda df:
     ... pr.stats.simes(df, "Gene", "PValue", keep_position=True))
-    +--------------+-----------+-----------+-------------+------------+------------+
-    |   Chromosome |     Start |       End |       Simes | Strand     | Gene       |
-    |     (object) |   (int32) |   (int32) |   (float64) | (object)   | (object)   |
-    |--------------+-----------+-----------+-------------+------------+------------|
-    |            1 |        10 |        20 |      0.0001 | +          | P53        |
-    |            2 |        60 |        90 |      1e-07  | -          | FOX        |
-    +--------------+-----------+-----------+-------------+------------+------------+
+    +--------------+-----------+-----------+-------------+--------------+------------+
+    |   Chromosome |     Start |       End |       Simes | Strand       | Gene       |
+    |   (category) |   (int32) |   (int32) |   (float64) | (category)   | (object)   |
+    |--------------+-----------+-----------+-------------+--------------+------------|
+    |            1 |        10 |        20 |      0.0001 | +            | P53        |
+    |            2 |        60 |        90 |      1e-07  | -            | FOX        |
+    +--------------+-----------+-----------+-------------+--------------+------------+
     Stranded PyRanges object has 2 rows and 6 columns from 2 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
@@ -602,15 +645,19 @@ def simes(df, groupby, pcol, keep_position=False):
     ranks = g.cumcount().values + 1
     size = g.size().values
     size = np.repeat(size, size)
-    multiplied = (sdf[pcol].values * size)
+    multiplied = sdf[pcol].values * size
 
     simes = multiplied / ranks
 
     sdf.insert(sdf.shape[1], "Simes", simes)
 
     if keep_position:
-
-        grpby_dict = {"Chromosome": "first", "Start": "min", "End": "max", "Simes": "min"}
+        grpby_dict = {
+            "Chromosome": "first",
+            "Start": "min",
+            "End": "max",
+            "Simes": "min",
+        }
 
         if stranded:
             grpby_dict["Strand"] = "first"
@@ -626,19 +673,18 @@ def simes(df, groupby, pcol, keep_position=False):
     return simes
 
 
-
 def chromsizes_as_int(chromsizes):
-        if isinstance(chromsizes, int):
-            pass
-        elif isinstance(chromsizes, dict):
-            chromsizes = sum(chromsizes.values())
-        elif isinstance(chromsizes, (pd.DataFrame, pr.PyRanges)):
-            chromsizes = chromsizes.End.sum()
+    if isinstance(chromsizes, int):
+        pass
+    elif isinstance(chromsizes, dict):
+        chromsizes = sum(chromsizes.values())
+    elif isinstance(chromsizes, (pd.DataFrame, pr.PyRanges)):
+        chromsizes = chromsizes.End.sum()
 
-        return chromsizes
+    return chromsizes
 
 
-class StatisticsMethods():
+class StatisticsMethods:
 
     """Namespace for statistical comparsion-operations.
 
@@ -647,12 +693,9 @@ class StatisticsMethods():
     pr = None
 
     def __init__(self, pr):
-
         self.pr = pr
 
-
     def forbes(self, other, chromsizes, strandedness=None):
-
         """Compute Forbes coefficient.
 
         Ratio which represents observed versus expected co-occurence.
@@ -699,7 +742,7 @@ class StatisticsMethods():
 
         kwargs = {}
         kwargs["sparse"] = {"self": True, "other": True}
-        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
         reference_length = self.merge(strand=strand).length
@@ -707,16 +750,16 @@ class StatisticsMethods():
 
         intersection_sum = sum(
             v.sum()
-            for v in self.set_intersect(
-                    other, strandedness=strandedness).lengths(as_dict=True).values())
+            for v in self.set_intersect(other, strandedness=strandedness)
+            .lengths(as_dict=True)
+            .values()
+        )
 
         forbes = chromsizes * intersection_sum / (reference_length * query_length)
 
         return forbes
 
-
     def jaccard(self, other, **kwargs):
-
         """Compute Jaccards coefficient.
 
         Ratio of the intersection and union of two sets.
@@ -758,19 +801,20 @@ class StatisticsMethods():
         self = self.pr
 
         kwargs["sparse"] = {"self": True, "other": True}
-        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
         intersection_sum = sum(
-            v.sum()
-            for v in self.set_intersect(other).lengths(as_dict=True).values())
+            v.sum() for v in self.set_intersect(other).lengths(as_dict=True).values()
+        )
 
         union_sum = 0
         for gr in [self, other]:
             union_sum += sum(
-                v.sum() for v in gr.merge(strand=strand).lengths(as_dict=True).values())
+                v.sum() for v in gr.merge(strand=strand).lengths(as_dict=True).values()
+            )
 
-        denominator = (union_sum - intersection_sum)
+        denominator = union_sum - intersection_sum
         if denominator == 0:
             return 1
         else:
@@ -779,7 +823,6 @@ class StatisticsMethods():
         return jc
 
     def relative_distance(self, other, **kwargs):
-
         """Compute spatial correllation between two sets.
 
         Metric which describes relative distance between each interval in one
@@ -874,9 +917,11 @@ class StatisticsMethods():
         self = self.pr
 
         kwargs["sparse"] = {"self": True, "other": True}
-        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        kwargs = pr.pyranges_main.fill_kwargs(kwargs)
 
-        result = pyrange_apply(_relative_distance, self, other, **kwargs)  # pylint: disable=E1132
+        result = pyrange_apply(
+            _relative_distance, self, other, **kwargs
+        )  # pylint: disable=E1132
 
         result = pd.Series(np.concatenate(list(result.values())))
 
@@ -891,13 +936,14 @@ class StatisticsMethods():
 
         return vc
 
-from math import sqrt
-def _mcc(tp, fp, tn, fn):
 
+from math import sqrt
+
+
+def _mcc(tp, fp, tn, fn):
     # https://stackoverflow.com/a/56875660/992687
     x = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
     return ((tp * tn) - (fp * fn)) / sqrt(x)
-
 
 
 # def __tetrachoric(self, other, chromsizes, **kwargs):
