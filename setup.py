@@ -12,9 +12,8 @@ install_requires = [
     "ncls>=0.0.63",
     "tabulate",
     "sorted_nearest>=0.0.33",
-    "pyrle",
     "natsort",
-]  # ,
+] 
 
 # optional_requires = ["bamread", "pybigwig", "ray"]
 
