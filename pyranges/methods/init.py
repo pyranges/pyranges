@@ -10,7 +10,6 @@ from pyranges.helpers import single_value_key, get_key_from_df
 
 
 def set_dtypes(df, int64):
-
     # if extended is None:
     #     extended = False if df.Start.dtype == np.int32 else True
 
@@ -46,7 +45,6 @@ def set_dtypes(df, int64):
 
 
 def create_df_dict(df, stranded):
-
     chrs = df.Chromosome.cat.remove_unused_categories()
 
     df["Chromosome"] = chrs
@@ -61,12 +59,10 @@ def create_df_dict(df, stranded):
 
 
 def create_pyranges_df(chromosomes, starts, ends, strands=None):
-
     if isinstance(chromosomes, str) or isinstance(chromosomes, int):
         chromosomes = pd.Series([chromosomes] * len(starts), dtype="category")
 
     if strands is not None:
-
         if isinstance(strands, str):
             strands = pd.Series([strands] * len(starts), dtype="category")
 
@@ -151,7 +147,6 @@ def _init(
         df = create_pyranges_df(chromosomes, starts, ends, strands)
 
     if isinstance(df, pd.DataFrame):
-
         df = df.reset_index(drop=True)
 
         stranded = check_strandedness(df)
@@ -162,7 +157,6 @@ def _init(
 
     # df is actually dict of dfs
     else:
-
         empty_removed = {k: v.copy() for k, v in df.items() if not v.empty}
 
         _single_value_key = True
@@ -170,7 +164,6 @@ def _init(
         _strand_valid = True
         _has_strand = True
         for key, df in empty_removed.items():
-
             _key = get_key_from_df(df)
             _single_value_key = single_value_key(df) and _single_value_key
             _key_same = (_key == key) and _key_same

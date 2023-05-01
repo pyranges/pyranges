@@ -4,7 +4,6 @@ from ncls import NCLS
 
 
 def _number_overlapping(scdf, ocdf, **kwargs):
-
     keep_nonoverlapping = kwargs.get("keep_nonoverlapping", True)
     column_name = kwargs.get("overlap_col", True)
 
@@ -24,8 +23,7 @@ def _number_overlapping(scdf, ocdf, **kwargs):
     ends = scdf.End.values
     indexes = scdf.index.values
 
-    _self_indexes, _other_indexes = oncls.all_overlaps_both(
-        starts, ends, indexes)
+    _self_indexes, _other_indexes = oncls.all_overlaps_both(starts, ends, indexes)
 
     s = pd.Series(_self_indexes)
     counts_per_read = s.value_counts()[s.unique()].reset_index()
@@ -34,7 +32,9 @@ def _number_overlapping(scdf, ocdf, **kwargs):
     df = scdf.copy()
 
     _missing_indexes = np.setdiff1d(scdf.index, _self_indexes)
-    missing = pd.DataFrame(data={"Index": _missing_indexes, "Count": 0}, index=_missing_indexes)
+    missing = pd.DataFrame(
+        data={"Index": _missing_indexes, "Count": 0}, index=_missing_indexes
+    )
     counts_per_read = pd.concat([counts_per_read, missing])
 
     counts_per_read = counts_per_read.set_index("Index").sort_index()
@@ -47,9 +47,7 @@ def _number_overlapping(scdf, ocdf, **kwargs):
         return df[df[column_name] != 0]
 
 
-
 def _coverage(scdf, ocdf, **kwargs):
-
     fraction_col = kwargs["fraction_col"]
 
     if scdf.empty:
@@ -66,7 +64,7 @@ def _coverage(scdf, ocdf, **kwargs):
     indexes = scdf.index.values
 
     _lengths = oncls.coverage(starts, ends, indexes)
-    _lengths = _lengths /  (ends - starts)
+    _lengths = _lengths / (ends - starts)
     _fractions = _lengths
     _fractions = _fractions.astype("float64")
     _fractions = np.nan_to_num(_fractions)

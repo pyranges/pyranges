@@ -4,9 +4,9 @@ from ncls import NCLS
 
 
 def _both_indexes(scdf, ocdf, how=False):
-
-    assert (how in "containment first last outer right left".split() + [False, None]) or isinstance(
-        how, int)
+    assert (
+        how in "containment first last outer right left".split() + [False, None]
+    ) or isinstance(how, int)
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values
@@ -14,23 +14,17 @@ def _both_indexes(scdf, ocdf, how=False):
     it = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how:
-        _self_indexes, _other_indexes = it.all_overlaps_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
     elif how == "containment":
-        _self_indexes, _other_indexes = it.all_containments_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = it.all_containments_both(starts, ends, indexes)
     elif how == "first":
-        _self_indexes, _other_indexes = it.first_overlap_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = it.first_overlap_both(starts, ends, indexes)
     elif how == "last":
-        _self_indexes, _other_indexes = it.last_overlap_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = it.last_overlap_both(starts, ends, indexes)
         six = scdf.index
         oix = ocdf.index
     elif how in ["outer", "left", "right"]:
-
-        _self_indexes, _other_indexes = it.all_overlaps_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
 
         missing_in_s = scdf.index.difference(_self_indexes)
         missing_in_o = ocdf.index.difference(_other_indexes)
@@ -49,6 +43,7 @@ def _both_indexes(scdf, ocdf, how=False):
             _other_indexes = np.concatenate([_other_indexes, missing_in_o])
 
     return _self_indexes, _other_indexes
+
 
 def null_types(h):
     h2 = h.copy()
@@ -76,11 +71,9 @@ def null_types(h):
 
 
 def _both_dfs(scdf, ocdf, how=False):
-
     _self_indexes, _other_indexes = _both_indexes(scdf, ocdf, how)
 
     if how in ["outer", "left", "right"]:
-
         sh = null_types(scdf.head(1))
         oh = null_types(ocdf.head(1))
         sh.index = [-1]
@@ -93,7 +86,6 @@ def _both_dfs(scdf, ocdf, how=False):
         ocdf = ocdf.reindex(_other_indexes)
 
         if "Strand" in scdf and "Strand" in ocdf:
-
             if how == "left":
                 x = ocdf.index.values == -1
                 ocdf.loc[x, "Strand"] = scdf[x].Strand.values
@@ -109,7 +101,6 @@ def _both_dfs(scdf, ocdf, how=False):
 
 
 def _write_both(scdf, ocdf, **kwargs):
-
     how = kwargs["how"]
 
     if scdf.empty or ocdf.empty:
@@ -138,6 +129,8 @@ def _write_both(scdf, ocdf, **kwargs):
     df = scdf.join(ocdf, rsuffix=suffix)
 
     if kwargs.get("report_overlap"):
-        df["Overlap"] = df[["End", "End"+suffix]].min(axis=1) - df[["Start", "Start"+suffix]].max(axis=1)
+        df["Overlap"] = df[["End", "End" + suffix]].min(axis=1) - df[
+            ["Start", "Start" + suffix]
+        ].max(axis=1)
 
     return df

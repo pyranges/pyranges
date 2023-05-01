@@ -48,7 +48,7 @@ def compute_introns_single(df, by):
     # x = x[~(x.End == g.End.iloc[0])]
     x = x[x.Start != x.End]
 
-    return x.sort_values("Start End".split())  #.reset_index(drop=True)
+    return x.sort_values("Start End".split())  # .reset_index(drop=True)
 
 
 # actual   Chromosome     Start       End Strand
@@ -75,20 +75,24 @@ def _introns_correct(full, genes, exons, introns, by):
     1: ends larger than starts
     2: the intersection of the computed introns and exons per gene are 0
     3: that the number of introns overlapping each gene is the same as number of introns per gene
-    4 & 5: that the intron positions are the same as the ones computed with the slow, but correct algo"""
+    4 & 5: that the intron positions are the same as the ones computed with the slow, but correct algo
+    """
     id_column = by_to_id[by]
     if len(introns):
         assert (introns.Start < introns.End).all(), str(
-            introns[(introns.Start >= introns.End)])
+            introns[(introns.Start >= introns.End)]
+        )
 
     expected_results = {}
     based_on = {}
     for gene_id, gdf in full.groupby(
-            id_column):  # #[full.gene_id.isin(["ENSG00000078808.16"])]
+        id_column
+    ):  # #[full.gene_id.isin(["ENSG00000078808.16"])]
         # print("gdf " * 10)
         # print(gdf)
         if not len(gdf[gdf.Feature == "gene"]) or not len(
-                gdf[gdf.Feature == "transcript"]):
+            gdf[gdf.Feature == "transcript"]
+        ):
             continue
         expected_results[gene_id] = compute_introns_single(gdf, by)
 
@@ -104,11 +108,12 @@ def _introns_correct(full, genes, exons, introns, by):
         if not gene_id in expected_results:
             continue
         expected = expected_results[gene_id]
-        exons = pr.PyRanges(
-            based_on[gene_id]).subset(lambda df: df.Feature == "exon").merge(
-                by=id_column)
-        genes = pr.PyRanges(
-            based_on[gene_id]).subset(lambda df: df.Feature == by)
+        exons = (
+            pr.PyRanges(based_on[gene_id])
+            .subset(lambda df: df.Feature == "exon")
+            .merge(by=id_column)
+        )
+        genes = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == by)
         print("exons", exons)
         print("based_on", based_on[gene_id])
         print("actual", idf["Chromosome Start End Strand".split()])
@@ -154,7 +159,6 @@ by = ["gene", "transcript"]
 
 
 def test_introns_single():
-
     "Assert that our fast method of computing introns is the same as the slow, correct one in compute_introns_single"
 
     gr = pr.data.gencode_gtf()[["gene_id", "Feature"]]

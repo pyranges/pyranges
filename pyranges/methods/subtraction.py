@@ -11,6 +11,7 @@ def add_rows_per_group(df):
     df = df.sort_values("__ix__", ascending=True)
     return df
 
+
 # def _subtraction(scdf, **kwargs):
 #     if scdf.empty:
 #         return scdf
@@ -44,8 +45,8 @@ def add_rows_per_group(df):
 
 #     return scdf[~remove_mask]
 
-def _subtraction(scdf, ocdf, **kwargs):
 
+def _subtraction(scdf, ocdf, **kwargs):
     if ocdf.empty or scdf.empty:
         return scdf
 
@@ -62,7 +63,8 @@ def _subtraction(scdf, ocdf, **kwargs):
     o = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     idx_self, new_starts, new_ends = o.set_difference_helper(
-        scdf.Start.values, scdf.End.values, scdf.index.values, scdf.__num__.values)
+        scdf.Start.values, scdf.End.values, scdf.index.values, scdf.__num__.values
+    )
 
     missing_idx = pd.Index(scdf.index).difference(idx_self)
 

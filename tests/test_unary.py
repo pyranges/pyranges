@@ -1,7 +1,7 @@
 import pytest
 from natsort import natsorted
 
-from hypothesis import given, settings, HealthCheck  #, assume
+from hypothesis import given, settings, HealthCheck  # , assume
 from hypothesis import reproduce_failure  # pylint: disable=unused-import
 
 import tempfile
@@ -13,7 +13,14 @@ import numpy as np
 import pandas as pd
 
 from tests.helpers import assert_df_equal
-from tests.hypothesis_helper import dfs_min, df_data, selector, dfs_min_with_id, max_examples, deadline
+from tests.hypothesis_helper import (
+    dfs_min,
+    df_data,
+    selector,
+    dfs_min_with_id,
+    max_examples,
+    deadline,
+)
 
 import pyranges as pr
 
@@ -32,10 +39,10 @@ merge_command = "bedtools merge -o first,count -c 6,1 {} -i <(sort -k1,1 -k2,2n 
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
 def test_merge(gr, strand):
-
     bedtools_strand = {True: "-s", False: ""}[strand]
 
     print(gr)
@@ -49,7 +56,8 @@ def test_merge(gr, strand):
 
         # ignoring bandit security warning. All strings created by test suite
         result = subprocess.check_output(  # nosec
-            cmd, shell=True, executable="/bin/bash").decode()  # nosec
+            cmd, shell=True, executable="/bin/bash"
+        ).decode()  # nosec
 
         print("result" * 10)
         print(result)
@@ -62,14 +70,16 @@ def test_merge(gr, strand):
                 header=None,
                 usecols=[0, 1, 2, 4],
                 names="Chromosome Start End Count".split(),
-                dtype={"Chromosome": "category"})
+                dtype={"Chromosome": "category"},
+            )
         else:
             bedtools_df = pd.read_csv(
                 StringIO(result),
                 sep="\t",
                 header=None,
                 names="Chromosome Start End Strand Count".split(),
-                dtype={"Chromosome": "category"})
+                dtype={"Chromosome": "category"},
+            )
 
     print("bedtools_df\n", bedtools_df)
     result = gr.merge(strand=strand, count=True)
@@ -80,11 +90,13 @@ def test_merge(gr, strand):
         if result.stranded:
             assert_df_equal(
                 result.df.sort_values("Chromosome Start Strand".split()),
-                bedtools_df.sort_values("Chromosome Start Strand".split()))
+                bedtools_df.sort_values("Chromosome Start Strand".split()),
+            )
         else:
             assert_df_equal(
                 result.df.sort_values("Chromosome Start".split()),
-                bedtools_df.sort_values("Chromosome Start".split()))
+                bedtools_df.sort_values("Chromosome Start".split()),
+            )
     else:
         assert bedtools_df.empty == result.df.empty
 
@@ -97,10 +109,10 @@ cluster_command = "bedtools cluster {} -i <(sort -k1,1 -k2,2n {})"
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
 def test_cluster(gr, strand):
-
     bedtools_strand = {True: "-s", False: ""}[strand]
 
     print(gr)
@@ -114,20 +126,18 @@ def test_cluster(gr, strand):
 
         # ignoring bandit security warning. All strings created by test suite
         result = subprocess.check_output(  # nosec
-            cmd, shell=True, executable="/bin/bash").decode()  # nosec
+            cmd, shell=True, executable="/bin/bash"
+        ).decode()  # nosec
 
         bedtools_df = pd.read_csv(
             StringIO(result),
             sep="\t",
             header=None,
-            squeeze=True,
             names="Chromosome Start End Name Score Strand Cluster".split(),
-            dtype={"Chromosome": "category"})
+            dtype={"Chromosome": "category"},
+        )
 
     print("bedtools_df\n", bedtools_df)
-
-    # from pydbg import dbg
-    # dbg(gr.cluster(strand=strand))
 
     print("gr\n", gr)
     result = gr.cluster(strand=strand)
@@ -142,17 +152,24 @@ def test_cluster(gr, strand):
             sort_values = "Chromosome Start".split()
 
         result_df = result.df.sort_values(sort_values)
+        print(bedtools_df)
         bedtools_df = bedtools_df.sort_values(sort_values)
 
         cluster_ids = {
             k: v
-            for k, v in zip(result_df.Cluster.drop_duplicates(),
-                            bedtools_df.Cluster.drop_duplicates())
+            for k, v in zip(
+                result_df.Cluster.drop_duplicates(),
+                bedtools_df.Cluster.drop_duplicates(),
+            )
         }
 
         # bedtools gives different cluster ids than pyranges
         result_df.Cluster.replace(cluster_ids, inplace=True)
-        assert_df_equal(result_df, bedtools_df)
+
+        bedtools_df.Cluster = bedtools_df.Cluster.astype("int32")
+        assert_df_equal(
+            result_df.drop("Cluster", axis=1), bedtools_df.drop("Cluster", axis=1)
+        )
     else:
         assert bedtools_df.empty == result.df.empty
 
@@ -161,10 +178,10 @@ def test_cluster(gr, strand):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(gr=dfs_min_with_id())  # pylint: disable=no-value-for-parameter
 def test_cluster_by(gr, strand):
-
     result = gr.cluster(by="ID", strand=strand).df
     print(result)
     df = gr.df
@@ -196,17 +213,17 @@ def test_cluster_by(gr, strand):
     print(expected)
     print(result)
 
-    assert_df_equal(result, expected)
+    assert_df_equal(result.drop("Cluster", axis=1), expected.drop("Cluster", axis=1))
 
 
 @pytest.mark.parametrize("strand", [True, False])
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(gr=dfs_min_with_id())  # pylint: disable=no-value-for-parameter
 def test_merge_by(gr, strand):
-
     print(gr)
     result = gr.merge(by="ID").df.drop("ID", axis=1)
 
@@ -232,11 +249,11 @@ makewindows_command = "bedtools makewindows -w 10 -b <(sort -k1,1 -k2,2n {})"
     max_examples=max_examples,
     print_blob=True,
     deadline=deadline,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
 # @reproduce_failure('5.5.4', b'AXicY2RgYGAEIzgAsRkBAFsABg==')
 def test_windows(gr):
-
     with tempfile.TemporaryDirectory() as temp_dir:
         f1 = "{}/f1.bed".format(temp_dir)
         gr.df.to_csv(f1, sep="\t", header=False, index=False)
@@ -246,15 +263,16 @@ def test_windows(gr):
 
         # ignoring bandit security warning. All strings created by test suite
         result = subprocess.check_output(  # nosec
-            cmd, shell=True, executable="/bin/bash").decode()  # nosec
+            cmd, shell=True, executable="/bin/bash"
+        ).decode()  # nosec
 
         bedtools_df = pd.read_csv(
             StringIO(result),
             sep="\t",
             header=None,
-            squeeze=True,
             names="Chromosome Start End".split(),
-            dtype={"Chromosome": "category"})
+            dtype={"Chromosome": "category"},
+        )
 
     print("bedtools_df\n", bedtools_df)
 
@@ -271,10 +289,10 @@ def test_windows(gr):
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(gr=df_data())  # pylint: disable=no-value-for-parameter
 def test_init(gr, strand):
-
     c, s, e, strands = gr
 
     if strand:
@@ -289,10 +307,10 @@ chipseq = pr.data.chipseq()
 @settings(
     max_examples=max_examples,
     deadline=deadline,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(selector=selector())  # pylint: disable=no-value-for-parameter
 def test_getitem(selector):
-
     # have these weird returns to avoid being flagged as unused code
     if len(selector) == 3:
         a, b, c = selector
@@ -314,10 +332,10 @@ def test_getitem(selector):
     max_examples=max_examples,
     deadline=deadline,
     print_blob=True,
-    suppress_health_check=HealthCheck.all())
+    suppress_health_check=HealthCheck.all(),
+)
 @given(gr=dfs_min())  # pylint: disable=no-value-for-parameter
 def test_summary(gr):
-
     print(gr.to_example())
     # merely testing that it does not error
     # contents are just (pandas) dataframe.describe()

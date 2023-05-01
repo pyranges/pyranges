@@ -1,3 +1,8 @@
+# 0.0.121 (01.05.2022)
+- update numpy types
+- reformat with black
+- fix doctests
+
 # 0.0.120 (08.12.2022)
 - fix error in null_types when a variable is pandas.StringDtype (@mkanai)
 
