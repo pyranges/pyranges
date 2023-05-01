@@ -8,7 +8,8 @@ from sorted_nearest.src.introns import find_introns
 
 __all__ = ["genome_bounds", "tile_genome", "GenomicFeaturesMethods"]
 
-class GenomicFeaturesMethods():
+
+class GenomicFeaturesMethods:
 
     """Namespace for methods using feature information.
 
@@ -17,11 +18,9 @@ class GenomicFeaturesMethods():
     pr = None
 
     def __init__(self, pr):
-
         self.pr = pr
 
     def tss(self):
-
         """Return the transcription start sites.
 
         Returns the 5' for every interval with feature "transcript".
@@ -33,44 +32,42 @@ class GenomicFeaturesMethods():
         Examples
         --------
 
-        >>> gr = pr.data.ensembl_gtf()
+        >>> gr = pr.data.ensembl_gtf()[["Source", "Feature"]]
         >>> gr
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
-        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
-        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
-        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
-        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
+        +--------------+------------+--------------+-----------+-----------+--------------+
+        | Chromosome   | Source     | Feature      | Start     | End       | Strand       |
+        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (category)   |
+        |--------------+------------+--------------+-----------+-----------+--------------|
+        | 1            | havana     | gene         | 11868     | 14409     | +            |
+        | 1            | havana     | transcript   | 11868     | 14409     | +            |
+        | 1            | havana     | exon         | 11868     | 12227     | +            |
+        | 1            | havana     | exon         | 12612     | 12721     | +            |
+        | ...          | ...        | ...          | ...       | ...       | ...          |
+        | 1            | havana     | gene         | 1173055   | 1179555   | -            |
+        | 1            | havana     | transcript   | 1173055   | 1179555   | -            |
+        | 1            | havana     | exon         | 1179364   | 1179555   | -            |
+        | 1            | havana     | exon         | 1173055   | 1176396   | -            |
+        +--------------+------------+--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
 
         >>> gr.features.tss()
-        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        | Chromosome   | Source     | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
-        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
-        |--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
-        | 1            | havana     | tss        | 11868     | 11869     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | tss        | 12009     | 12010     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | tss        | 29553     | 29554     | .          | +            | .          | lncRNA                             | ...   |
-        | 1            | havana     | tss        | 30266     | 30267     | .          | +            | .          | lncRNA                             | ...   |
-        | ...          | ...        | ...        | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
-        | 1            | havana     | tss        | 1092813   | 1092814   | .          | -            | .          | protein_coding                     | ...   |
-        | 1            | havana     | tss        | 1116087   | 1116088   | .          | -            | .          | protein_coding                     | ...   |
-        | 1            | havana     | tss        | 1116089   | 1116090   | .          | -            | .          | protein_coding                     | ...   |
-        | 1            | havana     | tss        | 1179555   | 1179556   | .          | -            | .          | lncRNA                             | ...   |
-        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        Stranded PyRanges object has 280 rows and 28 columns from 1 chromosomes.
+        +--------------+------------+------------+-----------+-----------+--------------+
+        | Chromosome   | Source     | Feature    | Start     | End       | Strand       |
+        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (category)   |
+        |--------------+------------+------------+-----------+-----------+--------------|
+        | 1            | havana     | tss        | 11868     | 11869     | +            |
+        | 1            | havana     | tss        | 12009     | 12010     | +            |
+        | 1            | havana     | tss        | 29553     | 29554     | +            |
+        | 1            | havana     | tss        | 30266     | 30267     | +            |
+        | ...          | ...        | ...        | ...       | ...       | ...          |
+        | 1            | havana     | tss        | 1092812   | 1092813   | -            |
+        | 1            | havana     | tss        | 1116086   | 1116087   | -            |
+        | 1            | havana     | tss        | 1116088   | 1116089   | -            |
+        | 1            | havana     | tss        | 1179554   | 1179555   | -            |
+        +--------------+------------+------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 280 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
         """
 
         pr = self.pr
@@ -88,7 +85,6 @@ class GenomicFeaturesMethods():
         return pr
 
     def tes(self, slack=0):
-
         """Return the transcription end sites.
 
         Returns the 3' for every interval with feature "transcript".
@@ -100,44 +96,42 @@ class GenomicFeaturesMethods():
         Examples
         --------
 
-        >>> gr = pr.data.ensembl_gtf()
+        >>> gr = pr.data.ensembl_gtf()[["Source", "Feature"]]
         >>> gr
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
-        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
-        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
-        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
-        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
+        +--------------+------------+--------------+-----------+-----------+--------------+
+        | Chromosome   | Source     | Feature      | Start     | End       | Strand       |
+        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (category)   |
+        |--------------+------------+--------------+-----------+-----------+--------------|
+        | 1            | havana     | gene         | 11868     | 14409     | +            |
+        | 1            | havana     | transcript   | 11868     | 14409     | +            |
+        | 1            | havana     | exon         | 11868     | 12227     | +            |
+        | 1            | havana     | exon         | 12612     | 12721     | +            |
+        | ...          | ...        | ...          | ...       | ...       | ...          |
+        | 1            | havana     | gene         | 1173055   | 1179555   | -            |
+        | 1            | havana     | transcript   | 1173055   | 1179555   | -            |
+        | 1            | havana     | exon         | 1179364   | 1179555   | -            |
+        | 1            | havana     | exon         | 1173055   | 1176396   | -            |
+        +--------------+------------+--------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
 
         >>> gr.features.tes()
-        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        | Chromosome   | Source     | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
-        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
-        |--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
-        | 1            | havana     | tes        | 14409     | 14410     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | tes        | 13670     | 13671     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | tes        | 31097     | 31098     | .          | +            | .          | lncRNA                             | ...   |
-        | 1            | havana     | tes        | 31109     | 31110     | .          | +            | .          | lncRNA                             | ...   |
-        | ...          | ...        | ...        | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
-        | 1            | havana     | tes        | 1092813   | 1092814   | .          | -            | .          | protein_coding                     | ...   |
-        | 1            | havana     | tes        | 1116087   | 1116088   | .          | -            | .          | protein_coding                     | ...   |
-        | 1            | havana     | tes        | 1116089   | 1116090   | .          | -            | .          | protein_coding                     | ...   |
-        | 1            | havana     | tes        | 1179555   | 1179556   | .          | -            | .          | lncRNA                             | ...   |
-        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        Stranded PyRanges object has 280 rows and 28 columns from 1 chromosomes.
+        +--------------+------------+------------+-----------+-----------+--------------+
+        | Chromosome   | Source     | Feature    | Start     | End       | Strand       |
+        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (category)   |
+        |--------------+------------+------------+-----------+-----------+--------------|
+        | 1            | havana     | tes        | 14408     | 14409     | +            |
+        | 1            | havana     | tes        | 13669     | 13670     | +            |
+        | 1            | havana     | tes        | 31096     | 31097     | +            |
+        | 1            | havana     | tes        | 31108     | 31109     | +            |
+        | ...          | ...        | ...        | ...       | ...       | ...          |
+        | 1            | havana     | tes        | 1090405   | 1090406   | -            |
+        | 1            | havana     | tes        | 1091045   | 1091046   | -            |
+        | 1            | havana     | tes        | 1091499   | 1091500   | -            |
+        | 1            | havana     | tes        | 1173055   | 1173056   | -            |
+        +--------------+------------+------------+-----------+-----------+--------------+
+        Stranded PyRanges object has 280 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
         """
 
         pr = self.pr
@@ -154,9 +148,7 @@ class GenomicFeaturesMethods():
 
         return pr
 
-
     def introns(self, by="gene", nb_cpu=1):
-
         """Return the introns.
 
         Parameters
@@ -176,67 +168,64 @@ class GenomicFeaturesMethods():
         Examples
         --------
 
-        >>> gr = pr.data.ensembl_gtf()
+        >>> gr = pr.data.ensembl_gtf()[["Feature", "gene_id", "transcript_id"]]
         >>> gr
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
-        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
-        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
-        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
-        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |
-        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |
-        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |
-        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
-        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.
+        +--------------+--------------+-----------+-----------+--------------+-----------------+-----------------+
+        | Chromosome   | Feature      | Start     | End       | Strand       | gene_id         | transcript_id   |
+        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)        | (object)        |
+        |--------------+--------------+-----------+-----------+--------------+-----------------+-----------------|
+        | 1            | gene         | 11868     | 14409     | +            | ENSG00000223972 | nan             |
+        | 1            | transcript   | 11868     | 14409     | +            | ENSG00000223972 | ENST00000456328 |
+        | 1            | exon         | 11868     | 12227     | +            | ENSG00000223972 | ENST00000456328 |
+        | 1            | exon         | 12612     | 12721     | +            | ENSG00000223972 | ENST00000456328 |
+        | ...          | ...          | ...       | ...       | ...          | ...             | ...             |
+        | 1            | gene         | 1173055   | 1179555   | -            | ENSG00000205231 | nan             |
+        | 1            | transcript   | 1173055   | 1179555   | -            | ENSG00000205231 | ENST00000379317 |
+        | 1            | exon         | 1179364   | 1179555   | -            | ENSG00000205231 | ENST00000379317 |
+        | 1            | exon         | 1173055   | 1176396   | -            | ENSG00000205231 | ENST00000379317 |
+        +--------------+--------------+-----------+-----------+--------------+-----------------+-----------------+
+        Stranded PyRanges object has 2,446 rows and 7 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
 
         >>> gr.features.introns(by="gene")
-        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------+
-        | Chromosome   | Source         | Feature    | Start     | End       | Score      | Strand       | Frame      | +20   |
-        | (object)     | (object)       | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |
-        |--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------|
-        | 1            | ensembl_havana | intron     | 1173926   | 1174265   | .          | +            | .          | ...   |
-        | 1            | ensembl_havana | intron     | 1174321   | 1174423   | .          | +            | .          | ...   |
-        | 1            | ensembl_havana | intron     | 1174489   | 1174520   | .          | +            | .          | ...   |
-        | 1            | ensembl_havana | intron     | 1175034   | 1179188   | .          | +            | .          | ...   |
-        | ...          | ...            | ...        | ...       | ...       | ...        | ...          | ...        | ...   |
-        | 1            | havana         | intron     | 874591    | 875046    | .          | -            | .          | ...   |
-        | 1            | havana         | intron     | 875155    | 875525    | .          | -            | .          | ...   |
-        | 1            | havana         | intron     | 875625    | 876526    | .          | -            | .          | ...   |
-        | 1            | havana         | intron     | 876611    | 876754    | .          | -            | .          | ...   |
-        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------+
-        Stranded PyRanges object has 311 rows and 28 columns from 1 chromosomes.
+        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
+        | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
+        | (object)     | (object)   | (int32)   | (int32)   | (category)   | (object)        | (object)        |
+        |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
+        | 1            | intron     | 1173926   | 1174265   | +            | ENSG00000162571 | nan             |
+        | 1            | intron     | 1174321   | 1174423   | +            | ENSG00000162571 | nan             |
+        | 1            | intron     | 1174489   | 1174520   | +            | ENSG00000162571 | nan             |
+        | 1            | intron     | 1175034   | 1179188   | +            | ENSG00000162571 | nan             |
+        | ...          | ...        | ...       | ...       | ...          | ...             | ...             |
+        | 1            | intron     | 874591    | 875046    | -            | ENSG00000283040 | nan             |
+        | 1            | intron     | 875155    | 875525    | -            | ENSG00000283040 | nan             |
+        | 1            | intron     | 875625    | 876526    | -            | ENSG00000283040 | nan             |
+        | 1            | intron     | 876611    | 876754    | -            | ENSG00000283040 | nan             |
+        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
+        Stranded PyRanges object has 311 rows and 7 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        20 hidden columns: gene_biotype, gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, ... (+ 11 more.)
 
         >>> gr.features.introns(by="transcript")
-        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------+
-        | Chromosome   | Source         | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                     | +19   |
-        | (object)     | (object)       | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                         | ...   |
-        |--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------|
-        | 1            | havana         | intron     | 818202    | 818722    | .          | +            | .          | lncRNA                           | ...   |
-        | 1            | ensembl_havana | intron     | 960800    | 961292    | .          | +            | .          | protein_coding                   | ...   |
-        | 1            | ensembl_havana | intron     | 961552    | 961628    | .          | +            | .          | protein_coding                   | ...   |
-        | 1            | ensembl_havana | intron     | 961750    | 961825    | .          | +            | .          | protein_coding                   | ...   |
-        | ...          | ...            | ...        | ...       | ...       | ...        | ...          | ...        | ...                              | ...   |
-        | 1            | havana         | intron     | 732207    | 732980    | .          | -            | .          | transcribed_processed_pseudogene | ...   |
-        | 1            | havana_tagene  | intron     | 168165    | 169048    | .          | -            | .          | lncRNA                           | ...   |
-        | 1            | havana_tagene  | intron     | 165942    | 167958    | .          | -            | .          | lncRNA                           | ...   |
-        | 1            | havana_tagene  | intron     | 168165    | 169048    | .          | -            | .          | lncRNA                           | ...   |
-        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------+
-        Stranded PyRanges object has 1,043 rows and 28 columns from 1 chromosomes.
+        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
+        | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
+        | (object)     | (object)   | (int32)   | (int32)   | (category)   | (object)        | (object)        |
+        |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
+        | 1            | intron     | 818202    | 818722    | +            | ENSG00000177757 | ENST00000326734 |
+        | 1            | intron     | 960800    | 961292    | +            | ENSG00000187961 | ENST00000338591 |
+        | 1            | intron     | 961552    | 961628    | +            | ENSG00000187961 | ENST00000338591 |
+        | 1            | intron     | 961750    | 961825    | +            | ENSG00000187961 | ENST00000338591 |
+        | ...          | ...        | ...       | ...       | ...          | ...             | ...             |
+        | 1            | intron     | 732207    | 732980    | -            | ENSG00000230021 | ENST00000648019 |
+        | 1            | intron     | 168165    | 169048    | -            | ENSG00000241860 | ENST00000655252 |
+        | 1            | intron     | 165942    | 167958    | -            | ENSG00000241860 | ENST00000662089 |
+        | 1            | intron     | 168165    | 169048    | -            | ENSG00000241860 | ENST00000662089 |
+        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
+        Stranded PyRanges object has 1,043 rows and 7 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)
         """
 
         kwargs = {"by": by, "nb_cpu": nb_cpu}
-        kwargs = pr.pyranges.fill_kwargs(kwargs)
+        kwargs = pr.pyranges_main.fill_kwargs(kwargs)
 
         assert by in ["gene", "transcript"]
 
@@ -255,9 +244,11 @@ class GenomicFeaturesMethods():
 
         return pr.PyRanges(result)
 
+
 def _outside_bounds(df, **kwargs):
     
     df = df.copy()
+
     chromsizes = kwargs.get("chromsizes")
 
     if not isinstance(chromsizes, dict):
@@ -300,7 +291,6 @@ def _outside_bounds(df, **kwargs):
 
 
 def genome_bounds(gr, chromsizes, clip=False, only_right=False):
-
     """Remove or clip intervals outside of genome bounds.
 
     Parameters
@@ -381,7 +371,6 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     KeyError: '3'
     """
 
-
     if isinstance(chromsizes, pr.PyRanges):
         chromsizes = {
             k: v
@@ -409,8 +398,6 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right)
 
 
-
-
 def _last_tile(df, **kwargs):
     # do not need copy, since it is only used internally by
     # tile_genome
@@ -423,7 +410,6 @@ def _last_tile(df, **kwargs):
 
 
 def tile_genome(genome, tile_size, tile_last=False):
-
     """Create a tiled genome.
 
     Parameters
@@ -499,11 +485,9 @@ def tile_genome(genome, tile_size, tile_last=False):
 
 
 def _keep_transcript_with_most_exons(df):
-
     transcripts_with_most_exons = []
 
     for _, gdf in df.groupby("gene_id"):
-
         max_exon = gdf.exon_number.max()
         max_transcript = gdf.loc[gdf.exon_number == max_exon].Transcript.iloc[0]
 
@@ -514,14 +498,11 @@ def _keep_transcript_with_most_exons(df):
     return pd.concat(transcripts_with_most_exons).reset_index(drop=True)
 
 
-
 def filter_transcripts(df, keep="most_exons"):
-
     return _keep_transcript_with_most_exons(df)
 
 
 def _tss(df, slack=0):
-
     intype = df.Start.dtype
 
     tss_pos = df.loc[df.Strand == "+"]
@@ -546,7 +527,6 @@ def _tss(df, slack=0):
 
 
 def _tes(df, slack=0):
-
     intype = df.Start.dtype
     # df = self.df
 
@@ -575,10 +555,7 @@ by_to_id = {"gene": "gene_id", "transcript": "transcript_id"}
 
 
 def _introns2(df, exons, **kwargs):
-
-    """TODO: refactor
-
-    """
+    """TODO: refactor"""
 
     if df.empty or exons.empty:
         return None
@@ -592,24 +569,29 @@ def _introns2(df, exons, **kwargs):
     exons.columns = ["Start", "End", "by_id"]
     genes.columns = ["Start", "End", "by_id"]
 
-    intersection = pd.Series(
-        np.intersect1d(exons["by_id"], genes["by_id"]))
+    intersection = pd.Series(np.intersect1d(exons["by_id"], genes["by_id"]))
     if len(intersection) == 0:
         return None
 
-    exons = exons[exons["by_id"].isin(intersection)].reset_index(
-        drop=True).sort_values(["by_id", "Start"])
-    genes = genes[genes["by_id"].isin(intersection)].reset_index(
-        drop=True).sort_values(["by_id", "Start"])
-    df = df[df[id_column].isin(intersection)].reset_index(
-        drop=True)
+    exons = (
+        exons[exons["by_id"].isin(intersection)]
+        .reset_index(drop=True)
+        .sort_values(["by_id", "Start"])
+    )
+    genes = (
+        genes[genes["by_id"].isin(intersection)]
+        .reset_index(drop=True)
+        .sort_values(["by_id", "Start"])
+    )
+    df = df[df[id_column].isin(intersection)].reset_index(drop=True)
 
     assert len(genes) == len(
         genes.drop_duplicates("by_id")
     ), "The {id_column}s need to be unique to compute the introns.".format(
-        id_column=id_column)
+        id_column=id_column
+    )
 
-    exon_ids = (exons["by_id"].shift() != exons["by_id"])
+    exon_ids = exons["by_id"].shift() != exons["by_id"]
     by_ids = pd.Series(range(1, len(genes) + 1))
     df.insert(0, "__temp__", by_ids)
 
@@ -620,26 +602,30 @@ def _introns2(df, exons, **kwargs):
         exon_ids = exon_ids.cumsum()
 
     assert (by_ids == exon_ids.drop_duplicates().values).all()
-    starts, ends, ids = find_introns(genes.Start.values, genes.End.values,
-                                     by_ids.values, exons.Start.values,
-                                     exons.End.values, exon_ids.values)
+    starts, ends, ids = find_introns(
+        genes.Start.values,
+        genes.End.values,
+        by_ids.values,
+        exons.Start.values,
+        exons.End.values,
+        exon_ids.values,
+    )
 
     introns = pd.DataFrame(
         data={
             "Chromosome": df.Chromosome.iloc[0],
             "Start": starts,
             "End": ends,
-            "by_id": ids
-        })
+            "by_id": ids,
+        }
+    )
 
     vc = introns["by_id"].value_counts(sort=False).to_frame().reset_index()
     vc.columns = ["by_id", "counts"]
 
     genes_without_introns = pd.DataFrame(
-        data={
-            "by_id": np.setdiff1d(by_ids.values, vc.by_id.values),
-            "counts": 0
-        })
+        data={"by_id": np.setdiff1d(by_ids.values, vc.by_id.values), "counts": 0}
+    )
 
     vc = pd.concat([vc, genes_without_introns]).sort_values("by_id")
 
@@ -648,19 +634,24 @@ def _introns2(df, exons, **kwargs):
         df[["__temp__", id_column]],
         right_on="__temp__",
         left_on="by_id",
-        suffixes=("_drop", ""))
+        suffixes=("_drop", ""),
+    )
     original_ids = original_ids.drop(
-        ["__temp__"] +
-        [c for c in original_ids.columns if c.endswith("_drop")],
-        axis=1).sort_values("by_id")
+        ["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1
+    ).sort_values("by_id")
     introns.loc[:, "by_id"] = original_ids[id_column].values
     introns = introns.merge(
-        df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme"))
+        df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme")
+    )
     introns = introns.drop(
-        [c for c in introns.columns if c.endswith("_dropme")], axis=1)
+        [c for c in introns.columns if c.endswith("_dropme")], axis=1
+    )
 
-    if introns.Feature.dtype.name == "category" and not "intron" in introns.Feature.cat.categories:
-        introns.Feature.cat.add_categories(["intron"], inplace=True)
+    if (
+        introns.Feature.dtype.name == "category"
+        and not "intron" in introns.Feature.cat.categories
+    ):
+        introns.Feature.cat.add_categories(["intron"])
     introns.loc[:, "Feature"] = "intron"
 
     introns = introns[original_order]

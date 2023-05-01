@@ -5,6 +5,7 @@ import pandas as pd
 
 from io import StringIO
 
+
 @pytest.fixture
 def expected_result():
     c = """Chromosome  Start  End       Name  Score Strand
@@ -16,8 +17,8 @@ def expected_result():
 
     return df
 
-def test_windows():
 
+def test_windows():
     f1 = pr.data.f1()
 
     print(f1)
@@ -31,8 +32,8 @@ def test_windows():
     assert list(df.Start) == [2, 4, 8, 4, 6]
     assert list(df.End) == [4, 6, 10, 6, 8]
 
-def test_windows2():
 
+def test_windows2():
     c = """Chromosome  Start    End  Count
 0       chr1  10200  10400      7
 1       chr1  10400  10600      7
@@ -46,7 +47,6 @@ def test_windows2():
 
     print(gr)
     result = gr.tile(200)
-
 
     print(result)
 

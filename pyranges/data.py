@@ -26,23 +26,37 @@ import pkg_resources
 import pyranges as pr
 import pandas as pd
 
-__all__ = ["f1", "f2", "chipseq", "chipseq_background", "aorta", "aorta2",
-           "ensembl_gtf", "gencode_gtf", "ucsc_bed", "control_bam", "cpg", "exons", "chromsizes"]
+__all__ = [
+    "f1",
+    "f2",
+    "chipseq",
+    "chipseq_background",
+    "aorta",
+    "aorta2",
+    "ensembl_gtf",
+    "gencode_gtf",
+    "ucsc_bed",
+    "control_bam",
+    "cpg",
+    "exons",
+    "chromsizes",
+]
+
 
 def get_example_path(basename):
-
     full_path = pkg_resources.resource_filename(
-        "pyranges", "example_data/{}".format(basename))
+        "pyranges", "example_data/{}".format(basename)
+    )
 
     if full_path.endswith(".bam"):
         _hack_to_load_idx = pkg_resources.resource_filename(
-            "pyranges", "example_data/{}.bai".format(basename))
+            "pyranges", "example_data/{}.bai".format(basename)
+        )
 
     return full_path
 
 
 def aorta():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -68,7 +82,6 @@ def aorta():
 
 
 def aorta2():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -92,14 +105,14 @@ def aorta2():
 
     return pr.read_bed(full_path)
 
-def bw():
 
+def bw():
     full_path = get_example_path("bw.bw")
 
     return pr.read_bigwig(full_path)
 
-def chipseq():
 
+def chipseq():
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -125,7 +138,6 @@ def chipseq():
 
 
 def chipseq_background():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -149,8 +161,8 @@ def chipseq_background():
 
     return pr.read_bed(full_path)
 
-def chromsizes():
 
+def chromsizes():
     """
     >>> # +--------------+-----------+-----------+
     >>> # | Chromosome   | Start     | End       |
@@ -176,8 +188,6 @@ def chromsizes():
 
 
 def control_bam():
-
-
     """
     >>> # +--------------+-----------+-----------+--------------+------------+
     >>> # | Chromosome   | Start     | End       | Strand       | Flag       |
@@ -203,8 +213,6 @@ def control_bam():
 
 
 def cpg():
-
-
     """
     >>> # +--------------+-----------+-----------+-----------+
     >>> # | Chromosome   | Start     | End       | CpG       |
@@ -227,16 +235,13 @@ def cpg():
     full_path = get_example_path("cpg.bed")
 
     df = pd.read_csv(
-        full_path,
-        sep="\t",
-        header=None,
-        names="Chromosome Start End CpG".split())
+        full_path, sep="\t", header=None, names="Chromosome Start End CpG".split()
+    )
 
     return pr.PyRanges(df)
 
 
 def ensembl_gtf():
-
     """
     >>> # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
     >>> # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
@@ -263,7 +268,6 @@ def ensembl_gtf():
 
 
 def exons():
-
     """
     >>> # +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
@@ -287,8 +291,8 @@ def exons():
 
     return pr.read_bed(full_path)
 
-def f1():
 
+def f1():
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -308,7 +312,6 @@ def f1():
 
 
 def f2():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -326,9 +329,7 @@ def f2():
     return pr.read_bed(full_path)
 
 
-
 def gencode_gtf():
-
     """
     >>> # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------------+-------+
     >>> # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id           | +15   |
@@ -354,10 +355,7 @@ def gencode_gtf():
     return pr.read_gtf(full_path)
 
 
-
-
 def ucsc_bed():
-
     """
     >>> # +--------------+-----------+-----------+------------+------------+-----------------+--------------+---------------+-------------------+
     >>> # | Chromosome   | Start     | End       | Feature    | gene_id    | transcript_id   | Strand       | exon_number   | transcript_name   |

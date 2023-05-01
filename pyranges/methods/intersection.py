@@ -4,7 +4,6 @@ from ncls import NCLS
 
 
 def _intersection(scdf, ocdf, **kwargs):
-
     how = kwargs["how"]
 
     if ocdf.empty or scdf.empty:
@@ -20,17 +19,15 @@ def _intersection(scdf, ocdf, **kwargs):
     oncls = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     if not how or how is None:
-        _self_indexes, _other_indexes = oncls.all_overlaps_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = oncls.all_overlaps_both(starts, ends, indexes)
     elif how == "containment":
         _self_indexes, _other_indexes = oncls.all_containments_both(
-            starts, ends, indexes)
+            starts, ends, indexes
+        )
     elif how == "first":
-        _self_indexes, _other_indexes = oncls.first_overlap_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = oncls.first_overlap_both(starts, ends, indexes)
     elif how == "last":
-        _self_indexes, _other_indexes = oncls.last_overlap_both(
-            starts, ends, indexes)
+        _self_indexes, _other_indexes = oncls.last_overlap_both(starts, ends, indexes)
 
     _self_indexes = _self_indexes
     _other_indexes = _other_indexes
@@ -38,20 +35,21 @@ def _intersection(scdf, ocdf, **kwargs):
     scdf, ocdf = scdf.reindex(_self_indexes), ocdf.reindex(_other_indexes)
 
     new_starts = pd.Series(
-        np.where(scdf.Start.values > ocdf.Start.values, scdf.Start,
-                 ocdf.Start),
+        np.where(scdf.Start.values > ocdf.Start.values, scdf.Start, ocdf.Start),
         index=scdf.index,
-        dtype=in_dtype)
+        dtype=in_dtype,
+    )
 
     new_ends = pd.Series(
         np.where(scdf.End.values < ocdf.End.values, scdf.End, ocdf.End),
         index=scdf.index,
-        dtype=in_dtype)
+        dtype=in_dtype,
+    )
 
     pd.options.mode.chained_assignment = None  # default='warn'
     scdf.loc[:, "Start"] = new_starts
     scdf.loc[:, "End"] = new_ends
-    pd.options.mode.chained_assignment = 'warn'
+    pd.options.mode.chained_assignment = "warn"
 
     if not scdf.empty:
         return scdf
@@ -60,7 +58,6 @@ def _intersection(scdf, ocdf, **kwargs):
 
 
 def _overlap(scdf, ocdf, **kwargs):
-
     return_indexes = kwargs.get("return_indexes", False)
 
     if scdf.empty or ocdf.empty:
@@ -89,11 +86,10 @@ def _overlap(scdf, ocdf, **kwargs):
 
 
 def _count_overlaps(scdf, ocdf, **kwargs):
-
     kwargs["return_indexes"] = True
     idx = _overlap(scdf, ocdf, **kwargs)
 
-    sx = pd.DataFrame(np.zeros(len(scdf)), index=scdf.index)
+    sx = pd.DataFrame(np.zeros(len(scdf), dtype=np.int32), index=scdf.index)
 
     vc = pd.Series(idx, dtype=np.int64).value_counts(sort=False)
 
