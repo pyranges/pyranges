@@ -23,8 +23,8 @@ def _split(df, **kwargs):
 
     _ends = points.shift(-1)
 
-    points = points[:-1]
-    _ends = _ends[:-1]
+    points = points.iloc[:-1]
+    _ends = _ends.iloc[:-1]
     features = pd.concat([points, _ends], axis=1).astype(dtype)
     features.columns = "Start End".split()
 
