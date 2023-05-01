@@ -311,16 +311,15 @@ chipseq = pr.data.chipseq()
 )
 @given(selector=selector())  # pylint: disable=no-value-for-parameter
 def test_getitem(selector):
-    # have these weird returns to avoid being flagged as unused code
     if len(selector) == 3:
         a, b, c = selector
-        return chipseq[a, b, c]
+        chipseq[a, b, c]
     elif len(selector) == 2:
         a, b = selector
-        return chipseq[a, b]
+        chipseq[a, b]
     elif len(selector) == 1:
         a = selector[0]
-        return chipseq[a]
+        chipseq[a]
     elif len(selector) == 0:
         pass
     else:

@@ -2,17 +2,6 @@ import pandas as pd
 
 
 def _split(df, **kwargs):
-    """Blah blah.
-
-    Example
-    -------
-
-    >>> 5
-    5
-
-    TODO: would be sped up if used numpy instead of pandas for everything?
-    """
-
     strand = kwargs.get("strand", False)
 
     dtype = df.Start.dtype
