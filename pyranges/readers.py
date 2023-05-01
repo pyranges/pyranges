@@ -260,7 +260,7 @@ def skiprows(f):
     return i
 
 
-def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
+def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False, ignore_bad: bool = False):
     """Read files in the Gene Transfer Format.
 
     Parameters
@@ -284,6 +284,10 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
     duplicate_attr : bool, default False
 
         Whether to handle (potential) duplicate attributes or just keep last one.
+
+    ignore_bad : bool, default False
+
+        Whether to ignore bad lines or raise an error.
 
     Note
     ----
@@ -325,14 +329,14 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False):
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr)
+        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad)
     else:
         gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
 
     return gr
 
 
-def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
+def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False, ignore_bad: bool = False):
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
@@ -352,7 +356,7 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False):
 
     dfs = []
     for df in df_iter:
-        extra = _to_rows(df.Attribute)
+        extra = _to_rows(df.Attribute, ignore_bad=ignore_bad)
         df = df.drop("Attribute", axis=1)
         ndf = pd.concat([df, extra], axis=1, sort=False)
         dfs.append(ndf)
@@ -369,7 +373,7 @@ def parse_kv_fields(l):
     # rstrip: allows for GFF not having a last ";", or having final spaces
     return [kv.replace('""', '"NA"').replace('"', '').split(None, 1) for kv in l.rstrip('; ').split("; ")]
 
-def to_rows(anno):
+def to_rows(anno, ignore_bad: bool = False):
     rowdicts = []
     try:
         l = anno.head(1)
@@ -382,31 +386,41 @@ def to_rows(anno):
             )
         )
 
-    for l in anno:
-        rowdicts.append({k: v for k, v in parse_kv_fields(l)})
+    try:
+        for l in anno:
+            rowdicts.append({k: v for k, v in parse_kv_fields(l)})
+    except ValueError:
+        if not ignore_bad:
+            print(f"The following line is not parseable as gtf:\n{l}\n\nTo ignore bad lines use ignore_bad=True.")
+            raise
 
-    return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
+    return pd.DataFrame.from_dict(rowdicts).reset_index(drop=True)
 
 
-def to_rows_keep_duplicates(anno):
+def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
     rowdicts = []
-    for l in anno:
-        rowdict = {}
+    try:
+        for l in anno:
+            rowdict = {}
 
-        # rstrip: allows for GFF not having a last ";", or having final spaces
-        for k, v in tuple(parse_kv_fields(l)):
-            if k not in rowdict:
-                rowdict[k] = v
-            elif k in rowdict and isinstance(rowdict[k], list):
-                rowdict[k].append(v)
-            else:
-                rowdict[k] = [rowdict[k], v]
+            # rstrip: allows for GFF not having a last ";", or having final spaces
+            for k, v in tuple(parse_kv_fields(l)):
+                if k not in rowdict:
+                    rowdict[k] = v
+                elif k in rowdict and isinstance(rowdict[k], list):
+                    rowdict[k].append(v)
+                else:
+                    rowdict[k] = [rowdict[k], v]
 
-        rowdicts.append(
-            {k: ",".join(v) if isinstance(v, list) else v for k, v in rowdict.items()}
-        )
+            rowdicts.append(
+                {k: ",".join(v) if isinstance(v, list) else v for k, v in rowdict.items()}
+            )
+    except ValueError:
+        if not ignore_bad:
+            print(f"The following line is not parseable as gtf:\n\n{l}\n\nTo ignore bad lines use ignore_bad=True.")
+            raise
 
-    return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
+    return pd.DataFrame.from_dict(rowdicts)
 
 
 def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):

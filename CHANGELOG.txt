@@ -1,9 +1,14 @@
-# 0.0.122 (01.05.2022) (@marco-mariotti)
+# 0.0.123 (01.05.2023)
+- fix gtf reading (@fairliereese)
+- fix FutureWarning split.py (@y9c)
+- add ignore_bad line to read_gtf to skip unparseable lines.
+
+# 0.0.122 (01.05.2023) (@marco-mariotti)
 - genomicfeatures.genome_bounds can use a pyfaidx object as chromsizes
 - add option genome_bounds to only clip right out-of-bounds 
 - genome_bounds bugfix: modified df in-place
 
-# 0.0.121 (01.05.2022)
+# 0.0.121 (01.05.2023)
 - update numpy types
 - reformat with black
 - fix doctests
