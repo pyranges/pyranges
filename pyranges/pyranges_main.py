@@ -2272,6 +2272,7 @@ class PyRanges:
         suffix="_b",
         nb_cpu=1,
         apply_strand_suffix=None,
+        preserve_order=False,
     ):
         """Join PyRanges on genomic location.
 
@@ -2313,6 +2314,10 @@ class PyRanges:
 
             How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
             Will only lead to speedups on large datasets.
+
+        preserve_order : bool, default False
+
+            If True, preserves the order after performing the join (only relevant in "outer", "left" and "right" joins).
 
         Returns
         -------
@@ -2408,6 +2413,7 @@ class PyRanges:
             "suffix": suffix,
             "nb_cpu": nb_cpu,
             "apply_strand_suffix": apply_strand_suffix,
+            "preserve_order": preserve_order,
         }
         if slack:
             self = self.copy()
