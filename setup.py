@@ -13,7 +13,7 @@ install_requires = [
     "tabulate",
     "sorted_nearest>=0.0.33",
     "natsort",
-] 
+]
 
 # optional_requires = ["bamread", "pybigwig", "ray"]
 

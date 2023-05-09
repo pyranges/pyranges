@@ -260,7 +260,14 @@ def skiprows(f):
     return i
 
 
-def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False, ignore_bad: bool = False):
+def read_gtf(
+    f,
+    full=True,
+    as_df=False,
+    nrows=None,
+    duplicate_attr=False,
+    ignore_bad: bool = False,
+):
     """Read files in the Gene Transfer Format.
 
     Parameters
@@ -329,14 +336,24 @@ def read_gtf(f, full=True, as_df=False, nrows=None, duplicate_attr=False, ignore
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad)
+        gr = read_gtf_full(
+            f, as_df, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad
+        )
     else:
         gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
 
     return gr
 
 
-def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False, ignore_bad: bool = False):
+def read_gtf_full(
+    f,
+    as_df=False,
+    nrows=None,
+    skiprows=0,
+    duplicate_attr=False,
+    ignore_bad: bool = False,
+    chunksize: int = int(1e5),  # for unit-testing purposes
+):
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
@@ -347,7 +364,7 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False, 
         header=None,
         names=names,
         dtype=dtypes,
-        chunksize=int(1e5),
+        chunksize=chunksize,
         skiprows=skiprows,
         nrows=nrows,
     )
@@ -358,6 +375,7 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False, 
     for df in df_iter:
         extra = _to_rows(df.Attribute, ignore_bad=ignore_bad)
         df = df.drop("Attribute", axis=1)
+        extra.set_index(df.index, inplace=True)
         ndf = pd.concat([df, extra], axis=1, sort=False)
         dfs.append(ndf)
 
@@ -369,9 +387,14 @@ def read_gtf_full(f, as_df=False, nrows=None, skiprows=0, duplicate_attr=False, 
     else:
         return df
 
+
 def parse_kv_fields(l):
     # rstrip: allows for GFF not having a last ";", or having final spaces
-    return [kv.replace('""', '"NA"').replace('"', '').split(None, 1) for kv in l.rstrip('; ').split("; ")]
+    return [
+        kv.replace('""', '"NA"').replace('"', "").split(None, 1)
+        for kv in l.rstrip("; ").split("; ")
+    ]
+
 
 def to_rows(anno, ignore_bad: bool = False):
     rowdicts = []
@@ -391,10 +414,12 @@ def to_rows(anno, ignore_bad: bool = False):
             rowdicts.append({k: v for k, v in parse_kv_fields(l)})
     except ValueError:
         if not ignore_bad:
-            print(f"The following line is not parseable as gtf:\n{l}\n\nTo ignore bad lines use ignore_bad=True.")
+            print(
+                f"The following line is not parseable as gtf:\n{l}\n\nTo ignore bad lines use ignore_bad=True."
+            )
             raise
 
-    return pd.DataFrame.from_dict(rowdicts).reset_index(drop=True)
+    return pd.DataFrame.from_dict(rowdicts)
 
 
 def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
@@ -413,11 +438,16 @@ def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
                     rowdict[k] = [rowdict[k], v]
 
             rowdicts.append(
-                {k: ",".join(v) if isinstance(v, list) else v for k, v in rowdict.items()}
+                {
+                    k: ",".join(v) if isinstance(v, list) else v
+                    for k, v in rowdict.items()
+                }
             )
     except ValueError:
         if not ignore_bad:
-            print(f"The following line is not parseable as gtf:\n\n{l}\n\nTo ignore bad lines use ignore_bad=True.")
+            print(
+                f"The following line is not parseable as gtf:\n\n{l}\n\nTo ignore bad lines use ignore_bad=True."
+            )
             raise
 
     return pd.DataFrame.from_dict(rowdicts)
@@ -461,6 +491,7 @@ def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
 
         extract.exon_number = extract.exon_number.astype(float)
 
+        extract.set_index(df.index, inplace=True)
         df = pd.concat([df[cols_to_concat], extract], axis=1, sort=False)
 
         dfs.append(df)
@@ -545,6 +576,7 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
     for df in df_iter:
         extra = to_rows_gff3(df.Attribute.astype(str))
         df = df.drop("Attribute", axis=1)
+        extra.set_index(df.index, inplace=True)
         ndf = pd.concat([df, extra], axis=1, sort=False)
         dfs.append(ndf)
 

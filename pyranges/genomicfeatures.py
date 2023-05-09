@@ -246,7 +246,6 @@ class GenomicFeaturesMethods:
 
 
 def _outside_bounds(df, **kwargs):
-    
     df = df.copy()
 
     chromsizes = kwargs.get("chromsizes")
@@ -372,30 +371,27 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     """
 
     if isinstance(chromsizes, pr.PyRanges):
-        chromsizes = {
-            k: v
-            for k, v in zip(chromsizes.Chromosome, chromsizes.End)
-        }
+        chromsizes = {k: v for k, v in zip(chromsizes.Chromosome, chromsizes.End)}
 
     elif isinstance(chromsizes, dict):
         pass
 
     else:
-
         try:
             import pyfaidx
+
             if isinstance(chromsizes, pyfaidx.Fasta):
-                chromsizes={
-                    k: len(chromsizes[k])
-                    for k in chromsizes.keys()
-                }
+                chromsizes = {k: len(chromsizes[k]) for k in chromsizes.keys()}
         except:
             pass
 
-    assert isinstance(chromsizes, dict), \
-            "ERROR chromsizes must be a dictionary, or a PyRanges, or a pyfaidx.Fasta object"
+    assert isinstance(
+        chromsizes, dict
+    ), "ERROR chromsizes must be a dictionary, or a PyRanges, or a pyfaidx.Fasta object"
 
-    return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right)
+    return gr.apply(
+        _outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right
+    )
 
 
 def _last_tile(df, **kwargs):

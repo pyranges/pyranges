@@ -26,6 +26,11 @@ def test_read_gtf():
     # assert list(gr.df.columns[:4]) == "Chromosome Start End Strand".split()
 
 
+def test_read_gtf_multiple_chunks():
+    skiprows = pr.readers.skiprows("tests/test_data/ensembl.gtf")
+    gr = pr.readers.read_gtf_full("tests/test_data/ensembl.gtf", chunksize=2, skiprows=skiprows)
+
+
 def test_read_gff3():
     gr = pr.read_gff3("tests/test_data/gencode.gff3")
 

@@ -48,7 +48,6 @@ def _both_indexes(scdf, ocdf, how=False):
 def null_types(h):
     h2 = h.copy()
     for n, d in zip(h, h.dtypes):
-
         if n in ["Chromosome", "Strand"]:
             continue
 

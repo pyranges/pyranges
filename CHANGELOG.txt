@@ -1,3 +1,6 @@
+# 0.0.125 (09.05.2023)
+- fix read_gtf error
+
 # 0.0.124 (01.05.2023)
 - make pyrle optional
 
