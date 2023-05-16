@@ -1,0 +1,518 @@
+# The PyRanges tutorial
+
+PyRanges objects represent sequence intervals ("ranges") such as genomic regions.
+Examples include gene annotations, mapped reads, protein domains, and results from
+Blast or analogous software. PyRanges provides convenient methods to load data in
+GFF, GTF, BED, BAM format. In this tutorial, we refer to PyRanges objects for their
+typical use case, i.e. representing genomic intervals, but the same concepts and methods
+may be applied to RNA or protein sequences.
+
+Every interval in a PyRanges object is defined, at minimum, by its chromosome and start
+and end coordinates. Optionally, the strand (+ or -) can also be present; if so, the
+PyRanges object is "Stranded". The ranges can additionally have an arbitrary number
+of meta-data fields, i.e. columns associated with them.
+
+Note that PyRanges follows the standard python convention:
+
+* coordinates are **0-based**
+* in each interval, the **start is included** and the **end is excluded**.
+
+Some genomic coordinate formats (GFF, GTF) use a 1-based, start-and-end-included format.
+PyRanges takes care of converting between these conventions when loading and writing files in these formats.
+ The data in PyRanges objects are stored as [pandas](https://pandas.pydata.org/) dataframes.
+ This means that the vast Python ecosystem
+ for high-performance scientific computing is available to manipulate the data in PyRanges objects.
+ While not strictly necessary, having familiarity with pandas greatly facilitates the use of PyRanges.
+ In this tutorial and in how-to pages, we will sometimes mix PyRanges and pandas functionalities.
+
+
+
+## Getting started
+
+For this tutorial, we will use real data consisting of the genome sequence (fasta format) and annotation (GFF3 format)
+of a worm with a very small but complex genome (*Dimorphilus gyrociliatus*, assembly ID GCA_904063045.1).
+These data were modified for this tutorial only to shorten IDs.
+
+Download and unpack tutorial data with:
+
+```{bash, results='hide'}
+    curl -O https://mariottigenomicslab.bio.ub.edu/pyranges_data/pyranges_tutorial_data.tar.gz
+    tar zxf pyranges_tutorial_data.tar.gz
+```
+
+
+We recommend using [ipython](https://ipython.readthedocs.io/) or [Jupyter](https://jupyter.org/) for this tutorial.
+Besides pyranges and some of its dependencies, we will use the optional module **pyfaidx**. Make sure to install it with:
+
+    pip install pyfaidx
+
+Or with
+
+    conda install -c bioconda pyfaidx
+
+## Loading and accessing pyranges objects
+
+Let's import libraries and load the annotation into a PyRanges object called `ann`:
+
+```{python tidy=FALSE}
+import pyranges as pr, pandas as pd
+ann = pr.read_gff3('Dgyro_annotation.gff')
+ann
+```
+
+The `ann` object has lots of columns, most of which are not displayed because of space. Here's the full list:
+
+
+```{python tidy=FALSE}
+ann.columns
+```
+
+Let's select only certain columns:
+
+```{python tidy=FALSE}
+ann = ann[ ['Feature', 'Parent', 'ID'] ]
+ann 
+```
+
+As seen above, column selection syntax is analogous to pandas.
+However, a difference is that PyRanges retained the essential columns **Chromosome, Start, End, Strand** even though we did not select them.
+
+The Chromosome column can take any value among the sequence names in the genome assembly.
+Only for the best quality assemblies it corresponds to actual chromosomes, and in other cases it is contigs or scaffolds;
+for simplicity, here we refer to it as chromosomes. In a fasta file, the sequence name is the first word of a header line
+(i.e. those starting with ">"). We can have a peek in the assembly in bash:
+
+```{bash, warning=FALSE}
+grep ">" Dgyro_genome.fa | head
+```
+
+Genomic annotations often contain information for diverse entities, such as genes, mRNAs, exons, CDS, etc.
+In GFF files, the entity type is encoded in the Feature column. In pyranges, you use the dot notation to
+fetch an individual column, which is technically a pandas Series:
+
+```{python tidy=FALSE}
+ann.Feature
+```
+
+Let's focus on a subset of the annotation: CDS intervals, corresponding to coding sequences.
+We filter rows and create a new PyRanges object called `cds`:
+
+```{python tidy=FALSE}
+selector = (ann.Feature == 'CDS')
+cds = ann [selector]
+```
+
+We used another syntax familiar to pandas users. The object `selector` is a Series of boolean values, so it can be used to index PyRanges.
+
+Let's further reduce the width of the cds object. We showcase an alternative method for column selection: the method `drop` lets us choose which columns to discard.
+
+```{python tidy=FALSE}
+cds = cds.drop( ['Feature', 'Parent'] )
+cds 
+```
+
+The interface shown so far is analogous to pandas.
+Additionally, pyranges offers a non-pandas syntax for selecting intervals in a genomic region of interest (i.e. region retrieval).
+The code below will show only intervals completely included in the specified position range in the requested chromosome:
+
+```{python tidy=FALSE}
+cds['0002.1', 145000:150000]
+```
+
+The syntax for region retrieval may consists of:
+
+* chromosome
+* chromosome, position slice (as the example above)
+* chromosome, strand, position slice
+
+So, for example, this is also valid:
+
+```{python tidy=FALSE}
+cds['0002.1', "-", 145000:150000]
+```
+
+It is important to differentiate between **Stranded and Unstranded** PyRanges objects.
+When a Strand column is present and all its values are "+" or "-", the object is Stranded.
+When there are invalid values (e.g. ".") or the Strand column is absent, it is Unstranded.
+You can check whether an interval is Stranded with:
+
+```{python tidy=FALSE}
+cds.stranded
+```
+
+Certain pyranges methods require a Stranded input.
+While the annotation used in this tutorial is naturally Stranded, others may not be.
+If necessary, you may use method `make_stranded` to transform all invalid Strand values to "+" or remove them.
+
+## Working with groups of exons
+
+Multi-exonic genes are represented with multiple rows in PyRanges. In this tutorial, the `ID` column links the
+intervals belonging to the same CDS: these rows have the same ID value.
+While this concept applies to all annotations, files from different sources may use different column names for this purpose (e.g. transcript_id).
+Note that here we focus on CDS regions. These may encompass multiple exons, but they do not span the whole mRNA: the 5'UTRs and 3'UTRs are not included.
+
+Next, we will examine the first and last codon of annotated CDSs. We will obtain their genomic coordinate, then fetch their sequence. 
+
+Method `spliced_subsequence` allows to obtain a subregion of groups of intervals. The code below derives the first codon of each CDS group (grouping is defined by their ID):
+
+```{python tidy=FALSE}
+first=cds.spliced_subsequence(start=0, end=3, by='ID')
+first
+```
+
+Let's **fetch the sequence** for each of these intervals from our genome fasta file.
+The function `get_sequence` returns one sequence per interval, which we assign to a new column of our pyranges object:
+
+```{python tidy=FALSE}
+first.Sequence = pr.get_sequence(first, 'Dgyro_genome.fa')
+first
+```
+
+The `Sequence` column is a pandas Series containing strings. We see that the starting codon is ATG in most cases, as expected.
+When we check the length of the sequences, we notice that some are not 3-letter long:
+
+```{python tidy=FALSE}
+(first.Sequence.str.len() == 3 ).all()
+```
+
+Let's look at those sequences, using a row selector as before:
+```{python tidy=FALSE}
+first [ first.Sequence.str.len() != 3 ]
+```
+
+In some cases the starting codon is split between two exons.
+This is uncommon, but we are looking at all protein coding genes of a species, so it is expected at least in a few cases.
+How do we get the full codon sequence?
+
+Instead of `get_sequence`, let's use `get_transcript_sequence`, which returns the concatenated sequence of a group of intervals,
+i.e. joining exons together. The sequence is given 5' to 3'.
+
+
+```{python tidy=FALSE}
+seq_first = pr.get_transcript_sequence(
+           first, 
+           group_by='ID',
+           path='Dgyro_genome.fa'
+          )
+seq_first
+```
+
+`seq_first` is not a PyRanges object, but a pandas DataFrame. It has a column for the group (ID) and one for the sequence.
+Here we confirm the sequence length is always 3:
+
+```{python tidy=FALSE}
+(seq_first.Sequence.str.len()==3).all()
+```
+
+Finally, let's quantify how many start codons are ATG, using a bit of pandas magic.
+First, we make sure the whole sequence is in uppercase characters.
+Then, we make a boolean Series `is_atg` which has True corresponding to the ATG codons,
+then we sum its values to count the instances of True, creating variable `n_atg`.
+We also store the IDs of the CDSs with ATG codons in the variable `is_atg_ids`. Finally, we print a summary:
+
+```{python tidy=FALSE}
+seq_first.Sequence = seq_first.Sequence.str.upper()
+is_atg = (seq_first.Sequence == 'ATG')
+is_atg_ids = seq_first[is_atg].ID
+n_atg = is_atg.sum()
+print(f'There are {n_atg} ATG start codons out of '
+      f'{len(seq_first)} CDSs => {n_atg/len(seq_first):.2%}')
+```
+
+Now, we want to perform an analogous analysis with stop codons. 
+First, we get the a pyranges object of the last codon of each CDS.
+Conveniently, the method `spliced_subsequence` accepts negative arguments to count from the 3',
+so we can obtain the last three nucleotides of CDSs with:
+
+```{python tidy=FALSE}
+last = cds.spliced_subsequence(start=-3, by='ID')
+```
+
+By not providing an `end` argument, we requested intervals that reach the very end of each CDS group.
+Let's get their sequence as before, then use pandas function `value_counts` to count them:
+
+```{python tidy=FALSE}
+seq_last = pr.get_transcript_sequence(last, 'ID',
+           'Dgyro_genome.fa')
+seq_last.Sequence = seq_last.Sequence.str.upper()
+seq_last.Sequence.value_counts()
+```
+
+The canonical stop codons account for the great majority of cases, but there are some other values.
+This may warrant a further look into these CDSs. In this tutorial, we'll simply exclude them from our next steps.
+
+Let's gather the IDs of CDSs with a canonical stop, to be used further on:
+
+```{python tidy=FALSE}
+is_stop = seq_last.Sequence.isin( {'TAG', 'TAA', 'TGA'} )
+is_stop_ids = seq_last[is_stop].ID
+```
+
+## Writing coordinates and sequences to the disk
+We want to get a "clean" annotation consisting only of canonical CDSs, with an ATG starting codon
+and a TAA/TAG/TGA stop codon. First, we put together the IDs of CDSs with these characteristics:
+
+```{python tidy=FALSE}
+clean_ids = set(is_atg_ids).intersection(set(is_stop_ids))
+```
+
+Then we subset the ann pyranges object:
+
+```{python tidy=FALSE}
+clean_ann = ann[ann.ID.isin(clean_ids)]
+clean_ann
+```
+
+We can now write this pyranges object to a file, for example in GTF format:
+
+```{python tidy=FALSE}
+clean_ann.to_gtf('Dgyro_annotation.canonical_CDS.gtf')
+```
+
+Let's get the sequence for the canonical CDSs and write it to a tabular file. 
+
+```{python tidy=FALSE}
+clean_ann_seq = pr.get_transcript_sequence(clean_ann, 'ID',
+                'Dgyro_genome.fa')
+clean_ann_seq.to_csv('Dgyro_canonical_CDS.seq.tsv', 
+                     sep='\t', index=False)
+```
+
+Note that `clean_ann_seq` is a pandas DataFrame. To write sequences in fasta format we use: 
+
+
+```{python tidy=FALSE, results='hide', warning=FALSE}
+with open('Dgyro_canonical_CDS.fa', 'w') as fw:
+  for xin, xid, xseq in clean_ann_seq.itertuples():
+     fw.write(f'>{xid}\n{xseq}\n')
+```
+
+## Extending genomic intervals 
+
+Now we want to obtain (a practical approximation of) promoter sequences, here defined as the 300bp region before the start codon.
+Before we begin, let's peek into our object `cds`:
+
+```{python tidy=FALSE}
+cds.head()
+```
+
+First, we use the method `extend` to obtain intervals which include the CDS and the promoter defined as above:
+
+```{python tidy=FALSE}
+g = cds.extend({'5':300}, group_by='ID')
+g.head()
+```
+
+The first argument ensures that the 300bp extension is applied only at the 5' (left side for + strand intervals, right side for - strand intervals).
+Through the `group_by` argument, we request one extension per CDS, instead of extending every interval.
+In the object we obtained, the promoter corresponds to the first 300 bp of every interval group.
+We can use method `spliced_subsequence` again to get it:
+
+```{python tidy=FALSE}
+prom = g.spliced_subsequence(0, 300, 'ID')
+prom.head()
+```
+
+Because we extended intervals, some may have gone out-of-bounds on the left or on the right side:
+they may have a Start smaller than 0, or an End greater than the length of its chromosome, respectively.
+Indeed, we see there are cases of the first type:
+
+```{python tidy=FALSE}
+prom[prom.Start<0]
+```
+
+The function `genome_bounds` in submodule `genomicfeatures` is designed to correct this.
+We may use it to remove out-of-bounds intervals, or to retain only their in-bound portions. We go for the second option, with `clip=True`:
+
+
+```{python tidy=FALSE}
+import pyfaidx
+pyf=pyfaidx.Fasta('Dgyro_genome.fa')
+cor_prom = pr.genomicfeatures.genome_bounds(prom,
+                    chromsizes=pyf,
+                    clip=True)
+```
+
+To detect cases of out-of-bounds on the right side, function `genome_bounds` needs to know chromosome sizes.
+Various input types are accepted for the `chromsizes` argument; we used a `pyfaidx.Fasta` object, which derives it from a fasta file.
+
+The intervals above (and also the right-side out-of-bounds, though we don't inspect them) have been corrected:
+
+```{python tidy=FALSE}
+outofbounds_left=prom[prom.Start<0].ID
+cor_prom[cor_prom.ID.isin(outofbounds_left)]
+```
+
+## Detecting overlaps among intervals
+
+Let's see if any of the promoter regions overlap other CDSs. Pyranges offers many efficient methods to detect overlaps, such as `overlap`:
+
+```{python tidy=FALSE}
+cor_prom.overlap(cds, strandedness=False)
+```
+
+By default, this method reports intervals in the self pyranges object (i.e., `cor_prom`) that have at least 1bp of overlap with
+the other pyranges (i.e., cds). By invoking `strandedness=False`, we included overlaps even between intervals on opposite strands.
+
+There are many promoters overlapping CDSs. Let's get the overlapping regions only, using function `intersect`:
+
+```{python tidy=FALSE}
+prom_in_cds = cor_prom.intersect(cds, strandedness=False)
+prom_in_cds
+```
+
+`intersect` returned more rows than `overlap`. This is because an interval in `cor_prom` may overlap multiple intervals in cds,
+potentially with different intersection regions (compare the 2nd, 3rd and 4th rows, which are all subregions of the same promoter).
+Therefore, `intersect` returns one row for each pair of overlapping intervals, while `overlap` always returns a subset of rows from the self pyranges object, unaltered.
+
+We want to remove redundancy in the object above. We use the method `merge` to fuse intervals that have some overlap (and the same ID value):
+
+```{python tidy=FALSE}
+prom_in_cds = prom_in_cds.merge(by='ID')
+prom_in_cds
+```
+
+Note that with overlap or intersect, we do not keep track of the coordinates of overlapping intervals in the second object (`cds`),
+as we only obtain those in the first object (`cor_prom`). For that task, check methods `cluster` and `join` (not shown here).
+
+We now want to calculate how long the overlapping regions are. We create a new column named `Length` by subtracting `Start` from `End`.
+This operation is performed element-wise (the 1st value of End minus the 1st value of Start, the 2nd End minus the 2nd Start, etc), a common paradigm of pandas Series.
+
+
+```{python tidy=FALSE}
+prom_in_cds.Length = prom_in_cds.End - prom_in_cds.Start
+prom_in_cds
+```
+
+## Pandas vs Pyranges
+It is convenient to think of PyRanges objects as pandas DataFrames decorated with convenient methods for genomic analyses.
+As seen above, PyRanges offers an interface analogous to DataFrame for data access and input/output, and it is similar when printed.
+Also, the columns of both object types are pandas Series.
+
+Yet, PyRanges is not implemented as a subclass of DataFrame, as we will see shortly, so that it does not offer all its methods.
+When in need of a pandas functionality missing in PyRanges, you can easily obtain a DataFrame version of it with property `df` (a shortcut for method `as_df`).
+Note that this copies all data: avoid it if you can stick to PyRanges functions.
+
+```{python tidy=FALSE}
+prom_in_cds.df
+```
+
+Let's use the DataFrame for a `groupby` operation wherein we get the aggregated length per promoter of regions overlapping a CDS, as pandas Series:
+
+```{python tidy=FALSE}
+tot_len = prom_in_cds.df.groupby("ID").Length.sum()
+tot_len.name = 'Tot_length'
+tot_len
+```
+
+Let's add this new information (how much of a CDS promoter is overlapping a different CDS) to the `cds` object.
+Since it is one number per CDS, all intervals with the same ID will have the same `Tot_length`. This operation corresponds to a database "join",
+which is missing from PyRanges functionalities but available as pandas `merge`:
+
+```{python tidy=FALSE}
+z = cds.df.merge(tot_len, on='ID', how='left')
+z.Tot_length.fillna(0, inplace=True, downcast='infer')
+z
+```
+
+Only some CDSs have a promoter overlapping another CDS, so we used how='left' when calling `merge`.
+This retains all rows of `cds`, introducing NaN values for IDs missing in `tot_len`. On the next line of code, we filled NaN with zeros.
+
+Now let's convert the resulting DataFrame `z` back to PyRanges:
+
+```{python tidy=FALSE}
+cds = pr.PyRanges(z)
+cds
+```
+
+Now let's dig into the **differences of PyRanges and DataFrame**.
+Say that we want to order our intervals by `Tot_length`. We use PyRanges method `sort`:
+
+```{python tidy=FALSE}
+srt_cds = cds.sort('Tot_length')
+srt_cds
+```
+
+If we sort the analogous DataFrame using pandas `sort_values`, we see the results does not quite look the same:
+
+```{python tidy=FALSE}
+cds.df.sort_values('Tot_length')
+```
+Why is that? Under the hood, each PyRanges object is a **collection of DataFrames**: data is spread into separate tables,
+one for each chromosome/strand pair; e.g. there is a DataFrame with coordinates for + intervals on chr1, one for - intervals on chr1,
+one for + on chr2, one for - on chr2, etc. The user typically does not need to directly access them (but if you do,
+you can check the dictionary-type PyRanges attribute `dfs`).
+
+Intervals on different chromosomes have no order relative to each other, and they are never mixed up in the same table. Indeed, when inspecting a PyRanges object, you see the message:
+
+    For printing, the PyRanges was sorted on Chromosome and Strand.
+
+PyRanges `sort` therefore acts on each table independently. Pandas, on the other hand,
+has no problems mixing up rows corresponding to different chromosomes, which explains the discrepancy seen above.
+
+This leads to another important difference. In pandas, the index is an essential component of the DataFrame,
+providing the row labels, order, and a tool for data access.
+**In PyRanges objects, there is no index**. Their internal tables of course have their own indices, but they
+are purposely hidden from the user as they are not to be queried or relied upon.
+
+The user should also beware of methods `merge` and `join`, which have different meanings.
+As seen above, in Pandas they are slight variations of database "join", while in PyRanges they refer to interval manipulation based on genomic overlap.
+
+## Method chaining and custom functions
+Like Pandas, pyranges support method chaining.
+Some useful methods in this sense are: `pc`, which prints the object and returns it for further chaining;
+`subset`, which performs row selection; and `assign`, which adds a column.
+
+We may chain these to obtain at once the CDS subset, add the length of intervals as new column, drop a couple of columns, then print before and after sorting by length:
+
+```{python tidy=FALSE}
+( ann.subset(lambda x:x.Feature=='CDS')
+     .assign('Length', lambda x:x.End-x.Start)
+     .drop(['Parent', 'Feature'])
+     .pc()
+     .sort('Length')
+     .print()
+)
+```
+
+With `assign` and `subset`, you provide a function which is applied to each DataFrame in the collection.
+In both cases, it must return a Series with the same number of rows as the input PyRanges.
+For `subset`, it must be a boolean Series, which is used as row selector. Another similar method called `apply` also exists.
+Use `apply` when your function returns a DataFrame which can be converted to a PyRanges object (i.e. containing Chromosome, Start, End, Strand columns).
+
+In the following code, we select only CDS intervals whose center point is within 50 nucleotides from the middle of a chromosome.
+For this, we precompute a table of chromosome sizes from the object `pyf` used earlier, and we use pandas `merge`, through pyranges `apply`,
+to join this table with each dataframe.
+
+
+```{python tidy=FALSE}
+chromsizes = pd.DataFrame.from_dict(
+  {'Chromosome':[k for k,v in pyf.items()],
+   'chromsize':[len(v) for k,v in pyf.items()]}
+)
+
+(ann.subset(lambda x:x.Feature=='CDS')
+    .drop(['Parent', 'Feature', 'ID'])
+    .apply(lambda x:x.merge(chromsizes, on='Chromosome'))
+    .assign('midpoint', lambda x:(x.End+x.Start)/2)
+    .subset(lambda x:abs(x.midpoint - x.chromsize/2)<50)
+    )
+```
+
+A common operation in pandas is group by then apply, i.e. dividing the table in groups and performing certain operations on each group.
+You can do such operations using `subset`, `assign`, or `apply`, depending on what to do with the result.
+Remember that the table of each Chromosome/Strand is processed independently.
+
+Let's use this functionality to get the first (5'-most) exon of each CDS group.
+We use pyranges `sort` with the argument '5', which puts intervals in 5' -> 3' order, then we apply a groupby+apply pandas chain:
+
+```{python tidy=FALSE}
+( ann.subset(lambda x:x.Feature=='CDS')
+     .drop(['Parent', 'Feature'])
+     .sort('5')
+     .apply(lambda x:x.groupby('ID', as_index=False).first())
+)
+```
+
+This concludes our tutorial. The next pages will delve into pyranges functionalities grouped by topic.
+
