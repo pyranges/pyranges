@@ -1,3 +1,6 @@
+# unreleased (17.05.2023)
+- add preserve_order to join (@aallahyar)
+
 # 0.0.125 (09.05.2023)
 - fix read_gtf error
 
