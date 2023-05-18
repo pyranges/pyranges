@@ -10,18 +10,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+  build_and_upload_wheels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Build SDist and wheel
-      run: pipx run build
+      - name: Build SDist and wheel
+        run: pipx run build
 
-    - uses: actions/upload-artifact@v3
-      with:
-        path: dist/*
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*
 
-    - name: Check metadata
-      run: pipx run twine check dist/*
+      - name: Check metadata
+        run: pipx run twine check dist/*
