@@ -1,4 +1,4 @@
-name: Install, test, doctest, lint, typecheck pyranges
+name: linting-typechecking-doctests
 
 # Source: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#using-multiple-python-versions
 
@@ -11,7 +11,7 @@ jobs:
       # You can use PyPy versions in python-version.
       # For example, pypy2.7 and pypy3.9
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v3
@@ -23,12 +23,18 @@ jobs:
         run: pip install .
       - name: Install add-ons
         run: pip install pyrle pybigwig bamread pyfaidx fisher
-      - name: Test
+      - run: pip install pytest
+      - name: doctests
         env:
           GITHUB_ACTIONS: true
         run: |
           shopt -s globstar  # allow recursive globs
           python -m doctest pyranges/**.py
+      - name: unittests
+        env:
+          GITHUB_ACTIONS: true
+        run: |
+          pytest tests/unit
 
   isort:
     runs-on: ubuntu-latest
