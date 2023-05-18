@@ -5,4 +5,4 @@ def test_unstrand():
     gr = pr.data.chipseq()
     u = gr.unstrand()
     assert all([not isinstance(k, tuple) for k in u.dfs])
-    assert u.stranded == False
+    assert not u.stranded

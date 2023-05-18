@@ -3,12 +3,10 @@ from __future__ import print_function
 import sys
 
 import pandas as pd
-
-from pyranges.pyranges_main import PyRanges
-
-from io import StringIO
+from natsort import natsorted  # type: ignore
 
 import pyranges as pr
+from pyranges.pyranges_main import PyRanges
 
 
 def read_bed(f, as_df=False, nrows=None):
@@ -68,7 +66,9 @@ def read_bed(f, as_df=False, nrows=None):
 
     """
 
-    columns = "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split()
+    columns = (
+        "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split()
+    )
 
     if f.endswith(".gz"):
         import gzip
@@ -177,8 +177,8 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     """
 
     try:
-        import bamread
-    except ModuleNotFoundError as e:
+        import bamread  # type: ignore
+    except ImportError:
         print(
             "bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it."
         )
@@ -206,9 +206,7 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
         try:
             df = bamread.read_bam_full(f, mapq, required_flag, filter_flag)
         except AttributeError:
-            print(
-                "bamread version 0.0.6 or higher is required to read bam non-sparsely."
-            )
+            print("bamread version 0.0.6 or higher is required to read bam non-sparsely.")
 
     if as_df:
         return df
@@ -336,9 +334,7 @@ def read_gtf(
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(
-            f, as_df, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad
-        )
+        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad)
     else:
         gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
 
@@ -363,7 +359,7 @@ def read_gtf_full(
         sep="\t",
         header=None,
         names=names,
-        dtype=dtypes,
+        dtype=dtypes,  # type: ignore
         chunksize=chunksize,
         skiprows=skiprows,
         nrows=nrows,
@@ -388,48 +384,43 @@ def read_gtf_full(
         return df
 
 
-def parse_kv_fields(l):
+def parse_kv_fields(line):
     # rstrip: allows for GFF not having a last ";", or having final spaces
-    return [
-        kv.replace('""', '"NA"').replace('"', "").split(None, 1)
-        for kv in l.rstrip("; ").split("; ")
-    ]
+    return [kv.replace('""', '"NA"').replace('"', "").split(None, 1) for kv in line.rstrip("; ").split("; ")]
 
 
 def to_rows(anno, ignore_bad: bool = False):
     rowdicts = []
     try:
-        l = anno.head(1)
-        for l in l:
-            l.replace('"', "").replace(";", "").split()
+        line = anno.head(1)
+        for line in line:
+            line.replace('"', "").replace(";", "").split()
     except AttributeError:
         raise Exception(
-            "Invalid attribute string: {l}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(
-                l=l
+            "Invalid attribute string: {line}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(
+                line=line
             )
         )
 
     try:
-        for l in anno:
-            rowdicts.append({k: v for k, v in parse_kv_fields(l)})
+        for line in anno:
+            rowdicts.append({k: v for k, v in parse_kv_fields(line)})
     except ValueError:
         if not ignore_bad:
-            print(
-                f"The following line is not parseable as gtf:\n{l}\n\nTo ignore bad lines use ignore_bad=True."
-            )
+            print(f"The following line is not parseable as gtf:\n{line}\n\nTo ignore bad lines use ignore_bad=True.")
             raise
 
-    return pd.DataFrame.from_dict(rowdicts)
+    return pd.DataFrame.from_records(rowdicts)
 
 
 def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
     rowdicts = []
     try:
-        for l in anno:
+        for line in anno:
             rowdict = {}
 
             # rstrip: allows for GFF not having a last ";", or having final spaces
-            for k, v in tuple(parse_kv_fields(l)):
+            for k, v in tuple(parse_kv_fields(line)):
                 if k not in rowdict:
                     rowdict[k] = v
                 elif k in rowdict and isinstance(rowdict[k], list):
@@ -437,20 +428,13 @@ def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
                 else:
                     rowdict[k] = [rowdict[k], v]
 
-            rowdicts.append(
-                {
-                    k: ",".join(v) if isinstance(v, list) else v
-                    for k, v in rowdict.items()
-                }
-            )
+            rowdicts.append({k: ",".join(v) if isinstance(v, list) else v for k, v in rowdict.items()})
     except ValueError:
         if not ignore_bad:
-            print(
-                f"The following line is not parseable as gtf:\n\n{l}\n\nTo ignore bad lines use ignore_bad=True."
-            )
+            print(f"The following line is not parseable as gtf:\n\n{line}\n\nTo ignore bad lines use ignore_bad=True.")
             raise
 
-    return pd.DataFrame.from_dict(rowdicts)
+    return pd.DataFrame.from_records(rowdicts)
 
 
 def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
@@ -509,12 +493,12 @@ def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
 def to_rows_gff3(anno):
     rowdicts = []
 
-    for l in list(anno):
+    for line in list(anno):
         # stripping last white char if present
-        lx = (it.split("=") for it in l.rstrip("; ").split(";"))
+        lx = (it.split("=") for it in line.rstrip("; ").split(";"))
         rowdicts.append({k: v for k, v in lx})
 
-    return pd.DataFrame.from_dict(rowdicts).set_index(anno.index)
+    return pd.DataFrame.from_records(rowdicts).set_index(anno.index)
 
 
 def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
@@ -592,7 +576,7 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
 
 def read_bigwig(f, as_df=False):
     try:
-        import pyBigWig
+        import pyBigWig  # type: ignore
     except ModuleNotFoundError:
         print(
             "bwread must be installed to read bigwigs. Use `conda install -c bioconda bwread` or `pip install bwread` to install it."
@@ -620,8 +604,6 @@ def read_bigwig(f, as_df=False):
     >>> gr = pr.read_bigwig(f)
     >>> gr
     """
-
-    from natsort import natsorted
 
     bw = pyBigWig.open(f)
 

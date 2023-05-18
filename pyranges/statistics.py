@@ -1,14 +1,14 @@
 """Statistics useful for genomics."""
 
-import pandas as pd
+from collections import defaultdict
+from math import sqrt
+
 import numpy as np
+import pandas as pd
 
 import pyranges as pr
-from pyranges.multithreaded import pyrange_apply
-
 from pyranges.methods.statistics import _relative_distance
-
-from collections import defaultdict
+from pyranges.multithreaded import pyrange_apply
 
 __all__ = [
     "simes",
@@ -67,7 +67,7 @@ def fdr(p_vals):
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
-    from scipy.stats import rankdata
+    from scipy.stats import rankdata  # type: ignore
 
     ranked_p_values = rankdata(p_vals)
     fdr = p_vals * len(p_vals) / ranked_p_values
@@ -140,8 +140,8 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
     """
 
     try:
-        from fisher import pvalue_npy
-    except:
+        from fisher import pvalue_npy  # type: ignore
+    except ImportError:
         import sys
 
         print(
@@ -156,9 +156,7 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
 
     left, right, twosided = pvalue_npy(tp, fp, fn, tn)
 
-    OR = ((tp + pseudocount) / (fp + pseudocount)) / (
-        (fn + pseudocount) / (tn + pseudocount)
-    )
+    OR = ((tp + pseudocount) / (fp + pseudocount)) / ((fn + pseudocount) / (tn + pseudocount))
 
     df = pd.DataFrame({"OR": OR, "P": twosided, "PLeft": left, "PRight": right})
 
@@ -218,7 +216,7 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
     """
 
     import sys
-    from itertools import combinations_with_replacement, chain
+    from itertools import chain, combinations_with_replacement
 
     if labels is None:
         _labels = list(range(len(grs)))
@@ -282,9 +280,7 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                 fn = 0
                 tn = genome_length - tp
                 fp = 0
-                rowdicts.append(
-                    {"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1}
-                )
+                rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1})
             else:
                 for strand in "+ -".split():
                     tp = t[strand].length
@@ -539,11 +535,7 @@ def rowbased_rankdata(data):
         _count = np.column_stack([nz, np.ones(len(nz)) * len_r])
         _dense = dense.reindex(nzdf.index).values
 
-        _result = 0.5 * (
-            np.take_along_axis(_count, _dense, 1)
-            + np.take_along_axis(_count, _dense - 1, 1)
-            + 1
-        )
+        _result = 0.5 * (np.take_along_axis(_count, _dense, 1) + np.take_along_axis(_count, _dense - 1, 1) + 1)
 
         result = pd.DataFrame(_result, index=nzdf.index)
         ranks.append(result)
@@ -749,10 +741,7 @@ class StatisticsMethods:
         query_length = other.merge(strand=strand).length
 
         intersection_sum = sum(
-            v.sum()
-            for v in self.set_intersect(other, strandedness=strandedness)
-            .lengths(as_dict=True)
-            .values()
+            v.sum() for v in self.set_intersect(other, strandedness=strandedness).lengths(as_dict=True).values()
         )
 
         forbes = chromsizes * intersection_sum / (reference_length * query_length)
@@ -804,15 +793,11 @@ class StatisticsMethods:
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
-        intersection_sum = sum(
-            v.sum() for v in self.set_intersect(other).lengths(as_dict=True).values()
-        )
+        intersection_sum = sum(v.sum() for v in self.set_intersect(other).lengths(as_dict=True).values())
 
         union_sum = 0
         for gr in [self, other]:
-            union_sum += sum(
-                v.sum() for v in gr.merge(strand=strand).lengths(as_dict=True).values()
-            )
+            union_sum += sum(v.sum() for v in gr.merge(strand=strand).lengths(as_dict=True).values())
 
         denominator = union_sum - intersection_sum
         if denominator == 0:
@@ -919,9 +904,7 @@ class StatisticsMethods:
         kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
 
-        result = pyrange_apply(
-            _relative_distance, self, other, **kwargs
-        )  # pylint: disable=E1132
+        result = pyrange_apply(_relative_distance, self, other, **kwargs)  # pylint: disable=E1132
 
         result = pd.Series(np.concatenate(list(result.values())))
 
@@ -935,9 +918,6 @@ class StatisticsMethods:
         vc = vc.reset_index(drop=True)
 
         return vc
-
-
-from math import sqrt
 
 
 def _mcc(tp, fp, tn, fn):

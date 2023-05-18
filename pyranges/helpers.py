@@ -29,9 +29,6 @@ def get_key_from_df(df):
 
 def single_value_key(df):
     if "Strand" in df:
-        return (
-            len(df[["Chromosome", "Strand"]].drop_duplicates(["Chromosome", "Strand"]))
-            == 1
-        )
+        return len(df[["Chromosome", "Strand"]].drop_duplicates(["Chromosome", "Strand"])) == 1
     else:
         return len(df.Chromosome.drop_duplicates()) == 1

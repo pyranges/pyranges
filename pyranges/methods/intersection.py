@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from ncls import NCLS
+from ncls import NCLS  # type: ignore
 
 
 def _intersection(scdf, ocdf, **kwargs):
@@ -21,9 +21,7 @@ def _intersection(scdf, ocdf, **kwargs):
     if not how or how is None:
         _self_indexes, _other_indexes = oncls.all_overlaps_both(starts, ends, indexes)
     elif how == "containment":
-        _self_indexes, _other_indexes = oncls.all_containments_both(
-            starts, ends, indexes
-        )
+        _self_indexes, _other_indexes = oncls.all_containments_both(starts, ends, indexes)
     elif how == "first":
         _self_indexes, _other_indexes = oncls.first_overlap_both(starts, ends, indexes)
     elif how == "last":
@@ -86,6 +84,7 @@ def _overlap(scdf, ocdf, **kwargs):
 
 
 def _count_overlaps(scdf, ocdf, **kwargs):
+    # FIXME: Modifies in-place.
     kwargs["return_indexes"] = True
     idx = _overlap(scdf, ocdf, **kwargs)
 

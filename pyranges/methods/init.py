@@ -1,12 +1,10 @@
-import sys
 import numpy as np
 import pandas as pd
-from natsort import natsorted
 
-from pyranges.statistics import StatisticsMethods
-from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges import PyRanges
-from pyranges.helpers import single_value_key, get_key_from_df
+from pyranges.genomicfeatures import GenomicFeaturesMethods
+from pyranges.helpers import get_key_from_df, single_value_key
+from pyranges.statistics import StatisticsMethods
 
 
 def set_dtypes(df, int64):
@@ -70,16 +68,12 @@ def create_pyranges_df(chromosomes, starts, ends, strands=None):
         lengths = list(str(len(s)) for s in columns)
         assert (
             len(set(lengths)) == 1
-        ), "chromosomes, starts, ends and strands must be of equal length. But are {}".format(
-            ", ".join(lengths)
-        )
+        ), "chromosomes, starts, ends and strands must be of equal length. But are {}".format(", ".join(lengths))
         colnames = "Chromosome Start End Strand".split()
     else:
         columns = [chromosomes, starts, ends]
         lengths = list(str(len(s)) for s in columns)
-        assert (
-            len(set(lengths)) == 1
-        ), "chromosomes, starts and ends must be of equal length. But are {}".format(
+        assert len(set(lengths)) == 1, "chromosomes, starts and ends must be of equal length. But are {}".format(
             ", ".join(lengths)
         )
         colnames = "Chromosome Start End".split()
@@ -108,9 +102,7 @@ def check_strandedness(df):
 
     contains_more_than_plus_minus_in_strand_col = False
 
-    if str(df.Strand.dtype) == "category" and (
-        set(df.Strand.cat.categories) - set("+-")
-    ):
+    if str(df.Strand.dtype) == "category" and (set(df.Strand.cat.categories) - set("+-")):
         contains_more_than_plus_minus_in_strand_col = True
     elif not ((df.Strand == "+") | (df.Strand == "-")).all():
         contains_more_than_plus_minus_in_strand_col = True

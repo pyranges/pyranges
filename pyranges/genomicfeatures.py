@@ -1,10 +1,9 @@
+import numpy as np
 import pandas as pd
+from sorted_nearest.src.introns import find_introns  # type: ignore
 
 import pyranges as pr
-import numpy as np
-
 from pyranges.multithreaded import pyrange_apply
-from sorted_nearest.src.introns import find_introns
 
 __all__ = ["genome_bounds", "tile_genome", "GenomicFeaturesMethods"]
 
@@ -378,20 +377,18 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
 
     else:
         try:
-            import pyfaidx
+            import pyfaidx  # type: ignore
 
             if isinstance(chromsizes, pyfaidx.Fasta):
                 chromsizes = {k: len(chromsizes[k]) for k in chromsizes.keys()}
-        except:
+        except ImportError:
             pass
 
     assert isinstance(
         chromsizes, dict
     ), "ERROR chromsizes must be a dictionary, or a PyRanges, or a pyfaidx.Fasta object"
 
-    return gr.apply(
-        _outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right
-    )
+    return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right)
 
 
 def _last_tile(df, **kwargs):
@@ -569,23 +566,13 @@ def _introns2(df, exons, **kwargs):
     if len(intersection) == 0:
         return None
 
-    exons = (
-        exons[exons["by_id"].isin(intersection)]
-        .reset_index(drop=True)
-        .sort_values(["by_id", "Start"])
-    )
-    genes = (
-        genes[genes["by_id"].isin(intersection)]
-        .reset_index(drop=True)
-        .sort_values(["by_id", "Start"])
-    )
+    exons = exons[exons["by_id"].isin(intersection)].reset_index(drop=True).sort_values(["by_id", "Start"])
+    genes = genes[genes["by_id"].isin(intersection)].reset_index(drop=True).sort_values(["by_id", "Start"])
     df = df[df[id_column].isin(intersection)].reset_index(drop=True)
 
     assert len(genes) == len(
         genes.drop_duplicates("by_id")
-    ), "The {id_column}s need to be unique to compute the introns.".format(
-        id_column=id_column
-    )
+    ), "The {id_column}s need to be unique to compute the introns.".format(id_column=id_column)
 
     exon_ids = exons["by_id"].shift() != exons["by_id"]
     by_ids = pd.Series(range(1, len(genes) + 1))
@@ -619,9 +606,7 @@ def _introns2(df, exons, **kwargs):
     vc = introns["by_id"].value_counts(sort=False).to_frame().reset_index()
     vc.columns = ["by_id", "counts"]
 
-    genes_without_introns = pd.DataFrame(
-        data={"by_id": np.setdiff1d(by_ids.values, vc.by_id.values), "counts": 0}
-    )
+    genes_without_introns = pd.DataFrame(data={"by_id": np.setdiff1d(by_ids.values, vc.by_id.values), "counts": 0})
 
     vc = pd.concat([vc, genes_without_introns]).sort_values("by_id")
 
@@ -636,17 +621,10 @@ def _introns2(df, exons, **kwargs):
         ["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1
     ).sort_values("by_id")
     introns.loc[:, "by_id"] = original_ids[id_column].values
-    introns = introns.merge(
-        df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme")
-    )
-    introns = introns.drop(
-        [c for c in introns.columns if c.endswith("_dropme")], axis=1
-    )
+    introns = introns.merge(df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme"))
+    introns = introns.drop([c for c in introns.columns if c.endswith("_dropme")], axis=1)
 
-    if (
-        introns.Feature.dtype.name == "category"
-        and not "intron" in introns.Feature.cat.categories
-    ):
+    if introns.Feature.dtype.name == "category" and "intron" not in introns.Feature.cat.categories:
         introns.Feature.cat.add_categories(["intron"])
     introns.loc[:, "Feature"] = "intron"
 

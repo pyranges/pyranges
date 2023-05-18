@@ -1,6 +1,7 @@
-import pyranges as pr
 import numpy as np
 import pandas as pd
+
+import pyranges as pr
 
 
 def _setattr(self, column_name, column, pos=False):

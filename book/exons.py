@@ -1,5 +1,6 @@
-import pyranges as pr
 import pandas as pd
+
+import pyranges as pr
 
 exons = pr.data.exons()
 cpg = pr.data.cpg()

@@ -1,5 +1,6 @@
-import pyranges as pr
 import numpy as np
+
+import pyranges as pr
 
 np.random.seed(0)
 

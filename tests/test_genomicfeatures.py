@@ -1,10 +1,7 @@
 import pandas as pd
+from hypothesis import reproduce_failure  # noqa: F401
+
 import pyranges as pr
-
-from hypothesis import given, settings
-from hypothesis import reproduce_failure  # pylint: disable=unused-import
-
-from tests.hypothesis_helper import deadline, slow_max_examples
 
 by_to_id = {"gene": "gene_id", "transcript": "transcript_id"}
 
@@ -79,20 +76,14 @@ def _introns_correct(full, genes, exons, introns, by):
     """
     id_column = by_to_id[by]
     if len(introns):
-        assert (introns.Start < introns.End).all(), str(
-            introns[(introns.Start >= introns.End)]
-        )
+        assert (introns.Start < introns.End).all(), str(introns[(introns.Start >= introns.End)])
 
     expected_results = {}
     based_on = {}
-    for gene_id, gdf in full.groupby(
-        id_column
-    ):  # #[full.gene_id.isin(["ENSG00000078808.16"])]
+    for gene_id, gdf in full.groupby(id_column):  # #[full.gene_id.isin(["ENSG00000078808.16"])]
         # print("gdf " * 10)
         # print(gdf)
-        if not len(gdf[gdf.Feature == "gene"]) or not len(
-            gdf[gdf.Feature == "transcript"]
-        ):
+        if not len(gdf[gdf.Feature == "gene"]) or not len(gdf[gdf.Feature == "transcript"]):
             continue
         expected_results[gene_id] = compute_introns_single(gdf, by)
 
@@ -105,14 +96,10 @@ def _introns_correct(full, genes, exons, introns, by):
 
     for gene_id, idf in introns.groupby(id_column):
         idf = idf.sort_values("Start End".split())
-        if not gene_id in expected_results:
+        if gene_id not in expected_results:
             continue
         expected = expected_results[gene_id]
-        exons = (
-            pr.PyRanges(based_on[gene_id])
-            .subset(lambda df: df.Feature == "exon")
-            .merge(by=id_column)
-        )
+        exons = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == "exon").merge(by=id_column)
         genes = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == by)
         print("exons", exons)
         print("based_on", based_on[gene_id])

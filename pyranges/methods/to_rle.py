@@ -3,8 +3,8 @@ from pyranges.multithreaded import pyrange_apply_single
 
 def _to_rle(ranges, value_col=None, strand=True, rpm=False, **kwargs):
     try:
-        from pyrle.methods import coverage
-        from pyrle import PyRles
+        from pyrle import PyRles  # type: ignore
+        from pyrle.methods import coverage  # type: ignore
     except ImportError:
         raise Exception("Using the coverage method requires that pyrle is installed.")
 

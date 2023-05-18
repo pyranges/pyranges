@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import pandas as pd
-
 from tabulate import tabulate
 
 

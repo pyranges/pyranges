@@ -1,9 +1,9 @@
+from io import StringIO
+
+import pandas as pd
 import pytest
 
 import pyranges as pr
-import pandas as pd
-
-from io import StringIO
 
 
 @pytest.fixture

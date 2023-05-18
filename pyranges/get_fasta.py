@@ -1,6 +1,8 @@
 import sys
-import pyranges as pr
+
 import pandas as pd
+
+import pyranges as pr  # noqa: F401
 
 
 def get_sequence(gr, path=None, pyfaidx_fasta=None):
@@ -90,8 +92,8 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     """
 
     try:
-        import pyfaidx
-    except ModuleNotFoundError as e:
+        import pyfaidx  # type: ignore
+    except ImportError:
         print(
             "pyfaidx must be installed to get fasta sequences. Use `conda install -c bioconda pyfaidx` or `pip install pyfaidx` to install it."
         )
@@ -99,9 +101,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
 
     if pyfaidx_fasta is None:
         if path is None:
-            raise Exception(
-                "ERROR get_sequence : you must provide a fasta path or pyfaidx_fasta object"
-            )
+            raise Exception("ERROR get_sequence : you must provide a fasta path or pyfaidx_fasta object")
         pyfaidx_fasta = pyfaidx.Fasta(path, read_ahead=int(1e5))
 
     seqs = []

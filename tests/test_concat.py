@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import pytest
 import pyranges as pr
 
 
@@ -17,7 +16,7 @@ def assert_equal_length_before_after(gr1, gr2):
     assert l1 + l2 == lc
 
 
-def test_concat_stranded_unstranded(f1, f2):
+def test_concat_stranded_tranded(f1, f2):
     assert_equal_length_before_after(f1, f2)
 
 

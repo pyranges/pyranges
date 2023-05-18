@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from ncls import NCLS
+from ncls import NCLS  # type: ignore
 
 
 def _number_overlapping(scdf, ocdf, **kwargs):
@@ -32,9 +32,7 @@ def _number_overlapping(scdf, ocdf, **kwargs):
     df = scdf.copy()
 
     _missing_indexes = np.setdiff1d(scdf.index, _self_indexes)
-    missing = pd.DataFrame(
-        data={"Index": _missing_indexes, "Count": 0}, index=_missing_indexes
-    )
+    missing = pd.DataFrame(data={"Index": _missing_indexes, "Count": 0}, index=_missing_indexes)
     counts_per_read = pd.concat([counts_per_read, missing])
 
     counts_per_read = counts_per_read.set_index("Index").sort_index()

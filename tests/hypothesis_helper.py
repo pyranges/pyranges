@@ -1,14 +1,12 @@
-from hypothesis.extra.pandas import data_frames, column, indexes
+from os import environ
+
 import hypothesis.strategies as st
+import numpy as np
+import pandas as pd
+from hypothesis.extra.pandas import column, data_frames, indexes
 
 import pyranges as pr
 from pyranges import PyRanges
-
-import pandas as pd
-import numpy as np
-
-from os import environ
-from sys import platform
 
 if environ.get("TOX"):
     max_examples = 3
@@ -31,9 +29,7 @@ datatype = st.sampled_from([pd.Series, np.array, list])
 
 feature_data = st.sampled_from(["ensembl_gtf", "gencode_gtf", "ucsc_bed"])
 
-chromosomes = st.sampled_from(
-    ["chr{}".format(str(e)) for e in list(range(1, 23)) + "X Y M".split()]
-)
+chromosomes = st.sampled_from(["chr{}".format(str(e)) for e in list(range(1, 23)) + "X Y M".split()])
 chromosomes_small = st.sampled_from(["chr1"])
 cs = st.one_of(chromosomes, chromosomes_small)
 

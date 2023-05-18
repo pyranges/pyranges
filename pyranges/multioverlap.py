@@ -1,5 +1,6 @@
-import pyranges as pr
 import numpy as np
+
+import pyranges as pr
 
 
 def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
@@ -153,7 +154,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
         gr = gr.drop()
 
         kwargs["name"] = name
-        res = features.apply_pair(gr, _count_overlaps, **kwargs)
+        features.apply_pair(gr, _count_overlaps, **kwargs)  # count overlaps modifies the ranges in-place
 
     def to_int(df):
         df.loc[:, names] = df[names].astype(np.int32)

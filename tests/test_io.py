@@ -1,3 +1,6 @@
+import numpy as np
+from pandas.testing import assert_frame_equal
+
 import pyranges as pr
 
 
@@ -29,6 +32,18 @@ def test_read_gtf():
 def test_read_gtf_multiple_chunks():
     skiprows = pr.readers.skiprows("tests/test_data/ensembl.gtf")
     gr = pr.readers.read_gtf_full("tests/test_data/ensembl.gtf", chunksize=2, skiprows=skiprows)
+    gr2 = pr.readers.read_gtf_full("tests/test_data/ensembl.gtf", skiprows=skiprows)
+
+    df = gr.df
+    df2 = gr2.df
+    # reading in chunks might mix types because reading a chunk of . 0 will make each value a str
+    # however, when reading a chunk of 0 0 the type will be int
+    df.loc[:, "Frame"] = df["Frame"].astype(str)
+
+    df.Feature = np.array(df["Feature"].astype(str))
+    df2.Feature = np.array(df2["Feature"].astype(str))
+
+    assert_frame_equal(df, df2, check_dtype=False)
 
 
 def test_read_gff3():

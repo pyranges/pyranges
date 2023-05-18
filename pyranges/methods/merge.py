@@ -1,6 +1,5 @@
 import pandas as pd
-
-from sorted_nearest import find_clusters, merge_by
+from sorted_nearest import find_clusters, merge_by  # type: ignore
 
 
 def _merge(df, **kwargs):
@@ -63,9 +62,7 @@ def _merge_by(df, **kwargs):
 
     cdf.insert(cdf.shape[1], "ClusterBy", new_ids)
 
-    ids, starts, ends, number = merge_by(
-        cdf.Start.values, cdf.End.values, cdf.ClusterBy.values, slack
-    )
+    ids, starts, ends, number = merge_by(cdf.Start.values, cdf.End.values, cdf.ClusterBy.values, slack)
 
     nidx = pd.Index(range(len(starts)))
 

@@ -1,12 +1,10 @@
-import numpy as np
+import os
 
+import numpy as np
 import pandas as pd
+from natsort import natsorted  # type: ignore
 
 import pyranges as pr
-
-from natsort import natsorted
-
-import os
 
 ray = None
 
@@ -167,9 +165,15 @@ def get_multithreaded_funcs(function, nb_cpu):
         get = ray.get
         function = ray.remote(function)
     else:
-        _merge_dfs = lambda: "dummy value"
+
+        def _merge_dfs():
+            return "dummy value"
+
         _merge_dfs.remote = merge_dfs
-        get = lambda x: x
+
+        def get(x):
+            return x
+
         function.remote = function
 
     return function, get, _merge_dfs
@@ -231,7 +235,7 @@ def pyrange_apply(function, self, other, **kwargs):
     else:
         if self.stranded and not other.stranded:
             for (c, s), df in items:
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odf = dummy
                 else:
                     odf = other_dfs[c]
@@ -242,7 +246,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
         elif not self.stranded and other.stranded:
             for c, df in items:
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odf = dummy
                 else:
                     odf1 = other_dfs.get((c, "+"), dummy)
@@ -257,7 +261,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
         elif self.stranded and other.stranded:
             for (c, s), df in self.items():
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odfs = pr.PyRanges(dummy)
                 else:
                     odfp = other_dfs.get((c, "+"), dummy)
@@ -279,7 +283,7 @@ def pyrange_apply(function, self, other, **kwargs):
 
         else:
             for c, df in items:
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odf = dummy
                 else:
                     odf = other_dfs[c]
@@ -313,9 +317,7 @@ def pyrange_apply_single(function, self, **kwargs):
     function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
 
     if strand:
-        assert (
-            self.stranded
-        ), "Can only do stranded operation when PyRange contains strand info"
+        assert self.stranded, "Can only do stranded operation when PyRange contains strand info"
 
     results = []
 
@@ -413,9 +415,7 @@ def _extend(df, **kwargs):
     dtype = df.Start.dtype
     slack = kwargs["ext"]
 
-    assert isinstance(
-        slack, (int, dict)
-    ), "Extend parameter must be integer or dict, is {}".format(type(slack))
+    assert isinstance(slack, (int, dict)), "Extend parameter must be integer or dict, is {}".format(type(slack))
 
     if isinstance(slack, int):
         df.loc[:, "Start"] = df.Start - slack
@@ -423,7 +423,6 @@ def _extend(df, **kwargs):
         df.End = df.End + slack
     else:
         strand = df.Strand.iloc[0]
-        slack_dict = slack
         five_end_slack = slack.get("5")
         three_end_slack = slack.get("3")
 
@@ -439,9 +438,7 @@ def _extend(df, **kwargs):
 
     df = df.astype({"Start": dtype, "End": dtype})
 
-    assert (
-        df.Start < df.End
-    ).all(), "Some intervals are negative or zero length after applying extend!"
+    assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying extend!"
 
     return df
 
@@ -453,9 +450,7 @@ def _extend_grp(df, **kwargs):
     by = kwargs["group_by"]
     g = df.groupby(by)
 
-    assert isinstance(
-        slack, (int, dict)
-    ), "Extend parameter must be integer or dict, is {}".format(type(slack))
+    assert isinstance(slack, (int, dict)), "Extend parameter must be integer or dict, is {}".format(type(slack))
 
     minstarts_pos = g.Start.idxmin()
     maxends_pos = g.End.idxmax()
@@ -467,7 +462,6 @@ def _extend_grp(df, **kwargs):
 
     else:
         strand = df.Strand.iloc[0]
-        slack_dict = slack
         five_end_slack = slack.get("5")
         three_end_slack = slack.get("3")
 
@@ -483,9 +477,7 @@ def _extend_grp(df, **kwargs):
 
     df = df.astype({"Start": dtype, "End": dtype})
 
-    assert (
-        df.Start < df.End
-    ).all(), "Some intervals are negative or zero length after applying extend!"
+    assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying extend!"
 
     return df
 

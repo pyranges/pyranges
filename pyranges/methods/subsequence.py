@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 
 
@@ -33,17 +32,9 @@ def _subseq(scdf, **kwargs):
         agg_dict[b] = "first"
 
     if kwargs.get("by"):
-        j = (
-            scdf.groupby(by, dropna=False)[["Start", "End", "__i__"] + by]
-            .agg(agg_dict)
-            .set_index("__i__")
-        )
+        j = scdf.groupby(by, dropna=False)[["Start", "End", "__i__"] + by].agg(agg_dict).set_index("__i__")
     else:
-        j = (
-            scdf.groupby(by, dropna=False)[["Start", "End", "__i__"]]
-            .agg(agg_dict)
-            .set_index("__i__")
-        )
+        j = scdf.groupby(by, dropna=False)[["Start", "End", "__i__"]].agg(agg_dict).set_index("__i__")
         j.insert(0, "__i__", j.index)
         j.index.name = None
 
@@ -70,11 +61,7 @@ def _subseq(scdf, **kwargs):
         j.rename(columns={"starts": "__min__", "ends": "__max__"}, inplace=True)
 
     # I'm maintaing the original row order
-    scdf = (
-        scdf.merge(j[by + ["__min__", "__max__"]], on=by)
-        .set_index("__i__")
-        .loc[orig_order]
-    )
+    scdf = scdf.merge(j[by + ["__min__", "__max__"]], on=by).set_index("__i__").loc[orig_order]
 
     # instead of simply using starts and ends as computed above, we're dealing here with potential out of bounds:
     r = scdf[~((scdf.Start >= scdf.__max__) | (scdf.End <= scdf.__min__))].copy()

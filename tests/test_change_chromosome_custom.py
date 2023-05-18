@@ -1,16 +1,11 @@
 import pandas as pd
+
 import pyranges as pr
 
 
 def test_change_chromosomes():
-    df1 = pd.DataFrame(
-        {"Chromosome": ["chr1", "chr2"], "Start": [100, 200], "End": [150, 201]}
-    )
+    df1 = pd.DataFrame({"Chromosome": ["chr1", "chr2"], "Start": [100, 200], "End": [150, 201]})
     py1 = pr.PyRanges(df1)
-    df2 = pd.DataFrame(
-        {"Chromosome": ["1", "2"], "Start": [1000, 2000], "End": [1500, 20010]}
-    )
-    py2 = pr.PyRanges(df2)
 
     def modify_chrom_series(df):
         df.Chromosome = df.Chromosome.apply(lambda val: val.replace("chr", ""))

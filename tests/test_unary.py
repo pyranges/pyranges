@@ -1,28 +1,17 @@
-import pytest
-from natsort import natsorted
-
-from hypothesis import given, settings, HealthCheck  # , assume
-from hypothesis import reproduce_failure  # pylint: disable=unused-import
-
-import tempfile
 import subprocess  # nosec
+import tempfile
 from io import StringIO
 
 import numpy as np
-
 import pandas as pd
-
-from tests.helpers import assert_df_equal
-from tests.hypothesis_helper import (
-    dfs_min,
-    df_data,
-    selector,
-    dfs_min_with_id,
-    max_examples,
-    deadline,
-)
+import pytest
+from hypothesis import reproduce_failure  # noqa: F401
+from hypothesis import HealthCheck, given, settings
+from natsort import natsorted  # type: ignore
 
 import pyranges as pr
+from tests.helpers import assert_df_equal
+from tests.hypothesis_helper import deadline, df_data, dfs_min, dfs_min_with_id, max_examples, selector
 
 # if environ.get("TRAVIS"):
 #     max_examples = 100
@@ -55,9 +44,7 @@ def test_merge(gr, strand):
         print(cmd)
 
         # ignoring bandit security warning. All strings created by test suite
-        result = subprocess.check_output(  # nosec
-            cmd, shell=True, executable="/bin/bash"
-        ).decode()  # nosec
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()  # nosec  # nosec
 
         print("result" * 10)
         print(result)
@@ -125,9 +112,7 @@ def test_cluster(gr, strand):
         print(cmd)
 
         # ignoring bandit security warning. All strings created by test suite
-        result = subprocess.check_output(  # nosec
-            cmd, shell=True, executable="/bin/bash"
-        ).decode()  # nosec
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()  # nosec  # nosec
 
         bedtools_df = pd.read_csv(
             StringIO(result),
@@ -167,9 +152,7 @@ def test_cluster(gr, strand):
         result_df.Cluster.replace(cluster_ids, inplace=True)
 
         bedtools_df.Cluster = bedtools_df.Cluster.astype("int32")
-        assert_df_equal(
-            result_df.drop("Cluster", axis=1), bedtools_df.drop("Cluster", axis=1)
-        )
+        assert_df_equal(result_df.drop("Cluster", axis=1), bedtools_df.drop("Cluster", axis=1))
     else:
         assert bedtools_df.empty == result.df.empty
 
@@ -262,9 +245,7 @@ def test_windows(gr):
         print(cmd)
 
         # ignoring bandit security warning. All strings created by test suite
-        result = subprocess.check_output(  # nosec
-            cmd, shell=True, executable="/bin/bash"
-        ).decode()  # nosec
+        result = subprocess.check_output(cmd, shell=True, executable="/bin/bash").decode()  # nosec  # nosec
 
         bedtools_df = pd.read_csv(
             StringIO(result),

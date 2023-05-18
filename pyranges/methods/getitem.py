@@ -1,10 +1,9 @@
-import pandas as pd
 import numpy as np
-
-from pyranges.subset import get_string, get_tuple, get_slice, get_booldict
-from pyranges.methods.drop import _keep
+import pandas as pd
 
 from pyranges import PyRanges
+from pyranges.methods.drop import _keep
+from pyranges.subset import get_booldict, get_slice, get_string, get_tuple
 
 
 def _getitem(self, val):

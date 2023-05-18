@@ -15,10 +15,15 @@ def test_join_with_slack():
 
 
 def test_join_without_reordering():
-    f1 = pr.from_dict({'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [3, 8, 5],
-                       'End': [6, 9, 7], 'Name': ['interval1', 'interval3', 'interval2']})
-    f2 = pr.from_dict({'Chromosome': ['chr1', 'chr1'], 'Start': [1, 6],
-                       'End': [2, 7], 'Name': ['a', 'b']})
+    f1 = pr.from_dict(
+        {
+            "Chromosome": ["chr1", "chr1", "chr1"],
+            "Start": [3, 8, 5],
+            "End": [6, 9, 7],
+            "Name": ["interval1", "interval3", "interval2"],
+        }
+    )
+    f2 = pr.from_dict({"Chromosome": ["chr1", "chr1"], "Start": [1, 6], "End": [2, 7], "Name": ["a", "b"]})
 
     lj = f1.join(f2, how="left", preserve_order=True)
     assert_series_equal(lj.Name, f1.Name)

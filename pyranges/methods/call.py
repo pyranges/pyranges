@@ -1,4 +1,5 @@
 import pandas as pd
+
 import pyranges as pr
 
 
@@ -21,9 +22,7 @@ def _handle_eval_return(self, result, col, as_pyranges, subset):
                 self.__setattr__(col, result)
                 return self
             else:
-                raise Exception(
-                    "Cannot return PyRanges when function returns a Series! Use as_pyranges=False."
-                )
+                raise Exception("Cannot return PyRanges when function returns a Series! Use as_pyranges=False.")
         return pr.PyRanges(result)
     else:
         return result

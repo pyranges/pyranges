@@ -1,4 +1,4 @@
-from sorted_nearest import annotate_clusters, cluster_by
+from sorted_nearest import annotate_clusters, cluster_by  # type: ignore
 
 
 def _cluster(df, **kwargs):

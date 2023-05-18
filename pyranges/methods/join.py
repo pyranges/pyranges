@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
-from ncls import NCLS
+from ncls import NCLS  # type: ignore
 
 
 def _both_indexes(scdf, ocdf, how=False, **kwargs):
-    assert (
-        how in "containment first last outer right left".split() + [False, None]
-    ) or isinstance(how, int)
+    assert (how in "containment first last outer right left".split() + [False, None]) or isinstance(how, int)
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values
@@ -21,8 +19,6 @@ def _both_indexes(scdf, ocdf, how=False, **kwargs):
         _self_indexes, _other_indexes = it.first_overlap_both(starts, ends, indexes)
     elif how == "last":
         _self_indexes, _other_indexes = it.last_overlap_both(starts, ends, indexes)
-        six = scdf.index
-        oix = ocdf.index
     elif how in ["outer", "left", "right"]:
         _self_indexes, _other_indexes = it.all_overlaps_both(starts, ends, indexes)
 
@@ -153,8 +149,6 @@ def _write_both(scdf, ocdf, **kwargs):
     df = scdf.join(ocdf, rsuffix=suffix)
 
     if kwargs.get("report_overlap"):
-        df["Overlap"] = df[["End", "End" + suffix]].min(axis=1) - df[
-            ["Start", "Start" + suffix]
-        ].max(axis=1)
+        df["Overlap"] = df[["End", "End" + suffix]].min(axis=1) - df[["Start", "Start" + suffix]].max(axis=1)
 
     return df

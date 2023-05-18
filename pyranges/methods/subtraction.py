@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
-
-from ncls import NCLS
+from ncls import NCLS  # type: ignore
 
 
 def add_rows_per_group(df):

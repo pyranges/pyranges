@@ -1,5 +1,5 @@
-from ncls import NCLS
 import pandas as pd
+from ncls import NCLS  # type: ignore
 
 
 def create_ncls(df):

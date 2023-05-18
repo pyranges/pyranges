@@ -1,24 +1,21 @@
 """Data structure for genomic intervals and their annotation."""
 
-import pandas as pd
 import numpy as np
-
-from natsort import natsorted
+import pandas as pd
+from natsort import natsorted  # type: ignore
 
 import pyranges as pr
-
-from pyranges.tostring2 import tostring
-
 from pyranges.methods.intersection import _intersection, _overlap
 from pyranges.multithreaded import (
-    pyrange_apply,
-    pyrange_apply_single,
-    pyrange_apply_chunks,
     _extend,
     _extend_grp,
     _tes,
     _tss,
+    pyrange_apply,
+    pyrange_apply_chunks,
+    pyrange_apply_single,
 )
+from pyranges.tostring2 import tostring
 
 __all__ = ["PyRanges"]
 
@@ -229,9 +226,7 @@ class PyRanges:
         func, call, gr = args
 
         columns = list(gr.columns)
-        non_index = [
-            c for c in columns if c not in ["Chromosome", "Start", "End", "Strand"]
-        ]
+        non_index = [c for c in columns if c not in ["Chromosome", "Start", "End", "Strand"]]
 
         for chromosome, df in gr:
             subset = df.head(1)[non_index].select_dtypes(include=np.number).columns
@@ -897,9 +892,7 @@ class PyRanges:
 
         first_result = next(iter(result.values()))
 
-        assert isinstance(
-            first_result, pd.Series
-        ), "result of assign function must be Series, but is {}".format(
+        assert isinstance(first_result, pd.Series), "result of assign function must be Series, but is {}".format(
             type(first_result)
         )
 
@@ -1234,9 +1227,7 @@ class PyRanges:
             new_dfs[k] = v
 
         if not strand and _stranded:
-            new_dfs = {
-                k: d.rename(columns={"Strand2": "Strand"}) for k, d in new_dfs.items()
-            }
+            new_dfs = {k: d.rename(columns={"Strand2": "Strand"}) for k, d in new_dfs.items()}
 
         self = PyRanges(new_dfs)
 
@@ -1817,9 +1808,7 @@ class PyRanges:
         """
 
         if isinstance(ext, dict):
-            assert (
-                self.stranded
-            ), "PyRanges must be stranded to add 5/3-end specific extend."
+            assert self.stranded, "PyRanges must be stranded to add 5/3-end specific extend."
 
         kwargs = fill_kwargs({"ext": ext, "strand": self.stranded})
 
@@ -2069,9 +2058,7 @@ class PyRanges:
         from pyranges.methods.attr import _setattr
 
         if isinstance(other, (pd.Series, pd.DataFrame)):
-            assert len(other) == len(
-                self
-            ), "Pandas Series or DataFrame must be same length as PyRanges!"
+            assert len(other) == len(self), "Pandas Series or DataFrame must be same length as PyRanges!"
 
             if isinstance(other, pd.Series):
                 if not other.name:
@@ -2463,9 +2450,7 @@ class PyRanges:
                     file=sys.stderr,
                 )
             elif apply_strand_suffix:
-                gr.columns = gr.columns.str.replace(
-                    "Strand", "Strand" + kwargs["suffix"]
-                )
+                gr.columns = gr.columns.str.replace("Strand", "Strand" + kwargs["suffix"])
 
         return gr
 
@@ -2721,8 +2706,9 @@ class PyRanges:
         For printing, the PyRanges was sorted on Chromosome.
         """
 
-        from pyranges.methods.k_nearest import _nearest
-        from sorted_nearest import get_all_ties, get_different_ties
+        from sorted_nearest import get_all_ties, get_different_ties  # type: ignore
+
+        from pyranges.methods.k_nearest import _nearest  # type: ignore
 
         kwargs = {
             "strandedness": strandedness,
@@ -2740,10 +2726,8 @@ class PyRanges:
 
         self = self.copy()
 
-        try:  # if k is a Series
+        if isinstance(k, pd.Series):
             k = k.values
-        except:
-            pass
 
         # how many to nearest to find; might be different for each
         self.__k__ = k
@@ -2758,9 +2742,7 @@ class PyRanges:
         else:
             from collections import defaultdict
 
-            overlap_how = defaultdict(lambda: None, {"first": "first", "last": "last"})[
-                kwargs.get("ties")
-            ]
+            overlap_how = defaultdict(lambda: None, {"first": "first", "last": "last"})[kwargs.get("ties")]
             overlaps = self.join(
                 other,
                 strandedness=strandedness,
@@ -2851,9 +2833,7 @@ class PyRanges:
                     file=sys.stderr,
                 )
             elif apply_strand_suffix:
-                result.columns = result.columns.str.replace(
-                    "Strand", "Strand" + kwargs["suffix"]
-                )
+                result.columns = result.columns.str.replace("Strand", "Strand" + kwargs["suffix"])
 
         return result
 
@@ -3199,9 +3179,7 @@ class PyRanges:
 
         PyRanges.print : print PyRanges."""
 
-        print(
-            tostring(self, n=n, merge_position=True, sort=True, formatting=formatting)
-        )
+        print(tostring(self, n=n, merge_position=True, sort=True, formatting=formatting))
 
     def mspc(self, n=30, formatting=None):
         """Sort on location, merge location, print and return self.
@@ -3211,9 +3189,7 @@ class PyRanges:
 
         PyRanges.print : print PyRanges."""
 
-        print(
-            tostring(self, n=n, merge_position=True, sort=True, formatting=formatting)
-        )
+        print(tostring(self, n=n, merge_position=True, sort=True, formatting=formatting))
 
         return self
 
@@ -3348,9 +3324,7 @@ class PyRanges:
         }
         kwargs = fill_kwargs(kwargs)
         if kwargs.get("how") in "upstream downstream".split():
-            assert (
-                other.stranded
-            ), "If doing upstream or downstream nearest, other pyranges must be stranded"
+            assert other.stranded, "If doing upstream or downstream nearest, other pyranges must be stranded"
 
         dfs = pyrange_apply(_nearest, self, other, **kwargs)
         gr = PyRanges(dfs)
@@ -3364,9 +3338,7 @@ class PyRanges:
                     file=sys.stderr,
                 )
             elif apply_strand_suffix:
-                gr.columns = gr.columns.str.replace(
-                    "Strand", "Strand" + kwargs["suffix"]
-                )
+                gr.columns = gr.columns.str.replace("Strand", "Strand" + kwargs["suffix"])
 
         return gr
 
@@ -3671,9 +3643,7 @@ class PyRanges:
 
         return self
 
-    def print(
-        self, n=8, merge_position=False, sort=False, formatting=None, chain=False
-    ):
+    def print(self, n=8, merge_position=False, sort=False, formatting=None, chain=False):
         """Print the PyRanges.
 
         Parameters
@@ -3825,9 +3795,7 @@ class PyRanges:
         For printing, the PyRanges was sorted on Chromosome.
         """
 
-        s = tostring(
-            self, n=n, merge_position=merge_position, sort=sort, formatting=formatting
-        )
+        s = tostring(self, n=n, merge_position=merge_position, sort=sort, formatting=formatting)
 
         print(s)
 
@@ -3898,9 +3866,7 @@ class PyRanges:
         subsetter[sample] = True
         return self[subsetter]
 
-    def set_intersect(
-        self, other, strandedness=None, how=None, new_pos=False, nb_cpu=1
-    ):
+    def set_intersect(self, other, strandedness=None, how=None, new_pos=False, nb_cpu=1):
         """Return set-theoretical intersection.
 
         Like intersect, but both PyRanges are merged first.
@@ -4213,8 +4179,7 @@ class PyRanges:
         kwargs["sparse"] = {"self": False}
         if by:
             assert "5" not in by or (
-                ((type(by) is str and by == "5") or (type(by) is not str and "5" in by))
-                and self.stranded
+                ((type(by) is str and by == "5") or (type(by) is not str and "5" in by)) and self.stranded
             ), "Only stranded PyRanges can be sorted by 5'! "
             kwargs["by"] = by
 
@@ -4373,9 +4338,7 @@ class PyRanges:
         from pyranges.methods.spliced_subsequence import _spliced_subseq
 
         if strand and not self.stranded:
-            raise Exception(
-                "spliced_subsequence: you can use strand=True only for stranded PyRanges!"
-            )
+            raise Exception("spliced_subsequence: you can use strand=True only for stranded PyRanges!")
 
         if strand is None:
             strand = True if self.stranded else False
@@ -4701,9 +4664,7 @@ class PyRanges:
 
         first_result = next(iter(result.values()))
 
-        assert (
-            first_result.dtype == bool
-        ), "result of subset function must be bool, but is {}".format(
+        assert first_result.dtype == bool, "result of subset function must be bool, but is {}".format(
             first_result.dtype
         )
 
@@ -4913,9 +4874,7 @@ class PyRanges:
         strand = True if strandedness else False
         other_clusters = other.merge(strand=strand)
 
-        self = self.count_overlaps(
-            other_clusters, strandedness=strandedness, overlap_col="__num__"
-        )
+        self = self.count_overlaps(other_clusters, strandedness=strandedness, overlap_col="__num__")
 
         result = pyrange_apply(_subtraction, self, other_clusters, **kwargs)
 
@@ -5547,9 +5506,7 @@ class PyRanges:
         if chromosome_sizes is None:
             chromosome_sizes = pr.data.chromsizes()
 
-        result = _to_bigwig(
-            self, path, chromosome_sizes, rpm, divide, value_col, dryrun
-        )
+        result = _to_bigwig(self, path, chromosome_sizes, rpm, divide, value_col, dryrun)
 
         if dryrun:
             return result

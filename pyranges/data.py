@@ -21,10 +21,10 @@ Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 For printing, the PyRanges was sorted on Chromosome and Strand.
 """
 
+import pandas as pd
 import pkg_resources
 
 import pyranges as pr
-import pandas as pd
 
 __all__ = [
     "f1",
@@ -44,14 +44,11 @@ __all__ = [
 
 
 def get_example_path(basename):
-    full_path = pkg_resources.resource_filename(
-        "pyranges", "example_data/{}".format(basename)
-    )
+    full_path = pkg_resources.resource_filename("pyranges", "example_data/{}".format(basename))
 
     if full_path.endswith(".bam"):
-        _hack_to_load_idx = pkg_resources.resource_filename(
-            "pyranges", "example_data/{}.bai".format(basename)
-        )
+        # hack to load index too
+        pkg_resources.resource_filename("pyranges", "example_data/{}.bai".format(basename))
 
     return full_path
 
@@ -234,9 +231,7 @@ def cpg():
 
     full_path = get_example_path("cpg.bed")
 
-    df = pd.read_csv(
-        full_path, sep="\t", header=None, names="Chromosome Start End CpG".split()
-    )
+    df = pd.read_csv(full_path, sep="\t", header=None, names="Chromosome Start End CpG".split())
 
     return pr.PyRanges(df)
 

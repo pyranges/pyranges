@@ -1,18 +1,6 @@
-import numpy as np
+import numpy as np  # NOQA: E402
 import pandas as pd
-
-from time import time
-
-from sorted_nearest import (
-    k_nearest_previous_nonoverlapping,
-    k_nearest_next_nonoverlapping,
-    get_all_ties,
-)
-
-try:
-    dummy = profile
-except NameError:
-    profile = lambda x: x
+from sorted_nearest import k_nearest_next_nonoverlapping, k_nearest_previous_nonoverlapping  # type: ignore
 
 
 def nearest_previous_idx(d1, d2, k, ties=None):
@@ -30,9 +18,7 @@ def nearest_previous_idx(d1, d2, k, ties=None):
 
     d1s = d1s.iloc[valid]
 
-    lidx, ridx_pos, dist = k_nearest_previous_nonoverlapping(
-        d1s.values, d2e.values, d1s.index.values, ix, k, ties
-    )
+    lidx, ridx_pos, dist = k_nearest_previous_nonoverlapping(d1s.values, d2e.values, d1s.index.values, ix, k, ties)
 
     dist += 1
 
@@ -58,9 +44,7 @@ def nearest_next_idx(d1, d2, k, ties=None):
 
     d1e = d1e.iloc[valid]
 
-    lidx, ridx_pos, dist = k_nearest_next_nonoverlapping(
-        d1e.values, d2s.values, d1e.index.values, ix, k, ties
-    )
+    lidx, ridx_pos, dist = k_nearest_next_nonoverlapping(d1e.values, d2s.values, d1e.index.values, ix, k, ties)
 
     dist += 1
 
@@ -182,38 +166,3 @@ def _nearest(d1, d2, **kwargs):
     df = __nearest(d1, d2, **kwargs)
 
     return df
-
-
-if __name__ == "__main__":
-    import pyranges as pr
-    import numpy as np
-
-    np.random.seed(0)
-    chrM = pr.data.chromsizes()
-    # chrM = chrM[chrM.Chromosome == "chrM"]
-    size = int(1e5)
-    print(np.log10(size))
-    half_size = int(size / 2)
-    strand = True
-
-    gr = pr.random(size, chromsizes=chrM, strand=strand).sort()
-    gr2 = pr.random(size, chromsizes=chrM, strand=strand).sort()
-    gr.ID = np.arange(len(gr))
-    gr2.ID = np.arange(len(gr2))
-
-    from time import time
-
-    start = time()
-    ks = np.array([1, 2] * half_size, dtype=int)
-    result = gr.k_nearest(gr2, k=ks, strandedness=None, overlap=True, ties="different")
-    end = time()
-
-    print(end - start)
-
-    gr.msp()
-    gr2.msp()
-
-    result.msp()
-    vc = result.ID.value_counts()
-    # print(vc[vc > 2])
-    # print(result[result.ID.isin(vc[vc > 2].index)])

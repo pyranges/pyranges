@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from sorted_nearest import max_disjoint
+from sorted_nearest import max_disjoint  # type: ignore
 
 
 def _max_disjoint(df, **kwargs):

@@ -1,9 +1,8 @@
-import numpy as np
-
-import pandas as pd
 import csv
 
-from natsort import natsorted
+import numpy as np
+import pandas as pd
+from natsort import natsorted  # type: ignore
 
 _gtf_columns = {
     "seqname": "Chromosome",
@@ -131,14 +130,7 @@ def _to_gtf(self, path=None, compression="infer", map_cols=None):
             )
             mode = "a"
     else:
-        return "".join(
-            [
-                outdf.to_csv(
-                    index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE
-                )
-                for outdf in outdfs
-            ]
-        )
+        return "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for outdf in outdfs])
 
 
 def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
@@ -161,9 +153,7 @@ def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
     else:
         return "".join(
             [
-                outdf.to_csv(
-                    index=False, header=header, sep=sep, quoting=csv.QUOTE_NONE
-                )
+                outdf.to_csv(index=False, header=header, sep=sep, quoting=csv.QUOTE_NONE)
                 for _, outdf in sorted(gr.dfs.items())
             ]
         )
@@ -190,22 +180,13 @@ def _to_bed(self, path=None, sep="\t", keep=True, compression="infer"):
             mode = "a"
 
     else:
-        res = "".join(
-            [
-                outdf.to_csv(
-                    index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE
-                )
-                for outdf in outdfs
-            ]
-        )
+        res = "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for outdf in outdfs])
         return res
 
 
-def _to_bigwig(
-    self, path, chromosome_sizes, rpm=True, divide=False, value_col=None, dryrun=False
-):
+def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=None, dryrun=False):
     try:
-        import pyBigWig
+        import pyBigWig  # type: ignore
     except ModuleNotFoundError:
         print(
             "pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it."
@@ -281,12 +262,7 @@ def _to_gff3(self, path=None, compression="infer", map_cols=None):
             mode = "a"
     else:
         return "".join(
-            [
-                outdf.to_csv(
-                    index=False, header=False, sep="\t", quoting=csv.QUOTE_MINIMAL
-                )
-                for outdf in outdfs
-            ]
+            [outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_MINIMAL) for outdf in outdfs]
         )
 
 
@@ -322,9 +298,7 @@ def _gff3(df, mapping):
             rest_df.loc[~isnull, c] = new_val
             rest_df.loc[isnull, c] = ""
 
-        attribute = rest_df.apply(
-            lambda r: "".join([v for v in r if v]), axis=1
-        ).str.replace(";$", "", regex=True)
+        attribute = rest_df.apply(lambda r: "".join([v for v in r if v]), axis=1).str.replace(";$", "", regex=True)
     outdf.insert(outdf.shape[1], "attribute", attribute)
 
     return outdf

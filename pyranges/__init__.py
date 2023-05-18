@@ -1,34 +1,29 @@
 from __future__ import print_function
 
 import sys
-
 from collections import defaultdict
 
-try:
-    import mkl
-
-    mkl.set_num_threads(1)
-except ImportError:
-    pass
-
-import pandas as pd
 import numpy as np
+import pandas as pd
+from natsort import natsorted  # type: ignore
 
 import pyranges as pr
-
-
-from pyranges.pyranges_main import PyRanges
-from pyranges import data
+import pyranges.genomicfeatures as gf  # NOQA: F401
+from pyranges import data, statistics
+from pyranges.get_fasta import get_fasta, get_sequence, get_transcript_sequence
 from pyranges.methods.concat import concat
-
-from pyranges.version import __version__
-
-from natsort import natsorted
+from pyranges.multioverlap import count_overlaps
+from pyranges.pyranges_main import PyRanges
+from pyranges.readers import read_bam, read_bed, read_bigwig, read_gff3, read_gtf  # NOQA: F401
+from pyranges.version import __version__  # NOQA: F401
 
 get_example_path = data.get_example_path
+stats = statistics
+get_fasta = get_fasta
+get_sequence = get_sequence
+get_transcript_sequence = get_transcript_sequence
 
-
-from pyranges.multioverlap import count_overlaps
+read_gff = read_gtf
 
 
 def from_dict(d, int64=False):
@@ -124,15 +119,6 @@ def from_string(s, int64=False):
     df = pd.read_csv(StringIO(s), sep=r"\s+", index_col=None)
 
     return PyRanges(df, int64=int64)
-
-
-from pyranges.get_fasta import get_fasta, get_sequence, get_transcript_sequence
-
-get_fasta = get_fasta
-get_sequence = get_sequence
-get_transcript_sequence = get_transcript_sequence
-
-import pyranges.genomicfeatures as gf
 
 
 def itergrs(prs, strand=None, keys=False):
@@ -319,19 +305,13 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
         chromsizes = data.chromsizes()
         df = chromsizes.df
     elif isinstance(chromsizes, dict):
-        df = pd.DataFrame(
-            {"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())}
-        )
+        df = pd.DataFrame({"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())})
     else:
         df = chromsizes.df
 
     p = df.End / df.End.sum()
 
-    n_per_chrom = (
-        pd.Series(np.random.choice(df.index, size=n, p=p))
-        .value_counts(sort=False)
-        .to_frame()
-    )
+    n_per_chrom = pd.Series(np.random.choice(df.index, size=n, p=p)).value_counts(sort=False).to_frame()
     n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
     n_per_chrom.columns = "Count Chromosome".split()
 
@@ -349,15 +329,6 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
     return PyRanges(random_df, int64=int64)
 
 
-from pyranges.readers import read_bam, read_bed, read_bigwig, read_gff3
-from pyranges.readers import read_gtf
-
-read_gff = read_gtf
-
-
-from pyranges import statistics
-
-stats = statistics
 """Namespace for statistcal functions.
 
 See Also
@@ -515,7 +486,7 @@ def to_bigwig(gr, path, chromosome_sizes):
     """
 
     try:
-        import pyBigWig
+        import pyBigWig  # type: ignore
     except ModuleNotFoundError:
         print(
             "pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it."

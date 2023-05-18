@@ -1,7 +1,3 @@
-import pandas as pd
-import numpy as np
-
-
 def _spliced_subseq(scdf, **kwargs):
     if scdf.empty:
         return None
@@ -38,26 +34,16 @@ def _spliced_subseq(scdf, **kwargs):
 
     if start < 0 or (end is not None and end < 0):
         # len_per_transc is total sum of exon length per transcript
-        len_per_transc = scdf.loc[g.__i__.last(), by + ["__cumsum__"]].rename(
-            columns={"__cumsum__": "__totexonlen__"}
-        )
+        len_per_transc = scdf.loc[g.__i__.last(), by + ["__cumsum__"]].rename(columns={"__cumsum__": "__totexonlen__"})
 
         # exp_len_per_transc has same rows of scdf with total sum of exon length
         # had to add bits to keep the order of rows right, or merge would destroy it
         if kwargs.get("by"):
             exp_len_per_transc = (
-                scdf.loc[:, by + ["__i__"]]
-                .merge(len_per_transc, on=by)
-                .set_index("__i__")
-                .loc[scdf.index]
+                scdf.loc[:, by + ["__i__"]].merge(len_per_transc, on=by).set_index("__i__").loc[scdf.index]
             )
         else:
-            exp_len_per_transc = (
-                scdf.loc[:, by]
-                .merge(len_per_transc, on=by)
-                .set_index("__i__")
-                .loc[scdf.index]
-            )
+            exp_len_per_transc = scdf.loc[:, by].merge(len_per_transc, on=by).set_index("__i__").loc[scdf.index]
 
         if start < 0:
             start = exp_len_per_transc["__totexonlen__"] + start
@@ -70,33 +56,25 @@ def _spliced_subseq(scdf, **kwargs):
 
     cs_end = scdf["__cumsum__"]
 
-    ## NOTE
-    #  here below, start is a scalar if originally provided > 0, or a Series if < 0
-    #              end is a scalar if originally None or provided >0, or a Series if provided < 0
+    # NOTE
+    # here below, start is a scalar if originally provided > 0, or a Series if < 0
+    #             end is a scalar if originally None or provided >0, or a Series if provided < 0
     if strand == "-":  # and use_strand:
         start_adjustments = start - cs_start
         adjust_start = start_adjustments > 0
-        scdf.loc[adjust_start, "End"] -= start_adjustments[adjust_start].astype(
-            scdf.End.dtype
-        )
+        scdf.loc[adjust_start, "End"] -= start_adjustments[adjust_start].astype(scdf.End.dtype)
 
         end_adjustments = cs_end - end
         adjust_end = end_adjustments > 0
-        scdf.loc[adjust_end, "Start"] += end_adjustments[adjust_end].astype(
-            scdf.Start.dtype
-        )
+        scdf.loc[adjust_end, "Start"] += end_adjustments[adjust_end].astype(scdf.Start.dtype)
     else:
         start_adjustments = start - cs_start
         adjust_start = start_adjustments > 0
-        scdf.loc[adjust_start, "Start"] += start_adjustments[adjust_start].astype(
-            scdf.Start.dtype
-        )
+        scdf.loc[adjust_start, "Start"] += start_adjustments[adjust_start].astype(scdf.Start.dtype)
 
         end_adjustments = cs_end - end
         adjust_end = end_adjustments > 0
-        scdf.loc[adjust_end, "End"] -= end_adjustments[adjust_end].astype(
-            scdf.End.dtype
-        )
+        scdf.loc[adjust_end, "End"] -= end_adjustments[adjust_end].astype(scdf.End.dtype)
 
     scdf = scdf.loc[orig_order]
     scdf = scdf[(scdf.Start < scdf.End)]

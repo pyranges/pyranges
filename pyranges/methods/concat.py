@@ -1,7 +1,8 @@
-import pyranges as pr
+from collections import defaultdict
+
 import pandas as pd
 
-from collections import defaultdict
+import pyranges as pr
 
 
 def concat(pyranges, strand=None):
@@ -17,9 +18,7 @@ def concat(pyranges, strand=None):
         strand = all(strand_info)
 
     if strand:
-        assert all(
-            [gr.stranded for gr in pyranges]
-        ), "Cannot do stranded concat, not all pyranges contain strand info."
+        assert all([gr.stranded for gr in pyranges]), "Cannot do stranded concat, not all pyranges contain strand info."
 
         for gr in pyranges:
             for k, df in gr.dfs.items():

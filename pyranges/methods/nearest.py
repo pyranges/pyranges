@@ -1,14 +1,9 @@
 import pandas as pd
+from sorted_nearest import nearest_nonoverlapping  # type: ignore
+from sorted_nearest import nearest_next_nonoverlapping, nearest_previous_nonoverlapping
 
-
-from .join import _both_dfs
-from .sort import sort_one_by_one
-
-from sorted_nearest import (
-    nearest_previous_nonoverlapping,
-    nearest_next_nonoverlapping,
-    nearest_nonoverlapping,
-)
+from pyranges.methods.join import _both_dfs
+from pyranges.methods.sort import sort_one_by_one
 
 
 def _insert_distance(ocdf, dist, suffix):
@@ -61,9 +56,7 @@ def _overlapping_for_nearest(scdf, ocdf, suffix):
 def _next_nonoverlapping(left_ends, right_starts, right_indexes):
     left_ends = left_ends.sort_values()
     right_starts = right_starts.sort_values()
-    r_idx, dist = nearest_next_nonoverlapping(
-        left_ends.values - 1, right_starts.values, right_indexes
-    )
+    r_idx, dist = nearest_next_nonoverlapping(left_ends.values - 1, right_starts.values, right_indexes)
     r_idx = pd.Series(r_idx, index=left_ends.index).sort_index().values
     dist = pd.Series(dist, index=left_ends.index).sort_index().values
 
@@ -73,9 +66,7 @@ def _next_nonoverlapping(left_ends, right_starts, right_indexes):
 def _previous_nonoverlapping(left_starts, right_ends):
     left_starts = left_starts.sort_values()
     right_ends = right_ends.sort_values()
-    r_idx, dist = nearest_previous_nonoverlapping(
-        left_starts.values, right_ends.values - 1, right_ends.index.values
-    )
+    r_idx, dist = nearest_previous_nonoverlapping(left_starts.values, right_ends.values - 1, right_ends.index.values)
 
     r_idx = pd.Series(r_idx, index=left_starts.index).sort_index().values
     dist = pd.Series(dist, index=left_starts.index).sort_index().values
@@ -111,25 +102,15 @@ def _nearest(scdf, ocdf, **kwargs):
         df_to_find_nearest_in.index = pd.Index(range(len(df_to_find_nearest_in)))
 
         if how == "next":
-            r_idx, dist = _next_nonoverlapping(
-                df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values
-            )
+            r_idx, dist = _next_nonoverlapping(df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values)
         elif how == "previous":
-            r_idx, dist = _previous_nonoverlapping(
-                df_to_find_nearest_in.Start, ocdf.End
-            )
+            r_idx, dist = _previous_nonoverlapping(df_to_find_nearest_in.Start, ocdf.End)
         else:
-            previous_r_idx, previous_dist = _previous_nonoverlapping(
-                df_to_find_nearest_in.Start, ocdf.End
-            )
+            previous_r_idx, previous_dist = _previous_nonoverlapping(df_to_find_nearest_in.Start, ocdf.End)
 
-            next_r_idx, next_dist = _next_nonoverlapping(
-                df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values
-            )
+            next_r_idx, next_dist = _next_nonoverlapping(df_to_find_nearest_in.End, ocdf.Start, ocdf.index.values)
 
-            r_idx, dist = nearest_nonoverlapping(
-                previous_r_idx, previous_dist, next_r_idx, next_dist
-            )
+            r_idx, dist = nearest_nonoverlapping(previous_r_idx, previous_dist, next_r_idx, next_dist)
 
         ocdf = ocdf.reindex(r_idx)
 

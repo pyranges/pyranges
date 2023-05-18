@@ -1,7 +1,6 @@
 import numpy as np
-import pytest
-
 import pandas as pd
+import pytest
 
 from pyranges import PyRanges
 
@@ -12,9 +11,7 @@ def pytest_configure(config):
         "bedtools: tests rely on",
     )
 
-    config.addinivalue_line(
-        "markers", "explore: functionality not ready for prime-time"
-    )
+    config.addinivalue_line("markers", "explore: functionality not ready for prime-time")
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -94,7 +91,7 @@ chr19                     59128983
 chr22                     51304566
 chr21                     48129895"""
         ),
-        sep="\s+",
+        sep=r"\s+",
         header=None,
         index_col=0,
     )
