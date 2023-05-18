@@ -70,9 +70,6 @@ class PyRanges:
     strands : array-like or scalar value, default None
         The strands in the PyRanges.
 
-    int64 : bool, default False
-        Use np.int64 to represent starts and ends
-
     copy_df : bool, default True
         Copy input pandas.DataFrame
 
@@ -99,7 +96,7 @@ class PyRanges:
     Empty PyRanges
 
     >>> pr.PyRanges(chromosomes="chr1", starts=(1, 5), ends=[3, 149],
-    ...             strands=("+", "-"), int64=True)
+    ...             strands=("+", "-"))
     +--------------+-----------+-----------+--------------+
     | Chromosome   |     Start |       End | Strand       |
     | (category)   |   (int64) |   (int64) | (category)   |
@@ -119,7 +116,7 @@ class PyRanges:
     >>> pr.PyRanges(df)
     +--------------+-----------+-----------+
     | Chromosome   |     Start |       End |
-    | (category)   |   (int32) |   (int32) |
+    | (category)   |   (int64) |   (int64) |
     |--------------+-----------+-----------|
     | chr1         |       100 |       150 |
     | chr2         |       200 |       201 |
@@ -133,7 +130,7 @@ class PyRanges:
     >>> gr
     +--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------+
     |   Chromosome | Strand       |     Start |       End |        TP |        FP |        TN |        FN |
-    |   (category) | (category)   |   (int32) |   (int32) |   (int64) |   (int64) |   (int64) |   (int64) |
+    |   (category) | (category)   |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |
     |--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------|
     |            1 | +            |         1 |         2 |         0 |        12 |        10 |         2 |
     |            1 | -            |         4 |        27 |         1 |        11 |         9 |         3 |
@@ -178,7 +175,7 @@ class PyRanges:
         if df is None and chromosomes is None:
             df = pd.DataFrame(columns="Chromosome Start End".split())
 
-        _init(self, df, chromosomes, starts, ends, strands, int64, copy_df)
+        _init(self, df, chromosomes, starts, ends, strands, copy_df)
 
     def __array_ufunc__(self, *args, **kwargs):
         """Apply unary numpy-function.
@@ -201,7 +198,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+-----------+-----------+------------+
         |   Chromosome |     Start |       End |     Score |    Score2 | Name       |
-        |   (category) |   (int32) |   (int32) |   (int64) |   (int64) | (object)   |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+-----------+-----------+------------|
         |            1 |         1 |         2 |         9 |       121 | n1         |
         |            2 |         2 |         3 |        16 |       144 | n2         |
@@ -213,7 +210,7 @@ class PyRanges:
         >>> np.sqrt(gr)
         +--------------+-----------+-----------+-------------+-------------+------------+
         |   Chromosome |     Start |       End |       Score |      Score2 | Name       |
-        |   (category) |   (int32) |   (int32) |   (float64) |   (float64) | (object)   |
+        |   (category) |   (int64) |   (int64) |   (float64) |   (float64) | (object)   |
         |--------------+-----------+-----------+-------------+-------------+------------|
         |            1 |         1 |         2 |           3 |          11 | n1         |
         |            2 |         2 |         3 |           4 |          12 | n2         |
@@ -260,7 +257,7 @@ class PyRanges:
         0      0
         1    100
         2    250
-        Name: Start, dtype: int32
+        Name: Start, dtype: int64
         """
 
         from pyranges.methods.attr import _getattr
@@ -284,11 +281,11 @@ class PyRanges:
         -------
 
         >>> gr = pr.from_dict({"Chromosome": [1, 1, 1], "Start": [0, 100, 250], "End": [10, 125, 251]})
-        >>> gr.Start = np.array([1, 1, 2], dtype=np.int32)
+        >>> gr.Start = np.array([1, 1, 2], dtype=np.int64)
         >>> gr
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        |   (category) |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         |            1 |         1 |        10 |
         |            1 |         1 |       125 |
@@ -344,7 +341,7 @@ class PyRanges:
         >>> gr
         +--------------+------------+--------------+-----------+-----------+--------------+-----------------+
         | Chromosome   | Source     | Feature      | Start     | End       | Strand       | gene_id         |
-        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (category)   | (object)        |
+        | (category)   | (object)   | (category)   | (int64)   | (int64)   | (category)   | (object)        |
         |--------------+------------+--------------+-----------+-----------+--------------+-----------------|
         | 1            | havana     | gene         | 11868     | 14409     | +            | ENSG00000223972 |
         | 1            | havana     | transcript   | 11868     | 14409     | +            | ENSG00000223972 |
@@ -365,7 +362,7 @@ class PyRanges:
         >>> gr[s]
         +--------------+----------------+--------------+-----------+-----------+--------------+-----------------+
         | Chromosome   | Source         | Feature      | Start     | End       | Strand       | gene_id         |
-        | (category)   | (object)       | (category)   | (int32)   | (int32)   | (category)   | (object)        |
+        | (category)   | (object)       | (category)   | (int64)   | (int64)   | (category)   | (object)        |
         |--------------+----------------+--------------+-----------+-----------+--------------+-----------------|
         | 1            | havana         | gene         | 11868     | 14409     | +            | ENSG00000223972 |
         | 1            | havana         | transcript   | 11868     | 14409     | +            | ENSG00000223972 |
@@ -384,7 +381,7 @@ class PyRanges:
         >>> cs[10000:100000]
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr2         |     33241 |     33266 | U0         |         0 | +            |
         | chr2         |     13611 |     13636 | U0         |         0 | -            |
@@ -398,7 +395,7 @@ class PyRanges:
         >>> cs["chr1", "-"]
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 100079649 | 100079674 | U0         | 0         | -            |
         | chr1         | 223587418 | 223587443 | U0         | 0         | -            |
@@ -416,7 +413,7 @@ class PyRanges:
         >>> cs["chr5", "-", 90000:]
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr5         | 399682    | 399707    | U0         | 0         | -            |
         | chr5         | 1847502   | 1847527   | U0         | 0         | -            |
@@ -534,7 +531,7 @@ class PyRanges:
         >>> gr
         +--------------+--------------+-----------+-----------+
         |   Chromosome | Strand       |     Start |       End |
-        |   (category) | (category)   |   (int32) |   (int32) |
+        |   (category) | (category)   |   (int64) |   (int64) |
         |--------------+--------------+-----------+-----------|
         |            1 | +            |         1 |         2 |
         |            1 | +            |         4 |        27 |
@@ -556,7 +553,7 @@ class PyRanges:
         >>> gr.apply(add_to_ends, slack=500)
         +--------------+--------------+-----------+-----------+
         |   Chromosome | Strand       |     Start |       End |
-        |   (category) | (category)   |   (int32) |   (int32) |
+        |   (category) | (category)   |   (int64) |   (int64) |
         |--------------+--------------+-----------+-----------|
         |            1 | +            |         1 |       502 |
         |            1 | +            |         4 |       527 |
@@ -627,7 +624,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        |   (category) |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         |            1 |         2 |         9 |
         |            1 |         3 |         4 |
@@ -705,7 +702,7 @@ class PyRanges:
         >>> gr.apply_pair(gr2, pr.methods.intersection._intersection) # same as gr.intersect(gr2)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 226987603 | 226987617 | U0         |         0 | +            |
         | chr8         |  38747236 |  38747251 | U0         |         0 | -            |
@@ -718,7 +715,7 @@ class PyRanges:
         >>> f1
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         3 |         6 | interval1  |         0 | +            |
         | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -731,7 +728,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         1 |         2 | a          |         0 | +            |
         | chr1         |         6 |         7 | b          |         0 | -            |
@@ -778,7 +775,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+
         |   Chromosome |     Start |       End | Gene       |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        |   (category) |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         |            1 |         1 |         3 | A          |
         |            1 |         2 |         3 | B          |
@@ -845,7 +842,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+
         |   Chromosome |     Start |       End | Name       |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        |   (category) |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         |            1 |         1 |         3 | a          |
         |            1 |         2 |         5 | b          |
@@ -856,7 +853,7 @@ class PyRanges:
         >>> gr.assign("Blabla", lambda df: df.Chromosome.astype(str) + "_yadayada")
         +--------------+-----------+-----------+------------+------------+
         |   Chromosome |     Start |       End | Name       | Blabla     |
-        |   (category) |   (int32) |   (int32) | (object)   | (object)   |
+        |   (category) |   (int64) |   (int64) | (object)   | (object)   |
         |--------------+-----------+-----------+------------+------------|
         |            1 |         1 |         3 | a          | 1_yadayada |
         |            1 |         2 |         5 | b          | 1_yadayada |
@@ -871,7 +868,7 @@ class PyRanges:
         ... df.Name.str.capitalize(), sep="_")
         +--------------+-----------+-----------+------------+
         |   Chromosome |     Start |       End | Name       |
-        |   (category) |   (int32) |   (int32) | (object)   |
+        |   (category) |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         |            1 |         1 |         3 | 1_A        |
         |            1 |         2 |         5 | 2_B        |
@@ -934,7 +931,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+-----------------+------------+-----------+
         |   Chromosome |     Start |       End | transcript_id   | meta       |    length |
-        |   (category) |   (int32) |   (int32) | (object)        | (object)   |   (int32) |
+        |   (category) |   (int64) |   (int64) | (object)        | (object)   |   (int64) |
         |--------------+-----------+-----------+-----------------+------------+-----------|
         |            1 |         1 |        40 | tr1             | a          |        39 |
         |            1 |        60 |        68 | tr1             | b          |         8 |
@@ -946,7 +943,7 @@ class PyRanges:
         >>> gr.boundaries("transcript_id")
         +--------------+-----------+-----------+-----------------+
         |   Chromosome |     Start |       End | transcript_id   |
-        |   (category) |   (int32) |   (int32) | (object)        |
+        |   (category) |   (int64) |   (int64) | (object)        |
         |--------------+-----------+-----------+-----------------|
         |            1 |         1 |        68 | tr1             |
         |            1 |       110 |       130 | tr2             |
@@ -957,7 +954,7 @@ class PyRanges:
         >>> gr.boundaries("transcript_id", agg={"length":"sum", "meta": ",".join})
         +--------------+-----------+-----------+-----------------+------------+-----------+
         |   Chromosome |     Start |       End | transcript_id   | meta       |    length |
-        |   (category) |   (int32) |   (int32) | (object)        | (object)   |   (int32) |
+        |   (category) |   (int64) |   (int64) | (object)        | (object)   |   (int64) |
         |--------------+-----------+-----------+-----------------+------------+-----------|
         |            1 |         1 |        68 | tr1             | a,b        |        47 |
         |            1 |       110 |       130 | tr2             | c          |        20 |
@@ -1004,7 +1001,7 @@ class PyRanges:
         >>> p
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        10 | t1              |
         |            1 | +            |        31 |        45 | t1              |
@@ -1019,7 +1016,7 @@ class PyRanges:
         >>> p
         +--------------+--------------+-----------+-----------+-----------------+-----------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |     Frame |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |   (int32) |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |   (int64) |
         |--------------+--------------+-----------+-----------+-----------------+-----------|
         |            1 | +            |         1 |        10 | t1              |         0 |
         |            1 | +            |        31 |        45 | t1              |         9 |
@@ -1117,7 +1114,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+-----------+
         |   Chromosome |     Start |       End |      Gene |
-        |   (category) |   (int32) |   (int32) |   (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------|
         |            1 |         1 |         3 |         1 |
         |            1 |         2 |         3 |         2 |
@@ -1130,7 +1127,7 @@ class PyRanges:
         >>> gr.cluster()
         +--------------+-----------+-----------+-----------+-----------+
         |   Chromosome |     Start |       End |      Gene |   Cluster |
-        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------|
         |            1 |         1 |         3 |         1 |         1 |
         |            1 |         2 |         3 |         2 |         1 |
@@ -1143,7 +1140,7 @@ class PyRanges:
         >>> gr.cluster(by="Gene", count=True)
         +--------------+-----------+-----------+-----------+-----------+-----------+
         |   Chromosome |     Start |       End |      Gene |   Cluster |     Count |
-        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |   (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------+-----------|
         |            1 |         1 |         3 |         1 |         1 |         1 |
         |            1 |         2 |         3 |         2 |         2 |         1 |
@@ -1158,7 +1155,7 @@ class PyRanges:
         >>> gr.cluster(slack=-1)
         +--------------+-----------+-----------+-----------+-----------+
         |   Chromosome |     Start |       End |      Gene |   Cluster |
-        |   (category) |   (int32) |   (int32) |   (int64) |   (int32) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------|
         |            1 |         1 |         3 |         1 |         1 |
         |            1 |         2 |         3 |         2 |         1 |
@@ -1172,7 +1169,7 @@ class PyRanges:
         >>> gr2.cluster(by=["Feature", "Source"])
         +--------------+--------------+---------------+-----------+-----------+--------------+-----------+
         | Chromosome   | Feature      | Source        | Start     | End       | Strand       | Cluster   |
-        | (category)   | (category)   | (object)      | (int32)   | (int32)   | (category)   | (int32)   |
+        | (category)   | (category)   | (object)      | (int64)   | (int64)   | (category)   | (int64)   |
         |--------------+--------------+---------------+-----------+-----------+--------------+-----------|
         | 1            | CDS          | ensembl       | 69090     | 70005     | +            | 1         |
         | 1            | CDS          | ensembl       | 925941    | 926013    | +            | 2         |
@@ -1262,7 +1259,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         1 |         2 | a          |         0 | +            |
         | chr1         |         6 |         7 | b          |         0 | -            |
@@ -1277,7 +1274,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+------------+------------+--------------+
         | Chromosome   |     Start |       End | Name       |   NYANNYAN | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |    (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |    (int64) | (category)   |
         |--------------+-----------+-----------+------------+------------+--------------|
         | chr1         |         1 |         2 | a          |          0 | +            |
         | chr1         |         6 |         7 | b          |          0 | -            |
@@ -1343,7 +1340,7 @@ class PyRanges:
         >>> f1
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         6 | +            |
         | chr1         |         8 |         9 | +            |
@@ -1355,7 +1352,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         2 | +            |
         | chr1         |         6 |         7 | -            |
@@ -1366,7 +1363,7 @@ class PyRanges:
         >>> f1.count_overlaps(f2, overlap_col="Count")
         +--------------+-----------+-----------+--------------+-----------+
         | Chromosome   |     Start |       End | Strand       |     Count |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
         |--------------+-----------+-----------+--------------+-----------|
         | chr1         |         3 |         6 | +            |         0 |
         | chr1         |         8 |         9 | +            |         0 |
@@ -1444,7 +1441,7 @@ class PyRanges:
         >>> f1
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        |   (category) |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         |            1 |         3 |         6 |
         |            1 |         8 |         9 |
@@ -1457,7 +1454,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        |   (category) |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         |            1 |         1 |         2 |
         |            1 |         6 |         7 |
@@ -1468,7 +1465,7 @@ class PyRanges:
         >>> f1.coverage(f2, overlap_col="C", fraction_col="F")
         +--------------+-----------+-----------+-----------+-------------+
         |   Chromosome |     Start |       End |         C |           F |
-        |   (category) |   (int32) |   (int32) |   (int64) |   (float64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (float64) |
         |--------------+-----------+-----------+-----------+-------------|
         |            1 |         3 |         6 |         0 |         0   |
         |            1 |         8 |         9 |         0 |         0   |
@@ -1546,7 +1543,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+-----------+------------+
         |   Chromosome |     Start |       End | Strand       |     Count | Type       |
-        |   (category) |   (int32) |   (int32) | (category)   |   (int64) | (object)   |
+        |   (category) |   (int64) |   (int64) | (category)   |   (int64) | (object)   |
         |--------------+-----------+-----------+--------------+-----------+------------|
         |            1 |         1 |         5 | +            |         1 | exon       |
         |            1 |         4 |         6 | -            |         2 | exon       |
@@ -1557,7 +1554,7 @@ class PyRanges:
         >>> gr.drop()
         +--------------+-----------+-----------+--------------+
         |   Chromosome |     Start |       End | Strand       |
-        |   (category) |   (int32) |   (int32) | (category)   |
+        |   (category) |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         |            1 |         1 |         5 | +            |
         |            1 |         4 |         6 | -            |
@@ -1570,7 +1567,7 @@ class PyRanges:
         >>> gr.drop(like="Chromosome|Strand")
         +--------------+-----------+-----------+--------------+-----------+------------+
         |   Chromosome |     Start |       End | Strand       |     Count | Type       |
-        |   (category) |   (int32) |   (int32) | (category)   |   (int64) | (object)   |
+        |   (category) |   (int64) |   (int64) | (category)   |   (int64) | (object)   |
         |--------------+-----------+-----------+--------------+-----------+------------|
         |            1 |         1 |         5 | +            |         1 | exon       |
         |            1 |         4 |         6 | -            |         2 | exon       |
@@ -1581,7 +1578,7 @@ class PyRanges:
         >>> gr.drop(like="e$")
         +--------------+-----------+-----------+--------------+-----------+
         |   Chromosome |     Start |       End | Strand       |     Count |
-        |   (category) |   (int32) |   (int32) | (category)   |   (int64) |
+        |   (category) |   (int64) |   (int64) | (category)   |   (int64) |
         |--------------+-----------+-----------+--------------+-----------|
         |            1 |         1 |         5 | +            |         1 |
         |            1 |         4 |         6 | -            |         2 |
@@ -1618,7 +1615,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+------------+
         |   Chromosome |     Start |       End | Strand       | Name       |
-        |   (category) |   (int32) |   (int32) | (category)   | (object)   |
+        |   (category) |   (int64) |   (int64) | (category)   | (object)   |
         |--------------+-----------+-----------+--------------+------------|
         |            1 |         1 |         2 | +            | A          |
         |            1 |         1 |         2 | +            | Z          |
@@ -1630,7 +1627,7 @@ class PyRanges:
         >>> gr.drop_duplicate_positions()
         +--------------+-----------+-----------+--------------+------------+
         |   Chromosome |     Start |       End | Strand       | Name       |
-        |   (category) |   (int32) |   (int32) | (category)   | (object)   |
+        |   (category) |   (int64) |   (int64) | (category)   | (object)   |
         |--------------+-----------+-----------+--------------+------------|
         |            1 |         1 |         2 | +            | A          |
         |            1 |         1 |         2 | -            | B          |
@@ -1641,7 +1638,7 @@ class PyRanges:
         >>> gr.drop_duplicate_positions(keep="last")
         +--------------+-----------+-----------+--------------+------------+
         |   Chromosome |     Start |       End | Strand       | Name       |
-        |   (category) |   (int32) |   (int32) | (category)   | (object)   |
+        |   (category) |   (int64) |   (int64) | (category)   | (object)   |
         |--------------+-----------+-----------+--------------+------------|
         |            1 |         1 |         2 | +            | Z          |
         |            1 |         1 |         2 | -            | B          |
@@ -1654,7 +1651,7 @@ class PyRanges:
         >>> gr.drop_duplicate_positions(keep="last", strand=False)
         +--------------+-----------+-----------+--------------+------------+
         |   Chromosome |     Start |       End | Strand       | Name       |
-        |   (category) |   (int32) |   (int32) | (category)   | (object)   |
+        |   (category) |   (int64) |   (int64) | (category)   | (object)   |
         |--------------+-----------+-----------+--------------+------------|
         |            1 |         1 |         2 | -            | B          |
         +--------------+-----------+-----------+--------------+------------+
@@ -1688,7 +1685,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
         | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -1705,8 +1702,8 @@ class PyRanges:
 
         >>> gr.dtypes
         Chromosome    category
-        Start            int32
-        End              int32
+        Start            int64
+        End              int64
         Name            object
         Score            int64
         Strand        category
@@ -1756,7 +1753,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         6 | +            |
         | chr1         |         8 |         9 | +            |
@@ -1768,7 +1765,7 @@ class PyRanges:
         >>> gr.extend(4)
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         0 |        10 | +            |
         | chr1         |         4 |        13 | +            |
@@ -1780,7 +1777,7 @@ class PyRanges:
         >>> gr.extend({"3": 1})
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         7 | +            |
         | chr1         |         8 |        10 | +            |
@@ -1792,7 +1789,7 @@ class PyRanges:
         >>> gr.extend({"3": 1, "5": 2})
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         7 | +            |
         | chr1         |         6 |        10 | +            |
@@ -1867,7 +1864,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         9 | +            |
         | chr1         |         5 |         7 | -            |
@@ -1878,7 +1875,7 @@ class PyRanges:
         >>> gr.five_end()
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         4 | +            |
         | chr1         |         6 |         7 | -            |
@@ -1920,7 +1917,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
         | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -1938,7 +1935,7 @@ class PyRanges:
         >>> gr.head(3)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 212609534 | 212609559 | U0         |         0 | +            |
         | chr1         | 169887529 | 169887554 | U0         |         0 | +            |
@@ -1980,7 +1977,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | E            |         1 |         8 |
         | E            |         2 |        13 |
@@ -1994,7 +1991,7 @@ class PyRanges:
         >>> gr.insert(s)
         +--------------+-----------+-----------+-----------+
         | Chromosome   |     Start |       End |    Column |
-        | (category)   |   (int32) |   (int32) |   (int64) |
+        | (category)   |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------|
         | E            |         1 |         8 |         1 |
         | E            |         2 |        13 |         3 |
@@ -2017,7 +2014,7 @@ class PyRanges:
         >>> gr.insert(df, 1)
         +--------------+-----------+-----------+-----------+-----------+
         | Chromosome   |        NY |        AN |     Start |       End |
-        | (category)   |   (int64) |   (int64) |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------|
         | E            |         1 |         1 |         1 |         8 |
         | E            |         3 |         3 |         2 |        13 |
@@ -2032,14 +2029,14 @@ class PyRanges:
         >>> arbitrary_result
         {'E': 1     9
         2    15
-        Name: Hi!, dtype: int32, 'L': 0    6
-        Name: Hi!, dtype: int32, 'T': 3    24
-        Name: Hi!, dtype: int32}
+        Name: Hi!, dtype: int64, 'L': 0    6
+        Name: Hi!, dtype: int64, 'T': 3    24
+        Name: Hi!, dtype: int64}
 
         >>> gr.insert(arbitrary_result)
         +--------------+-----------+-----------+-----------+
         | Chromosome   |     Start |       End |       Hi! |
-        | (category)   |   (int32) |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------|
         | E            |         1 |         8 |         9 |
         | E            |         2 |        13 |        15 |
@@ -2144,7 +2141,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         3 | a          |
         | chr1         |         4 |         9 | b          |
@@ -2157,7 +2154,7 @@ class PyRanges:
         >>> gr2
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         2 |         3 |
         | chr1         |         2 |         9 |
@@ -2169,7 +2166,7 @@ class PyRanges:
         >>> gr.intersect(gr2)
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         2 |         3 | a          |
         | chr1         |         2 |         3 | a          |
@@ -2181,7 +2178,7 @@ class PyRanges:
         >>> gr.intersect(gr2, how="first")
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         2 |         3 | a          |
         | chr1         |         4 |         9 | b          |
@@ -2192,7 +2189,7 @@ class PyRanges:
         >>> gr.intersect(gr2, how="containment")
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         4 |         9 | b          |
         +--------------+-----------+-----------+------------+
@@ -2334,7 +2331,7 @@ class PyRanges:
         >>> f1
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         3 |         6 | interval1  |
         | chr1         |         8 |         9 | interval3  |
@@ -2348,7 +2345,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         2 | a          |
         | chr1         |         6 |         7 | b          |
@@ -2359,7 +2356,7 @@ class PyRanges:
         >>> f1.join(f2)
         +--------------+-----------+-----------+------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------+-----------+-----------+------------|
         | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
         +--------------+-----------+-----------+------------+-----------+-----------+------------+
@@ -2369,7 +2366,7 @@ class PyRanges:
         >>> f1.join(f2, how="right")
         +--------------+-----------+-----------+------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------+-----------+-----------+------------|
         | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
         | chr1         |        -1 |        -1 | -1         |         1 |         2 | a          |
@@ -2382,7 +2379,7 @@ class PyRanges:
         >>> f1.join(f2, slack=1)
         +--------------+-----------+-----------+------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------+-----------+-----------+------------|
         | chr1         |         3 |         6 | interval1  |         6 |         7 | b          |
         | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
@@ -2393,7 +2390,7 @@ class PyRanges:
         >>> f1.join(f2, how="right", preserve_order=True)
         +--------------+-----------+-----------+------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Name       |   Start_b |     End_b | Name_b     |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------+-----------+-----------+------------|
         | chr1         |        -1 |        -1 | -1         |         1 |         2 | a          |
         | chr1         |         5 |         7 | interval2  |         6 |         7 | b          |
@@ -2566,7 +2563,7 @@ class PyRanges:
         >>> f1
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         6 | +            |
         | chr1         |         8 |         9 | +            |
@@ -2580,7 +2577,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         2 | +            |
         | chr1         |         6 |         7 | -            |
@@ -2591,7 +2588,7 @@ class PyRanges:
         >>> f1.k_nearest(f2, k=2)
         +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
         | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int32) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |   (int64) | (category)   |    (int64) |
         |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
         | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
         | chr1         |         3 |         6 | +            |         1 |         2 | +            |         -2 |
@@ -2606,7 +2603,7 @@ class PyRanges:
         >>> f1.k_nearest(f2, how="upstream", k=2)
         +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
         | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int32) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |   (int64) | (category)   |    (int64) |
         |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
         | chr1         |         3 |         6 | +            |         1 |         2 | +            |         -2 |
         | chr1         |         8 |         9 | +            |         6 |         7 | -            |         -2 |
@@ -2619,7 +2616,7 @@ class PyRanges:
         >>> f1.k_nearest(f2, k=[1, 2, 1])
         +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
         | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int32) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |   (int64) | (category)   |    (int64) |
         |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
         | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
         | chr1         |         8 |         9 | +            |         6 |         7 | -            |         -2 |
@@ -2637,7 +2634,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        |   (category) |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         |            1 |         5 |         6 |
         +--------------+-----------+-----------+
@@ -2647,7 +2644,7 @@ class PyRanges:
         >>> gr2
         +--------------+-----------+-----------+-----------+
         |   Chromosome |     Start |       End |        ID |
-        |   (category) |   (int32) |   (int32) |   (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------|
         |            1 |         1 |         3 |         0 |
         |            1 |         1 |         3 |         1 |
@@ -2662,7 +2659,7 @@ class PyRanges:
         >>> gr.k_nearest(gr2, k=2)
         +--------------+-----------+-----------+-----------+-----------+-----------+------------+
         |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
-        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |    (int64) |
         |--------------+-----------+-----------+-----------+-----------+-----------+------------|
         |            1 |         5 |         6 |         5 |         7 |         2 |          0 |
         |            1 |         5 |         6 |         5 |         7 |         3 |          0 |
@@ -2673,7 +2670,7 @@ class PyRanges:
         >>> gr.k_nearest(gr2, k=2, ties="different")
         +--------------+-----------+-----------+-----------+-----------+-----------+------------+
         |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
-        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |    (int64) |
         |--------------+-----------+-----------+-----------+-----------+-----------+------------|
         |            1 |         5 |         6 |         5 |         7 |         2 |          0 |
         |            1 |         5 |         6 |         5 |         7 |         3 |          0 |
@@ -2686,7 +2683,7 @@ class PyRanges:
         >>> gr.k_nearest(gr2, k=3, ties="first")
         +--------------+-----------+-----------+-----------+-----------+-----------+------------+
         |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
-        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |    (int64) |
         |--------------+-----------+-----------+-----------+-----------+-----------+------------|
         |            1 |         5 |         6 |         5 |         7 |         2 |          0 |
         |            1 |         5 |         6 |         1 |         3 |         1 |         -3 |
@@ -2698,7 +2695,7 @@ class PyRanges:
         >>> gr.k_nearest(gr2, k=1, overlap=False)
         +--------------+-----------+-----------+-----------+-----------+-----------+------------+
         |   Chromosome |     Start |       End |   Start_b |     End_b |        ID |   Distance |
-        |   (category) |   (int32) |   (int32) |   (int32) |   (int32) |   (int64) |    (int32) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |    (int64) |
         |--------------+-----------+-----------+-----------+-----------+-----------+------------|
         |            1 |         5 |         6 |         1 |         3 |         1 |         -3 |
         +--------------+-----------+-----------+-----------+-----------+-----------+------------+
@@ -2853,7 +2850,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         3 |         6 | interval1  |         0 | +            |
         | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -2899,7 +2896,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         3 |         6 | interval1  |         0 | +            |
         | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -2912,7 +2909,7 @@ class PyRanges:
         0    3
         1    1
         2    2
-        dtype: int32
+        dtype: int64
 
         To find the length of the genome covered by the intervals, use merge first:
 
@@ -2920,7 +2917,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+-----------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |    Length |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |   (int32) |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |   (int64) |
         |--------------+-----------+-----------+------------+-----------+--------------+-----------|
         | chr1         |         3 |         6 | interval1  |         0 | +            |         3 |
         | chr1         |         8 |         9 | interval3  |         0 | +            |         1 |
@@ -2973,7 +2970,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         3 |         6 | interval1  |         0 | +            |
         | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -2985,7 +2982,7 @@ class PyRanges:
         >>> gr.max_disjoint(strand=False)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         3 |         6 | interval1  |         0 | +            |
         | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -3055,7 +3052,7 @@ class PyRanges:
         >>> gr
         +--------------+--------------+-----------+-----------+--------------+-------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)    |
         |--------------+--------------+-----------+-----------+--------------+-------------|
         | 1            | gene         | 11868     | 14409     | +            | DDX11L1     |
         | 1            | transcript   | 11868     | 14409     | +            | DDX11L1     |
@@ -3073,7 +3070,7 @@ class PyRanges:
         >>> gr.merge(count=True, count_col="Count")
         +--------------+-----------+-----------+--------------+-----------+
         | Chromosome   | Start     | End       | Strand       | Count     |
-        | (category)   | (int32)   | (int32)   | (category)   | (int32)   |
+        | (category)   | (int64)   | (int64)   | (category)   | (int64)   |
         |--------------+-----------+-----------+--------------+-----------|
         | 1            | 11868     | 14409     | +            | 12        |
         | 1            | 29553     | 31109     | +            | 11        |
@@ -3091,7 +3088,7 @@ class PyRanges:
         >>> gr.merge(by="Feature", count=True)
         +--------------+-----------+-----------+--------------+--------------+-----------+
         | Chromosome   | Start     | End       | Strand       | Feature      | Count     |
-        | (category)   | (int32)   | (int32)   | (category)   | (category)   | (int32)   |
+        | (category)   | (int64)   | (int64)   | (category)   | (category)   | (int64)   |
         |--------------+-----------+-----------+--------------+--------------+-----------|
         | 1            | 65564     | 65573     | +            | CDS          | 1         |
         | 1            | 69036     | 70005     | +            | CDS          | 2         |
@@ -3109,7 +3106,7 @@ class PyRanges:
         >>> gr.merge(by=["Feature", "gene_name"], count=True)
         +--------------+-----------+-----------+--------------+--------------+-------------+-----------+
         | Chromosome   | Start     | End       | Strand       | Feature      | gene_name   | Count     |
-        | (category)   | (int32)   | (int32)   | (category)   | (category)   | (object)    | (int32)   |
+        | (category)   | (int64)   | (int64)   | (category)   | (category)   | (object)    | (int64)   |
         |--------------+-----------+-----------+--------------+--------------+-------------+-----------|
         | 1            | 1020172   | 1020373   | +            | CDS          | AGRN        | 1         |
         | 1            | 1022200   | 1022462   | +            | CDS          | AGRN        | 2         |
@@ -3265,7 +3262,7 @@ class PyRanges:
         >>> f1
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         6 | +            |
         | chr1         |         8 |         9 | +            |
@@ -3279,7 +3276,7 @@ class PyRanges:
         >>> f2
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         2 | +            |
         | chr1         |         6 |         7 | -            |
@@ -3290,7 +3287,7 @@ class PyRanges:
         >>> f1.nearest(f2)
         +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
         | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |   (int64) | (category)   |    (int64) |
         |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
         | chr1         |         3 |         6 | +            |         6 |         7 | -            |          1 |
         | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
@@ -3302,7 +3299,7 @@ class PyRanges:
         >>> f1.nearest(f2, how="upstream")
         +--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------+
         | Chromosome   |     Start |       End | Strand       |   Start_b |     End_b | Strand_b     |   Distance |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int32) |   (int32) | (category)   |    (int64) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |   (int64) | (category)   |    (int64) |
         |--------------+-----------+-----------+--------------+-----------+-----------+--------------+------------|
         | chr1         |         3 |         6 | +            |         1 |         2 | +            |          2 |
         | chr1         |         8 |         9 | +            |         6 |         7 | -            |          2 |
@@ -3378,7 +3375,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         3 |         6 |
         | chr1         |         8 |         9 |
@@ -3392,7 +3389,7 @@ class PyRanges:
         >>> gr2
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         1 |         4 |
         | chr1         |         6 |         7 |
@@ -3404,7 +3401,7 @@ class PyRanges:
         >>> j
         +--------------+-----------+-----------+-----------+-----------+
         | Chromosome   |     Start |       End |   Start_b |     End_b |
-        | (category)   |   (int32) |   (int32) |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------|
         | chr1         |         3 |         6 |         1 |         4 |
         | chr1         |         5 |         7 |         6 |         7 |
@@ -3415,7 +3412,7 @@ class PyRanges:
         >>> j.new_position("swap")
         +--------------+-----------+-----------+-----------+-----------+
         | Chromosome   |     Start |       End |   Start_b |     End_b |
-        | (category)   |   (int32) |   (int32) |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------|
         | chr1         |         1 |         4 |         3 |         6 |
         | chr1         |         6 |         7 |         5 |         7 |
@@ -3426,7 +3423,7 @@ class PyRanges:
         >>> j.new_position("union").mp()
         +--------------------+-----------+-----------+
         | - Position -       |   Start_b |     End_b |
-        | (Multiple types)   |   (int32) |   (int32) |
+        | (Multiple types)   |   (int64) |   (int64) |
         |--------------------+-----------+-----------|
         | chr1 1-6           |         1 |         4 |
         | chr1 5-7           |         6 |         7 |
@@ -3437,7 +3434,7 @@ class PyRanges:
         >>> j.new_position("intersection").mp()
         +--------------------+-----------+-----------+
         | - Position -       |   Start_b |     End_b |
-        | (Multiple types)   |   (int32) |   (int32) |
+        | (Multiple types)   |   (int64) |   (int64) |
         |--------------------+-----------+-----------|
         | chr1 1-4           |         1 |         4 |
         | chr1 6-7           |         6 |         7 |
@@ -3450,7 +3447,7 @@ class PyRanges:
         >>> j2
         +--------------+-----------+-----------+-----------+-----------+-----------+-----------+
         |   Chromosome |     Start |       End |         A |         B |         C |         D |
-        |   (category) |   (int32) |   (int32) |   (int64) |   (int64) |   (int64) |   (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------+-----------+-----------|
         |            1 |         3 |         4 |         1 |         3 |         2 |         5 |
         +--------------+-----------+-----------+-----------+-----------+-----------+-----------+
@@ -3460,7 +3457,7 @@ class PyRanges:
         >>> j2.new_position("intersection", ("A", "B", "C", "D"))
         +--------------+-----------+-----------+-----------+-----------+-----------+-----------+
         |   Chromosome |     Start |       End |         A |         B |         C |         D |
-        |   (category) |   (int32) |   (int32) |   (int64) |   (int64) |   (int64) |   (int64) |
+        |   (category) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |   (int64) |
         |--------------+-----------+-----------+-----------+-----------+-----------+-----------|
         |            1 |         2 |         3 |         1 |         3 |         2 |         5 |
         +--------------+-----------+-----------+-----------+-----------+-----------+-----------+
@@ -3542,7 +3539,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         3 | a          |
         | chr1         |         4 |         9 | b          |
@@ -3555,7 +3552,7 @@ class PyRanges:
         >>> gr2
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         2 |         3 |
         | chr1         |         2 |         9 |
@@ -3567,7 +3564,7 @@ class PyRanges:
         >>> gr.overlap(gr2)
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         3 | a          |
         | chr1         |         4 |         9 | b          |
@@ -3578,7 +3575,7 @@ class PyRanges:
         >>> gr.overlap(gr2, how=None)
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         3 | a          |
         | chr1         |         1 |         3 | a          |
@@ -3590,7 +3587,7 @@ class PyRanges:
         >>> gr.overlap(gr2, how="containment")
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         4 |         9 | b          |
         +--------------+-----------+-----------+------------+
@@ -3600,7 +3597,7 @@ class PyRanges:
         >>> gr.overlap(gr2, invert=True)
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |        10 |        11 | c          |
         +--------------+-----------+-----------+------------+
@@ -3692,7 +3689,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-------------+--------------+
         | Chromosome   |     Start |       End | Name       |       Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (float64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (float64) | (category)   |
         |--------------+-----------+-----------+------------+-------------+--------------|
         | chr1         |         3 |         6 | i1         |      1.1    | +            |
         | chr1         |         8 |         9 | i3         |      2.3987 | +            |
@@ -3704,7 +3701,7 @@ class PyRanges:
         >>> gr.print(formatting={"Start": "{:,}", "Score": "{:.2f}"})
         +--------------+-----------+-----------+------------+-------------+--------------+
         | Chromosome   | Start     |       End | Name       |       Score | Strand       |
-        | (category)   | (int32)   |   (int32) | (object)   |   (float64) | (category)   |
+        | (category)   | (int64)   |   (int64) | (object)   |   (float64) | (category)   |
         |--------------+-----------+-----------+------------+-------------+--------------|
         | chr1         | 3         |         6 | i1         |         1.1 | +            |
         | chr1         | 8         |         9 | i3         |         2.4 | +            |
@@ -3729,7 +3726,7 @@ class PyRanges:
         >>> chipseq
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
         | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -3749,7 +3746,7 @@ class PyRanges:
         >>> chipseq.print(sort=True, n=20) # chipseq.sp()
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 1325303   | 1325328   | U0         | 0         | -            |
         | chr1         | 1541598   | 1541623   | U0         | 0         | +            |
@@ -3779,7 +3776,7 @@ class PyRanges:
         >>> pr.data.chromsizes().print()
         +--------------+-----------+-----------+
         | Chromosome   | Start     | End       |
-        | (category)   | (int32)   | (int32)   |
+        | (category)   | (int64)   | (int64)   |
         |--------------+-----------+-----------|
         | chr1         | 0         | 249250621 |
         | chr2         | 0         | 243199373 |
@@ -3847,7 +3844,7 @@ class PyRanges:
         >>> gr.sample(n=3)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr2         |  76564764 |  76564789 | U0         |         0 | +            |
         | chr3         | 185739979 | 185740004 | U0         |         0 | -            |
@@ -3913,7 +3910,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         3 | a          |
         | chr1         |         4 |         9 | b          |
@@ -3926,7 +3923,7 @@ class PyRanges:
         >>> gr2
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         2 |         3 |
         | chr1         |         2 |         9 |
@@ -3938,7 +3935,7 @@ class PyRanges:
         >>> gr.set_intersect(gr2)
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         2 |         3 |
         | chr1         |         4 |         9 |
@@ -3951,7 +3948,7 @@ class PyRanges:
         >>> gr.merge().intersect(gr2.merge())
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         2 |         3 |
         | chr1         |         4 |         9 |
@@ -3962,7 +3959,7 @@ class PyRanges:
         >>> gr.set_intersect(gr2, how="containment")
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         4 |         9 |
         +--------------+-----------+-----------+
@@ -4024,7 +4021,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         3 | a          |
         | chr1         |         4 |         9 | b          |
@@ -4037,7 +4034,7 @@ class PyRanges:
         >>> gr2
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         2 |         3 |
         | chr1         |         2 |         9 |
@@ -4049,7 +4046,7 @@ class PyRanges:
         >>> gr.set_union(gr2)
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         1 |        11 |
         +--------------+-----------+-----------+
@@ -4122,7 +4119,7 @@ class PyRanges:
         >>> p.sort()
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        11 | t3              |
         |            1 | +            |        40 |        60 | t3              |
@@ -4141,7 +4138,7 @@ class PyRanges:
         >>> p.sort(by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |       140 |       152 | t1              |
         |            1 | +            |       160 |       190 | t1              |
@@ -4159,7 +4156,7 @@ class PyRanges:
         >>> p.sort("5")
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        11 | t3              |
         |            1 | +            |        40 |        60 | t3              |
@@ -4268,7 +4265,7 @@ class PyRanges:
         >>> p
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        11 | t1              |
         |            1 | +            |        40 |        60 | t1              |
@@ -4283,7 +4280,7 @@ class PyRanges:
         >>> p.spliced_subsequence(0, 15, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        11 | t1              |
         |            1 | +            |        40 |        45 | t1              |
@@ -4298,7 +4295,7 @@ class PyRanges:
         >>> p.spliced_subsequence(-20, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |        70 |        75 | t2              |
@@ -4312,7 +4309,7 @@ class PyRanges:
         >>> p.spliced_subsequence(25, 60, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |        55 |        60 | t1              |
         +--------------+--------------+-----------+-----------+-----------------+
@@ -4323,7 +4320,7 @@ class PyRanges:
         >>> p.spliced_subsequence(3, -3, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         4 |        11 | t1              |
         |            1 | +            |        40 |        57 | t1              |
@@ -4393,7 +4390,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         3 |         6 | +            |
         | chr1         |         5 |         9 | +            |
@@ -4406,7 +4403,7 @@ class PyRanges:
         >>> gr.split()
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Strand     |
-        | (object)     |   (int32) |   (int32) | (object)   |
+        | (object)     |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         3 |         5 | +          |
         | chr1         |         5 |         6 | +          |
@@ -4420,7 +4417,7 @@ class PyRanges:
         >>> gr.split(between=True)
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | Strand     |
-        | (object)     |   (int32) |   (int32) | (object)   |
+        | (object)     |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         3 |         5 | +          |
         | chr1         |         5 |         6 | +          |
@@ -4435,7 +4432,7 @@ class PyRanges:
         >>> gr.split(strand=False)
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (object)     |   (int32) |   (int32) |
+        | (object)     |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         3 |         5 |
         | chr1         |         5 |         6 |
@@ -4449,7 +4446,7 @@ class PyRanges:
         >>> gr.split(strand=False, between=True)
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (object)     |   (int32) |   (int32) |
+        | (object)     |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         3 |         5 |
         | chr1         |         5 |         6 |
@@ -4501,7 +4498,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         5 | +            |
         | chr1         |         6 |         8 | .            |
@@ -4548,7 +4545,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         5 | +            |
         | chr1         |         6 |         8 | .            |
@@ -4613,7 +4610,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         3 |         6 | interval1  |         0 | +            |
         | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -4625,7 +4622,7 @@ class PyRanges:
         >>> gr.subset(lambda df: df.Start > 4)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         8 |         9 | interval3  |         0 | +            |
         | chr1         |         5 |         7 | interval2  |         0 | -            |
@@ -4638,7 +4635,7 @@ class PyRanges:
         >>> gr[gr.Start > 4]
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         |         8 |         9 | interval3  |         0 | +            |
         | chr1         |         5 |         7 | interval2  |         0 | -            |
@@ -4727,7 +4724,7 @@ class PyRanges:
         >>> p
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        20 | t1              |
         |            1 | +            |        40 |        60 | t1              |
@@ -4742,7 +4739,7 @@ class PyRanges:
         >>> p.subsequence(0, 10)
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        11 | t1              |
         |            1 | +            |        40 |        50 | t1              |
@@ -4757,7 +4754,7 @@ class PyRanges:
         >>> p.subsequence(0, 10, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        11 | t1              |
         |            2 | -            |        35 |        45 | t2              |
@@ -4770,7 +4767,7 @@ class PyRanges:
         >>> p.subsequence(-20, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |         2 |        13 | t2              |
@@ -4783,7 +4780,7 @@ class PyRanges:
         >>> p.subsequence(30, 300, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
+        |   (category) | (category)   |   (int64) |   (int64) | (object)        |
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |        40 |        60 | t1              |
         |            2 | -            |         2 |        13 | t2              |
@@ -4832,7 +4829,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         3 | a          |
         | chr1         |         4 |         9 | b          |
@@ -4844,7 +4841,7 @@ class PyRanges:
         >>> gr2
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         2 |         3 |
         | chr1         |         2 |         9 |
@@ -4856,7 +4853,7 @@ class PyRanges:
         >>> gr.subtract(gr2)
         +--------------+-----------+-----------+------------+
         | Chromosome   |     Start |       End | ID         |
-        | (category)   |   (int32) |   (int32) | (object)   |
+        | (category)   |   (int64) |   (int64) | (object)   |
         |--------------+-----------+-----------+------------|
         | chr1         |         1 |         2 | a          |
         | chr1         |        10 |        11 | c          |
@@ -4916,7 +4913,7 @@ class PyRanges:
         >>> gr
         +--------------+--------------+-----------+-----------+--------------+-----------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_id         |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)        |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)        |
         |--------------+--------------+-----------+-----------+--------------+-----------------|
         | 1            | gene         | 11868     | 14409     | +            | ENSG00000223972 |
         | 1            | transcript   | 11868     | 14409     | +            | ENSG00000223972 |
@@ -4992,7 +4989,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
         | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -5010,7 +5007,7 @@ class PyRanges:
         >>> gr.tail(3)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chrY         |  13517892 |  13517917 | U0         |         0 | -            |
         | chrY         |   8010951 |   8010976 | U0         |         0 | -            |
@@ -5070,7 +5067,7 @@ class PyRanges:
         >>> gr
         +--------------+--------------+-----------+-----------+--------------+-------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)    |
         |--------------+--------------+-----------+-----------+--------------+-------------|
         | 1            | gene         | 11868     | 14409     | +            | DDX11L1     |
         | 1            | transcript   | 11868     | 14409     | +            | DDX11L1     |
@@ -5088,7 +5085,7 @@ class PyRanges:
         >>> gr.tile(200)
         +--------------+--------------+-----------+-----------+--------------+-------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)    |
         |--------------+--------------+-----------+-----------+--------------+-------------|
         | 1            | gene         | 11800     | 12000     | +            | DDX11L1     |
         | 1            | gene         | 12000     | 12200     | +            | DDX11L1     |
@@ -5106,7 +5103,7 @@ class PyRanges:
         >>> gr.tile(100, overlap=True)
         +--------------+--------------+-----------+-----------+--------------+-------------+---------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   | TileOverlap   |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    | (int32)       |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)    | (int64)       |
         |--------------+--------------+-----------+-----------+--------------+-------------+---------------|
         | 1            | gene         | 11800     | 11900     | +            | DDX11L1     | 32            |
         | 1            | gene         | 11900     | 12000     | +            | DDX11L1     | 100           |
@@ -5157,7 +5154,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-        | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+        | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
         | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -5178,7 +5175,7 @@ class PyRanges:
         >>> pr.from_dict(d)
         +--------------+-----------+-----------+------------+-----------+--------------+
         | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-        | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+        | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
         |--------------+-----------+-----------+------------+-----------+--------------|
         | chr1         | 212609534 | 212609559 | U0         |         0 | +            |
         | chr1         | 169887529 | 169887554 | U0         |         0 | +            |
@@ -5226,7 +5223,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         5 | +            |
         | chr1         |         6 |         8 | -            |
@@ -5237,7 +5234,7 @@ class PyRanges:
         >>> gr.three_end()
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         4 |         5 | +            |
         | chr1         |         6 |         7 | -            |
@@ -5333,7 +5330,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+-----------+
         | Chromosome   |     Start |       End | Strand       |      Gene |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
         |--------------+-----------+-----------+--------------+-----------|
         | chr1         |         1 |         5 | +            |         1 |
         | chr1         |         6 |         8 | -            |         2 |
@@ -5360,7 +5357,7 @@ class PyRanges:
         >>> gr.to_bed("test.bed", chain=True)
         +--------------+-----------+-----------+--------------+-----------+
         | Chromosome   |     Start |       End | Strand       |      Gene |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
         |--------------+-----------+-----------+--------------+-----------|
         | chr1         |         1 |         5 | +            |         1 |
         | chr1         |         6 |         8 | -            |         2 |
@@ -5448,7 +5445,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+-----------+
         | Chromosome   |     Start |       End | Strand       |     Value |
-        | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
         |--------------+-----------+-----------+--------------+-----------|
         | chr1         |         1 |         7 | +            |        10 |
         | chr1         |         4 |         8 | -            |        20 |
@@ -5460,7 +5457,7 @@ class PyRanges:
         >>> gr.to_bigwig(dryrun=True, rpm=False)
         +--------------+-----------+-----------+-------------+
         | Chromosome   |     Start |       End |       Score |
-        | (category)   |   (int32) |   (int32) |   (float64) |
+        | (category)   |   (int64) |   (int64) |   (float64) |
         |--------------+-----------+-----------+-------------|
         | chr1         |         1 |         4 |           1 |
         | chr1         |         4 |         6 |           2 |
@@ -5474,7 +5471,7 @@ class PyRanges:
         >>> gr.to_bigwig(dryrun=True, rpm=False, value_col="Value")
         +--------------+-----------+-----------+-------------+
         | Chromosome   |     Start |       End |       Score |
-        | (category)   |   (int32) |   (int32) |   (float64) |
+        | (category)   |   (int64) |   (int64) |   (float64) |
         |--------------+-----------+-----------+-------------|
         | chr1         |         1 |         4 |          10 |
         | chr1         |         4 |         6 |          30 |
@@ -5488,7 +5485,7 @@ class PyRanges:
         >>> gr.to_bigwig(dryrun=True, rpm=False, value_col="Value", divide=True)
         +--------------+-----------+-----------+-------------+
         | Chromosome   |     Start |       End |       Score |
-        | (category)   |   (int32) |   (int32) |   (float64) |
+        | (category)   |   (int64) |   (int64) |   (float64) |
         |--------------+-----------+-----------+-------------|
         | chr1         |         0 |         1 |   nan       |
         | chr1         |         1 |         4 |     3.32193 |
@@ -5647,7 +5644,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+------------+-----------+------------+-------------+------------+
         |   Chromosome |     Start |       End | Feature    |      Gene | function   |   the_frame | tag        |
-        |   (category) |   (int32) |   (int32) | (object)   |   (int64) | (object)   |     (int64) | (object)   |
+        |   (category) |   (int64) |   (int64) | (object)   |   (int64) | (object)   |     (int64) | (object)   |
         |--------------+-----------+-----------+------------+-----------+------------+-------------+------------|
         |            1 |         1 |         4 | gene       |         1 | a b        |           0 | mRNA       |
         |            1 |         3 |         6 | exon       |         2 | c          |           2 | CDS        |
@@ -5905,7 +5902,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+--------------+
         | Chromosome   |     Start |       End | Strand       |
-        | (category)   |   (int32) |   (int32) | (category)   |
+        | (category)   |   (int64) |   (int64) | (category)   |
         |--------------+-----------+-----------+--------------|
         | chr1         |         1 |         5 | +            |
         | chr1         |         6 |         8 | -            |
@@ -5916,7 +5913,7 @@ class PyRanges:
         >>> gr.unstrand()
         +--------------+-----------+-----------+
         | Chromosome   |     Start |       End |
-        | (category)   |   (int32) |   (int32) |
+        | (category)   |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         | chr1         |         1 |         5 |
         | chr1         |         6 |         8 |
@@ -5983,7 +5980,7 @@ class PyRanges:
         >>> gr
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        |   (category) |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         |            1 |       895 |      1259 |
         +--------------+-----------+-----------+
@@ -5993,7 +5990,7 @@ class PyRanges:
         >>> gr.window(200)
         +--------------+-----------+-----------+
         |   Chromosome |     Start |       End |
-        |   (category) |   (int32) |   (int32) |
+        |   (category) |   (int64) |   (int64) |
         |--------------+-----------+-----------|
         |            1 |       895 |      1095 |
         |            1 |      1095 |      1259 |
@@ -6005,7 +6002,7 @@ class PyRanges:
         >>> gr2
         +--------------+--------------+-----------+-----------+--------------+-------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)    |
         |--------------+--------------+-----------+-----------+--------------+-------------|
         | 1            | gene         | 11868     | 14409     | +            | DDX11L1     |
         | 1            | transcript   | 11868     | 14409     | +            | DDX11L1     |
@@ -6024,7 +6021,7 @@ class PyRanges:
         >>> gr2.window(1000)
         +--------------+--------------+-----------+-----------+--------------+-------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_name   |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)    |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)    |
         |--------------+--------------+-----------+-----------+--------------+-------------|
         | 1            | gene         | 11868     | 12868     | +            | DDX11L1     |
         | 1            | gene         | 12868     | 13868     | +            | DDX11L1     |

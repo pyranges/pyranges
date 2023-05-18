@@ -5,6 +5,7 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
+import pkg_resources
 from natsort import natsorted  # type: ignore
 
 import pyranges as pr
@@ -15,7 +16,8 @@ from pyranges.methods.concat import concat
 from pyranges.multioverlap import count_overlaps
 from pyranges.pyranges_main import PyRanges
 from pyranges.readers import read_bam, read_bed, read_bigwig, read_gff3, read_gtf  # NOQA: F401
-from pyranges.version import __version__  # NOQA: F401
+
+__version__ = pkg_resources.get_distribution("pyranges").version
 
 get_example_path = data.get_example_path
 stats = statistics
@@ -57,7 +59,7 @@ def from_dict(d, int64=False):
     >>> pr.from_dict(d)
     +--------------+-----------+-----------+--------------+------------------+
     |   Chromosome |     Start |       End | Strand       | ArbitraryValue   |
-    |   (category) |   (int32) |   (int32) | (category)   | (object)         |
+    |   (category) |   (int64) |   (int64) | (category)   | (object)         |
     |--------------+-----------+-----------+--------------+------------------|
     |            1 |         1 |         4 | +            | a                |
     |            1 |         2 |         9 | +            | b                |
@@ -101,7 +103,7 @@ def from_string(s, int64=False):
     >>> pr.from_string(s)
     +--------------+-----------+-----------+--------------+
     | Chromosome   |     Start |       End | Strand       |
-    | (category)   |   (int32) |   (int32) | (category)   |
+    | (category)   |   (int64) |   (int64) | (category)   |
     |--------------+-----------+-----------+--------------|
     | chr1         | 246719402 | 246719502 | +            |
     | chr5         |  15400908 |  15401008 | +            |
@@ -147,7 +149,7 @@ def itergrs(prs, strand=None, keys=False):
     >>> gr1
     +--------------+-----------+-----------+--------------+
     |   Chromosome |     Start |       End | Strand       |
-    |   (category) |   (int32) |   (int32) | (category)   |
+    |   (category) |   (int64) |   (int64) | (category)   |
     |--------------+-----------+-----------+--------------|
     |            1 |         1 |         4 | +            |
     |            1 |         2 |         9 | +            |
@@ -159,7 +161,7 @@ def itergrs(prs, strand=None, keys=False):
     >>> gr2
     +--------------+-----------+-----------+--------------+
     |   Chromosome |     Start |       End | Strand       |
-    |   (category) |   (int32) |   (int32) | (category)   |
+    |   (category) |   (int64) |   (int64) | (category)   |
     |--------------+-----------+-----------+--------------|
     |            2 |         5 |        81 | -            |
     |            3 |         9 |        42 | +            |
@@ -262,7 +264,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
     # >>> pr.random()
     # +--------------+-----------+-----------+--------------+
     # | Chromosome   | Start     | End       | Strand       |
-    # | (category)   | (int32)   | (int32)   | (category)   |
+    # | (category)   | (int64)   | (int64)   | (category)   |
     # |--------------+-----------+-----------+--------------|
     # | chr1         | 216128004 | 216128104 | +            |
     # | chr1         | 114387955 | 114388055 | +            |
@@ -285,7 +287,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
     # >>> gr
     # +--------------+-----------+-----------+--------------+-----------+
     # | Chromosome   | Start     | End       | Strand       | Length    |
-    # | (category)   | (int32)   | (int64)   | (category)   | (int64)   |
+    # | (category)   | (int64)   | (int64)   | (category)   | (int64)   |
     # |--------------+-----------+-----------+--------------+-----------|
     # | chr1         | 203654331 | 203695380 | +            | 41049     |
     # | chr1         | 46918271  | 46978908  | +            | 60637     |
@@ -365,7 +367,7 @@ def to_bigwig(gr, path, chromosome_sizes):
     >>> print(hg19)
     +--------------+-----------+-----------+
     | Chromosome   | Start     | End       |
-    | (category)   | (int32)   | (int32)   |
+    | (category)   | (int64)   | (int64)   |
     |--------------+-----------+-----------|
     | chr1         | 0         | 249250621 |
     | chr2         | 0         | 243199373 |
@@ -395,7 +397,7 @@ def to_bigwig(gr, path, chromosome_sizes):
     >>> gr
     +--------------+-----------+-----------+--------------+-----------+
     | Chromosome   |     Start |       End | Strand       |     Value |
-    | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+    | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
     |--------------+-----------+-----------+--------------+-----------|
     | chr1         |         1 |         7 | +            |        10 |
     | chr1         |         4 |         8 | -            |        20 |
@@ -471,7 +473,7 @@ def to_bigwig(gr, path, chromosome_sizes):
     >>> out
     +--------------+-----------+-----------+-------------+--------------+
     | Chromosome   |     Start |       End |       Score | Strand       |
-    | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+    | (category)   |   (int64) |   (int64) |   (float64) | (category)   |
     |--------------+-----------+-----------+-------------+--------------|
     | chr1         |         1 |         7 |     1       | +            |
     | chr1         |         4 |         6 |     1.30103 | -            |

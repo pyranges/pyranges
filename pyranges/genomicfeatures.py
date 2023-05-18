@@ -35,7 +35,7 @@ class GenomicFeaturesMethods:
         >>> gr
         +--------------+------------+--------------+-----------+-----------+--------------+
         | Chromosome   | Source     | Feature      | Start     | End       | Strand       |
-        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (category)   |
+        | (category)   | (object)   | (category)   | (int64)   | (int64)   | (category)   |
         |--------------+------------+--------------+-----------+-----------+--------------|
         | 1            | havana     | gene         | 11868     | 14409     | +            |
         | 1            | havana     | transcript   | 11868     | 14409     | +            |
@@ -53,7 +53,7 @@ class GenomicFeaturesMethods:
         >>> gr.features.tss()
         +--------------+------------+------------+-----------+-----------+--------------+
         | Chromosome   | Source     | Feature    | Start     | End       | Strand       |
-        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (category)   |
+        | (category)   | (object)   | (object)   | (int64)   | (int64)   | (category)   |
         |--------------+------------+------------+-----------+-----------+--------------|
         | 1            | havana     | tss        | 11868     | 11869     | +            |
         | 1            | havana     | tss        | 12009     | 12010     | +            |
@@ -99,7 +99,7 @@ class GenomicFeaturesMethods:
         >>> gr
         +--------------+------------+--------------+-----------+-----------+--------------+
         | Chromosome   | Source     | Feature      | Start     | End       | Strand       |
-        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (category)   |
+        | (category)   | (object)   | (category)   | (int64)   | (int64)   | (category)   |
         |--------------+------------+--------------+-----------+-----------+--------------|
         | 1            | havana     | gene         | 11868     | 14409     | +            |
         | 1            | havana     | transcript   | 11868     | 14409     | +            |
@@ -117,7 +117,7 @@ class GenomicFeaturesMethods:
         >>> gr.features.tes()
         +--------------+------------+------------+-----------+-----------+--------------+
         | Chromosome   | Source     | Feature    | Start     | End       | Strand       |
-        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (category)   |
+        | (category)   | (object)   | (object)   | (int64)   | (int64)   | (category)   |
         |--------------+------------+------------+-----------+-----------+--------------|
         | 1            | havana     | tes        | 14408     | 14409     | +            |
         | 1            | havana     | tes        | 13669     | 13670     | +            |
@@ -171,7 +171,7 @@ class GenomicFeaturesMethods:
         >>> gr
         +--------------+--------------+-----------+-----------+--------------+-----------------+-----------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)        | (object)        |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
         |--------------+--------------+-----------+-----------+--------------+-----------------+-----------------|
         | 1            | gene         | 11868     | 14409     | +            | ENSG00000223972 | nan             |
         | 1            | transcript   | 11868     | 14409     | +            | ENSG00000223972 | ENST00000456328 |
@@ -189,7 +189,7 @@ class GenomicFeaturesMethods:
         >>> gr.features.introns(by="gene")
         +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
         | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (object)     | (object)   | (int32)   | (int32)   | (category)   | (object)        | (object)        |
+        | (object)     | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
         |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
         | 1            | intron     | 1173926   | 1174265   | +            | ENSG00000162571 | nan             |
         | 1            | intron     | 1174321   | 1174423   | +            | ENSG00000162571 | nan             |
@@ -207,7 +207,7 @@ class GenomicFeaturesMethods:
         >>> gr.features.introns(by="transcript")
         +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
         | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (object)     | (object)   | (int32)   | (int32)   | (category)   | (object)        | (object)        |
+        | (object)     | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
         |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
         | 1            | intron     | 818202    | 818722    | +            | ENSG00000177757 | ENST00000326734 |
         | 1            | intron     | 960800    | 961292    | +            | ENSG00000187961 | ENST00000338591 |
@@ -323,7 +323,7 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     >>> gr
     +--------------+-----------+-----------+
     |   Chromosome |     Start |       End |
-    |   (category) |   (int32) |   (int32) |
+    |   (category) |   (int64) |   (int64) |
     |--------------+-----------+-----------|
     |            1 |         1 |         2 |
     |            1 | 249250600 | 249250640 |
@@ -339,7 +339,7 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     >>> pr.gf.genome_bounds(gr, chromsizes)
     +--------------+-----------+-----------+
     |   Chromosome |     Start |       End |
-    |   (category) |   (int32) |   (int32) |
+    |   (category) |   (int64) |   (int64) |
     |--------------+-----------+-----------|
     |            1 |         1 |         2 |
     |            3 |         5 |         7 |
@@ -350,7 +350,7 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     >>> pr.gf.genome_bounds(gr, chromsizes, clip=True)
     +--------------+-----------+-----------+
     |   Chromosome |     Start |       End |
-    |   (category) |   (int32) |   (int32) |
+    |   (category) |   (int64) |   (int64) |
     |--------------+-----------+-----------|
     |            1 |         1 |         2 |
     |            1 | 249250600 | 249250621 |
@@ -430,7 +430,7 @@ def tile_genome(genome, tile_size, tile_last=False):
     >>> chromsizes
     +--------------+-----------+-----------+
     | Chromosome   | Start     | End       |
-    | (category)   | (int32)   | (int32)   |
+    | (category)   | (int64)   | (int64)   |
     |--------------+-----------+-----------|
     | chr1         | 0         | 249250621 |
     | chr2         | 0         | 243199373 |
@@ -448,7 +448,7 @@ def tile_genome(genome, tile_size, tile_last=False):
     >>> pr.gf.tile_genome(chromsizes, int(1e6))
     +--------------+-----------+-----------+
     | Chromosome   | Start     | End       |
-    | (category)   | (int32)   | (int32)   |
+    | (category)   | (int64)   | (int64)   |
     |--------------+-----------+-----------|
     | chr1         | 0         | 1000000   |
     | chr1         | 1000000   | 2000000   |

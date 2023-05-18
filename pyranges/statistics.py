@@ -44,7 +44,7 @@ def fdr(p_vals):
     >>> gr
     +--------------+-----------+-----------+--------------+-------------+
     | Chromosome   |     Start |       End | Strand       |      PValue |
-    | (category)   |   (int32) |   (int32) | (category)   |   (float64) |
+    | (category)   |   (int64) |   (int64) | (category)   |   (float64) |
     |--------------+-----------+-----------+--------------+-------------|
     | chr3         | 146419383 | 146419483 | -            |  0.00395914 |
     | chr6         |  39800100 |  39800200 | +            |  0.00376005 |
@@ -57,7 +57,7 @@ def fdr(p_vals):
     >>> gr.print(formatting={"PValue": "{:.4f}", "FDR": "{:.4}"})
     +--------------+-----------+-----------+--------------+-------------+-------------+
     | Chromosome   |     Start |       End | Strand       |      PValue |         FDR |
-    | (category)   |   (int32) |   (int32) | (category)   |   (float64) |   (float64) |
+    | (category)   |   (int64) |   (int64) | (category)   |   (float64) |   (float64) |
     |--------------+-----------+-----------+--------------+-------------+-------------|
     | chr3         | 146419383 | 146419483 | -            |      0.004  |    0.005939 |
     | chr6         |  39800100 |  39800200 | +            |      0.0038 |    0.01128  |
@@ -586,7 +586,7 @@ def simes(df, groupby, pcol, keep_position=False):
     >>> gr
     +--------------+-----------+-----------+--------------+------------+-------------+
     |   Chromosome |     Start |       End | Strand       | Gene       |      PValue |
-    |   (category) |   (int32) |   (int32) | (category)   | (object)   |   (float64) |
+    |   (category) |   (int64) |   (int64) | (category)   | (object)   |   (float64) |
     |--------------+-----------+-----------+--------------+------------+-------------|
     |            1 |        10 |        20 | +            | P53        |     0.0001  |
     |            1 |        20 |        20 | +            | P53        |     0.0002  |
@@ -608,7 +608,7 @@ def simes(df, groupby, pcol, keep_position=False):
     ... pr.stats.simes(df, "Gene", "PValue", keep_position=True))
     +--------------+-----------+-----------+-------------+--------------+------------+
     |   Chromosome |     Start |       End |       Simes | Strand       | Gene       |
-    |   (category) |   (int32) |   (int32) |   (float64) | (category)   | (object)   |
+    |   (category) |   (int64) |   (int64) |   (float64) | (category)   | (object)   |
     |--------------+-----------+-----------+-------------+--------------+------------|
     |            1 |        10 |        20 |      0.0001 | +            | P53        |
     |            2 |        60 |        90 |      1e-07  | -            | FOX        |

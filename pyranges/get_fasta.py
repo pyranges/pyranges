@@ -57,7 +57,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     >>> gr
     +--------------+-----------+-----------+
     | Chromosome   |     Start |       End |
-    | (category)   |   (int32) |   (int32) |
+    | (category)   |   (int64) |   (int64) |
     |--------------+-----------+-----------|
     | chr1         |         5 |         8 |
     | chr1         |         0 |         5 |
@@ -81,7 +81,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     >>> gr
     +--------------+-----------+-----------+------------+
     | Chromosome   |     Start |       End | seq        |
-    | (category)   |   (int32) |   (int32) | (object)   |
+    | (category)   |   (int64) |   (int64) | (object)   |
     |--------------+-----------+-----------+------------|
     | chr1         |         5 |         8 | CAT        |
     | chr1         |         0 |         5 | ATTAC      |
@@ -185,7 +185,7 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     >>> gr
     +--------------+-----------+-----------+--------------+--------------+
     | Chromosome   |     Start |       End | Strand       | transcript   |
-    | (category)   |   (int32) |   (int32) | (category)   | (object)     |
+    | (category)   |   (int64) |   (int64) | (category)   | (object)     |
     |--------------+-----------+-----------+--------------+--------------|
     | chr1         |         0 |         4 | +            | t1           |
     | chr1         |         9 |        13 | -            | t2           |

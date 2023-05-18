@@ -7,24 +7,13 @@ from pyranges.helpers import get_key_from_df, single_value_key
 from pyranges.statistics import StatisticsMethods
 
 
-def set_dtypes(df, int64):
-    # if extended is None:
-    #     extended = False if df.Start.dtype == np.int32 else True
-
-    if not int64:
-        dtypes = {
-            "Start": np.int32,
-            "End": np.int32,
-            "Chromosome": "category",
-            "Strand": "category",
-        }
-    else:
-        dtypes = {
-            "Start": np.int64,
-            "End": np.int64,
-            "Chromosome": "category",
-            "Strand": "category",
-        }
+def set_dtypes(df):
+    dtypes = {
+        "Start": np.int64,
+        "End": np.int64,
+        "Chromosome": "category",
+        "Strand": "category",
+    }
 
     if "Strand" not in df:
         del dtypes["Strand"]
@@ -120,7 +109,6 @@ def _init(
     starts=None,
     ends=None,
     strands=None,
-    int64=False,
     copy_df=True,
 ):
     # TODO: add categorize argument with dict of args to categorize?
@@ -143,7 +131,7 @@ def _init(
 
         stranded = check_strandedness(df)
 
-        df = set_dtypes(df, int64)
+        df = set_dtypes(df)
 
         self.__dict__["dfs"] = create_df_dict(df, stranded)
 

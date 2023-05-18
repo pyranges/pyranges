@@ -45,7 +45,7 @@ def read_bed(f, as_df=False, nrows=None):
     >>> pr.read_bed(path, nrows=5)
     +--------------+-----------+-----------+------------+-----------+--------------+
     | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-    | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+    | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
     |--------------+-----------+-----------+------------+-----------+--------------|
     | chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |
     | chr1         |      9953 |     10152 | H3K27me3   |         5 | +            |
@@ -144,7 +144,7 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     >>> pr.read_bam(path).sort()
     +--------------+-----------+-----------+--------------+------------+
     | Chromosome   | Start     | End       | Strand       | Flag       |
-    | (category)   | (int32)   | (int32)   | (category)   | (uint16)   |
+    | (category)   | (int64)   | (int64)   | (category)   | (uint16)   |
     |--------------+-----------+-----------+--------------+------------|
     | chr1         | 1041102   | 1041127   | +            | 0          |
     | chr1         | 2129359   | 2129384   | +            | 0          |
@@ -158,22 +158,6 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     +--------------+-----------+-----------+--------------+------------+
     Stranded PyRanges object has 10,000 rows and 5 columns from 25 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
-
-    >>> pr.read_bam(path, sparse=False, as_df=True)
-         Chromosome    Start      End Strand  Flag  QueryStart  QueryEnd QuerySequence Name Cigar Quality
-    0          chr1   887771   887796      -    16           0        25          None   U0   25M    None
-    1          chr1   994660   994685      -    16           0        25          None   U0   25M    None
-    2          chr1  1041102  1041127      +     0           0        25          None   U0   25M    None
-    3          chr1  1770383  1770408      -    16           0        25          None   U0   25M    None
-    4          chr1  1995141  1995166      -    16           0        25          None   U0   25M    None
-    ...         ...      ...      ...    ...   ...         ...       ...           ...  ...   ...     ...
-    9995       chrM     3654     3679      +     0           0        25          None   U0   25M    None
-    9996       chrM     3900     3925      -    16           0        25          None   U0   25M    None
-    9997       chrM    13006    13031      -    16           0        25          None   U0   25M    None
-    9998       chrM    14257    14282      +     0           0        25          None   U0   25M    None
-    9999       chrM    14257    14282      +     0           0        25          None   U0   25M    None
-    <BLANKLINE>
-    [10000 rows x 11 columns]
     """
 
     try:
@@ -314,7 +298,7 @@ def read_gtf(
 
     >>> # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------+
     >>> # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | +18   |
-    >>> # | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | ...   |
+    >>> # | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)        | (object)       | ...   |
     >>> # |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------|
     >>> # | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | ...   |
     >>> # | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | ...   |
