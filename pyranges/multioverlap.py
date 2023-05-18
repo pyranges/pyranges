@@ -91,7 +91,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     >>> pr.count_overlaps(grs)
     +--------------+-----------+-----------+-----------+-----------+-----------+
     | Chromosome   | Start     | End       | a         | b         | c         |
-    | (object)     | (int32)   | (int32)   | (int64)   | (int64)   | (int64)   |
+    | (object)     | (int32)   | (int32)   | (int32)   | (int32)   | (int32)   |
     |--------------+-----------+-----------+-----------+-----------+-----------|
     | chr1         | 6         | 8         | 1         | 0         | 0         |
     | chr1         | 8         | 10        | 1         | 0         | 1         |
@@ -123,7 +123,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     >>> pr.count_overlaps(grs, gr)
     +--------------+-----------+-----------+-----------+-----------+-----------+
     | Chromosome   |     Start |       End |         a |         b |         c |
-    | (category)   |   (int32) |   (int32) |   (int64) |   (int64) |   (int64) |
+    | (category)   |   (int32) |   (int32) |   (int32) |   (int32) |   (int32) |
     |--------------+-----------+-----------+-----------+-----------+-----------|
     | chr1         |         0 |        10 |         1 |         0 |         1 |
     | chr1         |        10 |        20 |         2 |         2 |         2 |
@@ -157,7 +157,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
         features.apply_pair(gr, _count_overlaps, **kwargs)  # count overlaps modifies the ranges in-place
 
     def to_int(df):
-        df.loc[:, names] = df[names].astype(np.int32)
+        df[names] = df[names].astype(np.int32)
         return df
 
     features = features.apply(to_int)

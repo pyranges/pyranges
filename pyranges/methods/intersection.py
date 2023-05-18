@@ -90,7 +90,7 @@ def _count_overlaps(scdf, ocdf, **kwargs):
 
     sx = pd.DataFrame(np.zeros(len(scdf), dtype=np.int32), index=scdf.index)
 
-    vc = pd.Series(idx, dtype=np.int64).value_counts(sort=False)
+    vc = pd.Series(idx, dtype=np.int32).value_counts(sort=False)
 
     sx.loc[vc.index, 0] = vc.values
 

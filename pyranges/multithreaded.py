@@ -159,7 +159,7 @@ def ray_initialized():
 
 def get_multithreaded_funcs(function, nb_cpu):
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
 
         _merge_dfs = ray.remote(merge_dfs)
         get = ray.get
@@ -184,7 +184,7 @@ def pyrange_apply(function, self, other, **kwargs):
     nb_cpu = kwargs.get("nb_cpu", 1)
 
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
 
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
@@ -309,7 +309,7 @@ def pyrange_apply_single(function, self, **kwargs):
     strand = kwargs["strand"]
 
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
 
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
@@ -486,7 +486,7 @@ def pyrange_apply_chunks(function, self, as_pyranges, **kwargs):
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
 
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
