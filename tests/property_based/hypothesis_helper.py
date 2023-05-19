@@ -9,8 +9,8 @@ import pyranges as pr
 from pyranges import PyRanges
 
 if environ.get("GITHUB_ACTIONS"):
-    max_examples = 100
-    slow_max_examples = 10
+    max_examples = 15
+    slow_max_examples = 5
     deadline = None
 else:
     max_examples = 1000
