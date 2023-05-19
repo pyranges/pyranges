@@ -5,6 +5,7 @@ on:
     workflows: [linting-typechecking-doctests]
     types: [completed]
 
+
 jobs:
   on-success:
     runs-on: ubuntu-latest
@@ -14,10 +15,10 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11.0"
-      - run: apt-get install bedtools
+      - run: sudo apt-get install bedtools
       - run: pip install hypothesis pytest pytest-xdist
       - run: pip install .
-      - run: pytest -sv -n 2 tests/property
+      - run: pytest -sv -n 2 tests/property_based
         env:
           GITHUB_ACTIONS: true
   on-failure:
