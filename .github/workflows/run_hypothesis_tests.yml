@@ -1,3 +1,4 @@
+name: property-tests
 
 on:
   workflow_run:
