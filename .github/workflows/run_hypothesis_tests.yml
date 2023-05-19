@@ -18,7 +18,7 @@ jobs:
       - run: sudo apt-get install bedtools
       - run: pip install hypothesis pytest pytest-xdist
       - run: pip install .
-      - run: pytest -sv -n 2 tests/property
+      - run: pytest -sv -n 2 tests/property_based
         env:
           GITHUB_ACTIONS: true
   on-failure:
