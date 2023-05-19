@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: [linting-typechecking-doctests]
     types: [completed]
-  workflow_dispatch:
+
 
 jobs:
   on-success:
