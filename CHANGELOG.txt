@@ -1,4 +1,7 @@
-# unreleased (17.05.2023)
+# 0.0.127 (19.05.2023)
+- Fix tostring regression
+
+# 0.0.126 (17.05.2023)
 - add preserve_order to join (@aallahyar)
 
 # 0.0.125 (09.05.2023)
