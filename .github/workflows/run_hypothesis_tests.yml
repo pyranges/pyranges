@@ -1,8 +1,10 @@
+name: property-tests
 
 on:
   workflow_run:
     workflows: [linting-typechecking-doctests]
     types: [completed]
+  workflow_dispatch:
 
 jobs:
   on-success:
@@ -13,7 +15,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11.0"
-      - run: apt-get install bedtools
+      - run: sudo apt-get install bedtools
       - run: pip install hypothesis pytest pytest-xdist
       - run: pip install .
       - run: pytest -sv -n 2 tests/property
