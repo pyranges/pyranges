@@ -195,7 +195,7 @@ def _grow_string_representation(df, columns_dtypes, terminal_width: Optional[int
         new_build_df = pd.concat([build_df, df[c]], axis=1)
 
         new_str_repr = tabulate(
-            new_build_df.to_dict(orient="records"), headers=list(new_build_df.columns), tablefmt="psql", showindex=False
+            new_build_df, headers=list(new_build_df.columns), tablefmt="psql", showindex=False  # type: ignore
         )
 
         table_width = len(new_str_repr.split("\n", 1)[0])
@@ -209,7 +209,7 @@ def _grow_string_representation(df, columns_dtypes, terminal_width: Optional[int
     if i < total_columns:
         new_build_df = add_hidden_col_dotdot(build_df, len(original_header[i:]))
         str_repr = tabulate(
-            new_build_df.to_dict(orient="records"), headers=list(new_build_df.columns), tablefmt="psql", showindex=False
+            new_build_df, headers=list(new_build_df.columns), tablefmt="psql", showindex=False  # type: ignore
         )
 
     return str_repr, original_header[i:]
