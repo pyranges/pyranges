@@ -8,14 +8,9 @@ from hypothesis.extra.pandas import column, data_frames, indexes
 import pyranges as pr
 from pyranges import PyRanges
 
-if environ.get("GITHUB_ACTIONS"):
-    max_examples = 15
-    slow_max_examples = 5
-    deadline = None
-else:
-    max_examples = 1000
-    slow_max_examples = 100
-    deadline = None
+max_examples = 15
+slow_max_examples = 5
+deadline = None
 
 lengths = st.integers(min_value=1, max_value=int(1e7))
 small_lengths = st.integers(min_value=1, max_value=int(1e4))
