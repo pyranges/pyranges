@@ -1,7 +1,10 @@
 from __future__ import print_function
 
+import itertools
 import sys
 from collections import defaultdict
+from pathlib import Path
+from typing import Dict, Iterable, Optional, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -27,8 +30,10 @@ get_transcript_sequence = get_transcript_sequence
 
 read_gff = read_gtf
 
+Chromsizes = Union[Dict[str, int], Dict[Tuple[str, str], int]]
 
-def from_dict(d):
+
+def from_dict(d: Dict[str, Iterable]) -> PyRanges:
     """Create a PyRanges from dict.
 
     Parameters
@@ -68,7 +73,7 @@ def from_dict(d):
     return PyRanges(pd.DataFrame(d))
 
 
-def from_string(s):
+def from_string(s: str) -> PyRanges:
     """Create a PyRanges from multiline string.
 
     Parameters
@@ -115,7 +120,7 @@ def from_string(s):
     return PyRanges(df)
 
 
-def itergrs(prs, strand=None, keys=False):
+def itergrs(prs: Iterable[PyRanges], strand=None, keys=False):
     r"""Iterate over multiple PyRanges at once.
 
     Parameters
@@ -209,14 +214,12 @@ def itergrs(prs, strand=None, keys=False):
         prs = [gr.unstrand() for gr in prs]
 
     grs_per_chromosome = defaultdict(list)
-    set_keys = set()
-    for gr in prs:
-        set_keys.update(gr.dfs.keys())
+    set_keys: Union[Set[str], Set[Tuple[str, str]]] = set(itertools.chain.from_iterable(*[gr.dfs.keys() for gr in prs]))
 
     empty_dfs = [pd.DataFrame(columns=gr.columns) for gr in prs]
     for gr, empty in zip(prs, empty_dfs):
         for k in set_keys:
-            df = gr.dfs.get(k, empty)
+            df = gr.dfs.get(k, empty)  # type: ignore
             grs_per_chromosome[k].append(df)
 
     if not keys:
@@ -225,7 +228,13 @@ def itergrs(prs, strand=None, keys=False):
         return iter(natsorted(grs_per_chromosome.items()))
 
 
-def random(n=1000, length=100, chromsizes=None, strand=True, seed=None):
+def random(
+    n: int = 1000,
+    length: int = 100,
+    chromsizes: Optional[Chromsizes] = None,
+    strand: bool = True,
+    seed: Optional[int] = None,
+):
     """Return PyRanges with random intervals.
 
     Parameters
@@ -296,8 +305,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, seed=None):
     """
 
     if chromsizes is None:
-        chromsizes = data.chromsizes()
-        df = chromsizes.df
+        df = data.chromsizes().df
     elif isinstance(chromsizes, dict):
         df = pd.DataFrame({"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())})
     else:
@@ -307,7 +315,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, seed=None):
 
     n_per_chrom = pd.Series(np.random.choice(df.index, size=n, p=p)).value_counts(sort=False).to_frame()
     n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
-    n_per_chrom.columns = "Count Chromosome".split()
+    n_per_chrom.columns = pd.Index("Count Chromosome".split())
 
     random_dfs = []
     for _, (count, chrom) in n_per_chrom.iterrows():
@@ -330,14 +338,17 @@ See Also
 pyranges.statistics : statistcal methods for genomics."""
 
 
-def to_bigwig(gr, path, chromosome_sizes):
+def to_bigwig(gr: PyRanges, path: Path, chromosome_sizes=Optional[Chromsizes]):
     """Write df to bigwig.
 
     Must contain the columns Chromosome, Start, End and Score. All others are ignored.
 
     Parameters
     ----------
-    path : str
+    gr: PyRanges
+        Intervals to write.
+
+    path : Path
 
         Where to write bigwig.
 
@@ -492,7 +503,9 @@ def to_bigwig(gr, path, chromosome_sizes):
     assert (
         len(gr.strands) <= 1
     ), "Can only write one strand at a time. Use an unstranded PyRanges or subset on strand first."
-    assert np.sum(gr.lengths()) == gr.merge().length, "Intervals must not overlap."
+    lengths = gr.lengths()
+    assert isinstance(lengths, pd.Series)
+    assert np.sum(lengths) == gr.merge().length, "Intervals must not overlap."
 
     df = gr.df
 
@@ -515,16 +528,16 @@ def to_bigwig(gr, path, chromosome_sizes):
     bw.addEntries(chromosomes, starts, ends=ends, values=values)
 
 
-def version_info():
+def version_info() -> None:
     import importlib
 
-    def update_version_info(version_info, library):
+    def update_version_info(_version_info, library) -> None:
         if importlib.util.find_spec(library):
             version = importlib.import_module(library).__version__
         else:
             version = "not installed"
 
-        version_info[library] = version
+        _version_info[library] = version
 
     version_info = {
         "pyranges version": pr.__version__,
@@ -561,3 +574,13 @@ __all__ = [
     "PyRanges",
     "version_info",
 ]
+
+
+def _test():
+    import doctest
+
+    doctest.testmod()
+
+
+if __name__ == "__main__":
+    _test()
