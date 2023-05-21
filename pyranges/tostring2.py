@@ -1,20 +1,21 @@
 import functools
 import os
 import shutil
-from typing import Any, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 import natsort  # type: ignore
 import pandas as pd
 from pandas.core.frame import DataFrame
 
-from pyranges.pyranges_main import PyRanges
+if TYPE_CHECKING:
+    from pyranges.pyranges_main import PyRanges
 
 sort_cols = "Start End".split()
 
 GITHUB_ACTIONS = os.environ.get("GITHUB_ACTIONS", False)
 
 
-def _get_stranded_f(self: PyRanges, half_entries: int, f: str, sort: bool = False) -> DataFrame:
+def _get_stranded_f(self: "PyRanges", half_entries: int, f: str, sort: bool = False) -> DataFrame:
     counter = 0
     dfs = []
 
@@ -57,7 +58,7 @@ def _get_stranded_f(self: PyRanges, half_entries: int, f: str, sort: bool = Fals
     return df
 
 
-def _get_unstranded_f(self: PyRanges, half_entries: int, f: str, sort: bool = False) -> DataFrame:
+def _get_unstranded_f(self: "PyRanges", half_entries: int, f: str, sort: bool = False) -> DataFrame:
     chromosomes = self.chromosomes
 
     if f == "tail":
@@ -88,7 +89,7 @@ def _get_unstranded_f(self: PyRanges, half_entries: int, f: str, sort: bool = Fa
     return df
 
 
-def _get_df(self: PyRanges, n: int, sort: bool) -> DataFrame:
+def _get_df(self: "PyRanges", n: int, sort: bool) -> DataFrame:
     half_entries = int(n / 2)
 
     if len(self) <= n:
@@ -139,7 +140,7 @@ def show_pos_merge_position(df: DataFrame) -> DataFrame:
     return df
 
 
-def get_columns_dtypes(self: PyRanges) -> Dict[str, str]:
+def get_columns_dtypes(self: "PyRanges") -> Dict[str, str]:
     _df = next(iter(self.dfs.values()))
     dtypes = [
         str(d)
@@ -228,7 +229,7 @@ grow_string_representation = functools.partial(
 )
 
 
-def untraditional_strand_info(self: PyRanges, str_repr_width: int) -> str:
+def untraditional_strand_info(self: "PyRanges", str_repr_width: int) -> str:
     _ustr = ""
     if "Strand" in self.columns and not self.stranded:
         strands = []
@@ -274,7 +275,7 @@ def hidden_columns_info(hidden_columns: List[Any], str_repr_width: int) -> str:
     return _hstr
 
 
-def add_text_to_str_repr(self: PyRanges, str_repr: str, hidden_columns: List[Any], sort: bool) -> str:
+def add_text_to_str_repr(self: "PyRanges", str_repr: str, hidden_columns: List[Any], sort: bool) -> str:
     n_intervals = len(self)
     n_chromosomes = len(self.chromosomes)
 
@@ -304,7 +305,7 @@ def add_text_to_str_repr(self: PyRanges, str_repr: str, hidden_columns: List[Any
 
 
 def tostring(
-    self: PyRanges,
+    self: "PyRanges",
     n: int = 8,
     merge_position: bool = False,
     formatting: Optional[Dict[str, str]] = None,
