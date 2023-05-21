@@ -28,7 +28,7 @@ get_transcript_sequence = get_transcript_sequence
 read_gff = read_gtf
 
 
-def from_dict(d, int64=False):
+def from_dict(d):
     """Create a PyRanges from dict.
 
     Parameters
@@ -36,10 +36,6 @@ def from_dict(d, int64=False):
     d : dict of array-like
 
         Dict with data.
-
-    int64 : bool, default False.
-
-        Whether to use 64-bit integers for starts and ends.
 
     Warning
     -------
@@ -69,10 +65,10 @@ def from_dict(d, int64=False):
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
-    return PyRanges(pd.DataFrame(d), int64=int64)
+    return PyRanges(pd.DataFrame(d))
 
 
-def from_string(s, int64=False):
+def from_string(s):
     """Create a PyRanges from multiline string.
 
     Parameters
@@ -80,10 +76,6 @@ def from_string(s, int64=False):
     s : str
 
         String with data.
-
-    int64 : bool, default False.
-
-        Whether to use 64-bit integers for starts and ends.
 
     See Also
     --------
@@ -120,7 +112,7 @@ def from_string(s, int64=False):
 
     df = pd.read_csv(StringIO(s), sep=r"\s+", index_col=None)
 
-    return PyRanges(df, int64=int64)
+    return PyRanges(df)
 
 
 def itergrs(prs, strand=None, keys=False):
@@ -233,7 +225,7 @@ def itergrs(prs, strand=None, keys=False):
         return iter(natsorted(grs_per_chromosome.items()))
 
 
-def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=None):
+def random(n=1000, length=100, chromsizes=None, strand=True, seed=None):
     """Return PyRanges with random intervals.
 
     Parameters
@@ -254,9 +246,9 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
 
         Data should have strand.
 
-    int64 : bool, default False
+    seed : int, default None
 
-        Use int64 to represent Start and End.
+        Seed for random number generator.
 
     Examples
     --------
@@ -328,7 +320,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
         s = np.random.choice("+ -".split(), size=n)
         random_df.insert(3, "Strand", s)
 
-    return PyRanges(random_df, int64=int64)
+    return PyRanges(random_df)
 
 
 """Namespace for statistcal functions.

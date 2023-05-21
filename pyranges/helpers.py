@@ -1,3 +1,8 @@
+from typing import Tuple, Union
+
+import pandas as pd
+
+
 def get_chromosomes_from_dict(dfs):
     keys = list(dfs.keys())
     if isinstance(keys[0], tuple):
@@ -18,7 +23,7 @@ def get_strands_from_dict(dfs):
     return strands
 
 
-def get_key_from_df(df):
+def get_key_from_df(df: pd.DataFrame) -> Union[str, Tuple[str, str]]:
     chromosome = df.Chromosome.head(1).iloc[0]
     if "Strand" in df:
         strand = df.Strand.head(1).iloc[0]
