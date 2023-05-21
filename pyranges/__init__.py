@@ -532,7 +532,7 @@ def version_info() -> None:
     import importlib
 
     def update_version_info(_version_info, library) -> None:
-        if importlib.util.find_spec(library):
+        if importlib.util.find_spec(library):  # type: ignore
             version = importlib.import_module(library).__version__
         else:
             version = "not installed"
