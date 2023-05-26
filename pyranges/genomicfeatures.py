@@ -4,6 +4,9 @@ from sorted_nearest.src.introns import find_introns  # type: ignore
 
 import pyranges as pr
 from pyranges.multithreaded import pyrange_apply
+from pandas.core.frame import DataFrame
+from pyranges.pyranges_main import PyRanges
+from typing import Dict, Optional
 
 __all__ = ["genome_bounds", "tile_genome", "GenomicFeaturesMethods"]
 
@@ -14,12 +17,10 @@ class GenomicFeaturesMethods:
 
     Accessed through `gr.features`."""
 
-    pr = None
-
-    def __init__(self, pr):
+    def __init__(self, pr: PyRanges) -> None:
         self.pr = pr
 
-    def tss(self):
+    def tss(self) -> PyRanges:
         """Return the transcription start sites.
 
         Returns the 5' for every interval with feature "transcript".
@@ -83,7 +84,7 @@ class GenomicFeaturesMethods:
 
         return pr
 
-    def tes(self, slack=0):
+    def tes(self) -> PyRanges:
         """Return the transcription end sites.
 
         Returns the 3' for every interval with feature "transcript".
@@ -147,18 +148,13 @@ class GenomicFeaturesMethods:
 
         return pr
 
-    def introns(self, by="gene", nb_cpu=1):
+    def introns(self, by: str = "gene") -> PyRanges:
         """Return the introns.
 
         Parameters
         ----------
         by : str, {"gene", "transcript"}, default "gene"
             Whether to find introns per gene or transcript.
-
-        nb_cpu: int, default 1
-
-            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
-            Will only lead to speedups on large datasets.
 
         See Also
         --------
@@ -223,7 +219,7 @@ class GenomicFeaturesMethods:
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
-        kwargs = {"by": by, "nb_cpu": nb_cpu}
+        kwargs = {"by": by}
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
 
         assert by in ["gene", "transcript"]
@@ -244,22 +240,26 @@ class GenomicFeaturesMethods:
         return pr.from_dfs(result)
 
 
-def _outside_bounds(df, **kwargs):
+def _outside_bounds(df: DataFrame, **kwargs) -> DataFrame:
     df = df.copy()
 
-    chromsizes = kwargs.get("chromsizes")
+    _chromsizes = kwargs.get("chromsizes")
 
-    if not isinstance(chromsizes, dict):
-        size_df = chromsizes.df
+    if isinstance(_chromsizes, PyRanges):
+        size_df = _chromsizes.df
+        if not size_df.Chromosome.is_unique:
+            raise ValueError("Chromosomes must be unique in chromsizes.")
         chromsizes = {k: v for k, v in zip(size_df.Chromosome, size_df.End)}
+    else:
+        assert isinstance(_chromsizes, dict)
+        chromsizes = _chromsizes
 
     size = int(chromsizes[df.Chromosome.iloc[0]])
     clip = kwargs.get("clip", False)
     only_right = kwargs.get("only_right", False)
 
     ends_outright = df.End > size
-    if not only_right:
-        starts_outleft = df.Start < 0
+    starts_outleft = df.Start < 0
 
     if not clip:  # i.e. remove
         if only_right:
@@ -288,7 +288,7 @@ def _outside_bounds(df, **kwargs):
     return df
 
 
-def genome_bounds(gr, chromsizes, clip=False, only_right=False):
+def genome_bounds(gr: PyRanges, chromsizes: Dict[str, int], clip: bool = False, only_right: bool = False) -> PyRanges:
     """Remove or clip intervals outside of genome bounds.
 
     Parameters
@@ -391,18 +391,15 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right)
 
 
-def _last_tile(df, **kwargs):
-    # do not need copy, since it is only used internally by
-    # tile_genome
-    # df = df.copy()
-    sizes = kwargs.get("sizes")
+def _last_tile(df: DataFrame, sizes: pd.DataFrame, **kwargs) -> DataFrame:
+    # do not need copy, since it is only used internally by tile_genome
     size = sizes[df.Chromosome.iloc[0]].End.iloc[0]
     df.loc[df.tail(1).index, "End"] = size
 
     return df
 
 
-def tile_genome(genome, tile_size, tile_last=False):
+def tile_genome(chromsizes: PyRanges, tile_size: int, tile_last: bool = False) -> PyRanges:
     """Create a tiled genome.
 
     Parameters
@@ -464,20 +461,20 @@ def tile_genome(genome, tile_size, tile_last=False):
     For printing, the PyRanges was sorted on Chromosome.
     """
 
-    if isinstance(genome, dict):
-        chromosomes, ends = list(genome.keys()), list(genome.values())
+    if isinstance(chromsizes, dict):
+        chromosomes, ends = list(chromsizes.keys()), list(chromsizes.values())
         df = pd.DataFrame({"Chromosome": chromosomes, "Start": 0, "End": ends})
-        genome = pr.PyRanges(df)
+        chromsizes = pr.PyRanges(df)
 
-    gr = genome.tile(tile_size)
+    gr = chromsizes.tile(tile_size)
 
     if not tile_last:
-        gr = gr.apply(_last_tile, sizes=genome)
+        gr = gr.apply(_last_tile, sizes=chromsizes)
 
     return gr
 
 
-def _keep_transcript_with_most_exons(df):
+def _keep_transcript_with_most_exons(df: pd.DataFrame) -> DataFrame:
     transcripts_with_most_exons = []
 
     for _, gdf in df.groupby("gene_id"):
@@ -491,13 +488,11 @@ def _keep_transcript_with_most_exons(df):
     return pd.concat(transcripts_with_most_exons).reset_index(drop=True)
 
 
-def filter_transcripts(df, keep="most_exons"):
+def filter_transcripts(df: pd.DataFrame) -> DataFrame:
     return _keep_transcript_with_most_exons(df)
 
 
-def _tss(df, slack=0):
-    intype = df.Start.dtype
-
+def _tss(df: DataFrame, slack: int = 0) -> DataFrame:
     tss_pos = df.loc[df.Strand == "+"]
 
     tss_neg = df.loc[df.Strand == "-"].copy()
@@ -512,17 +507,12 @@ def _tss(df, slack=0):
     tss.Start = tss.Start - slack
     tss.loc[tss.Start < 0, "Start"] = 0
 
-    tss.index = range(len(tss))
-
-    tss[["Start", "End"]] = tss[["Start", "End"]].astype(intype)
+    tss.index = pd.Index(range(len(tss)))
 
     return tss
 
 
-def _tes(df, slack=0):
-    intype = df.Start.dtype
-    # df = self.df
-
+def _tes(df: DataFrame, slack: int = 0) -> DataFrame:
     tes_pos = df.loc[df.Strand == "+"]
 
     tes_neg = df.loc[df.Strand == "-"].copy()
@@ -537,9 +527,7 @@ def _tes(df, slack=0):
     tes.Start = tes.Start - slack
     tes.loc[tes.Start < 0, "Start"] = 0
 
-    tes.index = range(len(tes))
-
-    tes[["Start", "End"]] = tes[["Start", "End"]].astype(intype)
+    tes.index = pd.Index(range(len(tes)))
 
     return tes
 
@@ -547,11 +535,11 @@ def _tes(df, slack=0):
 by_to_id = {"gene": "gene_id", "transcript": "transcript_id"}
 
 
-def _introns2(df, exons, **kwargs):
+def _introns2(df: DataFrame, exons: DataFrame, **kwargs) -> DataFrame:
     """TODO: refactor"""
 
     if df.empty or exons.empty:
-        return None
+        return pd.DataFrame(columns=df.columns)
 
     original_order = df.columns
     by = kwargs["by"]
@@ -559,12 +547,12 @@ def _introns2(df, exons, **kwargs):
 
     exons = exons[["Start", "End", id_column]]
     genes = df[["Start", "End", id_column]]
-    exons.columns = ["Start", "End", "by_id"]
-    genes.columns = ["Start", "End", "by_id"]
+    exons.columns = pd.Index(["Start", "End", "by_id"])
+    genes.columns = pd.Index(["Start", "End", "by_id"])
 
     intersection = pd.Series(np.intersect1d(exons["by_id"], genes["by_id"]))
     if len(intersection) == 0:
-        return None
+        return pd.DataFrame(columns=df.columns)
 
     exons = exons[exons["by_id"].isin(intersection)].reset_index(drop=True).sort_values(["by_id", "Start"])
     genes = genes[genes["by_id"].isin(intersection)].reset_index(drop=True).sort_values(["by_id", "Start"])
@@ -604,13 +592,17 @@ def _introns2(df, exons, **kwargs):
     )
 
     vc = introns["by_id"].value_counts(sort=False).to_frame().reset_index()
-    vc.columns = ["by_id", "counts"]
+    vc.columns = pd.Index(["by_id", "counts"])
 
-    genes_without_introns = pd.DataFrame(data={"by_id": np.setdiff1d(by_ids.values, vc.by_id.values), "counts": 0})
+    genes_without_introns = pd.DataFrame(data={"by_id": np.setdiff1d(
+        np.array(by_ids.values),
+        np.array(vc.by_id.values)),
+        "counts": 0}
+    )
 
     vc = pd.concat([vc, genes_without_introns]).sort_values("by_id")
 
-    original_ids = np.repeat(vc.by_id, vc.counts).to_frame()
+    original_ids = pd.Series(np.repeat(vc.by_id, vc.counts)).to_frame()
     original_ids = original_ids.merge(
         df[["__temp__", id_column]],
         right_on="__temp__",

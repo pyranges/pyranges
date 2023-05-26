@@ -609,7 +609,7 @@ class PyRanges:
 
         return pyrange_apply_single(f, self, **kwargs)
 
-    def apply_pair(self, other: "PyRanges", f: Callable, strandedness: None = None, **kwargs) -> "PyRanges":
+    def apply_pair(self, other: "PyRanges", f: Callable, strandedness: Optional[str] = None, **kwargs) -> "PyRanges":
         """Apply a function to a pair of PyRanges.
 
         The function is applied to each chromosome or chromosome/strand pair found in at least one
@@ -632,11 +632,6 @@ class PyRanges:
 
             Whether to return as a PyRanges or dict. If `f` does not return a pd.DataFrame valid for
             PyRanges, `as_pyranges` must be False.
-
-        nb_cpu: int, default 1
-
-            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
-            Will only lead to speedups on large datasets.
 
         **kwargs
             Additional keyword arguments to pass as keyword arguments to `f`
@@ -5214,10 +5209,9 @@ class PyRanges:
 
         from pyranges.out import _to_bigwig
 
-        if chromosome_sizes is None:
-            chromosome_sizes = pr.data.chromsizes()
+        _chromosome_sizes = pr.data.chromsizes() if chromosome_sizes is None else chromosome_sizes
 
-        result = _to_bigwig(self, path, chromosome_sizes, rpm, divide, value_col, dryrun)
+        result = _to_bigwig(self, path, _chromosome_sizes, rpm, divide, value_col, dryrun)
 
         if dryrun:
             return result

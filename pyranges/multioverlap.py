@@ -1,9 +1,11 @@
 import numpy as np
 
 import pyranges as pr
+from pyranges.pyranges_main import PyRanges
+from typing import Dict, Optional
 
 
-def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
+def count_overlaps(grs: Dict[str, PyRanges], features: Optional[PyRanges] = None, strandedness: Optional[str] = None, how: Optional[str] = None) -> PyRanges:
     """Count overlaps in multiple pyranges.
 
     Parameters
@@ -26,11 +28,6 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
 
         What intervals to report. By default reports all overlapping intervals. "containment"
         reports intervals where the overlapping is contained within it.
-
-    nb_cpu : int, default 1
-
-        How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
-        Will only lead to speedups on large datasets.
 
     Examples
     --------
@@ -136,10 +133,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
 
     kwargs = {
         "as_pyranges": False,
-        "nb_cpu": nb_cpu,
-        "strandedness": strandedness,
         "how": how,
-        "nb_cpu": nb_cpu,
     }
     names = list(grs.keys())
 
@@ -154,7 +148,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
         gr = gr.drop()
 
         kwargs["name"] = name
-        features.apply_pair(gr, _count_overlaps, **kwargs)  # count overlaps modifies the ranges in-place
+        features.apply_pair(gr, _count_overlaps, strandedness, **kwargs)  # count overlaps modifies the ranges in-place
 
     def to_int(df):
         df[names] = df[names].astype(np.int64)

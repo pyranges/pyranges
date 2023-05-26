@@ -1,9 +1,9 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 import pandas as pd
 
 
-def get_chromosomes_from_dict(dfs):
+def get_chromosomes_from_dict(dfs) -> List[str]:
     keys = list(dfs.keys())
     if isinstance(keys[0], tuple):
         chromosomes = [k[0] for k in keys]
@@ -13,7 +13,7 @@ def get_chromosomes_from_dict(dfs):
     return chromosomes
 
 
-def get_strands_from_dict(dfs):
+def get_strands_from_dict(dfs) -> Union[List[str], List[Tuple[str, str]]]:
     keys = list(dfs.keys())
     if isinstance(keys[0], tuple):
         strands = [k[1] for k in keys]
@@ -32,7 +32,7 @@ def get_key_from_df(df: pd.DataFrame) -> Union[str, Tuple[str, str]]:
     return chromosome
 
 
-def single_value_key(df):
+def single_value_key(df: pd.DataFrame) -> bool:
     if "Strand" in df:
         return len(df[["Chromosome", "Strand"]].drop_duplicates(["Chromosome", "Strand"])) == 1
     else:
