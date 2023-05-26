@@ -20,6 +20,7 @@ Examples
 Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 For printing, the PyRanges was sorted on Chromosome and Strand.
 """
+from pathlib import Path
 
 import pandas as pd
 import pkg_resources
@@ -43,17 +44,17 @@ __all__ = [
 ]
 
 
-def get_example_path(basename):
+def get_example_path(basename) -> Path:
     full_path = pkg_resources.resource_filename("pyranges", "example_data/{}".format(basename))
 
     if full_path.endswith(".bam"):
         # hack to load index too
         pkg_resources.resource_filename("pyranges", "example_data/{}.bai".format(basename))
 
-    return full_path
+    return Path(full_path)
 
 
-def aorta():
+def aorta() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -78,7 +79,7 @@ def aorta():
     return pr.read_bed(full_path)
 
 
-def aorta2():
+def aorta2() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -103,13 +104,13 @@ def aorta2():
     return pr.read_bed(full_path)
 
 
-def bw():
+def bw() -> "pr.PyRanges":
     full_path = get_example_path("bw.bw")
 
     return pr.read_bigwig(full_path)
 
 
-def chipseq():
+def chipseq() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -134,7 +135,7 @@ def chipseq():
     return pr.read_bed(full_path)
 
 
-def chipseq_background():
+def chipseq_background() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
@@ -159,7 +160,7 @@ def chipseq_background():
     return pr.read_bed(full_path)
 
 
-def chromsizes():
+def chromsizes() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+
     >>> # | Chromosome   | Start     | End       |
@@ -184,7 +185,7 @@ def chromsizes():
     return pr.read_bed(full_path)
 
 
-def control_bam():
+def control_bam() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+--------------+------------+
     >>> # | Chromosome   | Start     | End       | Strand       | Flag       |
@@ -209,7 +210,7 @@ def control_bam():
     return pr.read_bam(full_path)
 
 
-def cpg():
+def cpg() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+-----------+
     >>> # | Chromosome   | Start     | End       | CpG       |
@@ -236,7 +237,7 @@ def cpg():
     return pr.PyRanges(df)
 
 
-def ensembl_gtf():
+def ensembl_gtf() -> "pr.PyRanges":
     """
     >>> # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
     >>> # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
@@ -262,7 +263,7 @@ def ensembl_gtf():
     return pr.read_gtf(full_path)
 
 
-def exons():
+def exons() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
@@ -287,7 +288,7 @@ def exons():
     return pr.read_bed(full_path)
 
 
-def f1():
+def f1() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -306,7 +307,7 @@ def f1():
     return pr.read_bed(full_path)
 
 
-def f2():
+def f2() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -324,7 +325,7 @@ def f2():
     return pr.read_bed(full_path)
 
 
-def gencode_gtf():
+def gencode_gtf() -> "pr.PyRanges":
     """
     >>> # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------------+-------+
     >>> # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id           | +15   |
@@ -350,7 +351,7 @@ def gencode_gtf():
     return pr.read_gtf(full_path)
 
 
-def ucsc_bed():
+def ucsc_bed() -> "pr.PyRanges":
     """
     >>> # +--------------+-----------+-----------+------------+------------+-----------------+--------------+---------------+-------------------+
     >>> # | Chromosome   | Start     | End       | Feature    | gene_id    | transcript_id   | Strand       | exon_number   | transcript_name   |

@@ -4,7 +4,7 @@ from ncls import NCLS  # type: ignore
 
 
 def _both_indexes(scdf, ocdf, how=False, **kwargs):
-    assert (how in "containment first last outer right left".split() + [False, None]) or isinstance(how, int)
+    assert (how in "containment first last outer right left".split() + [False, None]) or isinstance(how, int), how
     starts = scdf.Start.values
     ends = scdf.End.values
     indexes = scdf.index.values

@@ -1,11 +1,19 @@
 import sys
+from pathlib import Path
+from typing import TYPE_CHECKING, Optional
 
 import pandas as pd
+from pandas.core.frame import DataFrame
+from pandas.core.series import Series
 
 import pyranges as pr  # noqa: F401
+from pyranges.pyranges_main import PyRanges
+
+if TYPE_CHECKING:
+    import pyfaidx  # type: ignore
 
 
-def get_sequence(gr, path=None, pyfaidx_fasta=None):
+def get_sequence(gr: PyRanges, path: Optional[Path] = None, pyfaidx_fasta: Optional["pyfaidx.Fasta"] = None) -> Series:
     """Get the sequence of the intervals from a fasta file
 
     Parameters
@@ -14,7 +22,7 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
 
         Coordinates.
 
-    path : str
+    path : Path
 
         Path to fasta file. It will be indexed using pyfaidx if an index is not found
 
@@ -128,7 +136,9 @@ def get_fasta(*args, **kwargs):
     return get_sequence(*args, **kwargs)
 
 
-def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
+def get_transcript_sequence(
+    gr: PyRanges, group_by: str, path: Optional[Path] = None, pyfaidx_fasta: Optional["pyfaidx.Fasta"] = None
+) -> DataFrame:
     """Get the sequence of mRNAs, e.g. joining intervals corresponding to exons of the same transcript
 
     Parameters
@@ -141,7 +151,7 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
 
         intervals are grouped by this/these ID column(s): these are exons belonging to same transcript
 
-    path : str
+    path : Optional Path
 
         Path to fasta file. It will be indexed using pyfaidx if an index is not found
 
@@ -223,3 +233,13 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     z["Sequence"] = get_sequence(gr, path=path, pyfaidx_fasta=pyfaidx_fasta)
 
     return z.groupby(group_by, as_index=False).agg({"Sequence": "".join})
+
+
+def _test():
+    import doctest
+
+    doctest.testmod()
+
+
+if __name__ == "__main__":
+    _test()

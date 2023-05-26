@@ -1,29 +1,33 @@
 import functools
 import os
 import shutil
-from typing import Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 import natsort  # type: ignore
 import pandas as pd
+from pandas.core.frame import DataFrame
+
+if TYPE_CHECKING:
+    from pyranges.pyranges_main import PyRanges
 
 sort_cols = "Start End".split()
 
 GITHUB_ACTIONS = os.environ.get("GITHUB_ACTIONS", False)
 
 
-def _get_stranded_f(self, half_entries, f, sort=False):
+def _get_stranded_f(self: "PyRanges", half_entries: int, f: str, sort: bool = False) -> DataFrame:
     counter = 0
     dfs = []
 
     chromosomes = self.chromosomes
 
     if f == "tail":
-        chromosomes = reversed(chromosomes)
+        chromosomes = list(reversed(chromosomes))
 
     default = pd.DataFrame(columns=self.columns)
     for chromosome in chromosomes:
-        plus = self.dfs.get((chromosome, "+"), default)
-        minus = self.dfs.get((chromosome, "-"), default)
+        plus = self.dfs.get((chromosome, "+"), default)  # type: ignore
+        minus = self.dfs.get((chromosome, "-"), default)  # type: ignore
 
         if sort:
             plus = plus.sort_values(sort_cols)
@@ -54,18 +58,18 @@ def _get_stranded_f(self, half_entries, f, sort=False):
     return df
 
 
-def _get_unstranded_f(self, half_entries, f, sort=False):
+def _get_unstranded_f(self: "PyRanges", half_entries: int, f: str, sort: bool = False) -> DataFrame:
     chromosomes = self.chromosomes
 
     if f == "tail":
-        chromosomes = reversed(chromosomes)
+        chromosomes = list(reversed(chromosomes))
 
     default = pd.DataFrame(columns=self.columns)
 
     counter = 0
     dfs = []
     for chromosome in chromosomes:
-        cdf = self.dfs.get((chromosome), default)
+        cdf = self.dfs.get(chromosome, default)  # type: ignore
         cdf = getattr(cdf, f)(half_entries)
 
         if sort:
@@ -85,7 +89,7 @@ def _get_unstranded_f(self, half_entries, f, sort=False):
     return df
 
 
-def _get_df(self, n, sort):
+def _get_df(self: "PyRanges", n: int, sort: bool) -> DataFrame:
     half_entries = int(n / 2)
 
     if len(self) <= n:
@@ -110,7 +114,7 @@ def _get_df(self, n, sort):
     return df
 
 
-def show_pos_merge_position(df):
+def show_pos_merge_position(df: DataFrame) -> DataFrame:
     # all_dots = df.Start == "..."
 
     cols_to_drop = "Chromosome Start End".split()
@@ -136,7 +140,7 @@ def show_pos_merge_position(df):
     return df
 
 
-def get_columns_dtypes(self):
+def get_columns_dtypes(self: "PyRanges") -> Dict[str, str]:
     _df = next(iter(self.dfs.values()))
     dtypes = [
         str(d)
@@ -149,7 +153,7 @@ def get_columns_dtypes(self):
     return {c: d for c, d in zip(columns, dtypes)}
 
 
-def build_header(columns_dtypes):
+def build_header(columns_dtypes: Dict[str, str]) -> List[str]:
     header = []
     for c, d in columns_dtypes.items():
         cd = "".join([str(c), "\n(", d, ")"])
@@ -166,7 +170,9 @@ def add_hidden_col_dotdot(df, n_hidden_cols):
     return df
 
 
-def _grow_string_representation(df, columns_dtypes, terminal_width: Optional[int] = None):
+def _grow_string_representation(
+    df: DataFrame, columns_dtypes: Dict[str, str], terminal_width: Optional[int] = None
+) -> Tuple[str, List[str]]:
     from tabulate import tabulate
 
     _terminal_width = shutil.get_terminal_size().columns if terminal_width is None else terminal_width
@@ -174,7 +180,7 @@ def _grow_string_representation(df, columns_dtypes, terminal_width: Optional[int
 
     if len(columns_dtypes) < 15:
         header = build_header(columns_dtypes)
-        str_repr = tabulate(df, headers=header, tablefmt="psql", showindex=False)
+        str_repr = tabulate(df, headers=header, tablefmt="psql", showindex=False)  # type: ignore
 
         table_width = len(str_repr.split("\n", 1)[0])
 
@@ -183,10 +189,11 @@ def _grow_string_representation(df, columns_dtypes, terminal_width: Optional[int
 
     header = build_header({k: columns_dtypes[k] for k in columns_dtypes})
     original_header = list(columns_dtypes)
-    df.columns = header
+    df.columns = pd.Index(header)
 
     # know that any pyrange will have at least three columns
     build_df = df.get(list(df.columns[:3]))
+    assert isinstance(build_df, DataFrame)
 
     total_columns = len(df.columns)
 
@@ -222,7 +229,7 @@ grow_string_representation = functools.partial(
 )
 
 
-def untraditional_strand_info(self, str_repr_width):
+def untraditional_strand_info(self: "PyRanges", str_repr_width: int) -> str:
     _ustr = ""
     if "Strand" in self.columns and not self.stranded:
         strands = []
@@ -249,7 +256,7 @@ def untraditional_strand_info(self, str_repr_width):
     return _ustr
 
 
-def hidden_columns_info(hidden_columns, str_repr_width):
+def hidden_columns_info(hidden_columns: List[Any], str_repr_width: int) -> str:
     n_hidden_cols = len(hidden_columns)
     _hstr = ""
     if n_hidden_cols:
@@ -268,7 +275,7 @@ def hidden_columns_info(hidden_columns, str_repr_width):
     return _hstr
 
 
-def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
+def add_text_to_str_repr(self: "PyRanges", str_repr: str, hidden_columns: List[Any], sort: bool) -> str:
     n_intervals = len(self)
     n_chromosomes = len(self.chromosomes)
 
@@ -297,7 +304,13 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
     return str_repr
 
 
-def tostring(self, n=8, merge_position=False, formatting=None, sort=False):
+def tostring(
+    self: "PyRanges",
+    n: int = 8,
+    merge_position: bool = False,
+    formatting: Optional[Dict[str, str]] = None,
+    sort: bool = False,
+) -> str:
     if len(self) == 0:
         return "Empty PyRanges"
 

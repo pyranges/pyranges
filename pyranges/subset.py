@@ -1,12 +1,18 @@
+from typing import Any, Dict, List, Tuple, Union
+
 import pandas as pd
 from ncls import NCLS  # type: ignore
+from numpy import int64
+from pandas.core.frame import DataFrame
+
+from pyranges.pyranges_main import PyRanges
 
 
-def create_ncls(df):
+def create_ncls(df: DataFrame) -> NCLS:
     return NCLS(df.Start.values, df.End.values, df.index.values)
 
 
-def find_overlaps(df, start, end):
+def find_overlaps(df: DataFrame, start: int, end: Union[int64, int]) -> List[Union[int, Any]]:
     n = create_ncls(df)
 
     idxes = []
@@ -16,106 +22,107 @@ def find_overlaps(df, start, end):
     return idxes
 
 
-def get_slice(self, val):
+def get_slice(self: PyRanges, val: slice) -> Union[Dict[str, DataFrame], Dict[Tuple[str, str], DataFrame]]:
     # 100:999
 
-    d = {}
+    if self.stranded:
+        sd = {}
+        for sk, sdf in self._dfs_with_strand.items():
+            start = val.start or 0
+            stop = val.stop or max(sdf.End.max(), start)
+            idxes = find_overlaps(sdf, start, stop)
+            sd[sk] = sdf.reindex(idxes)
+        return sd
+    else:
+        d = {}
+        for k, df in self._dfs_without_strand.items():
+            start = val.start or 0
+            stop = val.stop or max(df.End.max(), start)
+            idxes = find_overlaps(df, start, stop)
+            d[k] = df.reindex(idxes)
+        return d
 
-    for k, df in self.items():
-        start = val.start or 0
-        stop = val.stop or max(df.End.max(), start)
-        idxes = find_overlaps(df, start, stop)
-        d[k] = df.reindex(idxes)
 
-    return d
-
-
-def get_string(self, val):
+def get_string(self: PyRanges, val: str) -> Union[Dict[Tuple[str, str], DataFrame], Dict[str, DataFrame]]:
     if val in self.chromosomes:
         if self.stranded:
-            return {k: self.dfs[k] for k in self.keys() if k[0] == val}
+            return {k: df for k, df in self._dfs_with_strand.items() if k[0] == val}
         else:
-            return {val: self.dfs[val]}
-
+            return {val: df for k, df in self._dfs_without_strand.items() if k == val}
     elif val in "+ -".split():
-        return {k: v for k, v in self.items() if k[1] == val}
+        return {k: v for k, v in self._dfs_with_strand.items() if k[1] == val}
     else:
-        return {}
+        d: Dict[str, DataFrame] = {}
+        return d
 
 
-def get_tuple(self, val):
-    if len(val) == 2:
-        dfs = get_double(self, val)
-    elif len(val) == 3:
-        dfs = get_triple(self, val)
+def get_2_tuple(
+    self: PyRanges, first: str, second: Union[str, slice]
+) -> Union[Dict[str, DataFrame], Dict[Tuple[str, str], DataFrame]]:
+    if isinstance(first, str) and first in "+-" and isinstance(second, slice):
+        return get_strand_and_slice(self, strand=first, loc=second)
+    if isinstance(first, (int, str)) and isinstance(second, str):
+        return get_chromosome_and_strand(self, chromosome=first, strand=second)
+    if isinstance(first, (int, str)) and isinstance(second, slice):
+        return get_chromosome_and_slice(self, chromosome=first, loc=second)
+    else:
+        raise TypeError(f"Incorrect types: {type(first)}, {type(second)}")
 
-    return dfs
 
-
-def get_double(self, val):
-    if len(val) == 2 and val[0] in self.chromosomes and isinstance(val[1], slice):
-        chromosome, loc = val
+def get_chromosome_and_slice(
+    self: PyRanges, chromosome: str, loc: slice
+) -> Union[Dict[str, DataFrame], Dict[Tuple[str, str], DataFrame]]:
+    if chromosome in self.chromosomes:
         start = loc.start or 0
         if self.stranded:
-            dfs = {k: df for k, df in self.items() if k[0] == chromosome}
-            max_end = max([df.End.max() for df in dfs.values()])
+            dfs = [df for (c, _), df in self._dfs_with_strand.items() if c == chromosome]
         else:
-            dfs = {val[0]: self.dfs[val[0]]}
-            max_end = list(dfs.values())[0].End.max()
+            dfs = [df for c, df in self._dfs_without_strand.items() if c == chromosome]
+        max_end = max([df.End.max() for df in dfs])
 
         # in case 1:None
         stop = loc.stop or max(max_end, start)
 
-        dfs2 = {}
-        for k, df in dfs.items():
-            idxes = find_overlaps(df, start, stop)
-            if idxes:
-                dfs2[k] = df.loc[idxes]
+        out_dfs = [df[find_overlaps(df, start, stop)] for df in dfs]
 
-        return dfs2
+    return PyRanges(pd.concat(out_dfs)).dfs
 
+
+def get_strand_and_slice(self: PyRanges, strand: str, loc: slice) -> Dict[Tuple[str, str], DataFrame]:
     # "+", 5:10
-    if len(val) == 2 and val[0] in "+ -".split() and isinstance(val[1], slice):
-        strand, loc = val
-        start = loc.start or 0
+    start = loc.start or 0
 
-        dfs = {k: df for k, df in self.items() if k[1] == strand}
-        max_end = max([df.End.max() for df in dfs.values()])
+    dfs = [df for (c, s), df in self._dfs_with_strand.items() if s == strand]
+    max_end = max([df.End.max() for df in dfs])
 
-        stop = loc.stop or max(max_end, start)
+    stop = loc.stop or max(max_end, start)
 
-        dfs2 = {}
-        for k, df in dfs.items():
-            idxes = find_overlaps(df, start, stop)
-            if idxes:
-                dfs2[k] = df.loc[idxes]
+    out_dfs = [df[find_overlaps(df, start, stop)] for df in dfs]
 
-        return dfs2
-
-    # "chr1", "+"
-    if len(val) == 2 and val[1] in "+ -".split():
-        chromosome, strand = val
-
-        if (chromosome, strand) in self.dfs:
-            return {(chromosome, strand): self.dfs[chromosome, strand]}
-        else:
-            return {}
+    return {k: v for k, v in PyRanges(pd.concat(out_dfs))._dfs_with_strand.items()}
 
 
-def get_triple(self, val):
+# "chr1", "+"
+def get_chromosome_and_strand(
+    self: PyRanges, chromosome: Union[int, str], strand: str
+) -> Dict[Tuple[str, str], DataFrame]:
+    return {k: df for k, df in self._dfs_with_strand.items() if k == (chromosome, strand)}
+
+
+def get_chromosome_strand_loc(
+    self: PyRanges, chromosome: str, strand: str, loc: slice
+) -> Dict[Tuple[str, str], DataFrame]:
     # "chr1", "+", 5:10
-    chromosome, strand, loc = val
     start = loc.start or 0
 
     if strand not in "+ -".split():
-        raise Exception("Strand '{}' invalid.".format(val))
+        raise Exception("Strand '{}' invalid.".format(strand))
 
     r = self[chromosome, strand].values()
     if len(r):
         df = r[0]
     else:
-        df = pd.DataFrame(columns="Chromosome Start End".split())
-        return df
+        return {}
 
     max_end = df.End.max()
 

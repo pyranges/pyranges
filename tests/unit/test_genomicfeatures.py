@@ -15,11 +15,6 @@ def compute_introns_single(df, by):
     x.Strand = "-"
     x = x.df
 
-    print("g " * 100)
-    print(g)
-    print("x " * 100)
-    print(x)
-
     if g.empty or x.empty:
         return pd.DataFrame()
 
@@ -74,10 +69,6 @@ def _introns_correct(full, genes, exons, introns, by):
         expected = expected_results[gene_id]
         exons = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == "exon").merge(by=id_column)
         genes = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == by)
-        print("exons", exons)
-        print("based_on", based_on[gene_id])
-        print("actual", idf["Chromosome Start End Strand".split()])
-        print("expected", expected["Chromosome Start End Strand".split()])
         _introns = pr.PyRanges(idf)
         assert len(exons.intersect(_introns)) == 0
         assert len(genes.intersect(_introns)) == len(_introns)
@@ -96,17 +87,10 @@ def test_introns_single():
     exons.Feature = "exon"
     exons = exons.df
     df = pd.concat([gr[gr.Feature == "gene"].df, exons], sort=False)
-    print(df)
 
     for gid, gdf in df.groupby("gene_id"):
-        print("-------" * 20)
-        print(gid)
-        print(gdf)
-        print("gdf", len(gdf))
         expected = compute_introns_single(gdf, by="gene")
-        print("expected", len(expected))
         actual = pr.PyRanges(gdf).features.introns().df
-        print("actual", len(actual))
         if actual.empty:
             assert expected.empty
             continue

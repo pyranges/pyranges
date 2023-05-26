@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import pandas as pd
 
 import pyranges as pr
@@ -9,8 +7,7 @@ def concat(pyranges, strand=None):
     if not pyranges:
         return None
 
-    pyranges = [pr for pr in pyranges if not pr.empty]
-    grs_per_chromosome = defaultdict(list)
+    pyranges = [gr for gr in pyranges if not gr.empty]
 
     strand_info = [gr.stranded for gr in pyranges]
 
@@ -20,31 +17,4 @@ def concat(pyranges, strand=None):
     if strand:
         assert all([gr.stranded for gr in pyranges]), "Cannot do stranded concat, not all pyranges contain strand info."
 
-        for gr in pyranges:
-            for k, df in gr.dfs.items():
-                # dbg(df)
-                grs_per_chromosome[k].append(df)
-    else:
-        for gr in pyranges:
-            for chromosome in gr.chromosomes:
-                df = gr[chromosome].df
-                grs_per_chromosome[chromosome].append(df)
-
-    new_pyrange = {}
-
-    for k, v in grs_per_chromosome.items():
-        new_pyrange[k] = pd.concat(v, sort=False)
-
-    res = pr.multithreaded.process_results(new_pyrange.values(), new_pyrange.keys())
-
-    if any(strand_info) and not all(strand_info):
-        new_res = {}
-        for k, v in res.items():
-            v.loc[:, "Strand"] = v.Strand.cat.add_categories(["."])
-            new_res[k] = v.assign(Strand=v.Strand.fillna("."))
-        res = pr.PyRanges(new_res)
-        res.Strand = res.Strand
-    else:
-        res = pr.PyRanges(res)
-
-    return res
+    return pr.PyRanges(pd.concat([gr.df for gr in pyranges]))
