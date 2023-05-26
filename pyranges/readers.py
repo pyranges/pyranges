@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import sys
 from pathlib import Path
-from typing import Union, Optional, List
+from typing import List, Optional, Union
 
 import pandas as pd
 from natsort import natsorted  # type: ignore
@@ -300,9 +300,9 @@ def read_gtf(
 
 def read_gtf_full(
     f: Union[str, Path],
-    nrows = None,
-    skiprows = 0,
-    duplicate_attr = False,
+    nrows=None,
+    skiprows=0,
+    duplicate_attr=False,
     ignore_bad: bool = False,
     chunksize: int = int(1e5),  # for unit-testing purposes
 ) -> pr.PyRanges:
@@ -349,9 +349,7 @@ def to_rows(anno: pd.Series, ignore_bad: bool = False) -> pd.DataFrame:
         for entry in row:
             str(entry).replace('"', "").replace(";", "").split()
     except AttributeError:
-        raise Exception(
-            f"Invalid attribute string: {entry}. If the file is in GFF3 format, use pr.read_gff3 instead."
-        )
+        raise Exception(f"Invalid attribute string: {entry}. If the file is in GFF3 format, use pr.read_gff3 instead.")
 
     rowdicts = []
     try:
@@ -590,17 +588,3 @@ def read_bigwig(f: Union[str, Path]) -> pr.PyRanges:
         )
 
     return pr.from_dfs(dfs)
-
-
-
-
-
-
-def _test():
-    import doctest
-
-    doctest.testmod()
-
-
-if __name__ == "__main__":
-    _test()

@@ -5009,9 +5009,7 @@ class PyRanges:
     #         >>>
     #         """
 
-    def to_bed(
-        self, path: Optional[str] = None, keep: bool = True, compression: str = "infer", chain: bool = False
-    ) -> Union[str, "PyRanges"]:
+    def to_bed(self, path: Optional[str] = None, keep: bool = True, compression: str = "infer") -> Optional[str]:
         r"""Write to bed.
 
         Parameters
@@ -5026,9 +5024,6 @@ class PyRanges:
 
         compression : str, compression type to use, by default infer based on extension.
             See pandas.DataFree.to_csv for more info.
-
-        chain : bool, default False
-            Whether to return the PyRanges after writing.
 
         Examples
         --------
@@ -5063,16 +5058,7 @@ class PyRanges:
         chr1	1	5	.	.	+
         chr1	6	8	.	.	-
 
-        >>> gr.to_bed("test.bed", chain=True)
-        +--------------+-----------+-----------+--------------+-----------+
-        | Chromosome   |     Start |       End | Strand       |      Gene |
-        | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
-        |--------------+-----------+-----------+--------------+-----------|
-        | chr1         |         1 |         5 | +            |         1 |
-        | chr1         |         6 |         8 | -            |         2 |
-        +--------------+-----------+-----------+--------------+-----------+
-        Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
-        For printing, the PyRanges was sorted on Chromosome and Strand.
+        >>> gr.to_bed("test.bed")
 
         >>> open("test.bed").readlines()
         ['chr1\t1\t5\t.\t.\t+\t1\n', 'chr1\t6\t8\t.\t.\t-\t2\n']
@@ -5081,10 +5067,7 @@ class PyRanges:
 
         result = _to_bed(self, path, keep=keep, compression=compression)
 
-        if path and chain:
-            return self
-        else:
-            return result
+        return result
 
     def to_bigwig(
         self,
@@ -5223,7 +5206,7 @@ class PyRanges:
 
     def to_csv(
         self, path: Optional["Path"] = None, sep: str = ",", header: bool = True, compression: str = "infer"
-    ) -> Union[str, "PyRanges"]:
+    ) -> Optional[str]:
         r"""Write to comma- or other value-separated file.
 
         Parameters
@@ -5391,9 +5374,8 @@ class PyRanges:
         self,
         path: None = None,
         compression: str = "infer",
-        chain: bool = False,
         map_cols: Optional[Dict[str, str]] = None,
-    ) -> str:
+    ) -> Optional[str]:
         """Write to Gene Transfer Format.
 
         The GTF format consists of a tab-separated file without header.
@@ -5479,10 +5461,7 @@ class PyRanges:
 
         result = _to_gtf(self, path, compression=compression, map_cols=map_cols)
 
-        if path and chain:
-            return self
-        else:
-            return result
+        return result
 
     def to_rle(
         self, value_col: Optional[str] = None, strand: Optional[bool] = None, rpm: bool = False, nb_cpu: int = 1

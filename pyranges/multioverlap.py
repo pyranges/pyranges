@@ -1,11 +1,17 @@
+from typing import Dict, Optional
+
 import numpy as np
 
 import pyranges as pr
 from pyranges.pyranges_main import PyRanges
-from typing import Dict, Optional
 
 
-def count_overlaps(grs: Dict[str, PyRanges], features: Optional[PyRanges] = None, strandedness: Optional[str] = None, how: Optional[str] = None) -> PyRanges:
+def count_overlaps(
+    grs: Dict[str, PyRanges],
+    features: Optional[PyRanges] = None,
+    strandedness: Optional[str] = None,
+    how: Optional[str] = None,
+) -> PyRanges:
     """Count overlaps in multiple pyranges.
 
     Parameters

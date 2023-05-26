@@ -1,12 +1,13 @@
+from typing import Dict
+
 import numpy as np
 import pandas as pd
+from pandas.core.frame import DataFrame
 from sorted_nearest.src.introns import find_introns  # type: ignore
 
 import pyranges as pr
 from pyranges.multithreaded import pyrange_apply
-from pandas.core.frame import DataFrame
 from pyranges.pyranges_main import PyRanges
-from typing import Dict, Optional
 
 __all__ = ["genome_bounds", "tile_genome", "GenomicFeaturesMethods"]
 
@@ -594,10 +595,8 @@ def _introns2(df: DataFrame, exons: DataFrame, **kwargs) -> DataFrame:
     vc = introns["by_id"].value_counts(sort=False).to_frame().reset_index()
     vc.columns = pd.Index(["by_id", "counts"])
 
-    genes_without_introns = pd.DataFrame(data={"by_id": np.setdiff1d(
-        np.array(by_ids.values),
-        np.array(vc.by_id.values)),
-        "counts": 0}
+    genes_without_introns = pd.DataFrame(
+        data={"by_id": np.setdiff1d(np.array(by_ids.values), np.array(vc.by_id.values)), "counts": 0}
     )
 
     vc = pd.concat([vc, genes_without_introns]).sort_values("by_id")
