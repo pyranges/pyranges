@@ -9,6 +9,11 @@ import pandas as pd
 import pyranges as pr
 from pyranges.methods.statistics import _relative_distance
 from pyranges.multithreaded import pyrange_apply
+from numpy import float64, int64, ndarray
+from pandas.core.frame import DataFrame
+from pandas.core.series import Series
+from pyranges.pyranges_main import PyRanges
+from typing import Dict, List, Optional, Union, Any
 
 __all__ = [
     "simes",
@@ -22,7 +27,7 @@ __all__ = [
 ]
 
 
-def fdr(p_vals):
+def fdr(p_vals: Series) -> Series:
     """Adjust p-values with Benjamini-Hochberg.
 
     Parameters
@@ -76,7 +81,7 @@ def fdr(p_vals):
     return fdr
 
 
-def fisher_exact(tp, fp, fn, tn, pseudocount=0):
+def fisher_exact(tp: Series, fp: Series, fn: Series, tn: Series, pseudocount: int = 0) -> DataFrame:
     """Fisher's exact for contingency tables.
 
     Computes the hypotheses two-sided, less and greater at the same time.
@@ -149,10 +154,10 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
         )
         sys.exit(-1)
 
-    tp = np.array(tp, dtype=np.uint)
-    fp = np.array(fp, dtype=np.uint)
-    fn = np.array(fn, dtype=np.uint)
-    tn = np.array(tn, dtype=np.uint)
+    tp = pd.Series(np.array(tp, dtype=np.uint))
+    fp = pd.Series(np.array(fp, dtype=np.uint))
+    fn = pd.Series(np.array(fn, dtype=np.uint))
+    tn = pd.Series(np.array(tn, dtype=np.uint))
 
     left, right, twosided = pvalue_npy(tp, fp, fn, tn)
 
@@ -163,7 +168,7 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
     return df
 
 
-def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
+def mcc(grs: List[PyRanges], genome: Optional[Union[pr.PyRanges, pd.DataFrame, Dict[str, int]]] = None, labels: Optional[str] = None, strand: bool = False, verbose: bool = False) -> DataFrame:
     """Compute Matthew's correlation coefficient for PyRanges overlaps.
 
     Parameters
@@ -218,9 +223,28 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
     import sys
     from itertools import chain, combinations_with_replacement
 
+    if genome is None:
+        genome = defaultdict(int)
+        for gr in grs:
+            for k, v in gr:
+                genome[k] = max(genome[k], v.End.max())
+
+
+    if not isinstance(genome, dict):
+        _genome = genome
+        genome_length = int(_genome.End.sum())
+    else:
+        _genome = pd.DataFrame(
+            {
+                "Chromosome": list(genome.keys()),
+                "Start": 0,
+                "End": list(genome.values())
+            }
+        )
+        genome_length = sum(genome.values())
+
     if labels is None:
-        _labels = list(range(len(grs)))
-        _labels = combinations_with_replacement(_labels, r=2)
+        _labels = combinations_with_replacement(np.arange(len(grs)), r=2)
     else:
         assert len(labels) == len(grs)
         _labels = combinations_with_replacement(labels, r=2)
@@ -228,18 +252,15 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
     # remove all non-loc columns before computation
     grs = [gr.merge(strand=strand) for gr in grs]
 
-    if genome is not None:
-        if isinstance(genome, (pd.DataFrame, pr.PyRanges)):
-            genome_length = int(genome.End.sum())
-        else:
-            genome_length = sum(genome.values())
+    if _genome is not None:
+        genome_length = int(_genome.End.sum())
 
         if verbose:
             # check that genome definition does not have many more
             # chromosomes than datafiles
-            gr_cs = set(chain(*[gr.chromosomes for gr in grs]))
+            gr_cs = set(chain(*[gr.Chromosome for gr in grs]))
 
-            g_cs = set(genome.chromosomes)
+            g_cs = set(_genome.keys())
             surplus = g_cs - gr_cs
             if len(surplus):
                 print(
@@ -257,15 +278,7 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                 df2.insert(df2.shape[1], "Strand", "-")
                 return pd.concat([df, df2])
 
-            genome = genome.apply(make_stranded)
-
-    else:
-        d = defaultdict(int)
-        for gr in grs:
-            for k, v in gr:
-                d[k] = max(d[k], v.End.max())
-
-        genome_length = sum(d.values())
+            _genome = _genome.apply(make_stranded)
 
     strandedness = "same" if strand else None
 
@@ -282,7 +295,7 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                 fp = 0
                 rowdicts.append({"T": lt, "F": lf, "TP": tp, "FP": fp, "TN": tn, "FN": fn, "MCC": 1})
             else:
-                for strand in "+ -".split():
+                for _strand in "+ -".split():
                     tp = t[strand].length
                     fn = 0
                     tn = genome_length - tp
@@ -291,7 +304,7 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                         {
                             "T": lt,
                             "F": lf,
-                            "Strand": strand,
+                            "Strand": _strand,
                             "TP": tp,
                             "FP": fp,
                             "TN": tn,
@@ -305,17 +318,17 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
             j = t.join(f, strandedness=strandedness)
             tp_gr = j.new_position("intersection").merge(strand=strand)
             if strand:
-                for strand in "+ -".split():
-                    tp = tp_gr[strand].length
-                    fp = f[strand].length - tp
-                    fn = t[strand].length - tp
+                for _strand in "+ -".split():
+                    tp = tp_gr[_strand].length
+                    fp = f[_strand].length - tp
+                    fn = t[_strand].length - tp
                     tn = genome_length - (tp + fp + fn)
                     mcc = _mcc(tp, fp, tn, fn)
                     rowdicts.append(
                         {
                             "T": lt,
                             "F": lf,
-                            "Strand": strand,
+                            "Strand": _strand,
                             "TP": tp,
                             "FP": fp,
                             "TN": tn,
@@ -327,7 +340,7 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                         {
                             "T": lf,
                             "F": lt,
-                            "Strand": strand,
+                            "Strand": _strand,
                             "TP": tp,
                             "FP": fn,
                             "TN": tn,
@@ -365,12 +378,12 @@ def mcc(grs, genome=None, labels=None, strand=False, verbose=False):
                     }
                 )
 
-    df = pd.DataFrame.from_dict(rowdicts).sort_values(["T", "F"])
+    df = pd.DataFrame.from_records(rowdicts).sort_values(["T", "F"])
 
     return df
 
 
-def rowbased_spearman(x, y):
+def rowbased_spearman(x: ndarray, y: ndarray) -> ndarray:
     """Fast row-based Spearman's correlation.
 
     Parameters
@@ -416,7 +429,7 @@ def rowbased_spearman(x, y):
     return rowbased_pearson(rx, ry)
 
 
-def rowbased_pearson(x, y):
+def rowbased_pearson(x: Union[ndarray, DataFrame], y: Union[ndarray, DataFrame]) -> ndarray:
     """Fast row-based Pearson's correlation.
 
     Parameters
@@ -475,7 +488,7 @@ def rowbased_pearson(x, y):
     return r
 
 
-def rowbased_rankdata(data):
+def rowbased_rankdata(data: ndarray) -> DataFrame:
     """Rank order of entries in each row.
 
     Same as SciPy rankdata with method=mean.
@@ -519,17 +532,14 @@ def rowbased_rankdata(data):
 
     obs = np.column_stack([np.ones(len(res), dtype=bool), res])
 
-    dense = np.take_along_axis(np.apply_along_axis(np.cumsum, 1, obs), inv, 1)
+    dense = pd.DataFrame(np.take_along_axis(np.apply_along_axis(np.cumsum, 1, obs), inv, 1))
 
     len_r = obs.shape[1]
 
     nonzero = np.count_nonzero(obs, axis=1)
-    obs = pd.DataFrame(obs)
-    nonzero = pd.Series(nonzero)
-    dense = pd.DataFrame(dense)
 
-    ranks = []
-    for _nonzero, nzdf in obs.groupby(nonzero, sort=False):
+    _ranks = []
+    for _nonzero, nzdf in pd.DataFrame(obs).groupby(pd.Series(nonzero), sort=False):
         nz = np.apply_along_axis(lambda r: np.nonzero(r)[0], 1, nzdf)
 
         _count = np.column_stack([nz, np.ones(len(nz)) * len_r])
@@ -538,14 +548,14 @@ def rowbased_rankdata(data):
         _result = 0.5 * (np.take_along_axis(_count, _dense, 1) + np.take_along_axis(_count, _dense - 1, 1) + 1)
 
         result = pd.DataFrame(_result, index=nzdf.index)
-        ranks.append(result)
+        _ranks.append(result)
 
-    final = pd.concat(ranks).sort_index(kind="mergesort")
+    final = pd.concat(_ranks).sort_index(kind="mergesort")
 
     return final
 
 
-def simes(df, groupby, pcol, keep_position=False):
+def simes(df: DataFrame, groupby: Union[str, List[str]], pcol: str, keep_position: bool = False) -> DataFrame:
     """Apply Simes method for giving dependent events a p-value.
 
     Parameters
@@ -634,9 +644,9 @@ def simes(df, groupby, pcol, keep_position=False):
     sdf = df[positions + sorter].sort_values(sorter)
     g = sdf.groupby(positions + groupby)
 
-    ranks = g.cumcount().values + 1
-    size = g.size().values
-    size = np.repeat(size, size)
+    ranks = pd.Series(g.cumcount().values) + 1
+    _size = np.array(g.size().values)
+    size = np.repeat(a=_size, repeats=_size)
     multiplied = sdf[pcol].values * size
 
     simes = multiplied / ranks
@@ -665,15 +675,15 @@ def simes(df, groupby, pcol, keep_position=False):
     return simes
 
 
-def chromsizes_as_int(chromsizes):
-    if isinstance(chromsizes, int):
-        pass
-    elif isinstance(chromsizes, dict):
-        chromsizes = sum(chromsizes.values())
+def chromsizes_as_int(chromsizes: Union[PyRanges, DataFrame, Dict[Any, int]]) -> int:
+    if isinstance(chromsizes, dict):
+        _chromsizes = sum(chromsizes.values())
     elif isinstance(chromsizes, (pd.DataFrame, pr.PyRanges)):
-        chromsizes = chromsizes.End.sum()
+        _chromsizes = chromsizes.End.sum()
+    else:
+        raise TypeError("chromsizes must be dict, DataFrame or PyRanges, was {}".format(type(chromsizes)))
 
-    return chromsizes
+    return _chromsizes
 
 
 class StatisticsMethods:
@@ -682,12 +692,10 @@ class StatisticsMethods:
 
     Accessed with gr.stats."""
 
-    pr = None
-
-    def __init__(self, pr):
+    def __init__(self, pr: PyRanges) -> None:
         self.pr = pr
 
-    def forbes(self, other, chromsizes, strandedness=None):
+    def forbes(self, other: PyRanges, chromsizes: PyRanges, strandedness: Optional[str] = None) -> float64:
         """Compute Forbes coefficient.
 
         Ratio which represents observed versus expected co-occurence.
@@ -728,27 +736,24 @@ class StatisticsMethods:
         >>> gr.stats.forbes(gr2, chromsizes=chromsizes)
         1.7168314674978278"""
 
-        chromsizes = chromsizes_as_int(chromsizes)
+        _chromsizes = chromsizes_as_int(chromsizes)
 
-        self = self.pr
-
-        kwargs = {}
-        kwargs["sparse"] = {"self": True, "other": True}
+        kwargs = {"sparse": {"self": True, "other": True}}
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
-        reference_length = self.merge(strand=strand).length
+        reference_length = self.pr.merge(strand=strand).length
         query_length = other.merge(strand=strand).length
 
         intersection_sum = sum(
-            v.sum() for v in self.set_intersect(other, strandedness=strandedness).lengths(as_dict=True).values()
+            v.sum() for v in self.pr.set_intersect(other, strandedness=strandedness).lengths()
         )
 
-        forbes = chromsizes * intersection_sum / (reference_length * query_length)
+        forbes = _chromsizes * intersection_sum / (reference_length * query_length)
 
         return forbes
 
-    def jaccard(self, other, **kwargs):
+    def jaccard(self, other: PyRanges, **kwargs) -> float:
         """Compute Jaccards coefficient.
 
         Ratio of the intersection and union of two sets.
@@ -787,27 +792,25 @@ class StatisticsMethods:
         >>> gr.stats.jaccard(gr2, chromsizes=chromsizes)
         6.657941988519211e-05"""
 
-        self = self.pr
-
         kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
-        intersection_sum = sum(v.sum() for v in self.set_intersect(other).lengths(as_dict=True).values())
+        intersection_sum = sum(v.sum() for v in self.pr.set_intersect(other).lengths())
 
         union_sum = 0
-        for gr in [self, other]:
-            union_sum += sum(v.sum() for v in gr.merge(strand=strand).lengths(as_dict=True).values())
+        for gr in [self.pr, other]:
+            union_sum += sum(v.sum() for v in gr.merge(strand=strand).lengths())
 
         denominator = union_sum - intersection_sum
         if denominator == 0:
-            return 1
+            return 1.0
         else:
             jc = intersection_sum / denominator
 
         return jc
 
-    def relative_distance(self, other, **kwargs):
+    def relative_distance(self, other: PyRanges, **kwargs) -> DataFrame:
         """Compute spatial correllation between two sets.
 
         Metric which describes relative distance between each interval in one
@@ -899,14 +902,12 @@ class StatisticsMethods:
         49     0.49    194   9956  0.019486
         """
 
-        self = self.pr
-
         kwargs["sparse"] = {"self": True, "other": True}
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
 
-        result = pyrange_apply(_relative_distance, self, other, **kwargs)  # pylint: disable=E1132
+        dfs = pyrange_apply(_relative_distance, self.pr, other, **kwargs)
 
-        result = pd.Series(np.concatenate(list(result.values())))
+        result = pd.Series(np.concatenate(list(dfs.values())))
 
         not_nan = ~np.isnan(result)
         result.loc[not_nan] = np.floor(result[not_nan] * 100) / 100
@@ -920,7 +921,7 @@ class StatisticsMethods:
         return vc
 
 
-def _mcc(tp, fp, tn, fn):
+def _mcc(tp: int, fp: int, tn: int, fn: int) -> float:
     # https://stackoverflow.com/a/56875660/992687
     x = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
     return ((tp * tn) - (fp * fn)) / sqrt(x)
@@ -950,3 +951,13 @@ def _mcc(tp, fp, tn, fn):
 #     _tetrachoric = cos(180/(1 + sqrt((b * c) / (a * d))))
 
 #     return _tetrachoric
+
+
+def _test():
+    import doctest
+
+    doctest.testmod()
+
+
+if __name__ == "__main__":
+    _test()

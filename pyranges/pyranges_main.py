@@ -2289,7 +2289,7 @@ class PyRanges:
     def join(
         self,
         other: "PyRanges",
-        strandedness: None = None,
+        strandedness: Optional[str] = None,
         how: Optional[str] = None,
         report_overlap: bool = False,
         slack: int = 0,
@@ -2552,15 +2552,15 @@ class PyRanges:
         5
         """
 
-        lengths = self.lengths(as_dict=False)
+        lengths = self.lengths()
         assert isinstance(lengths, pd.Series)
         length = lengths.sum()
         assert isinstance(length, (np.int64, int))
         return int(length)
 
     def lengths(
-        self, as_dict: bool = False
-    ) -> Union[pd.Series, Dict[Tuple[str, str], pd.Series], Dict[str, pd.Series]]:
+        self
+    ) -> pd.Series:
         """Return the length of each interval.
 
         Parameters
@@ -2617,18 +2617,15 @@ class PyRanges:
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
 
-        if as_dict:
-            return {k: df.End - df.Start for k, df in self.items()}  # type: ignore
-        else:
-            _lengths: List[pd.Series] = []
-            if not len(self):
-                return pd.Series([], dtype=np.int64)
-            for _, df in self:
-                _lengths.append(df.End - df.Start)
+        _lengths: List[pd.Series] = []
+        if not len(self):
+            return pd.Series([], dtype=np.int64)
+        for _, df in self:
+            _lengths.append(df.End - df.Start)
 
-            ls = pd.concat(_lengths).reset_index(drop=True)
-            assert isinstance(ls, pd.Series)
-            return ls
+        ls = pd.concat(_lengths).reset_index(drop=True)
+        assert isinstance(ls, pd.Series)
+        return ls
 
     def max_disjoint(self, strand: Optional[bool] = None, slack: int = 0, **kwargs) -> "PyRanges":
         """Find the maximal disjoint set of intervals.
@@ -3561,7 +3558,7 @@ class PyRanges:
     def set_intersect(
         self,
         other: "PyRanges",
-        strandedness: None = None,
+        strandedness: Optional[str] = None,
         how: Optional[str] = None,
         new_pos: bool = False,
         nb_cpu: int = 1,
