@@ -23,7 +23,7 @@ keywords = ["bioinformatics", "genomicranges", "genomics"]
 dependencies = ["pandas", "ncls>=0.0.63", "tabulate", "sorted_nearest>=0.0.33", "natsort"]
 
 [project.optional-dependencies]
-dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
+dev = ["pyrle", "bamread", "bwread", "fisher"]
 
 [tool.setuptools.packages.find]
 where = ["."]

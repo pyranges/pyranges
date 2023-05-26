@@ -91,7 +91,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     >>> pr.count_overlaps(grs)
     +--------------+-----------+-----------+-----------+-----------+-----------+
     | Chromosome   | Start     | End       | a         | b         | c         |
-    | (object)     | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   |
+    | (category)   | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   |
     |--------------+-----------+-----------+-----------+-----------+-----------|
     | chr1         | 6         | 8         | 1         | 0         | 0         |
     | chr1         | 8         | 10        | 1         | 0         | 1         |
@@ -106,7 +106,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     Unstranded PyRanges object has 12 rows and 6 columns from 1 chromosomes.
     For printing, the PyRanges was sorted on Chromosome.
 
-    >>> gr = pr.PyRanges(chromosomes=["chr1"] * 4, starts=[0, 10, 20, 30], ends=[10, 20, 30, 40])
+    >>> gr = pr.from_args(chromosomes=["chr1"] * 4, starts=[0, 10, 20, 30], ends=[10, 20, 30, 40])
     >>> gr
     +--------------+-----------+-----------+
     | Chromosome   |     Start |       End |

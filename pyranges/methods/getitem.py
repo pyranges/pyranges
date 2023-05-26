@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from pyranges import PyRanges
+import pyranges as pr
 from pyranges.methods.drop import _keep
 from pyranges.subset import get_booldict, get_slice, get_string, get_tuple
 
@@ -32,5 +32,4 @@ def _getitem(self, val):
     else:
         raise Exception("Not a valid subsetter: {}".format(str(val)))
 
-    gr = PyRanges(dfs)
-    return gr
+    return pr.from_dfs(dfs)

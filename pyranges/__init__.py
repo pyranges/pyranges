@@ -4,7 +4,7 @@ import itertools
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Iterable, Optional, Set, Tuple, Union
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -15,6 +15,7 @@ import pyranges as pr
 import pyranges.genomicfeatures as gf  # NOQA: F401
 from pyranges import data, statistics
 from pyranges.get_fasta import get_fasta, get_sequence, get_transcript_sequence
+from pyranges.helpers import get_key_from_df, single_value_key
 from pyranges.methods.concat import concat
 from pyranges.multioverlap import count_overlaps
 from pyranges.pyranges_main import PyRanges
@@ -31,6 +32,49 @@ get_transcript_sequence = get_transcript_sequence
 read_gff = read_gtf
 
 Chromsizes = Union[Dict[str, int], Dict[Tuple[str, str], int]]
+
+
+def from_args(
+    chromosomes: Union[Sequence[str], Sequence[int]],
+    starts: Sequence[int],
+    ends: Sequence[int],
+    strands: Optional[Union[str, Sequence[str]]] = None,
+) -> "PyRanges":
+    if isinstance(chromosomes, str) or isinstance(chromosomes, int):
+        _chromosomes = pd.Series([chromosomes] * len(starts), dtype="category")
+    else:
+        _chromosomes = pd.Series(chromosomes, dtype="category")
+
+    columns: List[pd.Series] = [_chromosomes, pd.Series(starts), pd.Series(ends)]
+    colnames = ["Chromosome", "Start", "End"]
+    if strands is not None:
+        if isinstance(strands, str):
+            _strands = pd.Series([strands] * len(starts), dtype="category")
+        else:
+            _strands = pd.Series(strands, dtype="category")
+
+        columns.append(_strands)
+        colnames.append("Strand")
+
+    lengths = list(str(len(s)) for s in columns)
+    assert len(set(lengths)) == 1, "[{colnames} must be of equal length. But are {columns}".format(
+        colnames=", ".join(colnames), columns=", ".join(lengths)
+    )
+
+    idx = range(len(starts))
+    series_to_concat = []
+    for s in columns:
+        if isinstance(s, pd.Series):
+            s = pd.Series(s.values, index=idx)
+        else:
+            s = pd.Series(s, index=idx)
+
+        series_to_concat.append(s)
+
+    df = pd.concat(series_to_concat, axis=1)
+    df.columns = pd.Index(colnames)
+
+    return pr.PyRanges(df)
 
 
 def from_dict(d: Dict[str, Iterable]) -> PyRanges:
@@ -71,6 +115,36 @@ def from_dict(d: Dict[str, Iterable]) -> PyRanges:
     """
 
     return PyRanges(pd.DataFrame(d))
+
+
+def from_dfs(dfs: Union[Dict[str, pd.DataFrame], Dict[Tuple[str, str], pd.DataFrame]]) -> "PyRanges":
+    df: pd.DataFrame
+    empty_removed = {k: v.copy() for k, v in dfs.items() if not v.empty}
+
+    _strand_valid = True
+    for key, df in empty_removed.items():
+        _key = get_key_from_df(df)
+        if not single_value_key(df):
+            raise ValueError("All Chromosome/Strand vals in a df must be the same.")
+        _key_same = _key == key
+
+        if isinstance(_key, tuple):
+            _strand_valid = _strand_valid and (_key[1] in ["+", "-"])
+
+        if _strand_valid and not _key_same:
+            raise ValueError(f"All keys must be the same, but df has {_key} and dict had {key}.")
+
+    if not _strand_valid:
+        df = pd.concat(empty_removed.values()).reset_index(drop=True)
+
+        groupby_cols = ["Chromosome"]
+
+        empty_removed = {k[0]: v for k, v in df.groupby(groupby_cols)}  # type: ignore
+
+    gr = PyRanges()
+    gr.__dict__["dfs"] = empty_removed
+
+    return gr  # type: ignore
 
 
 def from_string(s: str) -> PyRanges:
@@ -214,7 +288,8 @@ def itergrs(prs: Iterable[PyRanges], strand=None, keys=False):
         prs = [gr.unstrand() for gr in prs]
 
     grs_per_chromosome = defaultdict(list)
-    set_keys: Union[Set[str], Set[Tuple[str, str]]] = set(itertools.chain.from_iterable(*[gr.dfs.keys() for gr in prs]))
+    keys = [gr.dfs.keys() for gr in prs]
+    set_keys: Union[Set[str], Set[Tuple[str, str]]] = set(itertools.chain.from_iterable(keys))
 
     empty_dfs = [pd.DataFrame(columns=gr.columns) for gr in prs]
     for gr, empty in zip(prs, empty_dfs):

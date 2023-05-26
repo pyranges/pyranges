@@ -189,7 +189,7 @@ class GenomicFeaturesMethods:
         >>> gr.features.introns(by="gene")
         +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
         | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (object)     | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
+        | (category)   | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
         |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
         | 1            | intron     | 1173926   | 1174265   | +            | ENSG00000162571 | nan             |
         | 1            | intron     | 1174321   | 1174423   | +            | ENSG00000162571 | nan             |
@@ -207,7 +207,7 @@ class GenomicFeaturesMethods:
         >>> gr.features.introns(by="transcript")
         +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
         | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (object)     | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
+        | (category)   | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
         |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
         | 1            | intron     | 818202    | 818722    | +            | ENSG00000177757 | ENST00000326734 |
         | 1            | intron     | 960800    | 961292    | +            | ENSG00000187961 | ENST00000338591 |
@@ -241,7 +241,7 @@ class GenomicFeaturesMethods:
 
         result = pyrange_apply(_introns2, by_gr, exons, **kwargs)
 
-        return pr.PyRanges(result)
+        return pr.from_dfs(result)
 
 
 def _outside_bounds(df, **kwargs):
