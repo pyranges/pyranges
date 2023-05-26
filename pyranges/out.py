@@ -90,7 +90,7 @@ def _gtf(df: DataFrame, mapping: Dict[str, str]) -> DataFrame:
     outdf = _fill_missing(df, all_columns)
 
     if "attribute" in df.columns:
-        attribute = pd.Series([mapping["attribute"] + ' "' + df.attribute + '";'])
+        attribute = mapping["attribute"] + ' "' + df.attribute + '";'
     else:
         # gotten all needed columns, need to join the rest
         _rest = set(df.columns) - set(all_columns)
@@ -294,7 +294,7 @@ def _to_gff3(
         )
 
 
-def _gff3(df: DataFrame, mapping: Dict[str, str]) -> DataFrame:
+def _gff3(df, mapping) -> pd.DataFrame:
     pr_col2gff_col = {v: k for k, v in mapping.items()}
 
     df = df.rename(columns=pr_col2gff_col)  # copying here
@@ -307,15 +307,14 @@ def _gff3(df: DataFrame, mapping: Dict[str, str]) -> DataFrame:
     if "attribute" in mapping:
         attribute_name = mapping["attribute"]
         attribute_value = df.attribute.iloc[0]
-        attribute = pd.Series([f"{attribute_name}={attribute_value}"])
+        attribute = f"{attribute_name}={attribute_value}"
     else:
         # gotten all needed columns, need to join the rest
-        _rest = set(df.columns) - set(all_columns)
-        rest = sorted(_rest, key=columns.index)
-        rest_df = df[rest].copy()
+        rest = set(df.columns) - set(all_columns)
+        _rest = sorted(rest, key=columns.index)
+        rest_df = df.get(_rest).copy()
         total_cols = rest_df.shape[1]
-        for i, _c in enumerate(rest_df, 1):
-            c = str(_c)
+        for i, c in enumerate(rest_df, 1):
             col = rest_df[c]
             isnull = col.isnull()
             col = col.astype(str).str.replace("nan", "")

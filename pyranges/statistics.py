@@ -2,18 +2,18 @@
 
 from collections import defaultdict
 from math import sqrt
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
+from numpy import ndarray
+from pandas.core.frame import DataFrame
+from pandas.core.series import Series
 
 import pyranges as pr
 from pyranges.methods.statistics import _relative_distance
 from pyranges.multithreaded import pyrange_apply
-from numpy import float64, int64, ndarray
-from pandas.core.frame import DataFrame
-from pandas.core.series import Series
 from pyranges.pyranges_main import PyRanges
-from typing import Dict, List, Optional, Union, Any
 
 __all__ = [
     "simes",
@@ -154,21 +154,27 @@ def fisher_exact(tp: Series, fp: Series, fn: Series, tn: Series, pseudocount: in
         )
         sys.exit(-1)
 
-    tp = pd.Series(np.array(tp, dtype=np.uint))
-    fp = pd.Series(np.array(fp, dtype=np.uint))
-    fn = pd.Series(np.array(fn, dtype=np.uint))
-    tn = pd.Series(np.array(tn, dtype=np.uint))
+    _tp = np.array(tp, dtype=np.uint)
+    _fp = np.array(fp, dtype=np.uint)
+    _fn = np.array(fn, dtype=np.uint)
+    _tn = np.array(tn, dtype=np.uint)
 
-    left, right, twosided = pvalue_npy(tp, fp, fn, tn)
+    left, right, twosided = pvalue_npy(_tp, _fp, _fn, _tn)
 
-    OR = ((tp + pseudocount) / (fp + pseudocount)) / ((fn + pseudocount) / (tn + pseudocount))
+    OR = ((_tp + pseudocount) / (_fp + pseudocount)) / ((_fn + pseudocount) / (_tn + pseudocount))
 
     df = pd.DataFrame({"OR": OR, "P": twosided, "PLeft": left, "PRight": right})
 
     return df
 
 
-def mcc(grs: List[PyRanges], genome: Optional[Union[pr.PyRanges, pd.DataFrame, Dict[str, int]]] = None, labels: Optional[str] = None, strand: bool = False, verbose: bool = False) -> DataFrame:
+def mcc(
+    grs: List["PyRanges"],
+    genome: Optional[Union["PyRanges", pd.DataFrame, Dict[str, int]]] = None,
+    labels: Optional[str] = None,
+    strand: bool = False,
+    verbose: bool = False,
+) -> DataFrame:
     """Compute Matthew's correlation coefficient for PyRanges overlaps.
 
     Parameters
@@ -229,18 +235,11 @@ def mcc(grs: List[PyRanges], genome: Optional[Union[pr.PyRanges, pd.DataFrame, D
             for k, v in gr:
                 genome[k] = max(genome[k], v.End.max())
 
-
     if not isinstance(genome, dict):
         _genome = genome
         genome_length = int(_genome.End.sum())
     else:
-        _genome = pd.DataFrame(
-            {
-                "Chromosome": list(genome.keys()),
-                "Start": 0,
-                "End": list(genome.values())
-            }
-        )
+        _genome = pd.DataFrame({"Chromosome": list(genome.keys()), "Start": 0, "End": list(genome.values())})
         genome_length = sum(genome.values())
 
     if labels is None:
@@ -555,7 +554,7 @@ def rowbased_rankdata(data: ndarray) -> DataFrame:
     return final
 
 
-def simes(df: DataFrame, groupby: Union[str, List[str]], pcol: str, keep_position: bool = False) -> DataFrame:
+def simes(df, groupby, pcol, keep_position=False):
     """Apply Simes method for giving dependent events a p-value.
 
     Parameters
@@ -644,9 +643,9 @@ def simes(df: DataFrame, groupby: Union[str, List[str]], pcol: str, keep_positio
     sdf = df[positions + sorter].sort_values(sorter)
     g = sdf.groupby(positions + groupby)
 
-    ranks = pd.Series(g.cumcount().values) + 1
-    _size = np.array(g.size().values)
-    size = np.repeat(a=_size, repeats=_size)
+    ranks = g.cumcount().values + 1
+    size = g.size().values
+    size = np.repeat(size, size)
     multiplied = sdf[pcol].values * size
 
     simes = multiplied / ranks
@@ -692,10 +691,15 @@ class StatisticsMethods:
 
     Accessed with gr.stats."""
 
-    def __init__(self, pr: PyRanges) -> None:
+    def __init__(self, pr: "PyRanges") -> None:
         self.pr = pr
 
-    def forbes(self, other: PyRanges, chromsizes: PyRanges, strandedness: Optional[str] = None) -> float64:
+    def forbes(
+        self,
+        other: "PyRanges",
+        chromsizes: Union["PyRanges", DataFrame, Dict[Any, int]],
+        strandedness: Optional[str] = None,
+    ) -> float:
         """Compute Forbes coefficient.
 
         Ratio which represents observed versus expected co-occurence.
@@ -734,7 +738,8 @@ class StatisticsMethods:
         >>> gr, gr2 = pr.data.chipseq(), pr.data.chipseq_background()
         >>> chromsizes = pr.data.chromsizes()
         >>> gr.stats.forbes(gr2, chromsizes=chromsizes)
-        1.7168314674978278"""
+        1.7168314674978278
+        """
 
         _chromsizes = chromsizes_as_int(chromsizes)
 
@@ -745,9 +750,7 @@ class StatisticsMethods:
         reference_length = self.pr.merge(strand=strand).length
         query_length = other.merge(strand=strand).length
 
-        intersection_sum = sum(
-            v.sum() for v in self.pr.set_intersect(other, strandedness=strandedness).lengths()
-        )
+        intersection_sum = self.pr.set_intersect(other, strandedness=strandedness).lengths().sum()
 
         forbes = _chromsizes * intersection_sum / (reference_length * query_length)
 
@@ -796,11 +799,11 @@ class StatisticsMethods:
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
-        intersection_sum = sum(v.sum() for v in self.pr.set_intersect(other).lengths())
+        intersection_sum = self.pr.set_intersect(other).lengths().sum()
 
         union_sum = 0
         for gr in [self.pr, other]:
-            union_sum += sum(v.sum() for v in gr.merge(strand=strand).lengths())
+            union_sum += gr.merge(strand=strand).lengths().sum()
 
         denominator = union_sum - intersection_sum
         if denominator == 0:

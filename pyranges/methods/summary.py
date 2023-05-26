@@ -7,28 +7,27 @@ from tabulate import tabulate
 def _summary(self, to_stdout=True, return_df=False):
     lengths = {}
     total_lengths = {}
-    lengths["pyrange"] = self.lengths(as_dict=True)
+    lengths["pyrange"] = self.lengths()
     total_lengths["pyrange"] = [self.length]
 
     if self.stranded:
         c = self.merge(strand=True)
-        lengths["coverage_forward"] = c["+"].lengths(as_dict=True)
-        lengths["coverage_reverse"] = c["-"].lengths(as_dict=True)
+        lengths["coverage_forward"] = c["+"].lengths()
+        lengths["coverage_reverse"] = c["-"].lengths()
         total_lengths["coverage_forward"] = [c["+"].length]
         total_lengths["coverage_reverse"] = [c["-"].length]
     else:
         c = self
 
     c = c.merge(strand=False)
-    lengths["coverage_unstranded"] = c.lengths(as_dict=True)
+    lengths["coverage_unstranded"] = c.lengths()
     total_lengths["coverage_unstranded"] = [c.length]
 
     summaries = OrderedDict()
 
     # statistics for lengths
-    for summary, d in lengths.items():
-        if d:
-            summaries[summary] = pd.concat(d.values()).describe()
+    for summary, s in lengths.items():
+        summaries[summary] = s.describe()
 
     summary = pd.concat(summaries.values(), axis=1)
     summary.columns = list(summaries)

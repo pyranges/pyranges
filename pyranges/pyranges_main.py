@@ -2558,17 +2558,11 @@ class PyRanges:
         assert isinstance(length, (np.int64, int))
         return int(length)
 
-    def lengths(
-        self
-    ) -> pd.Series:
+    def lengths(self) -> pd.Series:
         """Return the length of each interval.
 
         Parameters
         ----------
-
-        as_dict : bool, default False
-
-            Whether to return lengths as pd.Series or dict of pd.Series per key.
 
         Returns
         -------
@@ -4283,11 +4277,6 @@ class PyRanges:
             Whether to do operations on chromosome/strand pairs or chromosomes. If None, will use
             chromosome/strand pairs if the PyRanges is stranded.
 
-        nb_cpu : int, default 1
-
-            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
-            Will only lead to speedups on large datasets.
-
         **kwargs
             Additional keyword arguments to pass as keyword arguments to `f`
 
@@ -5401,10 +5390,6 @@ class PyRanges:
         compression : {‘infer’, ‘gzip’, ‘bz2’, ‘zip’, ‘xz’, None}, default "infer"
 
             Which compression to use. Uses file extension to infer by default.
-
-        chain: bool, default False
-
-            Whether to return the PyRanges after writing.
 
         map_cols: dict, default None
 
