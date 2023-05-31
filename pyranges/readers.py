@@ -8,6 +8,42 @@ from natsort import natsorted  # type: ignore
 import pyranges as pr
 from pyranges.pyranges_main import PyRanges
 
+from pyranges.out import _ordered_gtf_columns
+from pyranges.out import _ordered_gff3_columns
+
+def dedupe_core_cols(df, ftype):
+    """Deduplicate columns from GTF attributes that share names
+    with the default 8 columns by appending "_attr" to each name
+
+    Parameters
+    ----------
+    df : pandas DataFrame
+
+        DataFrame from read_gtf
+
+    ftype : str
+
+        {'gtf' or 'gff3'}
+
+    Returns
+    -------
+    df : pandas DataFrame
+
+        DataFrame with deduplicated column names
+    """
+
+    if ftype == 'gtf':
+        core_cols = _ordered_gtf_columns
+    elif ftype == 'gff3':
+        core_cols = _ordered_gff3_columns
+
+    dupe_core_cols = list(set(df.columns)&set(core_cols))
+    dupe_core_dict = dict()
+    for c in dupe_core_cols:
+         dupe_core_dict[c] = f'{c}_attr'
+    df.rename(dupe_core_dict, axis=1, inplace=True)
+
+    return df
 
 def read_bed(f, as_df=False, nrows=None):
     """Return bed file as PyRanges.
@@ -337,7 +373,6 @@ def read_gtf_full(
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
-
     df_iter = pd.read_csv(
         f,
         sep="\t",
@@ -361,6 +396,8 @@ def read_gtf_full(
 
     df = pd.concat(dfs, sort=False)
     df.loc[:, "Start"] = df.Start - 1
+
+    df = dedupe_core_cols(df, ftype='gtf')
 
     if not as_df:
         return PyRanges(df)
@@ -467,6 +504,8 @@ def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
     df = pd.concat(dfs, sort=False)
 
     df.loc[:, "Start"] = df.Start - 1
+
+    df = dedupe_core_cols(df, ftype='gtf')
 
     if not as_df:
         return PyRanges(df)

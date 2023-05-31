@@ -74,9 +74,9 @@ def _bed(df, keep):
     else:
         return outdf
 
-
 def _gtf(df, mapping):
-    pr_col2gff_col = {v: k for k, v in mapping.items() if k not in df.columns}
+
+    pr_col2gff_col = {v: k for k, v in mapping.items()}
 
     df = df.rename(columns=pr_col2gff_col)  # copying here
     df.loc[:, "start"] = df.start + 1
