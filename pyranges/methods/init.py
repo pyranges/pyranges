@@ -8,15 +8,18 @@ from pyranges.statistics import StatisticsMethods
 
 
 def set_dtypes(df):
+    from pandas.api.types import CategoricalDtype
+
     dtypes = {
         "Start": np.int64,
         "End": np.int64,
         "Chromosome": "category",
-        "Strand": "category",
     }
 
-    if "Strand" not in df:
-        del dtypes["Strand"]
+    if "Strand" in df:
+        dtypes["Strand"] = CategoricalDtype(
+            categories=df["Strand"].drop_duplicates().to_list()
+        )
 
     # need to ascertain that object columns do not consist of multiple types
     # https://github.com/biocore-ntnu/epic2/issues/32
@@ -38,7 +41,6 @@ def create_df_dict(df, stranded):
 
     if stranded:
         grpby_key = "Chromosome Strand".split()
-        df["Strand"] = df.Strand.cat.remove_unused_categories()
     else:
         grpby_key = "Chromosome"
 
