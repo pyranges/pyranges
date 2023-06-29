@@ -17,9 +17,7 @@ def set_dtypes(df):
     }
 
     if "Strand" in df:
-        dtypes["Strand"] = CategoricalDtype(
-            categories=df["Strand"].drop_duplicates().to_list()
-        )
+        dtypes["Strand"] = CategoricalDtype([".", "-", "+"], ordered=True)
 
     # need to ascertain that object columns do not consist of multiple types
     # https://github.com/biocore-ntnu/epic2/issues/32
