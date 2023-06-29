@@ -1,3 +1,6 @@
+# 0.0.129 (29.06.2023)
+- Fix join left category error #342 for real
+
 # 0.0.128 (27.06.2023)
 - Fix join left category error #342
 
