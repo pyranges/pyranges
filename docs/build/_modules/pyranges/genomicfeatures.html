@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyranges.genomicfeatures &mdash; pyranges  0.0.124 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyranges
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial of PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html">Introduction to PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#loading-creating-pyranges">Loading/Creating PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#writing-pyranges-to-disk">Writing PyRanges to disk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#inspecting-pyranges">Inspecting PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#accessing-data">Accessing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#operating-with-data">Operating with data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#overlapping-and-matching-pyranges">Overlapping and matching PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#summary-statistics">Summary statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#computing-with-pyranges">Computing with PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#working-at-the-transcript-level">Working at the transcript level</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#fetching-external-gene-tracks">Fetching external gene tracks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#rles-run-length-encodings">RLEs: run length encodings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyranges</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../pyranges.html">pyranges</a></li>
+      <li class="breadcrumb-item active">pyranges.genomicfeatures</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyranges.genomicfeatures</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pyranges.multithreaded</span> <span class="kn">import</span> <span class="n">pyrange_apply</span>
+<span class="kn">from</span> <span class="nn">sorted_nearest.src.introns</span> <span class="kn">import</span> <span class="n">find_introns</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;genome_bounds&quot;</span><span class="p">,</span> <span class="s2">&quot;tile_genome&quot;</span><span class="p">,</span> <span class="s2">&quot;GenomicFeaturesMethods&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="GenomicFeaturesMethods"><a class="viewcode-back" href="../../autoapi/pyranges/genomicfeatures/index.html#pyranges.genomicfeatures.GenomicFeaturesMethods">[docs]</a><span class="k">class</span> <span class="nc">GenomicFeaturesMethods</span><span class="p">():</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Namespace for methods using feature information.</span>
+
+<span class="sd">    Accessed through `gr.features`.&quot;&quot;&quot;</span>
+
+    <span class="n">pr</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pr</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pr</span> <span class="o">=</span> <span class="n">pr</span>
+
+<div class="viewcode-block" id="GenomicFeaturesMethods.tss"><a class="viewcode-back" href="../../autoapi/pyranges/genomicfeatures/index.html#pyranges.genomicfeatures.GenomicFeaturesMethods.tss">[docs]</a>    <span class="k">def</span> <span class="nf">tss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the transcription start sites.</span>
+
+<span class="sd">        Returns the 5&#39; for every interval with feature &quot;transcript&quot;.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        pyranges.genomicfeatures.GenomicFeaturesMethods.tes : return the transcription end sites</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        &gt;&gt;&gt; gr = pr.data.ensembl_gtf()</span>
+<span class="sd">        &gt;&gt;&gt; gr</span>
+<span class="sd">        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="sd">        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="sd">        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="sd">        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="sd">        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">        For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+
+<span class="sd">        &gt;&gt;&gt; gr.features.tss()</span>
+<span class="sd">        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        | Chromosome   | Source     | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="sd">        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="sd">        |--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="sd">        | 1            | havana     | tss        | 11868     | 11869     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | tss        | 12009     | 12010     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | tss        | 29553     | 29554     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | tss        | 30266     | 30267     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | ...          | ...        | ...        | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="sd">        | 1            | havana     | tss        | 1092813   | 1092814   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="sd">        | 1            | havana     | tss        | 1116087   | 1116088   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="sd">        | 1            | havana     | tss        | 1116089   | 1116090   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="sd">        | 1            | havana     | tss        | 1179555   | 1179556   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        Stranded PyRanges object has 280 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">        For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pr</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pr</span><span class="o">.</span><span class="n">stranded</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot compute TSSes or TESes without strand info. Perhaps use extend() or subsequence() or spliced_subsequence() instead?&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">pr</span> <span class="o">=</span> <span class="n">pr</span><span class="p">[</span><span class="n">pr</span><span class="o">.</span><span class="n">Feature</span> <span class="o">==</span> <span class="s2">&quot;transcript&quot;</span><span class="p">]</span>
+        <span class="n">pr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">_tss</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+
+        <span class="n">pr</span><span class="o">.</span><span class="n">Feature</span> <span class="o">=</span> <span class="s2">&quot;tss&quot;</span>
+
+        <span class="k">return</span> <span class="n">pr</span></div>
+
+<div class="viewcode-block" id="GenomicFeaturesMethods.tes"><a class="viewcode-back" href="../../autoapi/pyranges/genomicfeatures/index.html#pyranges.genomicfeatures.GenomicFeaturesMethods.tes">[docs]</a>    <span class="k">def</span> <span class="nf">tes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slack</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the transcription end sites.</span>
+
+<span class="sd">        Returns the 3&#39; for every interval with feature &quot;transcript&quot;.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        pyranges.genomicfeatures.GenomicFeaturesMethods.tss : return the transcription start sites</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        &gt;&gt;&gt; gr = pr.data.ensembl_gtf()</span>
+<span class="sd">        &gt;&gt;&gt; gr</span>
+<span class="sd">        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="sd">        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="sd">        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="sd">        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="sd">        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">        For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+
+<span class="sd">        &gt;&gt;&gt; gr.features.tes()</span>
+<span class="sd">        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        | Chromosome   | Source     | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="sd">        | (category)   | (object)   | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="sd">        |--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="sd">        | 1            | havana     | tes        | 14409     | 14410     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | tes        | 13670     | 13671     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | tes        | 31097     | 31098     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | tes        | 31109     | 31110     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | ...          | ...        | ...        | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="sd">        | 1            | havana     | tes        | 1092813   | 1092814   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="sd">        | 1            | havana     | tes        | 1116087   | 1116088   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="sd">        | 1            | havana     | tes        | 1116089   | 1116090   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="sd">        | 1            | havana     | tes        | 1179555   | 1179556   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        +--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        Stranded PyRanges object has 280 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">        For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pr</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pr</span><span class="o">.</span><span class="n">stranded</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot compute TSSes or TESes without strand info. Perhaps use extend() or subsequence() or spliced_subsequence() instead?&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">pr</span> <span class="o">=</span> <span class="n">pr</span><span class="p">[</span><span class="n">pr</span><span class="o">.</span><span class="n">Feature</span> <span class="o">==</span> <span class="s2">&quot;transcript&quot;</span><span class="p">]</span>
+        <span class="n">pr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">_tes</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+
+        <span class="n">pr</span><span class="o">.</span><span class="n">Feature</span> <span class="o">=</span> <span class="s2">&quot;tes&quot;</span>
+
+        <span class="k">return</span> <span class="n">pr</span></div>
+
+
+<div class="viewcode-block" id="GenomicFeaturesMethods.introns"><a class="viewcode-back" href="../../autoapi/pyranges/genomicfeatures/index.html#pyranges.genomicfeatures.GenomicFeaturesMethods.introns">[docs]</a>    <span class="k">def</span> <span class="nf">introns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="n">nb_cpu</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the introns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        by : str, {&quot;gene&quot;, &quot;transcript&quot;}, default &quot;gene&quot;</span>
+<span class="sd">            Whether to find introns per gene or transcript.</span>
+
+<span class="sd">        nb_cpu: int, default 1</span>
+
+<span class="sd">            How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.</span>
+<span class="sd">            Will only lead to speedups on large datasets.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        pyranges.genomicfeatures.GenomicFeaturesMethods.tss : return the transcription start sites</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        &gt;&gt;&gt; gr = pr.data.ensembl_gtf()</span>
+<span class="sd">        &gt;&gt;&gt; gr</span>
+<span class="sd">        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="sd">        | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="sd">        |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="sd">        | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="sd">        | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="sd">        | 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        | 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="sd">        +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="sd">        Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">        For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+
+<span class="sd">        &gt;&gt;&gt; gr.features.introns(by=&quot;gene&quot;)</span>
+<span class="sd">        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------+</span>
+<span class="sd">        | Chromosome   | Source         | Feature    | Start     | End       | Score      | Strand       | Frame      | +20   |</span>
+<span class="sd">        | (object)     | (object)       | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |</span>
+<span class="sd">        |--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------|</span>
+<span class="sd">        | 1            | ensembl_havana | intron     | 1173926   | 1174265   | .          | +            | .          | ...   |</span>
+<span class="sd">        | 1            | ensembl_havana | intron     | 1174321   | 1174423   | .          | +            | .          | ...   |</span>
+<span class="sd">        | 1            | ensembl_havana | intron     | 1174489   | 1174520   | .          | +            | .          | ...   |</span>
+<span class="sd">        | 1            | ensembl_havana | intron     | 1175034   | 1179188   | .          | +            | .          | ...   |</span>
+<span class="sd">        | ...          | ...            | ...        | ...       | ...       | ...        | ...          | ...        | ...   |</span>
+<span class="sd">        | 1            | havana         | intron     | 874591    | 875046    | .          | -            | .          | ...   |</span>
+<span class="sd">        | 1            | havana         | intron     | 875155    | 875525    | .          | -            | .          | ...   |</span>
+<span class="sd">        | 1            | havana         | intron     | 875625    | 876526    | .          | -            | .          | ...   |</span>
+<span class="sd">        | 1            | havana         | intron     | 876611    | 876754    | .          | -            | .          | ...   |</span>
+<span class="sd">        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------+</span>
+<span class="sd">        Stranded PyRanges object has 311 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">        For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">        20 hidden columns: gene_biotype, gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, ... (+ 11 more.)</span>
+
+<span class="sd">        &gt;&gt;&gt; gr.features.introns(by=&quot;transcript&quot;)</span>
+<span class="sd">        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------+</span>
+<span class="sd">        | Chromosome   | Source         | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                     | +19   |</span>
+<span class="sd">        | (object)     | (object)       | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                         | ...   |</span>
+<span class="sd">        |--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------|</span>
+<span class="sd">        | 1            | havana         | intron     | 818202    | 818722    | .          | +            | .          | lncRNA                           | ...   |</span>
+<span class="sd">        | 1            | ensembl_havana | intron     | 960800    | 961292    | .          | +            | .          | protein_coding                   | ...   |</span>
+<span class="sd">        | 1            | ensembl_havana | intron     | 961552    | 961628    | .          | +            | .          | protein_coding                   | ...   |</span>
+<span class="sd">        | 1            | ensembl_havana | intron     | 961750    | 961825    | .          | +            | .          | protein_coding                   | ...   |</span>
+<span class="sd">        | ...          | ...            | ...        | ...       | ...       | ...        | ...          | ...        | ...                              | ...   |</span>
+<span class="sd">        | 1            | havana         | intron     | 732207    | 732980    | .          | -            | .          | transcribed_processed_pseudogene | ...   |</span>
+<span class="sd">        | 1            | havana_tagene  | intron     | 168165    | 169048    | .          | -            | .          | lncRNA                           | ...   |</span>
+<span class="sd">        | 1            | havana_tagene  | intron     | 165942    | 167958    | .          | -            | .          | lncRNA                           | ...   |</span>
+<span class="sd">        | 1            | havana_tagene  | intron     | 168165    | 169048    | .          | -            | .          | lncRNA                           | ...   |</span>
+<span class="sd">        +--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------+</span>
+<span class="sd">        Stranded PyRanges object has 1,043 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">        For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">        19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="n">by</span><span class="p">,</span> <span class="s2">&quot;nb_cpu&quot;</span><span class="p">:</span> <span class="n">nb_cpu</span><span class="p">}</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">pyranges</span><span class="o">.</span><span class="n">fill_kwargs</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">by</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;transcript&quot;</span><span class="p">]</span>
+
+        <span class="n">id_column</span> <span class="o">=</span> <span class="n">by_to_id</span><span class="p">[</span><span class="n">by</span><span class="p">]</span>
+        <span class="n">gr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pr</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">id_column</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">gr</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">()</span>
+
+        <span class="n">exons</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">Feature</span> <span class="o">==</span> <span class="s2">&quot;exon&quot;</span><span class="p">)</span>
+        <span class="n">exons</span> <span class="o">=</span> <span class="n">exons</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">id_column</span><span class="p">)</span>
+
+        <span class="n">by_gr</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">Feature</span> <span class="o">==</span> <span class="n">by</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pyrange_apply</span><span class="p">(</span><span class="n">_introns2</span><span class="p">,</span> <span class="n">by_gr</span><span class="p">,</span> <span class="n">exons</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div></div>
+
+<span class="k">def</span> <span class="nf">_outside_bounds</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">chromsizes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chromsizes&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chromsizes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">size_df</span> <span class="o">=</span> <span class="n">chromsizes</span><span class="o">.</span><span class="n">df</span>
+        <span class="n">chromsizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">size_df</span><span class="o">.</span><span class="n">Chromosome</span><span class="p">,</span> <span class="n">size_df</span><span class="o">.</span><span class="n">End</span><span class="p">)}</span>
+
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chromsizes</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Chromosome</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">clip</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;clip&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">ends_outside</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">End</span> <span class="o">&gt;</span> <span class="n">size</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">clip</span><span class="p">:</span>  <span class="c1"># i.e. remove</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">ends_outside</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">starts_inside</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Start</span> <span class="o">&lt;=</span> <span class="n">size</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ends_outside</span> <span class="o">&amp;</span> <span class="n">starts_inside</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+
+    <span class="k">return</span> <span class="n">df</span>
+
+
+<div class="viewcode-block" id="genome_bounds"><a class="viewcode-back" href="../../autoapi/pyranges/genomicfeatures/index.html#pyranges.genomicfeatures.genome_bounds">[docs]</a><span class="k">def</span> <span class="nf">genome_bounds</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span> <span class="n">chromsizes</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove or clip intervals outside of genome bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    chromsizes : dict or PyRanges</span>
+
+<span class="sd">        Dict or PyRanges describing the lengths of the chromosomes.</span>
+
+<span class="sd">    clip : bool, default False</span>
+
+<span class="sd">        Part of interval within bounds.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; d = {&quot;Chromosome&quot;: [1, 1, 3], &quot;Start&quot;: [1, 249250600, 5], &quot;End&quot;: [2, 249250640, 7]}</span>
+<span class="sd">    &gt;&gt;&gt; gr = pr.from_dict(d)</span>
+<span class="sd">    &gt;&gt;&gt; gr</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    |   Chromosome |     Start |       End |</span>
+<span class="sd">    |   (category) |   (int32) |   (int32) |</span>
+<span class="sd">    |--------------+-----------+-----------|</span>
+<span class="sd">    |            1 |         1 |         2 |</span>
+<span class="sd">    |            1 | 249250600 | 249250640 |</span>
+<span class="sd">    |            3 |         5 |         7 |</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    Unstranded PyRanges object has 3 rows and 3 columns from 2 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome.</span>
+
+<span class="sd">    &gt;&gt;&gt; chromsizes = {&quot;1&quot;: 249250621, &quot;3&quot;: 500}</span>
+<span class="sd">    &gt;&gt;&gt; chromsizes</span>
+<span class="sd">    {&#39;1&#39;: 249250621, &#39;3&#39;: 500}</span>
+
+<span class="sd">    &gt;&gt;&gt; pr.gf.genome_bounds(gr, chromsizes)</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    |   Chromosome |     Start |       End |</span>
+<span class="sd">    |   (category) |   (int32) |   (int32) |</span>
+<span class="sd">    |--------------+-----------+-----------|</span>
+<span class="sd">    |            1 |         1 |         2 |</span>
+<span class="sd">    |            3 |         5 |         7 |</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    Unstranded PyRanges object has 2 rows and 3 columns from 2 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome.</span>
+
+<span class="sd">    &gt;&gt;&gt; pr.gf.genome_bounds(gr, chromsizes, clip=True)</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    |   Chromosome |     Start |       End |</span>
+<span class="sd">    |   (category) |   (int32) |   (int32) |</span>
+<span class="sd">    |--------------+-----------+-----------|</span>
+<span class="sd">    |            1 |         1 |         2 |</span>
+<span class="sd">    |            1 | 249250600 | 249250621 |</span>
+<span class="sd">    |            3 |         5 |         7 |</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    Unstranded PyRanges object has 3 rows and 3 columns from 2 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome.</span>
+
+<span class="sd">    &gt;&gt;&gt; del chromsizes[&#39;3&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; chromsizes</span>
+<span class="sd">    {&#39;1&#39;: 249250621}</span>
+
+<span class="sd">    &gt;&gt;&gt; pr.gf.genome_bounds(gr, chromsizes)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    KeyError: &#39;3&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chromsizes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">chromsizes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">chromsizes</span><span class="o">.</span><span class="n">Chromosome</span><span class="p">,</span> <span class="n">chromsizes</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">gr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_outside_bounds</span><span class="p">,</span> <span class="n">chromsizes</span><span class="o">=</span><span class="n">chromsizes</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="n">clip</span><span class="p">)</span></div>
+
+
+
+
+<span class="k">def</span> <span class="nf">_last_tile</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># do not need copy, since it is only used internally by</span>
+    <span class="c1"># tile_genome</span>
+    <span class="c1"># df = df.copy()</span>
+    <span class="n">sizes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sizes&quot;</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">sizes</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Chromosome</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">End</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+
+    <span class="k">return</span> <span class="n">df</span>
+
+
+<div class="viewcode-block" id="tile_genome"><a class="viewcode-back" href="../../autoapi/pyranges/genomicfeatures/index.html#pyranges.genomicfeatures.tile_genome">[docs]</a><span class="k">def</span> <span class="nf">tile_genome</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span> <span class="n">tile_size</span><span class="p">,</span> <span class="n">tile_last</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiled genome.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    chromsizes : dict or PyRanges</span>
+
+<span class="sd">        Dict or PyRanges describing the lengths of the chromosomes.</span>
+
+<span class="sd">    tile_size : int</span>
+<span class="sd">        Length of the tiles.</span>
+
+<span class="sd">    tile_last : bool, default False</span>
+
+<span class="sd">        Use genome length as end of last tile.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    pyranges.PyRanges.tile : split intervals into adjacent non-overlapping tiles.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; chromsizes = pr.data.chromsizes()</span>
+<span class="sd">    &gt;&gt;&gt; chromsizes</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    | Chromosome   | Start     | End       |</span>
+<span class="sd">    | (category)   | (int32)   | (int32)   |</span>
+<span class="sd">    |--------------+-----------+-----------|</span>
+<span class="sd">    | chr1         | 0         | 249250621 |</span>
+<span class="sd">    | chr2         | 0         | 243199373 |</span>
+<span class="sd">    | chr3         | 0         | 198022430 |</span>
+<span class="sd">    | chr4         | 0         | 191154276 |</span>
+<span class="sd">    | ...          | ...       | ...       |</span>
+<span class="sd">    | chr22        | 0         | 51304566  |</span>
+<span class="sd">    | chrM         | 0         | 16571     |</span>
+<span class="sd">    | chrX         | 0         | 155270560 |</span>
+<span class="sd">    | chrY         | 0         | 59373566  |</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome.</span>
+
+<span class="sd">    &gt;&gt;&gt; pr.gf.tile_genome(chromsizes, int(1e6))</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    | Chromosome   | Start     | End       |</span>
+<span class="sd">    | (category)   | (int32)   | (int32)   |</span>
+<span class="sd">    |--------------+-----------+-----------|</span>
+<span class="sd">    | chr1         | 0         | 1000000   |</span>
+<span class="sd">    | chr1         | 1000000   | 2000000   |</span>
+<span class="sd">    | chr1         | 2000000   | 3000000   |</span>
+<span class="sd">    | chr1         | 3000000   | 4000000   |</span>
+<span class="sd">    | ...          | ...       | ...       |</span>
+<span class="sd">    | chrY         | 56000000  | 57000000  |</span>
+<span class="sd">    | chrY         | 57000000  | 58000000  |</span>
+<span class="sd">    | chrY         | 58000000  | 59000000  |</span>
+<span class="sd">    | chrY         | 59000000  | 59373566  |</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    Unstranded PyRanges object has 3,114 rows and 3 columns from 25 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">chromosomes</span><span class="p">,</span> <span class="n">ends</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">genome</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">genome</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="n">chromosomes</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">ends</span><span class="p">})</span>
+        <span class="n">genome</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">gr</span> <span class="o">=</span> <span class="n">genome</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">tile_size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tile_last</span><span class="p">:</span>
+        <span class="n">gr</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_last_tile</span><span class="p">,</span> <span class="n">sizes</span><span class="o">=</span><span class="n">genome</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gr</span></div>
+
+
+<span class="k">def</span> <span class="nf">_keep_transcript_with_most_exons</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+
+    <span class="n">transcripts_with_most_exons</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">gdf</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;gene_id&quot;</span><span class="p">):</span>
+
+        <span class="n">max_exon</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">exon_number</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">max_transcript</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="o">.</span><span class="n">exon_number</span> <span class="o">==</span> <span class="n">max_exon</span><span class="p">]</span><span class="o">.</span><span class="n">Transcript</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">max_rows</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="o">.</span><span class="n">Transcript</span> <span class="o">==</span> <span class="n">max_transcript</span><span class="p">]</span>
+
+        <span class="n">transcripts_with_most_exons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">max_rows</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">transcripts_with_most_exons</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+
+<span class="k">def</span> <span class="nf">filter_transcripts</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="s2">&quot;most_exons&quot;</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">_keep_transcript_with_most_exons</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_tss</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">slack</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="n">intype</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Start</span><span class="o">.</span><span class="n">dtype</span>
+
+    <span class="n">tss_pos</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Strand</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">]</span>
+
+    <span class="n">tss_neg</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Strand</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># pd.options.mode.chained_assignment = None</span>
+    <span class="n">tss_neg</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tss_neg</span><span class="o">.</span><span class="n">End</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># pd.options.mode.chained_assignment = &quot;warn&quot;</span>
+    <span class="n">tss</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tss_pos</span><span class="p">,</span> <span class="n">tss_neg</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">tss</span><span class="p">[</span><span class="s2">&quot;End&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tss</span><span class="o">.</span><span class="n">Start</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">tss</span><span class="o">.</span><span class="n">End</span> <span class="o">=</span> <span class="n">tss</span><span class="o">.</span><span class="n">End</span> <span class="o">+</span> <span class="n">slack</span>
+    <span class="n">tss</span><span class="o">.</span><span class="n">Start</span> <span class="o">=</span> <span class="n">tss</span><span class="o">.</span><span class="n">Start</span> <span class="o">-</span> <span class="n">slack</span>
+    <span class="n">tss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tss</span><span class="o">.</span><span class="n">Start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">tss</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tss</span><span class="p">))</span>
+
+    <span class="n">tss</span><span class="p">[[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tss</span><span class="p">[[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">intype</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tss</span>
+
+
+<span class="k">def</span> <span class="nf">_tes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">slack</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="n">intype</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Start</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="c1"># df = self.df</span>
+
+    <span class="n">tes_pos</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Strand</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">]</span>
+
+    <span class="n">tes_neg</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Strand</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># pd.options.mode.chained_assignment = None</span>
+    <span class="n">tes_neg</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;End&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tes_neg</span><span class="o">.</span><span class="n">Start</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># pd.options.mode.chained_assignment = &quot;warn&quot;</span>
+    <span class="n">tes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tes_pos</span><span class="p">,</span> <span class="n">tes_neg</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">tes</span><span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tes</span><span class="o">.</span><span class="n">End</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">tes</span><span class="o">.</span><span class="n">End</span> <span class="o">=</span> <span class="n">tes</span><span class="o">.</span><span class="n">End</span> <span class="o">+</span> <span class="n">slack</span>
+    <span class="n">tes</span><span class="o">.</span><span class="n">Start</span> <span class="o">=</span> <span class="n">tes</span><span class="o">.</span><span class="n">Start</span> <span class="o">-</span> <span class="n">slack</span>
+    <span class="n">tes</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tes</span><span class="o">.</span><span class="n">Start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">tes</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tes</span><span class="p">))</span>
+
+    <span class="n">tes</span><span class="p">[[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tes</span><span class="p">[[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">intype</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tes</span>
+
+
+<span class="n">by_to_id</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;gene&quot;</span><span class="p">:</span> <span class="s2">&quot;gene_id&quot;</span><span class="p">,</span> <span class="s2">&quot;transcript&quot;</span><span class="p">:</span> <span class="s2">&quot;transcript_id&quot;</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_introns2</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">exons</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TODO: refactor</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="n">exons</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">original_order</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">by</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;by&quot;</span><span class="p">]</span>
+    <span class="n">id_column</span> <span class="o">=</span> <span class="n">by_to_id</span><span class="p">[</span><span class="n">by</span><span class="p">]</span>
+
+    <span class="n">exons</span> <span class="o">=</span> <span class="n">exons</span><span class="p">[[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="n">id_column</span><span class="p">]]</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="n">id_column</span><span class="p">]]</span>
+    <span class="n">exons</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="s2">&quot;by_id&quot;</span><span class="p">]</span>
+    <span class="n">genes</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="s2">&quot;by_id&quot;</span><span class="p">]</span>
+
+    <span class="n">intersection</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">exons</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">],</span> <span class="n">genes</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">exons</span> <span class="o">=</span> <span class="n">exons</span><span class="p">[</span><span class="n">exons</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">intersection</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+        <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;by_id&quot;</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span><span class="p">])</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="n">genes</span><span class="p">[</span><span class="n">genes</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">intersection</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+        <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;by_id&quot;</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">id_column</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">intersection</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+        <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">genes</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;by_id&quot;</span><span class="p">)</span>
+    <span class="p">),</span> <span class="s2">&quot;The </span><span class="si">{id_column}</span><span class="s2">s need to be unique to compute the introns.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">id_column</span><span class="o">=</span><span class="n">id_column</span><span class="p">)</span>
+
+    <span class="n">exon_ids</span> <span class="o">=</span> <span class="p">(</span><span class="n">exons</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">()</span> <span class="o">!=</span> <span class="n">exons</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">])</span>
+    <span class="n">by_ids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;__temp__&quot;</span><span class="p">,</span> <span class="n">by_ids</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">exons</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">exons</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">exons</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">exon_ids</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">exon_ids</span> <span class="o">=</span> <span class="n">exon_ids</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">exon_ids</span> <span class="o">=</span> <span class="n">exon_ids</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="p">(</span><span class="n">by_ids</span> <span class="o">==</span> <span class="n">exon_ids</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">starts</span><span class="p">,</span> <span class="n">ends</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="n">find_introns</span><span class="p">(</span><span class="n">genes</span><span class="o">.</span><span class="n">Start</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">genes</span><span class="o">.</span><span class="n">End</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                     <span class="n">by_ids</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">exons</span><span class="o">.</span><span class="n">Start</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                     <span class="n">exons</span><span class="o">.</span><span class="n">End</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">exon_ids</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="n">introns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">Chromosome</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="n">starts</span><span class="p">,</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">ends</span><span class="p">,</span>
+            <span class="s2">&quot;by_id&quot;</span><span class="p">:</span> <span class="n">ids</span>
+        <span class="p">})</span>
+
+    <span class="n">vc</span> <span class="o">=</span> <span class="n">introns</span><span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">vc</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;by_id&quot;</span><span class="p">,</span> <span class="s2">&quot;counts&quot;</span><span class="p">]</span>
+
+    <span class="n">genes_without_introns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;by_id&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">by_ids</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">vc</span><span class="o">.</span><span class="n">by_id</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+            <span class="s2">&quot;counts&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">})</span>
+
+    <span class="n">vc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">vc</span><span class="p">,</span> <span class="n">genes_without_introns</span><span class="p">])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;by_id&quot;</span><span class="p">)</span>
+
+    <span class="n">original_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">vc</span><span class="o">.</span><span class="n">by_id</span><span class="p">,</span> <span class="n">vc</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+    <span class="n">original_ids</span> <span class="o">=</span> <span class="n">original_ids</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;__temp__&quot;</span><span class="p">,</span> <span class="n">id_column</span><span class="p">]],</span>
+        <span class="n">right_on</span><span class="o">=</span><span class="s2">&quot;__temp__&quot;</span><span class="p">,</span>
+        <span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;by_id&quot;</span><span class="p">,</span>
+        <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;_drop&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">original_ids</span> <span class="o">=</span> <span class="n">original_ids</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;__temp__&quot;</span><span class="p">]</span> <span class="o">+</span>
+        <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">original_ids</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_drop&quot;</span><span class="p">)],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;by_id&quot;</span><span class="p">)</span>
+    <span class="n">introns</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;by_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_ids</span><span class="p">[</span><span class="n">id_column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">introns</span> <span class="o">=</span> <span class="n">introns</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;by_id&quot;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="n">id_column</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;_dropme&quot;</span><span class="p">))</span>
+    <span class="n">introns</span> <span class="o">=</span> <span class="n">introns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">introns</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_dropme&quot;</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">introns</span><span class="o">.</span><span class="n">Feature</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;category&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;intron&quot;</span> <span class="ow">in</span> <span class="n">introns</span><span class="o">.</span><span class="n">Feature</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="p">:</span>
+        <span class="n">introns</span><span class="o">.</span><span class="n">Feature</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">([</span><span class="s2">&quot;intron&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">introns</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;Feature&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;intron&quot;</span>
+
+    <span class="n">introns</span> <span class="o">=</span> <span class="n">introns</span><span class="p">[</span><span class="n">original_order</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">introns</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Endre Bakken Stovner and Marco Mariotti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

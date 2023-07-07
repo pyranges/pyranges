@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyranges.genomicfeatures &mdash; pyranges  0.0.124 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="pyranges.get_fasta" href="../get_fasta/index.html" />
+    <link rel="prev" title="pyranges.data" href="../data/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pyranges
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial of PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_book.html">How-to-book</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../data/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.data</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.genomicfeatures</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../get_fasta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.get_fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../helpers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.helpers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../multioverlap/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.multioverlap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../multithreaded/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.multithreaded</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyranges/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.pyranges</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../readers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.readers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statistics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.statistics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stats/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.stats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../version/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyranges</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.genomicfeatures</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/pyranges/genomicfeatures/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyranges.genomicfeatures">
+<span id="pyranges-genomicfeatures"></span><h1><a class="reference internal" href="#module-pyranges.genomicfeatures" title="pyranges.genomicfeatures"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.genomicfeatures</span></code></a><a class="headerlink" href="#module-pyranges.genomicfeatures" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyranges.genomicfeatures.GenomicFeaturesMethods" title="pyranges.genomicfeatures.GenomicFeaturesMethods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GenomicFeaturesMethods</span></code></a></p></td>
+<td><p>Namespace for methods using feature information.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyranges.genomicfeatures.genome_bounds" title="pyranges.genomicfeatures.genome_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">genome_bounds</span></code></a>(gr, chromsizes[, clip, only_right])</p></td>
+<td><p>Remove or clip intervals outside of genome bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyranges.genomicfeatures.tile_genome" title="pyranges.genomicfeatures.tile_genome"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tile_genome</span></code></a>(genome, tile_size[, tile_last])</p></td>
+<td><p>Create a tiled genome.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyranges.genomicfeatures.GenomicFeaturesMethods">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyranges.genomicfeatures.</span></span><span class="sig-name descname"><span class="pre">GenomicFeaturesMethods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/genomicfeatures.html#GenomicFeaturesMethods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.genomicfeatures.GenomicFeaturesMethods" title="Permalink to this definition"></a></dt>
+<dd><p>Namespace for methods using feature information.</p>
+<p>Accessed through <cite>gr.features</cite>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyranges.genomicfeatures.GenomicFeaturesMethods.pr">
+<span class="sig-name descname"><span class="pre">pr</span></span><a class="headerlink" href="#pyranges.genomicfeatures.GenomicFeaturesMethods.pr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyranges.genomicfeatures.GenomicFeaturesMethods.tss">
+<span class="sig-name descname"><span class="pre">tss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/genomicfeatures.html#GenomicFeaturesMethods.tss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.genomicfeatures.GenomicFeaturesMethods.tss" title="Permalink to this definition"></a></dt>
+<dd><p>Return the transcription start sites.</p>
+<p>Returns the 5’ for every interval with feature “transcript”.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pyranges.genomicfeatures.GenomicFeaturesMethods.tes" title="pyranges.genomicfeatures.GenomicFeaturesMethods.tes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.genomicfeatures.GenomicFeaturesMethods.tes</span></code></a></dt><dd><p>return the transcription end sites</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ensembl_gtf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="go">| (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="go">|--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="go">| 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="go">| 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">tss</span><span class="p">()</span>
+<span class="go">+--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="go">| (category)   | (object)   | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="go">|--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="go">| 1            | havana     | tss        | 11868     | 11869     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | tss        | 12009     | 12010     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | tss        | 29553     | 29554     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | tss        | 30266     | 30267     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="go">| ...          | ...        | ...        | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="go">| 1            | havana     | tss        | 1092813   | 1092814   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="go">| 1            | havana     | tss        | 1116087   | 1116088   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="go">| 1            | havana     | tss        | 1116089   | 1116090   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="go">| 1            | havana     | tss        | 1179555   | 1179556   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">+--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">Stranded PyRanges object has 280 rows and 28 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyranges.genomicfeatures.GenomicFeaturesMethods.tes">
+<span class="sig-name descname"><span class="pre">tes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/genomicfeatures.html#GenomicFeaturesMethods.tes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.genomicfeatures.GenomicFeaturesMethods.tes" title="Permalink to this definition"></a></dt>
+<dd><p>Return the transcription end sites.</p>
+<p>Returns the 3’ for every interval with feature “transcript”.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pyranges.genomicfeatures.GenomicFeaturesMethods.tss" title="pyranges.genomicfeatures.GenomicFeaturesMethods.tss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.genomicfeatures.GenomicFeaturesMethods.tss</span></code></a></dt><dd><p>return the transcription start sites</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ensembl_gtf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="go">| (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="go">|--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="go">| 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="go">| 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">tes</span><span class="p">()</span>
+<span class="go">+--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="go">| (category)   | (object)   | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="go">|--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="go">| 1            | havana     | tes        | 14409     | 14410     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | tes        | 13670     | 13671     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | tes        | 31097     | 31098     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | tes        | 31109     | 31110     | .          | +            | .          | lncRNA                             | ...   |</span>
+<span class="go">| ...          | ...        | ...        | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="go">| 1            | havana     | tes        | 1092813   | 1092814   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="go">| 1            | havana     | tes        | 1116087   | 1116088   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="go">| 1            | havana     | tes        | 1116089   | 1116090   | .          | -            | .          | protein_coding                     | ...   |</span>
+<span class="go">| 1            | havana     | tes        | 1179555   | 1179556   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">+--------------+------------+------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">Stranded PyRanges object has 280 rows and 28 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyranges.genomicfeatures.GenomicFeaturesMethods.introns">
+<span class="sig-name descname"><span class="pre">introns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gene'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/genomicfeatures.html#GenomicFeaturesMethods.introns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.genomicfeatures.GenomicFeaturesMethods.introns" title="Permalink to this definition"></a></dt>
+<dd><p>Return the introns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>by</strong> (<em>str</em><em>, </em><em>{&quot;gene&quot;</em><em>, </em><em>&quot;transcript&quot;}</em><em>, </em><em>default &quot;gene&quot;</em>) – Whether to find introns per gene or transcript.</p></li>
+<li><p><strong>nb_cpu</strong> (<em>int</em><em>, </em><em>default 1</em>) – How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
+Will only lead to speedups on large datasets.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pyranges.genomicfeatures.GenomicFeaturesMethods.tss" title="pyranges.genomicfeatures.GenomicFeaturesMethods.tss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.genomicfeatures.GenomicFeaturesMethods.tss</span></code></a></dt><dd><p>return the transcription start sites</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ensembl_gtf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |</span>
+<span class="go">| (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |</span>
+<span class="go">|--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|</span>
+<span class="go">| 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |</span>
+<span class="go">| ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                                | ...   |</span>
+<span class="go">| 1            | havana     | gene         | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 1173055   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 1179364   | 1179555   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 1173055   | 1176396   | .          | -            | .          | lncRNA                             | ...   |</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+</span>
+<span class="go">Stranded PyRanges object has 2,446 rows and 28 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">introns</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;gene&quot;</span><span class="p">)</span>
+<span class="go">+--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------+</span>
+<span class="go">| Chromosome   | Source         | Feature    | Start     | End       | Score      | Strand       | Frame      | +20   |</span>
+<span class="go">| (object)     | (object)       | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | ...   |</span>
+<span class="go">|--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------|</span>
+<span class="go">| 1            | ensembl_havana | intron     | 1173926   | 1174265   | .          | +            | .          | ...   |</span>
+<span class="go">| 1            | ensembl_havana | intron     | 1174321   | 1174423   | .          | +            | .          | ...   |</span>
+<span class="go">| 1            | ensembl_havana | intron     | 1174489   | 1174520   | .          | +            | .          | ...   |</span>
+<span class="go">| 1            | ensembl_havana | intron     | 1175034   | 1179188   | .          | +            | .          | ...   |</span>
+<span class="go">| ...          | ...            | ...        | ...       | ...       | ...        | ...          | ...        | ...   |</span>
+<span class="go">| 1            | havana         | intron     | 874591    | 875046    | .          | -            | .          | ...   |</span>
+<span class="go">| 1            | havana         | intron     | 875155    | 875525    | .          | -            | .          | ...   |</span>
+<span class="go">| 1            | havana         | intron     | 875625    | 876526    | .          | -            | .          | ...   |</span>
+<span class="go">| 1            | havana         | intron     | 876611    | 876754    | .          | -            | .          | ...   |</span>
+<span class="go">+--------------+----------------+------------+-----------+-----------+------------+--------------+------------+-------+</span>
+<span class="go">Stranded PyRanges object has 311 rows and 28 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">20 hidden columns: gene_biotype, gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, ... (+ 11 more.)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">introns</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;transcript&quot;</span><span class="p">)</span>
+<span class="go">+--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------+</span>
+<span class="go">| Chromosome   | Source         | Feature    | Start     | End       | Score      | Strand       | Frame      | gene_biotype                     | +19   |</span>
+<span class="go">| (object)     | (object)       | (object)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                         | ...   |</span>
+<span class="go">|--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------|</span>
+<span class="go">| 1            | havana         | intron     | 818202    | 818722    | .          | +            | .          | lncRNA                           | ...   |</span>
+<span class="go">| 1            | ensembl_havana | intron     | 960800    | 961292    | .          | +            | .          | protein_coding                   | ...   |</span>
+<span class="go">| 1            | ensembl_havana | intron     | 961552    | 961628    | .          | +            | .          | protein_coding                   | ...   |</span>
+<span class="go">| 1            | ensembl_havana | intron     | 961750    | 961825    | .          | +            | .          | protein_coding                   | ...   |</span>
+<span class="go">| ...          | ...            | ...        | ...       | ...       | ...        | ...          | ...        | ...                              | ...   |</span>
+<span class="go">| 1            | havana         | intron     | 732207    | 732980    | .          | -            | .          | transcribed_processed_pseudogene | ...   |</span>
+<span class="go">| 1            | havana_tagene  | intron     | 168165    | 169048    | .          | -            | .          | lncRNA                           | ...   |</span>
+<span class="go">| 1            | havana_tagene  | intron     | 165942    | 167958    | .          | -            | .          | lncRNA                           | ...   |</span>
+<span class="go">| 1            | havana_tagene  | intron     | 168165    | 169048    | .          | -            | .          | lncRNA                           | ...   |</span>
+<span class="go">+--------------+----------------+------------+-----------+-----------+------------+--------------+------------+----------------------------------+-------+</span>
+<span class="go">Stranded PyRanges object has 1,043 rows and 28 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">19 hidden columns: gene_id, gene_name, gene_source, gene_version, tag, transcript_biotype, transcript_id, transcript_name, transcript_source, transcript_support_level, ... (+ 9 more.)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.genomicfeatures.genome_bounds">
+<span class="sig-prename descclassname"><span class="pre">pyranges.genomicfeatures.</span></span><span class="sig-name descname"><span class="pre">genome_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chromsizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_right</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/genomicfeatures.html#genome_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.genomicfeatures.genome_bounds" title="Permalink to this definition"></a></dt>
+<dd><p>Remove or clip intervals outside of genome bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gr</strong> (<a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Input intervals</p></li>
+<li><p><strong>chromsizes</strong> (<em>dict</em><em> or </em><a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a><em> or </em><em>pyfaidx.Fasta</em>) – Dict or PyRanges describing the lengths of the chromosomes.
+pyfaidx.Fasta object is also accepted since it conveniently loads chromosome length</p></li>
+<li><p><strong>clip</strong> (<em>bool</em><em>, </em><em>default False</em>) – Returns the portions of intervals within bounds,
+instead of dropping intervals entirely if they are even partially
+out of bounds</p></li>
+<li><p><strong>only_right</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, remove or clip only intervals that are out-of-bounds on the right,
+and do not alter those out-of-bounds on the left (whose Start is &lt; 0)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">249250600</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">249250640</span><span class="p">,</span> <span class="mi">7</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">|   Chromosome |     Start |       End |</span>
+<span class="go">|   (category) |   (int32) |   (int32) |</span>
+<span class="go">|--------------+-----------+-----------|</span>
+<span class="go">|            1 |         1 |         2 |</span>
+<span class="go">|            1 | 249250600 | 249250640 |</span>
+<span class="go">|            3 |         5 |         7 |</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">Unstranded PyRanges object has 3 rows and 3 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mi">249250621</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span>
+<span class="go">{&#39;1&#39;: 249250621, &#39;3&#39;: 500}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">gf</span><span class="o">.</span><span class="n">genome_bounds</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span> <span class="n">chromsizes</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">|   Chromosome |     Start |       End |</span>
+<span class="go">|   (category) |   (int32) |   (int32) |</span>
+<span class="go">|--------------+-----------+-----------|</span>
+<span class="go">|            1 |         1 |         2 |</span>
+<span class="go">|            3 |         5 |         7 |</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">Unstranded PyRanges object has 2 rows and 3 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">gf</span><span class="o">.</span><span class="n">genome_bounds</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span> <span class="n">chromsizes</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">|   Chromosome |     Start |       End |</span>
+<span class="go">|   (category) |   (int32) |   (int32) |</span>
+<span class="go">|--------------+-----------+-----------|</span>
+<span class="go">|            1 |         1 |         2 |</span>
+<span class="go">|            1 | 249250600 | 249250621 |</span>
+<span class="go">|            3 |         5 |         7 |</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">Unstranded PyRanges object has 3 rows and 3 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">chromsizes</span><span class="p">[</span><span class="s1">&#39;3&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span>
+<span class="go">{&#39;1&#39;: 249250621}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">gf</span><span class="o">.</span><span class="n">genome_bounds</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span> <span class="n">chromsizes</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;3&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.genomicfeatures.tile_genome">
+<span class="sig-prename descclassname"><span class="pre">pyranges.genomicfeatures.</span></span><span class="sig-name descname"><span class="pre">tile_genome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/genomicfeatures.html#tile_genome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.genomicfeatures.tile_genome" title="Permalink to this definition"></a></dt>
+<dd><p>Create a tiled genome.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chromsizes</strong> (<em>dict</em><em> or </em><a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Dict or PyRanges describing the lengths of the chromosomes.</p></li>
+<li><p><strong>tile_size</strong> (<em>int</em>) – Length of the tiles.</p></li>
+<li><p><strong>tile_last</strong> (<em>bool</em><em>, </em><em>default False</em>) – Use genome length as end of last tile.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../index.html#pyranges.PyRanges.tile" title="pyranges.PyRanges.tile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.PyRanges.tile</span></code></a></dt><dd><p>split intervals into adjacent non-overlapping tiles.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chromsizes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">| Chromosome   | Start     | End       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   |</span>
+<span class="go">|--------------+-----------+-----------|</span>
+<span class="go">| chr1         | 0         | 249250621 |</span>
+<span class="go">| chr2         | 0         | 243199373 |</span>
+<span class="go">| chr3         | 0         | 198022430 |</span>
+<span class="go">| chr4         | 0         | 191154276 |</span>
+<span class="go">| ...          | ...       | ...       |</span>
+<span class="go">| chr22        | 0         | 51304566  |</span>
+<span class="go">| chrM         | 0         | 16571     |</span>
+<span class="go">| chrX         | 0         | 155270560 |</span>
+<span class="go">| chrY         | 0         | 59373566  |</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">gf</span><span class="o">.</span><span class="n">tile_genome</span><span class="p">(</span><span class="n">chromsizes</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">))</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">| Chromosome   | Start     | End       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   |</span>
+<span class="go">|--------------+-----------+-----------|</span>
+<span class="go">| chr1         | 0         | 1000000   |</span>
+<span class="go">| chr1         | 1000000   | 2000000   |</span>
+<span class="go">| chr1         | 2000000   | 3000000   |</span>
+<span class="go">| chr1         | 3000000   | 4000000   |</span>
+<span class="go">| ...          | ...       | ...       |</span>
+<span class="go">| chrY         | 56000000  | 57000000  |</span>
+<span class="go">| chrY         | 57000000  | 58000000  |</span>
+<span class="go">| chrY         | 58000000  | 59000000  |</span>
+<span class="go">| chrY         | 59000000  | 59373566  |</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">Unstranded PyRanges object has 3,114 rows and 3 columns from 25 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../data/index.html" class="btn btn-neutral float-left" title="pyranges.data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../get_fasta/index.html" class="btn btn-neutral float-right" title="pyranges.get_fasta" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Endre Bakken Stovner and Marco Mariotti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

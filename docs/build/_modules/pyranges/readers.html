@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyranges.readers &mdash; pyranges  0.0.124 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyranges
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial of PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html">Introduction to PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#loading-creating-pyranges">Loading/Creating PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#writing-pyranges-to-disk">Writing PyRanges to disk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#inspecting-pyranges">Inspecting PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#accessing-data">Accessing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#operating-with-data">Operating with data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#overlapping-and-matching-pyranges">Overlapping and matching PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#summary-statistics">Summary statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#computing-with-pyranges">Computing with PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#working-at-the-transcript-level">Working at the transcript level</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#fetching-external-gene-tracks">Fetching external gene tracks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_book.html#rles-run-length-encodings">RLEs: run length encodings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyranges</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../pyranges.html">pyranges</a></li>
+      <li class="breadcrumb-item active">pyranges.readers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyranges.readers</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pyranges.pyranges</span> <span class="kn">import</span> <span class="n">PyRanges</span>
+
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+
+<span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span>
+<span class="kn">from</span> <span class="nn">pyranges.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+
+
+<div class="viewcode-block" id="read_bed"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.read_bed">[docs]</a><span class="k">def</span> <span class="nf">read_bed</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return bed file as PyRanges.</span>
+
+<span class="sd">    This is a reader for files that follow the bed format. They can have from</span>
+<span class="sd">    3-12 columns which will be named like so:</span>
+
+<span class="sd">    Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB</span>
+<span class="sd">    BlockCount BlockSizes BlockStarts</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : str</span>
+
+<span class="sd">        Path to bed file</span>
+
+<span class="sd">    as_df : bool, default False</span>
+
+<span class="sd">        Whether to return as pandas DataFrame instead of PyRanges.</span>
+
+<span class="sd">    nrows : int, default None</span>
+
+<span class="sd">        Number of rows to return.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    If you just want to create a PyRanges from a tab-delimited bed-like file,</span>
+<span class="sd">    use `pr.PyRanges(pandas.read_table(f))` instead.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; path = pr.get_example_path(&quot;aorta.bed&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; pr.read_bed(path, nrows=5)</span>
+<span class="sd">    +--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="sd">    | Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="sd">    | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="sd">    |--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="sd">    | chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |</span>
+<span class="sd">    | chr1         |      9953 |     10152 | H3K27me3   |         5 | +            |</span>
+<span class="sd">    | chr1         |      9916 |     10115 | H3K27me3   |         5 | -            |</span>
+<span class="sd">    | chr1         |      9951 |     10150 | H3K27me3   |         8 | -            |</span>
+<span class="sd">    | chr1         |      9978 |     10177 | H3K27me3   |         7 | -            |</span>
+<span class="sd">    +--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="sd">    Stranded PyRanges object has 5 rows and 6 columns from 1 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    &gt;&gt;&gt; pr.read_bed(path, as_df=True, nrows=5)</span>
+<span class="sd">      Chromosome  Start    End      Name  Score Strand</span>
+<span class="sd">    0       chr1   9916  10115  H3K27me3      5      -</span>
+<span class="sd">    1       chr1   9939  10138  H3K27me3      7      +</span>
+<span class="sd">    2       chr1   9951  10150  H3K27me3      8      -</span>
+<span class="sd">    3       chr1   9953  10152  H3K27me3      5      +</span>
+<span class="sd">    4       chr1   9978  10177  H3K27me3      7      -</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">columns</span> <span class="o">=</span> <span class="s2">&quot;Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">gzip</span>
+        <span class="n">first_start</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">first_start</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">first_start</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Strand&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span>
+        <span class="p">},</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[:</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">as_df</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="read_bam"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.read_bam">[docs]</a><span class="k">def</span> <span class="nf">read_bam</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mapq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">required_flag</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">filter_flag</span><span class="o">=</span><span class="mi">1540</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return bam file as PyRanges.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : str</span>
+
+<span class="sd">        Path to bam file</span>
+
+<span class="sd">    sparse : bool, default True</span>
+
+<span class="sd">        Whether to return only.</span>
+
+<span class="sd">    as_df : bool, default False</span>
+
+<span class="sd">        Whether to return as pandas DataFrame instead of PyRanges.</span>
+
+<span class="sd">    mapq : int, default 0</span>
+
+<span class="sd">        Minimum mapping quality score.</span>
+
+<span class="sd">    required_flag : int, default 0</span>
+
+<span class="sd">        Flags which must be present for the interval to be read.</span>
+
+<span class="sd">    filter_flag : int, default 1540</span>
+
+<span class="sd">        Ignore reads with these flags. Default 1540, which means that either</span>
+<span class="sd">        the read is unmapped, the read failed vendor or platfrom quality</span>
+<span class="sd">        checks, or the read is a PCR or optical duplicate.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    This functionality requires the library `bamread`. It can be installed with</span>
+<span class="sd">    `pip install bamread` or `conda install -c bioconda bamread`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; path = pr.get_example_path(&quot;control.bam&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; pr.read_bam(path)</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+------------+</span>
+<span class="sd">    | Chromosome   | Start     | End       | Strand       | Flag       |</span>
+<span class="sd">    | (category)   | (int32)   | (int32)   | (category)   | (uint16)   |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------+------------|</span>
+<span class="sd">    | chr1         | 887771    | 887796    | +            | 16         |</span>
+<span class="sd">    | chr1         | 994660    | 994685    | +            | 16         |</span>
+<span class="sd">    | chr1         | 1770383   | 1770408   | +            | 16         |</span>
+<span class="sd">    | chr1         | 1995141   | 1995166   | +            | 16         |</span>
+<span class="sd">    | ...          | ...       | ...       | ...          | ...        |</span>
+<span class="sd">    | chrY         | 57402214  | 57402239  | +            | 16         |</span>
+<span class="sd">    | chrY         | 10643526  | 10643551  | -            | 0          |</span>
+<span class="sd">    | chrY         | 11776321  | 11776346  | -            | 0          |</span>
+<span class="sd">    | chrY         | 20557165  | 20557190  | -            | 0          |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+------------+</span>
+<span class="sd">    Stranded PyRanges object has 10,000 rows and 5 columns from 25 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    &gt;&gt;&gt; pr.read_bam(path, sparse=False, as_df=True)</span>
+<span class="sd">         Chromosome    Start      End Strand  Flag  QueryStart  QueryEnd Name Cigar Quality</span>
+<span class="sd">    0          chr1   887771   887796      +    16           0        25   U0   25M    None</span>
+<span class="sd">    1          chr1   994660   994685      +    16           0        25   U0   25M    None</span>
+<span class="sd">    2          chr1  1041102  1041127      -     0           0        25   U0   25M    None</span>
+<span class="sd">    3          chr1  1770383  1770408      +    16           0        25   U0   25M    None</span>
+<span class="sd">    4          chr1  1995141  1995166      +    16           0        25   U0   25M    None</span>
+<span class="sd">    ...         ...      ...      ...    ...   ...         ...       ...  ...   ...     ...</span>
+<span class="sd">    9995       chrM     3654     3679      -     0           0        25   U0   25M    None</span>
+<span class="sd">    9996       chrM     3900     3925      +    16           0        25   U0   25M    None</span>
+<span class="sd">    9997       chrM    13006    13031      +    16           0        25   U0   25M    None</span>
+<span class="sd">    9998       chrM    14257    14282      -     0           0        25   U0   25M    None</span>
+<span class="sd">    9999       chrM    14257    14282      -     0           0        25   U0   25M    None</span>
+<span class="sd">    &lt;BLANKLINE&gt;</span>
+<span class="sd">    [10000 rows x 10 columns]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">bamread</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bamread must be installed to read bam. Use `conda install -c bioconda bamread` or `pip install bamread` to install it.&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bamread</span><span class="o">.</span><span class="n">__version__</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span> <span class="s2">&quot;0.0.2&quot;</span><span class="p">,</span> <span class="s2">&quot;0.0.3&quot;</span><span class="p">,</span> <span class="s2">&quot;0.0.4&quot;</span><span class="p">,</span>
+                               <span class="s2">&quot;0.0.5&quot;</span><span class="p">,</span> <span class="s2">&quot;0.0.6&quot;</span><span class="p">,</span> <span class="s2">&quot;0.0.7&quot;</span><span class="p">,</span> <span class="s2">&quot;0.0.8&quot;</span><span class="p">,</span> <span class="s2">&quot;0.0.9&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bamread not recent enough. Must be 0.0.10 or higher. Use `conda install -c bioconda &#39;bamread&gt;=0.0.10&#39;` or `pip install bamread&gt;=0.0.10` to install it.&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sparse</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">bamread</span><span class="o">.</span><span class="n">read_bam</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">mapq</span><span class="p">,</span> <span class="n">required_flag</span><span class="p">,</span> <span class="n">filter_flag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">bamread</span><span class="o">.</span><span class="n">read_bam_full</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">mapq</span><span class="p">,</span> <span class="n">required_flag</span><span class="p">,</span> <span class="n">filter_flag</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bamread version 0.0.6 or higher is required to read bam non-sparsely.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">as_df</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+    <span class="c1"># return bamread.read_bam(f, mapq, required_flag, filter_flag)</span>
+
+
+<div class="viewcode-block" id="_fetch_gene_transcript_exon_id"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges._fetch_gene_transcript_exon_id">[docs]</a><span class="k">def</span> <span class="nf">_fetch_gene_transcript_exon_id</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="n">no_quotes</span> <span class="o">=</span> <span class="n">attribute</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">no_quotes</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span>
+        <span class="s2">&quot;gene_id.?(.+?);(?:.*transcript_id.?(.+?);)?(?:.*exon_number.?(.+?);)?(?:.*exon_id.?(.+?);)?&quot;</span><span class="p">,</span>
+        <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># .iloc[:, [1, 2, 3]]</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="s2">&quot;gene_id transcript_id exon_number exon_id&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">annotation</span> <span class="o">==</span> <span class="s2">&quot;ensembl&quot;</span><span class="p">:</span>
+        <span class="n">newdf</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s2">&quot;gene_id transcript_id exon_id&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">newdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="n">newdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">newdf</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">newdf</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;exon_number&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;exon_number&quot;</span><span class="p">])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">newdf</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="skiprows"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.skiprows">[docs]</a><span class="k">def</span> <span class="nf">skiprows</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">gzip</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fh</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">decode</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;#&quot;</span><span class="p">:</span>
+                <span class="k">break</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>  <span class="c1"># not a gzipped file, or StringIO</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fh</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;#&quot;</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">i</span></div>
+
+
+<div class="viewcode-block" id="read_gtf"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.read_gtf">[docs]</a><span class="k">def</span> <span class="nf">read_gtf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duplicate_attr</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read files in the Gene Transfer Format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : str</span>
+
+<span class="sd">        Path to GTF file.</span>
+
+<span class="sd">    full : bool, default True</span>
+
+<span class="sd">        Whether to read and interpret the annotation column.</span>
+
+<span class="sd">    as_df : bool, default False</span>
+
+<span class="sd">        Whether to return as pandas DataFrame instead of PyRanges.</span>
+
+<span class="sd">    nrows : int, default None</span>
+
+<span class="sd">        Number of rows to read. Default None, i.e. all.</span>
+
+<span class="sd">    duplicate_attr : bool, default False</span>
+
+<span class="sd">        Whether to handle (potential) duplicate attributes or just keep last one.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    pyranges.read_gff3 : read files in the General Feature Format</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; path = pr.get_example_path(&quot;ensembl.gtf&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; gr = pr.read_gtf(path)</span>
+
+<span class="sd">    &gt;&gt;&gt; # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------+</span>
+<span class="sd">    &gt;&gt;&gt; # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | +18   |</span>
+<span class="sd">    &gt;&gt;&gt; # | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------|</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | ENSG00000223972 | 5              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | ENSG00000223972 | 5              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...             | ...            | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | ensembl    | transcript   | 120724    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | ensembl    | exon         | 133373    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | ensembl    | exon         | 129054    | 129223    | .          | -            | .          | ENSG00000238009 | 6              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # | 1            | ensembl    | exon         | 120873    | 120932    | .          | -            | .          | ENSG00000238009 | 6              | ...   |</span>
+<span class="sd">    &gt;&gt;&gt; # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------+</span>
+<span class="sd">    &gt;&gt;&gt; # Stranded PyRanges object has 95 rows and 28 columns from 1 chromosomes.</span>
+<span class="sd">    &gt;&gt;&gt; # For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">    &gt;&gt;&gt; # 18 hidden columns: gene_name, gene_source, gene_biotype, transcript_id, transcript_version, transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, ... (+ 8 more.)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_skiprows</span> <span class="o">=</span> <span class="n">skiprows</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">full</span><span class="p">:</span>
+        <span class="n">gr</span> <span class="o">=</span> <span class="n">read_gtf_full</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">as_df</span><span class="p">,</span> <span class="n">nrows</span><span class="p">,</span> <span class="n">_skiprows</span><span class="p">,</span> <span class="n">duplicate_attr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gr</span> <span class="o">=</span> <span class="n">read_gtf_restricted</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">_skiprows</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gr</span></div>
+
+
+<div class="viewcode-block" id="read_gtf_full"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.read_gtf_full">[docs]</a><span class="k">def</span> <span class="nf">read_gtf_full</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">duplicate_attr</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="n">dtypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Feature&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Strand&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="s2">&quot;Chromosome Source Feature Start End Score Strand Frame Attribute&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+    <span class="p">)</span>
+
+    <span class="n">df_iter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">dtypes</span><span class="p">,</span>
+        <span class="n">chunksize</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span>
+        <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">)</span>
+
+    <span class="n">_to_rows</span> <span class="o">=</span> <span class="n">to_rows_keep_duplicates</span> <span class="k">if</span> <span class="n">duplicate_attr</span> <span class="k">else</span> <span class="n">to_rows</span>
+
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_iter</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">_to_rows</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Attribute</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Attribute&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ndf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">extra</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndf</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Start</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">as_df</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="to_rows"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.to_rows">[docs]</a><span class="k">def</span> <span class="nf">to_rows</span><span class="p">(</span><span class="n">anno</span><span class="p">):</span>
+    <span class="n">rowdicts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">anno</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid attribute string: </span><span class="si">{l}</span><span class="s2">. If the file is in GFF3 format, use pr.read_gff3 instead.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="n">l</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">anno</span><span class="p">:</span>
+        <span class="n">rowdicts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+                         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">kv</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                                      <span class="c1"># l[:-1] removes final &quot;;&quot; cheaply</span>
+                                      <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">l</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="p">)]})</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">rowdicts</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">anno</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_rows_keep_duplicates"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.to_rows_keep_duplicates">[docs]</a><span class="k">def</span> <span class="nf">to_rows_keep_duplicates</span><span class="p">(</span><span class="n">anno</span><span class="p">):</span>
+    <span class="n">rowdicts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">anno</span><span class="p">:</span>
+        <span class="n">rowdict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># l[:-1] removes final &quot;;&quot; cheaply</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">kv</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">l</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="p">)):</span>
+
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rowdict</span><span class="p">:</span>
+                <span class="n">rowdict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rowdict</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rowdict</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">rowdict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rowdict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">rowdict</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">]</span>
+
+        <span class="n">rowdicts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="n">k</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rowdict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">rowdicts</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">anno</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_gtf_restricted"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.read_gtf_restricted">[docs]</a><span class="k">def</span> <span class="nf">read_gtf_restricted</span><span class="p">(</span><span class="n">f</span><span class="p">,</span>
+                        <span class="n">skiprows</span><span class="p">,</span>
+                        <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;seqname - name of the chromosome or scaffold; chromosome names can be given with or without the &#39;chr&#39; prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.</span>
+<span class="sd">    # source - name of the program that generated this feature, or the data source (database or project name)</span>
+<span class="sd">    feature - feature type name, e.g. Gene, Variation, Similarity</span>
+<span class="sd">    start - Start position of the feature, with sequence numbering starting at 1.</span>
+<span class="sd">    end - End position of the feature, with sequence numbering starting at 1.</span>
+<span class="sd">    score - A floating point value.</span>
+<span class="sd">    strand - defined as + (forward) or - (reverse).</span>
+<span class="sd">    # frame - One of &#39;0&#39;, &#39;1&#39; or &#39;2&#39;. &#39;0&#39; indicates that the first base of the feature is the first base of a codon, &#39;1&#39; that the second base is the first base of a codon, and so on..</span>
+<span class="sd">    attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature.&quot;&quot;&quot;</span>
+    <span class="n">dtypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Feature&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Strand&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">df_iter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">,</span>
+        <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+        <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">names</span><span class="o">=</span><span class="s2">&quot;Chromosome Feature Start End Score Strand Attribute&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">dtypes</span><span class="p">,</span>
+        <span class="n">chunksize</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span>
+        <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">)</span>
+
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_iter</span><span class="p">:</span>
+        <span class="c1"># Since Start is 1-indexed</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">Start</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Score</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+            <span class="n">cols_to_concat</span> <span class="o">=</span> <span class="s2">&quot;Chromosome Start End Strand Feature&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cols_to_concat</span> <span class="o">=</span> <span class="s2">&quot;Chromosome Start End Strand Feature Score&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+            <span class="p">)</span>
+
+        <span class="n">extract</span> <span class="o">=</span> <span class="n">_fetch_gene_transcript_exon_id</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Attribute</span><span class="p">)</span>
+        <span class="n">extract</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="s2">&quot;gene_id transcript_id exon_number exon_id&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="n">extract</span><span class="o">.</span><span class="n">exon_number</span> <span class="o">=</span> <span class="n">extract</span><span class="o">.</span><span class="n">exon_number</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">[</span><span class="n">cols_to_concat</span><span class="p">],</span> <span class="n">extract</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Start</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">as_df</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="to_rows_gff3"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.to_rows_gff3">[docs]</a><span class="k">def</span> <span class="nf">to_rows_gff3</span><span class="p">(</span><span class="n">anno</span><span class="p">):</span>
+    <span class="n">rowdicts</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">anno</span><span class="p">):</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="n">it</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">))</span>
+        <span class="n">rowdicts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">l</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">rowdicts</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">anno</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_gff3"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.read_gff3">[docs]</a><span class="k">def</span> <span class="nf">read_gff3</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read files in the General Feature Format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : str</span>
+
+<span class="sd">        Path to GFF file.</span>
+
+<span class="sd">    full : bool, default True</span>
+
+<span class="sd">        Whether to read and interpret the annotation column.</span>
+
+<span class="sd">    as_df : bool, default False</span>
+
+<span class="sd">        Whether to return as pandas DataFrame instead of PyRanges.</span>
+
+<span class="sd">    nrows : int, default None</span>
+
+<span class="sd">        Number of rows to read. Default None, i.e. all.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    pyranges.read_gtf : read files in the Gene Transfer Format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_skiprows</span> <span class="o">=</span> <span class="n">skiprows</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">read_gtf_restricted</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">_skiprows</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="n">as_df</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">)</span>
+
+    <span class="n">dtypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Feature&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Strand&quot;</span><span class="p">:</span> <span class="s2">&quot;category&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="s2">&quot;Chromosome Source Feature Start End Score Strand Frame Attribute&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+    <span class="p">)</span>
+
+    <span class="n">df_iter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span>
+        <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">dtypes</span><span class="p">,</span>
+        <span class="n">chunksize</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span>
+        <span class="n">skiprows</span><span class="o">=</span><span class="n">_skiprows</span><span class="p">,</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">)</span>
+
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_iter</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">to_rows_gff3</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Attribute</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Attribute&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ndf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">extra</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndf</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Start</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">as_df</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="read_bigwig"><a class="viewcode-back" href="../../autoapi/pyranges/readers/index.html#pyranges.read_bigwig">[docs]</a><span class="k">def</span> <span class="nf">read_bigwig</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">as_df</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pyBigWig</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bwread must be installed to read bigwigs. Use `conda install -c bioconda bwread` or `pip install bwread` to install it.&quot;</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read bigwig files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : str</span>
+
+<span class="sd">        Path to bw file.</span>
+
+<span class="sd">    as_df : bool, default False</span>
+
+<span class="sd">        Whether to return as pandas DataFrame instead of PyRanges.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; f = pr.get_example_path(&quot;bw.bw&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; gr = pr.read_bigwig(f)</span>
+<span class="sd">    &gt;&gt;&gt; gr</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">natsort</span> <span class="kn">import</span> <span class="n">natsorted</span>
+
+    <span class="n">bw</span> <span class="o">=</span> <span class="n">pyBigWig</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">)</span>
+    <span class="n">chromosomes</span> <span class="o">=</span> <span class="n">bw</span><span class="o">.</span><span class="n">chroms</span><span class="p">()</span>
+
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">chromosome</span> <span class="ow">in</span> <span class="n">natsorted</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">):</span>
+        <span class="n">outstarts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">outends</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">outvalues</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">length</span> <span class="o">=</span> <span class="n">chromosomes</span><span class="p">[</span><span class="n">chromosome</span><span class="p">]</span>
+
+        <span class="n">starts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+        <span class="n">ends</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">length</span> <span class="o">+</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+        <span class="n">ends</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+        <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">ends</span><span class="p">):</span>
+            <span class="n">intervals</span> <span class="o">=</span> <span class="n">bw</span><span class="o">.</span><span class="n">intervals</span><span class="p">(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">intervals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
+                    <span class="n">outstarts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                    <span class="n">outends</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                    <span class="n">outvalues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="n">outstarts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">outstarts</span><span class="p">)</span>
+        <span class="n">outends</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">outends</span><span class="p">)</span>
+        <span class="n">outvalues</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">outvalues</span><span class="p">)</span>
+        <span class="n">dfs</span><span class="p">[</span><span class="n">chromosome</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="n">chromosome</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="n">outstarts</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">outends</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">outvalues</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Endre Bakken Stovner and Marco Mariotti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

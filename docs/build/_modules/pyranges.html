@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyranges &mdash; pyranges  0.0.124 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyranges
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial of PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html">Introduction to PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#loading-creating-pyranges">Loading/Creating PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#writing-pyranges-to-disk">Writing PyRanges to disk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#inspecting-pyranges">Inspecting PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#accessing-data">Accessing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#operating-with-data">Operating with data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#overlapping-and-matching-pyranges">Overlapping and matching PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#summary-statistics">Summary statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#computing-with-pyranges">Computing with PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#working-at-the-transcript-level">Working at the transcript level</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#fetching-external-gene-tracks">Fetching external gene tracks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_book.html#rles-run-length-encodings">RLEs: run length encodings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyranges</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyranges</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyranges</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">mkl</span>
+    <span class="n">mkl</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span>
+
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+
+<span class="kn">from</span> <span class="nn">pyranges.pyranges</span> <span class="kn">import</span> <span class="n">PyRanges</span>
+<span class="kn">from</span> <span class="nn">pyranges</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="kn">from</span> <span class="nn">pyranges.methods.concat</span> <span class="kn">import</span> <span class="n">concat</span>
+
+<span class="kn">from</span> <span class="nn">pyrle</span> <span class="kn">import</span> <span class="n">PyRles</span><span class="p">,</span> <span class="n">Rle</span>
+
+<span class="kn">from</span> <span class="nn">pyranges.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+
+<span class="kn">from</span> <span class="nn">natsort</span> <span class="kn">import</span> <span class="n">natsorted</span>
+
+<span class="n">get_example_path</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_example_path</span>
+
+
+
+<span class="kn">from</span> <span class="nn">pyranges.multioverlap</span> <span class="kn">import</span> <span class="n">count_overlaps</span>
+
+<div class="viewcode-block" id="from_dict"><a class="viewcode-back" href="../autoapi/pyranges/index.html#pyranges.from_dict">[docs]</a><span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">int64</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a PyRanges from dict.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : dict of array-like</span>
+
+<span class="sd">        Dict with data.</span>
+
+<span class="sd">    int64 : bool, default False.</span>
+
+<span class="sd">        Whether to use 64-bit integers for starts and ends.</span>
+
+<span class="sd">    Warning</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    On versions of Python prior to 3.6, this function returns a PyRanges with</span>
+<span class="sd">    the columns in arbitrary order.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    pyranges.from_string : create a PyRanges from a multiline string.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; d = {&quot;Chromosome&quot;: [1, 1, 2], &quot;Start&quot;: [1, 2, 3], &quot;End&quot;: [4, 9, 12], &quot;Strand&quot;: [&quot;+&quot;, &quot;+&quot;, &quot;-&quot;], &quot;ArbitraryValue&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]}</span>
+<span class="sd">    &gt;&gt;&gt; pr.from_dict(d)</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+------------------+</span>
+<span class="sd">    |   Chromosome |     Start |       End | Strand       | ArbitraryValue   |</span>
+<span class="sd">    |   (category) |   (int32) |   (int32) | (category)   | (object)         |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------+------------------|</span>
+<span class="sd">    |            1 |         1 |         4 | +            | a                |</span>
+<span class="sd">    |            1 |         2 |         9 | +            | b                |</span>
+<span class="sd">    |            2 |         3 |        12 | -            | c                |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+------------------+</span>
+<span class="sd">    Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">int64</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_string"><a class="viewcode-back" href="../autoapi/pyranges/index.html#pyranges.from_string">[docs]</a><span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">int64</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a PyRanges from multiline string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s : str</span>
+
+<span class="sd">        String with data.</span>
+
+<span class="sd">    int64 : bool, default False.</span>
+
+<span class="sd">        Whether to use 64-bit integers for starts and ends.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    pyranges.from_dict : create a PyRanges from a dictionary.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; s = &#39;&#39;&#39;Chromosome      Start        End Strand</span>
+<span class="sd">    ... chr1  246719402  246719502      +</span>
+<span class="sd">    ... chr5   15400908   15401008      +</span>
+<span class="sd">    ... chr9   68366534   68366634      +</span>
+<span class="sd">    ... chr14   79220091   79220191      +</span>
+<span class="sd">    ... chr14  103456471  103456571      -&#39;&#39;&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; pr.from_string(s)</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    | Chromosome   |     Start |       End | Strand       |</span>
+<span class="sd">    | (category)   |   (int32) |   (int32) | (category)   |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------|</span>
+<span class="sd">    | chr1         | 246719402 | 246719502 | +            |</span>
+<span class="sd">    | chr5         |  15400908 |  15401008 | +            |</span>
+<span class="sd">    | chr9         |  68366534 |  68366634 | +            |</span>
+<span class="sd">    | chr14        |  79220091 |  79220191 | +            |</span>
+<span class="sd">    | chr14        | 103456471 | 103456571 | -            |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    Stranded PyRanges object has 5 rows and 4 columns from 4 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">int64</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span></div>
+
+
+<span class="kn">from</span> <span class="nn">pyranges.get_fasta</span> <span class="kn">import</span> <span class="n">get_fasta</span>
+
+<span class="n">get_fasta</span> <span class="o">=</span> <span class="n">get_fasta</span>
+
+
+<span class="kn">import</span> <span class="nn">pyranges.genomicfeatures</span> <span class="k">as</span> <span class="nn">gf</span>
+
+
+<div class="viewcode-block" id="itergrs"><a class="viewcode-back" href="../autoapi/pyranges/index.html#pyranges.itergrs">[docs]</a><span class="k">def</span> <span class="nf">itergrs</span><span class="p">(</span><span class="n">prs</span><span class="p">,</span> <span class="n">strand</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Iterate over multiple PyRanges at once.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prs : list of PyRanges</span>
+
+<span class="sd">        PyRanges to iterate over.</span>
+
+<span class="sd">    strand : bool, default None, i.e. auto</span>
+
+<span class="sd">        Whether to iterate over strands. If True, all PyRanges must be stranded.</span>
+
+<span class="sd">    keys : bool, default False</span>
+
+<span class="sd">        Return tuple with key and value from iterator.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; d1 = {&quot;Chromosome&quot;: [1, 1, 2], &quot;Start&quot;: [1, 2, 3], &quot;End&quot;: [4, 9, 12], &quot;Strand&quot;: [&quot;+&quot;, &quot;+&quot;, &quot;-&quot;]}</span>
+<span class="sd">    &gt;&gt;&gt; d2 = {&quot;Chromosome&quot;: [2, 3, 3], &quot;Start&quot;: [5, 9, 21], &quot;End&quot;: [81, 42, 25], &quot;Strand&quot;: [&quot;-&quot;, &quot;+&quot;, &quot;-&quot;]}</span>
+<span class="sd">    &gt;&gt;&gt; gr1, gr2 = pr.from_dict(d1), pr.from_dict(d2)</span>
+<span class="sd">    &gt;&gt;&gt; gr1</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    |   Chromosome |     Start |       End | Strand       |</span>
+<span class="sd">    |   (category) |   (int32) |   (int32) | (category)   |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------|</span>
+<span class="sd">    |            1 |         1 |         4 | +            |</span>
+<span class="sd">    |            1 |         2 |         9 | +            |</span>
+<span class="sd">    |            2 |         3 |        12 | -            |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    &gt;&gt;&gt; gr2</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    |   Chromosome |     Start |       End | Strand       |</span>
+<span class="sd">    |   (category) |   (int32) |   (int32) | (category)   |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------|</span>
+<span class="sd">    |            2 |         5 |        81 | -            |</span>
+<span class="sd">    |            3 |         9 |        42 | +            |</span>
+<span class="sd">    |            3 |        21 |        25 | -            |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    &gt;&gt;&gt; ranges = [gr1, gr2]</span>
+
+<span class="sd">    &gt;&gt;&gt; for key, dfs in pr.itergrs(ranges, keys=True):</span>
+<span class="sd">    ...     print(&quot;-----------\n&quot; + str(key) + &quot;\n-----------&quot;)</span>
+<span class="sd">    ...     for df in dfs:</span>
+<span class="sd">    ...         print(df)</span>
+<span class="sd">    -----------</span>
+<span class="sd">    (&#39;1&#39;, &#39;+&#39;)</span>
+<span class="sd">    -----------</span>
+<span class="sd">      Chromosome  Start  End Strand</span>
+<span class="sd">    0          1      1    4      +</span>
+<span class="sd">    1          1      2    9      +</span>
+<span class="sd">    Empty DataFrame</span>
+<span class="sd">    Columns: [Chromosome, Start, End, Strand]</span>
+<span class="sd">    Index: []</span>
+<span class="sd">    -----------</span>
+<span class="sd">    (&#39;2&#39;, &#39;-&#39;)</span>
+<span class="sd">    -----------</span>
+<span class="sd">      Chromosome  Start  End Strand</span>
+<span class="sd">    2          2      3   12      -</span>
+<span class="sd">      Chromosome  Start  End Strand</span>
+<span class="sd">    0          2      5   81      -</span>
+<span class="sd">    -----------</span>
+<span class="sd">    (&#39;3&#39;, &#39;+&#39;)</span>
+<span class="sd">    -----------</span>
+<span class="sd">    Empty DataFrame</span>
+<span class="sd">    Columns: [Chromosome, Start, End, Strand]</span>
+<span class="sd">    Index: []</span>
+<span class="sd">      Chromosome  Start  End Strand</span>
+<span class="sd">    1          3      9   42      +</span>
+<span class="sd">    -----------</span>
+<span class="sd">    (&#39;3&#39;, &#39;-&#39;)</span>
+<span class="sd">    -----------</span>
+<span class="sd">    Empty DataFrame</span>
+<span class="sd">    Columns: [Chromosome, Start, End, Strand]</span>
+<span class="sd">    Index: []</span>
+<span class="sd">      Chromosome  Start  End Strand</span>
+<span class="sd">    2          3     21   25      -</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">strand</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">strand</span> <span class="o">=</span> <span class="nb">all</span><span class="p">([</span><span class="n">gr</span><span class="o">.</span><span class="n">stranded</span> <span class="k">for</span> <span class="n">gr</span> <span class="ow">in</span> <span class="n">prs</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">strand</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="n">gr</span><span class="o">.</span><span class="n">stranded</span> <span class="k">for</span> <span class="n">gr</span> <span class="ow">in</span> <span class="n">prs</span><span class="p">]):</span>
+        <span class="n">prs</span> <span class="o">=</span> <span class="p">[</span><span class="n">gr</span><span class="o">.</span><span class="n">unstrand</span><span class="p">()</span> <span class="k">for</span> <span class="n">gr</span> <span class="ow">in</span> <span class="n">prs</span><span class="p">]</span>
+
+    <span class="n">grs_per_chromosome</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">set_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">gr</span> <span class="ow">in</span> <span class="n">prs</span><span class="p">:</span>
+        <span class="n">set_keys</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">dfs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">empty_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">gr</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="k">for</span> <span class="n">gr</span> <span class="ow">in</span> <span class="n">prs</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">gr</span><span class="p">,</span> <span class="n">empty</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">prs</span><span class="p">,</span> <span class="n">empty_dfs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">set_keys</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">dfs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span>
+            <span class="n">grs_per_chromosome</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">grs_per_chromosome</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">natsorted</span><span class="p">(</span><span class="n">grs_per_chromosome</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span></div>
+
+
+<div class="viewcode-block" id="random"><a class="viewcode-back" href="../autoapi/pyranges/index.html#pyranges.random">[docs]</a><span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">chromsizes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">strand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">int64</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return PyRanges with random intervals.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int, default 1000</span>
+
+<span class="sd">        Number of intervals.</span>
+
+<span class="sd">    length : int, default 100</span>
+
+<span class="sd">        Length of intervals.</span>
+
+<span class="sd">    chromsizes : dict or DataFrame, default None, i.e. use &quot;hg19&quot;</span>
+
+<span class="sd">        Draw intervals from within these bounds.</span>
+
+<span class="sd">    strand : bool, default True</span>
+
+<span class="sd">        Data should have strand.</span>
+
+<span class="sd">    int64 : bool, default False</span>
+
+<span class="sd">        Use int64 to represent Start and End.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(0)</span>
+<span class="sd">    &gt;&gt;&gt; pr.random()</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    | Chromosome   | Start     | End       | Strand       |</span>
+<span class="sd">    | (category)   | (int32)   | (int32)   | (category)   |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------|</span>
+<span class="sd">    | chr1         | 43223238  | 43223338  | +            |</span>
+<span class="sd">    | chr1         | 164609738 | 164609838 | +            |</span>
+<span class="sd">    | chr1         | 91355620  | 91355720  | +            |</span>
+<span class="sd">    | chr1         | 196620772 | 196620872 | +            |</span>
+<span class="sd">    | ...          | ...       | ...       | ...          |</span>
+<span class="sd">    | chrY         | 16870714  | 16870814  | -            |</span>
+<span class="sd">    | chrY         | 32379907  | 32380007  | -            |</span>
+<span class="sd">    | chrY         | 12904861  | 12904961  | -            |</span>
+<span class="sd">    | chrY         | 36607258  | 36607358  | -            |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+</span>
+<span class="sd">    Stranded PyRanges object has 1,000 rows and 4 columns from 24 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    To have random lengths:</span>
+
+<span class="sd">    &gt;&gt;&gt; gr = pr.random(length=1)</span>
+<span class="sd">    &gt;&gt;&gt; gr.End += np.random.randint(int(1e5), size=len(gr))</span>
+<span class="sd">    &gt;&gt;&gt; gr.Length = gr.lengths()</span>
+<span class="sd">    &gt;&gt;&gt; gr</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+-----------+</span>
+<span class="sd">    | Chromosome   | Start     | End       | Strand       | Length    |</span>
+<span class="sd">    | (category)   | (int32)   | (int64)   | (category)   | (int64)   |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------+-----------|</span>
+<span class="sd">    | chr1         | 203654331 | 203695380 | +            | 41049     |</span>
+<span class="sd">    | chr1         | 46918271  | 46978908  | +            | 60637     |</span>
+<span class="sd">    | chr1         | 97355021  | 97391587  | +            | 36566     |</span>
+<span class="sd">    | chr1         | 57284999  | 57323542  | +            | 38543     |</span>
+<span class="sd">    | ...          | ...       | ...       | ...          | ...       |</span>
+<span class="sd">    | chrY         | 31665821  | 31692660  | -            | 26839     |</span>
+<span class="sd">    | chrY         | 20236607  | 20253473  | -            | 16866     |</span>
+<span class="sd">    | chrY         | 33255377  | 33315933  | -            | 60556     |</span>
+<span class="sd">    | chrY         | 31182964  | 31205467  | -            | 22503     |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+-----------+</span>
+<span class="sd">    Stranded PyRanges object has 1,000 rows and 5 columns from 24 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">chromsizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">pyranges</span> <span class="kn">import</span> <span class="n">data</span>
+        <span class="n">chromsizes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">chromsizes</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">chromsizes</span><span class="o">.</span><span class="n">df</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chromsizes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">chromsizes</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">chromsizes</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">chromsizes</span><span class="o">.</span><span class="n">df</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">End</span> <span class="o">/</span> <span class="n">df</span><span class="o">.</span><span class="n">End</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">n_per_chrom</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+    <span class="n">n_per_chrom</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Chromosome&quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">n_per_chrom</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">Chromosome</span><span class="p">)</span>
+    <span class="n">n_per_chrom</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="s2">&quot;Count Chromosome&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="n">random_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">chrom</span><span class="p">)</span> <span class="ow">in</span> <span class="n">n_per_chrom</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Chromosome</span> <span class="o">==</span> <span class="n">chrom</span><span class="p">]</span><span class="o">.</span><span class="n">End</span> <span class="o">-</span> <span class="n">length</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
+        <span class="n">_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+            <span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="n">chrom</span><span class="p">,</span>
+            <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">,</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">r</span> <span class="o">+</span> <span class="n">length</span>
+        <span class="p">})</span>
+        <span class="n">random_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_df</span><span class="p">)</span>
+
+    <span class="n">random_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">random_dfs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">strand</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="s2">&quot;+ -&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">random_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Strand&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">random_df</span><span class="p">,</span> <span class="n">int64</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span></div>
+
+
+<span class="kn">from</span> <span class="nn">pyranges.readers</span> <span class="kn">import</span> <span class="n">read_bam</span><span class="p">,</span> <span class="n">read_bed</span><span class="p">,</span> <span class="n">read_bigwig</span><span class="p">,</span> <span class="n">read_gff3</span>
+<span class="kn">from</span> <span class="nn">pyranges.readers</span> <span class="kn">import</span> <span class="n">read_gtf</span>
+<span class="n">read_gff</span> <span class="o">=</span> <span class="n">read_gtf</span>
+
+
+<span class="kn">from</span> <span class="nn">pyranges</span> <span class="kn">import</span> <span class="n">statistics</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">statistics</span>
+<span class="sd">&quot;&quot;&quot;Namespace for statistcal functions.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">pyranges.statistics : statistcal methods for genomics.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="to_bigwig"><a class="viewcode-back" href="../autoapi/pyranges/index.html#pyranges.to_bigwig">[docs]</a><span class="k">def</span> <span class="nf">to_bigwig</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">chromosome_sizes</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write df to bigwig.</span>
+
+<span class="sd">    Must contain the columns Chromosome, Start, End and Score. All others are ignored.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+
+<span class="sd">        Where to write bigwig.</span>
+
+<span class="sd">    chromosome_sizes : PyRanges or dict</span>
+
+<span class="sd">        If dict: map of chromosome names to chromosome length.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    Extended example with how to prepare your data for writing bigwigs:</span>
+
+<span class="sd">    &gt;&gt;&gt; d =  {&#39;Chromosome&#39;: [&#39;chr1&#39;, &#39;chr1&#39;, &#39;chr1&#39;], &#39;Start&#39;: [1, 4, 6],</span>
+<span class="sd">    ...       &#39;End&#39;: [7, 8, 10], &#39;Strand&#39;: [&#39;+&#39;, &#39;-&#39;, &#39;-&#39;],</span>
+<span class="sd">    ...       &#39;Value&#39;: [10, 20, 30]}</span>
+<span class="sd">    &gt;&gt;&gt; import pyranges as pr</span>
+<span class="sd">    &gt;&gt;&gt; gr = pr.from_dict(d)</span>
+<span class="sd">    &gt;&gt;&gt; hg19 = pr.data.chromsizes()</span>
+<span class="sd">    &gt;&gt;&gt; print(hg19)</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    | Chromosome   | Start     | End       |</span>
+<span class="sd">    | (category)   | (int32)   | (int32)   |</span>
+<span class="sd">    |--------------+-----------+-----------|</span>
+<span class="sd">    | chr1         | 0         | 249250621 |</span>
+<span class="sd">    | chr2         | 0         | 243199373 |</span>
+<span class="sd">    | chr3         | 0         | 198022430 |</span>
+<span class="sd">    | chr4         | 0         | 191154276 |</span>
+<span class="sd">    | ...          | ...       | ...       |</span>
+<span class="sd">    | chr22        | 0         | 51304566  |</span>
+<span class="sd">    | chrM         | 0         | 16571     |</span>
+<span class="sd">    | chrX         | 0         | 155270560 |</span>
+<span class="sd">    | chrY         | 0         | 59373566  |</span>
+<span class="sd">    +--------------+-----------+-----------+</span>
+<span class="sd">    Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome.</span>
+
+<span class="sd">    Overlapping intervals are invalid in bigwigs:</span>
+
+<span class="sd">    &gt;&gt;&gt; to_bigwig(gr, &quot;outpath.bw&quot;, hg19)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    AssertionError: Can only write one strand at a time. Use an unstranded PyRanges or subset on strand first.</span>
+
+<span class="sd">    &gt;&gt;&gt; to_bigwig(gr[&quot;-&quot;], &quot;outpath.bw&quot;, hg19)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    AssertionError: Intervals must not overlap.</span>
+
+<span class="sd">    &gt;&gt;&gt; gr</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+-----------+</span>
+<span class="sd">    | Chromosome   |     Start |       End | Strand       |     Value |</span>
+<span class="sd">    | (category)   |   (int32) |   (int32) | (category)   |   (int64) |</span>
+<span class="sd">    |--------------+-----------+-----------+--------------+-----------|</span>
+<span class="sd">    | chr1         |         1 |         7 | +            |        10 |</span>
+<span class="sd">    | chr1         |         4 |         8 | -            |        20 |</span>
+<span class="sd">    | chr1         |         6 |        10 | -            |        30 |</span>
+<span class="sd">    +--------------+-----------+-----------+--------------+-----------+</span>
+<span class="sd">    Stranded PyRanges object has 3 rows and 5 columns from 1 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    &gt;&gt;&gt; value = gr.to_rle(rpm=False, value_col=&quot;Value&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; value</span>
+<span class="sd">    chr1 +</span>
+<span class="sd">    --</span>
+<span class="sd">    +--------+-----+------+</span>
+<span class="sd">    | Runs   | 1   | 6    |</span>
+<span class="sd">    |--------+-----+------|</span>
+<span class="sd">    | Values | 0.0 | 10.0 |</span>
+<span class="sd">    +--------+-----+------+</span>
+<span class="sd">    Rle of length 7 containing 2 elements (avg. length 3.5)</span>
+<span class="sd">    &lt;BLANKLINE&gt;</span>
+<span class="sd">    chr1 -</span>
+<span class="sd">    --</span>
+<span class="sd">    +--------+-----+------+------+------+</span>
+<span class="sd">    | Runs   | 4   | 2    | 2    | 2    |</span>
+<span class="sd">    |--------+-----+------+------+------|</span>
+<span class="sd">    | Values | 0.0 | 20.0 | 50.0 | 30.0 |</span>
+<span class="sd">    +--------+-----+------+------+------+</span>
+<span class="sd">    Rle of length 10 containing 4 elements (avg. length 2.5)</span>
+<span class="sd">    RleDict object with 2 chromosomes/strand pairs.</span>
+
+<span class="sd">    &gt;&gt;&gt; raw = gr.to_rle(rpm=False)</span>
+<span class="sd">    &gt;&gt;&gt; raw</span>
+<span class="sd">    chr1 +</span>
+<span class="sd">    --</span>
+<span class="sd">    +--------+-----+-----+</span>
+<span class="sd">    | Runs   | 1   | 6   |</span>
+<span class="sd">    |--------+-----+-----|</span>
+<span class="sd">    | Values | 0.0 | 1.0 |</span>
+<span class="sd">    +--------+-----+-----+</span>
+<span class="sd">    Rle of length 7 containing 2 elements (avg. length 3.5)</span>
+<span class="sd">    &lt;BLANKLINE&gt;</span>
+<span class="sd">    chr1 -</span>
+<span class="sd">    --</span>
+<span class="sd">    +--------+-----+-----+-----+-----+</span>
+<span class="sd">    | Runs   | 4   | 2   | 2   | 2   |</span>
+<span class="sd">    |--------+-----+-----+-----+-----|</span>
+<span class="sd">    | Values | 0.0 | 1.0 | 2.0 | 1.0 |</span>
+<span class="sd">    +--------+-----+-----+-----+-----+</span>
+<span class="sd">    Rle of length 10 containing 4 elements (avg. length 2.5)</span>
+<span class="sd">    RleDict object with 2 chromosomes/strand pairs.</span>
+
+<span class="sd">    &gt;&gt;&gt; result = (value / raw).apply_values(np.log10)</span>
+<span class="sd">    &gt;&gt;&gt; result</span>
+<span class="sd">    chr1 +</span>
+<span class="sd">    --</span>
+<span class="sd">    +--------+-----+-----+</span>
+<span class="sd">    | Runs   | 1   | 6   |</span>
+<span class="sd">    |--------+-----+-----|</span>
+<span class="sd">    | Values | nan | 1.0 |</span>
+<span class="sd">    +--------+-----+-----+</span>
+<span class="sd">    Rle of length 7 containing 2 elements (avg. length 3.5)</span>
+<span class="sd">    &lt;BLANKLINE&gt;</span>
+<span class="sd">    chr1 -</span>
+<span class="sd">    --</span>
+<span class="sd">    +--------+-----+--------------------+--------------------+--------------------+</span>
+<span class="sd">    | Runs   | 4   | 2                  | 2                  | 2                  |</span>
+<span class="sd">    |--------+-----+--------------------+--------------------+--------------------|</span>
+<span class="sd">    | Values | nan | 1.3010300397872925 | 1.3979400396347046 | 1.4771212339401245 |</span>
+<span class="sd">    +--------+-----+--------------------+--------------------+--------------------+</span>
+<span class="sd">    Rle of length 10 containing 4 elements (avg. length 2.5)</span>
+<span class="sd">    RleDict object with 2 chromosomes/strand pairs.</span>
+
+<span class="sd">    &gt;&gt;&gt; out = result.numbers_only().to_ranges()</span>
+<span class="sd">    &gt;&gt;&gt; out</span>
+<span class="sd">    +--------------+-----------+-----------+-------------+--------------+</span>
+<span class="sd">    | Chromosome   |     Start |       End |       Score | Strand       |</span>
+<span class="sd">    | (category)   |   (int32) |   (int32) |   (float64) | (category)   |</span>
+<span class="sd">    |--------------+-----------+-----------+-------------+--------------|</span>
+<span class="sd">    | chr1         |         1 |         7 |     1       | +            |</span>
+<span class="sd">    | chr1         |         4 |         6 |     1.30103 | -            |</span>
+<span class="sd">    | chr1         |         6 |         8 |     1.39794 | -            |</span>
+<span class="sd">    | chr1         |         8 |        10 |     1.47712 | -            |</span>
+<span class="sd">    +--------------+-----------+-----------+-------------+--------------+</span>
+<span class="sd">    Stranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.</span>
+<span class="sd">    For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="sd">    &gt;&gt;&gt; to_bigwig(out[&quot;-&quot;], &quot;deleteme_reverse.bw&quot;, hg19)</span>
+<span class="sd">    &gt;&gt;&gt; to_bigwig(out[&quot;+&quot;], &quot;deleteme_forward.bw&quot;, hg19)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pyBigWig</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.&quot;</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">strands</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Can only write one strand at a time. Use an unstranded PyRanges or subset on strand first.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">lengths</span><span class="p">())</span> <span class="o">==</span> <span class="n">gr</span><span class="o">.</span><span class="n">merge</span><span class="p">()</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="s2">&quot;Intervals must not overlap.&quot;</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">df</span>
+
+    <span class="n">unique_chromosomes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Chromosome</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chromosome_sizes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">size_df</span> <span class="o">=</span> <span class="n">chromosome_sizes</span><span class="o">.</span><span class="n">df</span>
+        <span class="n">chromosome_sizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">size_df</span><span class="o">.</span><span class="n">Chromosome</span><span class="p">,</span> <span class="n">size_df</span><span class="o">.</span><span class="n">End</span><span class="p">)}</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">chromosome_sizes</span><span class="p">[</span><span class="n">c</span><span class="p">]))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unique_chromosomes</span><span class="p">]</span>
+
+    <span class="n">bw</span> <span class="o">=</span> <span class="n">pyBigWig</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">bw</span><span class="o">.</span><span class="n">addHeader</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="n">chromosomes</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Chromosome</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">starts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Start</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">ends</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">End</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Score</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="n">bw</span><span class="o">.</span><span class="n">addEntries</span><span class="p">(</span><span class="n">chromosomes</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">ends</span><span class="o">=</span><span class="n">ends</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="version_info"><a class="viewcode-back" href="../autoapi/pyranges/index.html#pyranges.version_info">[docs]</a><span class="k">def</span> <span class="nf">version_info</span><span class="p">():</span>
+
+    <span class="kn">import</span> <span class="nn">importlib</span>
+    <span class="k">def</span> <span class="nf">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="n">library</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">library</span><span class="p">):</span>
+             <span class="n">version</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">library</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;not installed&quot;</span>
+
+        <span class="n">version_info</span><span class="p">[</span><span class="n">library</span><span class="p">]</span> <span class="o">=</span> <span class="n">version</span>
+
+    <span class="n">version_info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pyranges version&quot;</span><span class="p">:</span> <span class="n">pr</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+                    <span class="s2">&quot;pandas version&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+                    <span class="s2">&quot;numpy version&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+                    <span class="s2">&quot;python version&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">}</span>
+
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;ncls&quot;</span><span class="p">)</span>
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;sorted_nearest&quot;</span><span class="p">)</span>
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;pyrle&quot;</span><span class="p">)</span>
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;ray&quot;</span><span class="p">)</span>
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;bamread&quot;</span><span class="p">)</span>
+    <span class="c1"># update_version_info(version_info, &quot;bwread&quot;) no version string yet!</span>
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;pyranges_db&quot;</span><span class="p">)</span>
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;pybigwig&quot;</span><span class="p">)</span>
+    <span class="n">update_version_info</span><span class="p">(</span><span class="n">version_info</span><span class="p">,</span> <span class="s2">&quot;hypothesis&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">version_info</span><span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;from_string&quot;</span><span class="p">,</span> <span class="s2">&quot;from_dict&quot;</span><span class="p">,</span> <span class="s2">&quot;to_bigwig&quot;</span><span class="p">,</span> <span class="s2">&quot;count_overlaps&quot;</span><span class="p">,</span> <span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="s2">&quot;itergrs&quot;</span><span class="p">,</span> <span class="s2">&quot;read_gtf&quot;</span><span class="p">,</span> <span class="s2">&quot;read_bam&quot;</span><span class="p">,</span> <span class="s2">&quot;read_bed&quot;</span><span class="p">,</span> <span class="s2">&quot;read_gff3&quot;</span><span class="p">,</span> <span class="s2">&quot;concat&quot;</span><span class="p">,</span> <span class="s2">&quot;PyRanges&quot;</span><span class="p">,</span> <span class="s2">&quot;version_info&quot;</span><span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Endre Bakken Stovner and Marco Mariotti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

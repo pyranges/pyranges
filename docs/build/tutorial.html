@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial of PyRanges &mdash; pyranges  0.0.124 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction to PyRanges" href="how_to_book.html" />
+    <link rel="prev" title="Introduction" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyranges
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial of PyRanges</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-and-accessing-pyranges-objects">Loading and accessing pyranges objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#working-with-groups-of-exons">Working with groups of exons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-coordinates-and-sequences-to-the-disk">Writing coordinates and sequences to the disk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extending-genomic-intervals">Extending genomic intervals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detecting-overlaps-among-intervals">Detecting overlaps among intervals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pandas-vs-pyranges">Pandas vs Pyranges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method-chaining-and-custom-functions">Method chaining and custom functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html">Introduction to PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#loading-creating-pyranges">Loading/Creating PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#writing-pyranges-to-disk">Writing PyRanges to disk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#inspecting-pyranges">Inspecting PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#accessing-data">Accessing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#operating-with-data">Operating with data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#overlapping-and-matching-pyranges">Overlapping and matching PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#summary-statistics">Summary statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#computing-with-pyranges">Computing with PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#working-at-the-transcript-level">Working at the transcript level</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#fetching-external-gene-tracks">Fetching external gene tracks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_book.html#rles-run-length-encodings">RLEs: run length encodings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyranges</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorial of PyRanges</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorial-of-pyranges">
+<h1><a class="toc-backref" href="#id1" role="doc-backlink">Tutorial of PyRanges</a><a class="headerlink" href="#tutorial-of-pyranges" title="Permalink to this heading"></a></h1>
+<p>PyRanges objects represent sequence intervals (“ranges”) such as genomic regions.
+Examples include gene annotations, mapped reads, protein domains, and results from
+Blast or analogous software. PyRanges provides convenient methods to load data in
+GFF, GTF, BED, BAM format. In this tutorial, we refer to PyRanges objects for their
+typical use case, i.e. representing genomic intervals, but the same concepts and methods
+may be applied to RNA or protein sequences.</p>
+<p>Every interval in a PyRanges object is defined, at minimum, by its chromosome and start
+and end coordinates. Optionally, the strand (+ or -) can also be present; if so, the
+PyRanges object is “Stranded”. The ranges can additionally have an arbitrary number
+of meta-data fields, i.e. columns associated with them.</p>
+<p>Note that PyRanges follows the standard python convention:</p>
+<ul class="simple">
+<li><p>coordinates are <strong>0-based</strong></p></li>
+<li><p>in each interval, the <strong>start is included</strong> and the <strong>end is excluded</strong>.</p></li>
+</ul>
+<p>Some genomic coordinate formats (GFF, GTF) use a 1-based, start-and-end-included format.
+PyRanges takes care of converting between these conventions when loading and writing files in these formats.
+The data in PyRanges objects are stored as <a class="reference external" href="https://pandas.pydata.org/">Pandas</a> dataframes.
+This means that the vast Python ecosystem
+for high-performance scientific computing is available to manipulate the data in PyRanges objects.
+While not strictly necessary, having familiarity with pandas greatly facilitates the use of PyRanges.
+In this tutorial and in how-to pages, we will sometimes mix PyRanges and pandas functionalities.</p>
+<nav class="contents" id="contents-of-tutorial">
+<p class="topic-title">Contents of Tutorial</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tutorial-of-pyranges" id="id1">Tutorial of PyRanges</a></p>
+<ul>
+<li><p><a class="reference internal" href="#getting-started" id="id2">Getting started</a></p></li>
+<li><p><a class="reference internal" href="#loading-and-accessing-pyranges-objects" id="id3">Loading and accessing pyranges objects</a></p></li>
+<li><p><a class="reference internal" href="#working-with-groups-of-exons" id="id4">Working with groups of exons</a></p></li>
+<li><p><a class="reference internal" href="#writing-coordinates-and-sequences-to-the-disk" id="id5">Writing coordinates and sequences to the disk</a></p></li>
+<li><p><a class="reference internal" href="#extending-genomic-intervals" id="id6">Extending genomic intervals</a></p></li>
+<li><p><a class="reference internal" href="#detecting-overlaps-among-intervals" id="id7">Detecting overlaps among intervals</a></p></li>
+<li><p><a class="reference internal" href="#pandas-vs-pyranges" id="id8">Pandas vs Pyranges</a></p></li>
+<li><p><a class="reference internal" href="#method-chaining-and-custom-functions" id="id9">Method chaining and custom functions</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="getting-started">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Getting started</a><a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h2>
+<p>For this tutorial, we will use real data consisting of the genome sequence (fasta format) and annotation (GFF3 format)
+of a worm with a very small but complex genome (<em>Dimorphilus gyrociliatus</em>, assembly ID GCA_904063045.1).
+These data were modified for this tutorial only to shorten IDs.</p>
+<p>Download and unpack tutorial data with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-O<span class="w"> </span>https://mariottigenomicslab.bio.ub.edu/pyranges_data/pyranges_tutorial_data.tar.gz
+tar<span class="w"> </span>zxf<span class="w"> </span>pyranges_tutorial_data.tar.gz
+</pre></div>
+</div>
+<p>We recommend using <a class="reference external" href="https://ipython.readthedocs.io/">ipython</a> or <a class="reference external" href="https://jupyter.org/">Jupyter</a> for this tutorial.
+Besides pyranges and some of its dependencies, we will use the optional module <strong>pyfaidx</strong>. Make sure to install it with:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyfaidx
+</pre></div>
+</div>
+<p>Or with:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>bioconda<span class="w"> </span>pyfaidx
+</pre></div>
+</div>
+</section>
+<section id="loading-and-accessing-pyranges-objects">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Loading and accessing pyranges objects</a><a class="headerlink" href="#loading-and-accessing-pyranges-objects" title="Permalink to this heading"></a></h2>
+<p>Let’s import libraries and load the annotation into a PyRanges object called <code class="docutils literal notranslate"><span class="pre">ann</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span><span class="o">,</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">read_gff3</span><span class="p">(</span><span class="s1">&#39;Dgyro_annotation.gff&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+--------------------+---------------+------------+-------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | ID                 | Dbxref        | gbkey      | mol_type    | +13   |</span>
+<span class="go">| (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)           | (object)      | (object)   | (object)    | ...   |</span>
+<span class="go">|--------------+------------+--------------+-----------+-----------+------------+--------------+------------+--------------------+---------------+------------+-------------+-------|</span>
+<span class="go">| 0001.1       | EMBL       | region       | 0         | 3609319   | .          | +            | .          | 0001.1:1..3609319  | taxon:2664684 | Src        | genomic DNA | ...   |</span>
+<span class="go">| 0001.1       | EMBL       | gene         | 7326      | 7606      | .          | +            | .          | gene-DGYR_LOCUS1   | nan           | Gene       | nan         | ...   |</span>
+<span class="go">| 0001.1       | EMBL       | mRNA         | 7326      | 7606      | .          | +            | .          | rna-DGYR_LOCUS1    | nan           | mRNA       | nan         | ...   |</span>
+<span class="go">| 0001.1       | EMBL       | exon         | 7326      | 7606      | .          | +            | .          | exon-DGYR_LOCUS1-1 | nan           | mRNA       | nan         | ...   |</span>
+<span class="go">| ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...                | ...           | ...        | ...         | ...   |</span>
+<span class="go">| 0346.1       | EMBL       | region       | 0         | 1411      | .          | +            | .          | 0346.1:1..1411     | taxon:2664684 | Src        | genomic DNA | ...   |</span>
+<span class="go">| 0347.1       | EMBL       | region       | 0         | 1094      | .          | +            | .          | 0347.1:1..1094     | taxon:2664684 | Src        | genomic DNA | ...   |</span>
+<span class="go">| 0348.1       | EMBL       | region       | 0         | 667       | .          | +            | .          | 0348.1:1..667      | taxon:2664684 | Src        | genomic DNA | ...   |</span>
+<span class="go">| 0349.1       | EMBL       | region       | 0         | 641       | .          | +            | .          | 0349.1:1..641      | taxon:2664684 | Src        | genomic DNA | ...   |</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+--------------+------------+--------------------+---------------+------------+-------------+-------+</span>
+<span class="go">Stranded PyRanges object has 241,137 rows and 25 columns from 349 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">13 hidden columns: note, Name, gene_biotype, locus_tag, Parent, Note, standard_name, product, protein_id, pseudo, partial, start_range, end_range</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">ann</span></code> object has lots of columns, most of which are not displayed because of space. Here’s the full list:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">Index([&#39;Chromosome&#39;, &#39;Source&#39;, &#39;Feature&#39;, &#39;Start&#39;, &#39;End&#39;, &#39;Score&#39;, &#39;Strand&#39;,</span>
+<span class="go">     &#39;Frame&#39;, &#39;ID&#39;, &#39;Dbxref&#39;, &#39;gbkey&#39;, &#39;mol_type&#39;, &#39;note&#39;, &#39;Name&#39;,</span>
+<span class="go">     &#39;gene_biotype&#39;, &#39;locus_tag&#39;, &#39;Parent&#39;, &#39;Note&#39;, &#39;standard_name&#39;,</span>
+<span class="go">     &#39;product&#39;, &#39;protein_id&#39;, &#39;pseudo&#39;, &#39;partial&#39;, &#39;start_range&#39;,</span>
+<span class="go">     &#39;end_range&#39;],</span>
+<span class="go">    dtype=&#39;object&#39;)</span>
+</pre></div>
+</div>
+<p>Let’s select only certain columns:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ann</span><span class="p">[</span> <span class="p">[</span><span class="s1">&#39;Feature&#39;</span><span class="p">,</span> <span class="s1">&#39;Parent&#39;</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">]</span> <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span>
+<span class="go">+--------------+--------------+-----------+-----------+--------------+------------------+--------------------+</span>
+<span class="go">| Chromosome   | Feature      | Start     | End       | Strand       | Parent           | ID                 |</span>
+<span class="go">| (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)         | (object)           |</span>
+<span class="go">|--------------+--------------+-----------+-----------+--------------+------------------+--------------------|</span>
+<span class="go">| 0001.1       | region       | 0         | 3609319   | +            | nan              | 0001.1:1..3609319  |</span>
+<span class="go">| 0001.1       | gene         | 7326      | 7606      | +            | nan              | gene-DGYR_LOCUS1   |</span>
+<span class="go">| 0001.1       | mRNA         | 7326      | 7606      | +            | gene-DGYR_LOCUS1 | rna-DGYR_LOCUS1    |</span>
+<span class="go">| 0001.1       | exon         | 7326      | 7606      | +            | rna-DGYR_LOCUS1  | exon-DGYR_LOCUS1-1 |</span>
+<span class="go">| ...          | ...          | ...       | ...       | ...          | ...              | ...                |</span>
+<span class="go">| 0346.1       | region       | 0         | 1411      | +            | nan              | 0346.1:1..1411     |</span>
+<span class="go">| 0347.1       | region       | 0         | 1094      | +            | nan              | 0347.1:1..1094     |</span>
+<span class="go">| 0348.1       | region       | 0         | 667       | +            | nan              | 0348.1:1..667      |</span>
+<span class="go">| 0349.1       | region       | 0         | 641       | +            | nan              | 0349.1:1..641      |</span>
+<span class="go">+--------------+--------------+-----------+-----------+--------------+------------------+--------------------+</span>
+<span class="go">Stranded PyRanges object has 241,137 rows and 7 columns from 349 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>As seen above, column selection syntax is analogous to pandas.
+However, a difference is that PyRanges retained the essential columns <strong>Chromosome, Start, End, Strand</strong> even though we did not select them.</p>
+<p>The Chromosome column can take any value among the sequence names in the genome assembly.
+Only for the best quality assemblies it corresponds to actual chromosomes, and in other cases it is contigs or scaffolds;
+for simplicity, here we refer to it as chromosomes. In a fasta file, the sequence name is the first word of a header line
+(i.e. those starting with “&gt;”). We can have a peek in the assembly in bash:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>grep<span class="w"> </span><span class="s2">&quot;&gt;&quot;</span><span class="w"> </span>Dgyro_genome.fa<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+&gt;0001.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold001,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0002.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold002,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0003.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold003,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0004.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold004,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0005.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold005,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0006.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold006,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0007.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold007,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0008.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold008,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0009.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold009,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+&gt;0010.1<span class="w"> </span>Dimorphilus<span class="w"> </span>gyrociliatus<span class="w"> </span>genome<span class="w"> </span>assembly,<span class="w"> </span>contig:<span class="w"> </span>scaffold010,<span class="w"> </span>whole<span class="w"> </span>genome<span class="w"> </span>shotgun<span class="w"> </span>sequence
+</pre></div>
+</div>
+<p>Genomic annotations often contain information for diverse entities, such as genes, mRNAs, exons, CDS, etc.
+In GFF files, the entity type is encoded in the Feature column. In pyranges, you use the dot notation to
+fetch an individual column, which is technically a pandas Series:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">Feature</span>
+<span class="go">0    region</span>
+<span class="go">1      gene</span>
+<span class="go">2      mRNA</span>
+<span class="go">3      exon</span>
+<span class="go">4       CDS</span>
+<span class="go">      ...</span>
+<span class="go">0    region</span>
+<span class="go">0    region</span>
+<span class="go">0    region</span>
+<span class="go">0    region</span>
+<span class="go">0    region</span>
+<span class="go">Name: Feature, Length: 241137, dtype: category</span>
+<span class="go">Categories (6, object): [&#39;CDS&#39;, &#39;exon&#39;, &#39;gene&#39;, &#39;mRNA&#39;, &#39;pseudogene&#39;, &#39;region&#39;]</span>
+</pre></div>
+</div>
+<p>Let’s focus on a subset of the annotation: CDS intervals, corresponding to coding sequences.
+We filter rows and create a new PyRanges object called <code class="docutils literal notranslate"><span class="pre">cds</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">selector</span> <span class="o">=</span> <span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">Feature</span> <span class="o">==</span> <span class="s1">&#39;CDS&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span> <span class="o">=</span> <span class="n">ann</span> <span class="p">[</span><span class="n">selector</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We used another syntax familiar to pandas users. The object <code class="docutils literal notranslate"><span class="pre">selector</span></code> is a Series of boolean values, so it can be used to index PyRanges.</p>
+<p>Let’s further reduce the width of the cds object. We showcase an alternative method for column selection: the method <cite>drop</cite> lets us choose which columns to discard.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span> <span class="o">=</span> <span class="n">cds</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;Feature&#39;</span><span class="p">,</span> <span class="s1">&#39;Parent&#39;</span><span class="p">]</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">| 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 |</span>
+<span class="go">| 0001.1       | 46377     | 47603     | +            | cds-CAD5110625.1 |</span>
+<span class="go">| 0001.1       | 48406     | 49448     | +            | cds-CAD5110625.1 |</span>
+<span class="go">| 0001.1       | 46377     | 47603     | +            | cds-CAD5110626.1 |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              |</span>
+<span class="go">| 0117.1       | 26816     | 27881     | -            | cds-CAD5126988.1 |</span>
+<span class="go">| 0117.1       | 36183     | 38697     | -            | cds-CAD5126989.1 |</span>
+<span class="go">| 0117.1       | 39309     | 39450     | -            | cds-CAD5126990.1 |</span>
+<span class="go">| 0117.1       | 38911     | 39256     | -            | cds-CAD5126990.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 100,040 rows and 5 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The interface shown so far is analogous to pandas.
+Additionally, pyranges offers a non-pandas syntax for selecting intervals in a genomic region of interest (i.e. region retrieval).
+The code below will show only intervals completely included in the specified position range in the requested chromosome:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span><span class="p">[</span><span class="s1">&#39;0002.1&#39;</span><span class="p">,</span> <span class="mi">145000</span><span class="p">:</span><span class="mi">150000</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID               |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">|          2.1 |    146123 |    146246 | +            | cds-CAD5111630.1 |</span>
+<span class="go">|          2.1 |    146306 |    147077 | +            | cds-CAD5111630.1 |</span>
+<span class="go">|          2.1 |    147830 |    147976 | +            | cds-CAD5111631.1 |</span>
+<span class="go">|          2.1 |    148191 |    148297 | +            | cds-CAD5111631.1 |</span>
+<span class="go">|          2.1 |    148360 |    148489 | +            | cds-CAD5111631.1 |</span>
+<span class="go">|          2.1 |    145002 |    145116 | -            | cds-CAD5111629.1 |</span>
+<span class="go">|          2.1 |    145176 |    145262 | -            | cds-CAD5111629.1 |</span>
+<span class="go">|          2.1 |    145320 |    145435 | -            | cds-CAD5111629.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 8 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The syntax for region retrieval may consists of:</p>
+<ul class="simple">
+<li><p>chromosome</p></li>
+<li><p>chromosome, position slice (as the example above)</p></li>
+<li><p>chromosome, strand, position slice</p></li>
+</ul>
+<p>So, for example, this is also valid:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span><span class="p">[</span><span class="s1">&#39;0002.1&#39;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="mi">145000</span><span class="p">:</span><span class="mi">150000</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID               |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">|          2.1 |    145002 |    145116 | -            | cds-CAD5111629.1 |</span>
+<span class="go">|          2.1 |    145176 |    145262 | -            | cds-CAD5111629.1 |</span>
+<span class="go">|          2.1 |    145320 |    145435 | -            | cds-CAD5111629.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>It is important to differentiate between <strong>Stranded and Unstranded</strong> PyRanges objects.
+When a Strand column is present and all its values are “+” or “-”, the object is Stranded.
+When there are invalid values (e.g. “.”) or the Strand column is absent, it is Unstranded.
+You can check whether an interval is Stranded with:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span><span class="o">.</span><span class="n">stranded</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Certain pyranges methods require a Stranded input.
+While the annotation used in this tutorial is naturally Stranded, others may not be.
+If necessary, you may use method <code class="docutils literal notranslate"><span class="pre">make_stranded</span></code> to transform all invalid Strand values to “+” or remove them.</p>
+</section>
+<section id="working-with-groups-of-exons">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Working with groups of exons</a><a class="headerlink" href="#working-with-groups-of-exons" title="Permalink to this heading"></a></h2>
+<p>Multi-exonic genes are represented with multiple rows in PyRanges. In this tutorial, the <code class="docutils literal notranslate"><span class="pre">ID</span></code> column links the
+intervals belonging to the same CDS: these rows have the same ID value.
+While this concept applies to all annotations, files from different sources may use different column names for this purpose (e.g. transcript_id).
+Note that here we focus on CDS regions. These may encompass multiple exons, but they do not span the whole mRNA: the 5’UTRs and 3’UTRs are not included.</p>
+<p>Next, we will examine the first and last codon of annotated CDSs. We will obtain their genomic coordinate, then fetch their sequence.</p>
+<p>Method <code class="docutils literal notranslate"><span class="pre">spliced_subsequence</span></code> allows to obtain a subregion of groups of intervals. The code below derives the first codon of each CDS group (grouping is defined by their ID):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">first</span><span class="o">=</span><span class="n">cds</span><span class="o">.</span><span class="n">spliced_subsequence</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               |</span>
+<span class="go">| (category)   | (int64)   | (int32)   | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">| 0001.1       | 7327      | 7330      | +            | cds-CAD5110615.1 |</span>
+<span class="go">| 0001.1       | 46377     | 46380     | +            | cds-CAD5110625.1 |</span>
+<span class="go">| 0001.1       | 46377     | 46380     | +            | cds-CAD5110626.1 |</span>
+<span class="go">| 0001.1       | 60099     | 60102     | +            | cds-CAD5110627.1 |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              |</span>
+<span class="go">| 0117.1       | 38694     | 38697     | -            | cds-CAD5126989.1 |</span>
+<span class="go">| 0117.1       | 27878     | 27881     | -            | cds-CAD5126988.1 |</span>
+<span class="go">| 0117.1       | 21258     | 21261     | -            | cds-CAD5126985.1 |</span>
+<span class="go">| 0117.1       | 14274     | 14277     | -            | cds-CAD5126984.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 16,391 rows and 5 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Let’s <strong>fetch the sequence</strong> for each of these intervals from our genome fasta file.
+The function <code class="docutils literal notranslate"><span class="pre">get_sequence</span></code> returns one sequence per interval, which we assign to a new column of our pyranges object:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">first</span><span class="o">.</span><span class="n">Sequence</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="s1">&#39;Dgyro_genome.fa&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               | Sequence   |</span>
+<span class="go">| (category)   | (int64)   | (int32)   | (category)   | (object)         | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------+------------|</span>
+<span class="go">| 0001.1       | 7327      | 7330      | +            | cds-CAD5110615.1 | ATG        |</span>
+<span class="go">| 0001.1       | 46377     | 46380     | +            | cds-CAD5110625.1 | ATG        |</span>
+<span class="go">| 0001.1       | 46377     | 46380     | +            | cds-CAD5110626.1 | ATG        |</span>
+<span class="go">| 0001.1       | 60099     | 60102     | +            | cds-CAD5110627.1 | ATG        |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              | ...        |</span>
+<span class="go">| 0117.1       | 38694     | 38697     | -            | cds-CAD5126989.1 | ATT        |</span>
+<span class="go">| 0117.1       | 27878     | 27881     | -            | cds-CAD5126988.1 | ATG        |</span>
+<span class="go">| 0117.1       | 21258     | 21261     | -            | cds-CAD5126985.1 | ATG        |</span>
+<span class="go">| 0117.1       | 14274     | 14277     | -            | cds-CAD5126984.1 | ATG        |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+------------+</span>
+<span class="go">Stranded PyRanges object has 16,391 rows and 6 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Sequence</span></code> column is a pandas Series containing strings. We see that the starting codon is ATG in most cases, as expected.
+When we check the length of the sequences, we notice that some are not 3-letter long:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span> <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Let’s look at those sequences, using a row selector as before:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">first</span> <span class="p">[</span> <span class="n">first</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">3</span> <span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               | Sequence   |</span>
+<span class="go">| (category)   | (int32)   | (int64)   | (category)   | (object)         | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------+------------|</span>
+<span class="go">| 0001.1       | 667699    | 667700    | -            | cds-CAD5110773.1 | a          |</span>
+<span class="go">| 0001.1       | 667641    | 667643    | -            | cds-CAD5110773.1 | TG         |</span>
+<span class="go">| 0002.1       | 2632107   | 2632109   | -            | cds-CAD5112293.1 | AT         |</span>
+<span class="go">| 0002.1       | 2631440   | 2631441   | -            | cds-CAD5112293.1 | G          |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              | ...        |</span>
+<span class="go">| 0024.1       | 1091339   | 1091341   | -            | cds-CAD5125104.1 | AT         |</span>
+<span class="go">| 0024.1       | 1091163   | 1091164   | -            | cds-CAD5125104.1 | G          |</span>
+<span class="go">| 0025.1       | 39753     | 39755     | -            | cds-CAD5125115.1 | at         |</span>
+<span class="go">| 0025.1       | 39692     | 39693     | -            | cds-CAD5125115.1 | g          |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+------------+</span>
+<span class="go">Stranded PyRanges object has 26 rows and 6 columns from 11 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>In some cases the starting codon is split between two exons.
+This is uncommon, but we are looking at all protein coding genes of a species, so it is expected at least in a few cases.
+How do we get the full codon sequence?</p>
+<p>Instead of <code class="docutils literal notranslate"><span class="pre">get_sequence</span></code>, let’s use <code class="docutils literal notranslate"><span class="pre">get_transcript_sequence</span></code>, which returns the concatenated sequence of a group of intervals,
+i.e. joining exons together. The sequence is given 5’ to 3’.</p>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">seq_first</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_transcript_sequence</span><span class="p">(</span>
+<span class="go">         first,</span>
+<span class="go">         group_by=&#39;ID&#39;,</span>
+<span class="go">         path=&#39;Dgyro_genome.fa&#39;</span>
+<span class="go">        )</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seq_first</span>
+<span class="go">              ID              Sequence</span>
+<span class="go">0        cds-CAD5110614.1      ATG</span>
+<span class="go">1        cds-CAD5110615.1      ATG</span>
+<span class="go">2        cds-CAD5110616.1      atg</span>
+<span class="go">3        cds-CAD5110617.1      atg</span>
+<span class="go">4        cds-CAD5110618.1      ATG</span>
+<span class="go">...                   ...      ...</span>
+<span class="go">16373  cds-DGYR_LOCUS9540      atg</span>
+<span class="go">16374  cds-DGYR_LOCUS9596      ATG</span>
+<span class="go">16375  cds-DGYR_LOCUS9732      ATG</span>
+<span class="go">16376   cds-DGYR_LOCUS980      ATG</span>
+<span class="go">16377  cds-DGYR_LOCUS9980      ATG</span>
+</pre></div>
+</div>
+<p>[16378 rows x 2 columns]</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">seq_first</span></code> is not a PyRanges object, but a pandas DataFrame. It has a column for the group (ID) and one for the sequence.
+Here we confirm the sequence length is always 3:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">seq_first</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">==</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Finally, let’s quantify how many start codons are ATG, using a bit of pandas magic.
+First, we make sure the whole sequence is in uppercase characters.
+Then, we make a boolean Series <code class="docutils literal notranslate"><span class="pre">is_atg</span></code> which has True corresponding to the ATG codons,
+then we sum its values to count the instances of True, creating variable <code class="docutils literal notranslate"><span class="pre">n_atg</span></code>.
+We also store the IDs of the CDSs with ATG codons in the variable <code class="docutils literal notranslate"><span class="pre">is_atg_ids</span></code>. Finally, we print a summary:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">seq_first</span><span class="o">.</span><span class="n">Sequence</span> <span class="o">=</span> <span class="n">seq_first</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_atg</span> <span class="o">=</span> <span class="p">(</span><span class="n">seq_first</span><span class="o">.</span><span class="n">Sequence</span> <span class="o">==</span> <span class="s1">&#39;ATG&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_atg_ids</span> <span class="o">=</span> <span class="n">seq_first</span><span class="p">[</span><span class="n">is_atg</span><span class="p">]</span><span class="o">.</span><span class="n">ID</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_atg</span> <span class="o">=</span> <span class="n">is_atg</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;There are </span><span class="si">{</span><span class="n">n_atg</span><span class="si">}</span><span class="s1"> ATG start codons out of &#39;</span>
+<span class="go">    f&#39;{len(seq_first)} CDSs =&gt; {n_atg/len(seq_first):.2%}&#39;)</span>
+<span class="go">There are 16339 ATG start codons out of 16378 CDSs =&gt; 99.76%</span>
+</pre></div>
+</div>
+<p>Now, we want to perform an analogous analysis with stop codons.
+First, we get the a pyranges object of the last codon of each CDS.
+Conveniently, the method <code class="docutils literal notranslate"><span class="pre">spliced_subsequence</span></code> accepts negative arguments to count from the 3’,
+so we can obtain the last three nucleotides of CDSs with:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">last</span> <span class="o">=</span> <span class="n">cds</span><span class="o">.</span><span class="n">spliced_subsequence</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">3</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By not providing an <code class="docutils literal notranslate"><span class="pre">end</span></code> argument, we requested intervals that reach the very end of each CDS group.
+Let’s get their sequence as before, then use pandas function <code class="docutils literal notranslate"><span class="pre">value_counts</span></code> to count them:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">seq_last</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_transcript_sequence</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">,</span>
+<span class="go">         &#39;Dgyro_genome.fa&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seq_last</span><span class="o">.</span><span class="n">Sequence</span> <span class="o">=</span> <span class="n">seq_last</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seq_last</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="go">TAA    8986</span>
+<span class="go">TGA    3859</span>
+<span class="go">TAG    3488</span>
+<span class="go">AAA       4</span>
+<span class="go">CTT       3</span>
+<span class="go">AAG       3</span>
+<span class="go">TTA       3</span>
+<span class="go">AGG       2</span>
+<span class="go">GAG       2</span>
+<span class="go">ATA       2</span>
+<span class="go">GTT       2</span>
+<span class="go">CGA       2</span>
+<span class="go">ACA       2</span>
+<span class="go">TAT       2</span>
+<span class="go">CCC       1</span>
+<span class="go">AGT       1</span>
+<span class="go">TCA       1</span>
+<span class="go">TTC       1</span>
+<span class="go">TTT       1</span>
+<span class="go">AGC       1</span>
+<span class="go">CAA       1</span>
+<span class="go">TTG       1</span>
+<span class="go">AAT       1</span>
+<span class="go">GTG       1</span>
+<span class="go">CCA       1</span>
+<span class="go">AAC       1</span>
+<span class="go">TCT       1</span>
+<span class="go">GGC       1</span>
+<span class="go">GAA       1</span>
+<span class="go">CAG       1</span>
+<span class="go">ATG       1</span>
+<span class="go">CTG       1</span>
+<span class="go">Name: Sequence, dtype: int64</span>
+</pre></div>
+</div>
+<p>The canonical stop codons account for the great majority of cases, but there are some other values.
+This may warrant a further look into these CDSs. In this tutorial, we’ll simply exclude them from our next steps.</p>
+<p>Let’s gather the IDs of CDSs with a canonical stop, to be used further on:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_stop</span> <span class="o">=</span> <span class="n">seq_last</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span> <span class="p">{</span><span class="s1">&#39;TAG&#39;</span><span class="p">,</span> <span class="s1">&#39;TAA&#39;</span><span class="p">,</span> <span class="s1">&#39;TGA&#39;</span><span class="p">}</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_stop_ids</span> <span class="o">=</span> <span class="n">seq_last</span><span class="p">[</span><span class="n">is_stop</span><span class="p">]</span><span class="o">.</span><span class="n">ID</span>
+</pre></div>
+</div>
+</section>
+<section id="writing-coordinates-and-sequences-to-the-disk">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Writing coordinates and sequences to the disk</a><a class="headerlink" href="#writing-coordinates-and-sequences-to-the-disk" title="Permalink to this heading"></a></h2>
+<p>We want to get a “clean” annotation consisting only of canonical CDSs, with an ATG starting codon
+and a TAA/TAG/TGA stop codon. First, we put together the IDs of CDSs with these characteristics:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">is_atg_ids</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">is_stop_ids</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Then we subset the ann pyranges object:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_ann</span> <span class="o">=</span> <span class="n">ann</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">ID</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">clean_ids</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clean_ann</span>
+<span class="go">+--------------+--------------+-----------+-----------+--------------+---------------------+------------------+</span>
+<span class="go">| Chromosome   | Feature      | Start     | End       | Strand       | Parent              | ID               |</span>
+<span class="go">| (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)            | (object)         |</span>
+<span class="go">|--------------+--------------+-----------+-----------+--------------+---------------------+------------------|</span>
+<span class="go">| 0001.1       | CDS          | 7327      | 7606      | +            | rna-DGYR_LOCUS1     | cds-CAD5110615.1 |</span>
+<span class="go">| 0001.1       | CDS          | 46377     | 47603     | +            | rna-DGYR_LOCUS4     | cds-CAD5110625.1 |</span>
+<span class="go">| 0001.1       | CDS          | 48406     | 49448     | +            | rna-DGYR_LOCUS4     | cds-CAD5110625.1 |</span>
+<span class="go">| 0001.1       | CDS          | 46377     | 47603     | +            | rna-DGYR_LOCUS4-2   | cds-CAD5110626.1 |</span>
+<span class="go">| ...          | ...          | ...       | ...       | ...          | ...                 | ...              |</span>
+<span class="go">| 0117.1       | CDS          | 20172     | 21261     | -            | rna-DGYR_LOCUS14199 | cds-CAD5126985.1 |</span>
+<span class="go">| 0117.1       | CDS          | 26816     | 27881     | -            | rna-DGYR_LOCUS14201 | cds-CAD5126988.1 |</span>
+<span class="go">| 0117.1       | CDS          | 39309     | 39450     | -            | rna-DGYR_LOCUS14203 | cds-CAD5126990.1 |</span>
+<span class="go">| 0117.1       | CDS          | 38911     | 39256     | -            | rna-DGYR_LOCUS14203 | cds-CAD5126990.1 |</span>
+<span class="go">+--------------+--------------+-----------+-----------+--------------+---------------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 99,155 rows and 7 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>We can now write this pyranges object to a file, for example in GTF format:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_ann</span><span class="o">.</span><span class="n">to_gtf</span><span class="p">(</span><span class="s1">&#39;Dgyro_annotation.canonical_CDS.gtf&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s get the sequence for the canonical CDSs and write it to a tabular file.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_ann_seq</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_transcript_sequence</span><span class="p">(</span><span class="n">clean_ann</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">,</span>
+<span class="go">              &#39;Dgyro_genome.fa&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clean_ann_seq</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;Dgyro_canonical_CDS.seq.tsv&#39;</span><span class="p">,</span>
+<span class="go">                   sep=&#39;\t&#39;, index=False)</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">clean_ann_seq</span></code> is a pandas DataFrame. To write sequences in fasta format we use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;Dgyro_canonical_CDS.fa&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fw</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>  <span class="k">for</span> <span class="n">xin</span><span class="p">,</span> <span class="n">xid</span><span class="p">,</span> <span class="n">xseq</span> <span class="ow">in</span> <span class="n">clean_ann_seq</span><span class="o">.</span><span class="n">itertuples</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">fw</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&gt;</span><span class="si">{</span><span class="n">xid</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">xseq</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extending-genomic-intervals">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Extending genomic intervals</a><a class="headerlink" href="#extending-genomic-intervals" title="Permalink to this heading"></a></h2>
+<p>Now we want to obtain (a practical approximation of) promoter sequences, here defined as the 300bp region before the start codon.
+Before we begin, let’s peek into our object <code class="docutils literal notranslate"><span class="pre">cds</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID               |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">|          1.1 |      7327 |      7606 | +            | cds-CAD5110615.1 |</span>
+<span class="go">|          1.1 |     46377 |     47603 | +            | cds-CAD5110625.1 |</span>
+<span class="go">|          1.1 |     48406 |     49448 | +            | cds-CAD5110625.1 |</span>
+<span class="go">|          1.1 |     46377 |     47603 | +            | cds-CAD5110626.1 |</span>
+<span class="go">|          1.1 |     48406 |     48736 | +            | cds-CAD5110626.1 |</span>
+<span class="go">|          1.1 |     48839 |     48912 | +            | cds-CAD5110626.1 |</span>
+<span class="go">|          1.1 |     60099 |     60409 | +            | cds-CAD5110627.1 |</span>
+<span class="go">|          1.1 |     60476 |     60515 | +            | cds-CAD5110627.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 8 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>First, we use the method <code class="docutils literal notranslate"><span class="pre">extend</span></code> to obtain intervals which include the CDS and the promoter defined as above:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cds</span><span class="o">.</span><span class="n">extend</span><span class="p">({</span><span class="s1">&#39;5&#39;</span><span class="p">:</span><span class="mi">300</span><span class="p">},</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID               |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">|          1.1 |      7027 |      7606 | +            | cds-CAD5110615.1 |</span>
+<span class="go">|          1.1 |     46077 |     47603 | +            | cds-CAD5110625.1 |</span>
+<span class="go">|          1.1 |     48406 |     49448 | +            | cds-CAD5110625.1 |</span>
+<span class="go">|          1.1 |     46077 |     47603 | +            | cds-CAD5110626.1 |</span>
+<span class="go">|          1.1 |     48406 |     48736 | +            | cds-CAD5110626.1 |</span>
+<span class="go">|          1.1 |     48839 |     48912 | +            | cds-CAD5110626.1 |</span>
+<span class="go">|          1.1 |     59799 |     60409 | +            | cds-CAD5110627.1 |</span>
+<span class="go">|          1.1 |     60476 |     60515 | +            | cds-CAD5110627.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 8 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The first argument ensures that the 300bp extension is applied only at the 5’ (left side for + strand intervals, right side for - strand intervals).
+Through the <code class="docutils literal notranslate"><span class="pre">group_by</span></code> argument, we request one extension per CDS, instead of extending every interval.
+In the object we obtained, the promoter corresponds to the first 300 bp of every interval group.
+We can use method <code class="docutils literal notranslate"><span class="pre">spliced_subsequence</span></code> again to get it:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">prom</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">spliced_subsequence</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prom</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID               |</span>
+<span class="go">|   (category) |   (int64) |   (int32) | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">|          1.1 |      7027 |      7327 | +            | cds-CAD5110615.1 |</span>
+<span class="go">|          1.1 |     46077 |     46377 | +            | cds-CAD5110625.1 |</span>
+<span class="go">|          1.1 |     46077 |     46377 | +            | cds-CAD5110626.1 |</span>
+<span class="go">|          1.1 |     59799 |     60099 | +            | cds-CAD5110627.1 |</span>
+<span class="go">|          1.1 |     59799 |     60099 | +            | cds-CAD5110628.1 |</span>
+<span class="go">|          1.1 |     72099 |     72399 | +            | cds-CAD5110629.1 |</span>
+<span class="go">|          1.1 |     75736 |     76036 | +            | cds-CAD5110630.1 |</span>
+<span class="go">|          1.1 |     79997 |     80297 | +            | cds-CAD5110631.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 8 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Because we extended intervals, some may have gone out-of-bounds on the left or on the right side:
+they may have a Start smaller than 0, or an End greater than the length of its chromosome, respectively.
+Indeed, we see there are cases of the first type:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">prom</span><span class="p">[</span><span class="n">prom</span><span class="o">.</span><span class="n">Start</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+--------------+---------------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID                  |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)            |</span>
+<span class="go">|--------------+-----------+-----------+--------------+---------------------|</span>
+<span class="go">|         12.1 |      -129 |       171 | +            | cds-DGYR_LOCUS8189  |</span>
+<span class="go">|         18.1 |       -12 |       288 | +            | cds-DGYR_LOCUS10365 |</span>
+<span class="go">|         48.1 |      -118 |       182 | +            | cds-CAD5126431.1    |</span>
+<span class="go">|         78.1 |      -299 |         1 | +            | cds-CAD5126743.1    |</span>
+<span class="go">+--------------+-----------+-----------+--------------+---------------------+</span>
+<span class="go">Stranded PyRanges object has 4 rows and 5 columns from 4 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">genome_bounds</span></code> in submodule <code class="docutils literal notranslate"><span class="pre">genomicfeatures</span></code> is designed to correct this.
+We may use it to remove out-of-bounds intervals, or to retain only their in-bound portions. We go for the second option, with <code class="docutils literal notranslate"><span class="pre">clip=True</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyfaidx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyf</span><span class="o">=</span><span class="n">pyfaidx</span><span class="o">.</span><span class="n">Fasta</span><span class="p">(</span><span class="s1">&#39;Dgyro_genome.fa&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cor_prom</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">genomicfeatures</span><span class="o">.</span><span class="n">genome_bounds</span><span class="p">(</span><span class="n">prom</span><span class="p">,</span>
+<span class="go">                  chromsizes=pyf,</span>
+<span class="go">                  clip=True)</span>
+</pre></div>
+</div>
+<p>To detect cases of out-of-bounds on the right side, function <code class="docutils literal notranslate"><span class="pre">genome_bounds</span></code> needs to know chromosome sizes.
+Various input types are accepted for the <code class="docutils literal notranslate"><span class="pre">chromsizes</span></code> argument; we used a <code class="docutils literal notranslate"><span class="pre">pyfaidx.Fasta</span></code> object, which derives it from a fasta file.</p>
+<p>The intervals above (and also the right-side out-of-bounds, though we don’t inspect them) have been corrected:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outofbounds_left</span><span class="o">=</span><span class="n">prom</span><span class="p">[</span><span class="n">prom</span><span class="o">.</span><span class="n">Start</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ID</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cor_prom</span><span class="p">[</span><span class="n">cor_prom</span><span class="o">.</span><span class="n">ID</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">outofbounds_left</span><span class="p">)]</span>
+<span class="go">+--------------+-----------+-----------+--------------+---------------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID                  |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)            |</span>
+<span class="go">|--------------+-----------+-----------+--------------+---------------------|</span>
+<span class="go">|         12.1 |         0 |       171 | +            | cds-DGYR_LOCUS8189  |</span>
+<span class="go">|         18.1 |         0 |       288 | +            | cds-DGYR_LOCUS10365 |</span>
+<span class="go">|         48.1 |         0 |       182 | +            | cds-CAD5126431.1    |</span>
+<span class="go">|         78.1 |         0 |         1 | +            | cds-CAD5126743.1    |</span>
+<span class="go">+--------------+-----------+-----------+--------------+---------------------+</span>
+<span class="go">Stranded PyRanges object has 4 rows and 5 columns from 4 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+</section>
+<section id="detecting-overlaps-among-intervals">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Detecting overlaps among intervals</a><a class="headerlink" href="#detecting-overlaps-among-intervals" title="Permalink to this heading"></a></h2>
+<p>Let’s see if any of the promoter regions overlap other CDSs. Pyranges offers many efficient methods to detect overlaps, such as <code class="docutils literal notranslate"><span class="pre">overlap</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cor_prom</span><span class="o">.</span><span class="n">overlap</span><span class="p">(</span><span class="n">cds</span><span class="p">,</span> <span class="n">strandedness</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">| 0001.1       | 320232    | 320532    | +            | cds-CAD5110677.1 |</span>
+<span class="go">| 0001.1       | 371611    | 371911    | +            | cds-CAD5110692.1 |</span>
+<span class="go">| 0001.1       | 434425    | 434725    | +            | cds-CAD5110703.1 |</span>
+<span class="go">| 0001.1       | 445177    | 445477    | +            | cds-CAD5110709.1 |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              |</span>
+<span class="go">| 0111.1       | 42019     | 42319     | -            | cds-CAD5126964.1 |</span>
+<span class="go">| 0114.1       | 4745      | 5045      | -            | cds-CAD5126973.1 |</span>
+<span class="go">| 0117.1       | 12844     | 13144     | +            | cds-CAD5126983.1 |</span>
+<span class="go">| 0117.1       | 38697     | 38997     | -            | cds-CAD5126989.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 2,374 rows and 5 columns from 61 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>By default, this method reports intervals in the self pyranges object (i.e., <code class="docutils literal notranslate"><span class="pre">cor_prom</span></code>) that have at least 1bp of overlap with
+the other pyranges (i.e., cds). By invoking <code class="docutils literal notranslate"><span class="pre">strandedness=False</span></code>, we included overlaps even between intervals on opposite strands.</p>
+<p>There are many promoters overlapping CDSs. Let’s get the overlapping regions only, using function <code class="docutils literal notranslate"><span class="pre">intersect</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">prom_in_cds</span> <span class="o">=</span> <span class="n">cor_prom</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">cds</span><span class="p">,</span> <span class="n">strandedness</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prom_in_cds</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">| 0001.1       | 320529    | 320532    | +            | cds-CAD5110677.1 |</span>
+<span class="go">| 0001.1       | 371611    | 371744    | +            | cds-CAD5110692.1 |</span>
+<span class="go">| 0001.1       | 371611    | 371744    | +            | cds-CAD5110692.1 |</span>
+<span class="go">| 0001.1       | 371870    | 371911    | +            | cds-CAD5110692.1 |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              |</span>
+<span class="go">| 0114.1       | 4910      | 5045      | -            | cds-CAD5126973.1 |</span>
+<span class="go">| 0117.1       | 13016     | 13019     | +            | cds-CAD5126983.1 |</span>
+<span class="go">| 0117.1       | 13080     | 13144     | +            | cds-CAD5126983.1 |</span>
+<span class="go">| 0117.1       | 38911     | 38997     | -            | cds-CAD5126989.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 4,185 rows and 5 columns from 61 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">intersect</span></code> returned more rows than <code class="docutils literal notranslate"><span class="pre">overlap</span></code>. This is because an interval in <code class="docutils literal notranslate"><span class="pre">cor_prom</span></code> may overlap multiple intervals in cds,
+potentially with different intersection regions (compare the 2nd, 3rd and 4th rows, which are all subregions of the same promoter).
+Therefore, <code class="docutils literal notranslate"><span class="pre">intersect</span></code> returns one row for each pair of overlapping intervals, while <cite>overlap</cite> always returns a subset of rows from the self pyranges object, unaltered.</p>
+<p>We want to remove redundancy in the object above. We use the method <code class="docutils literal notranslate"><span class="pre">merge</span></code> to fuse intervals that have some overlap (and the same ID value):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">prom_in_cds</span> <span class="o">=</span> <span class="n">prom_in_cds</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prom_in_cds</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------|</span>
+<span class="go">| 0001.1       | 320529    | 320532    | +            | cds-CAD5110677.1 |</span>
+<span class="go">| 0001.1       | 371611    | 371744    | +            | cds-CAD5110692.1 |</span>
+<span class="go">| 0001.1       | 371870    | 371911    | +            | cds-CAD5110692.1 |</span>
+<span class="go">| 0001.1       | 434527    | 434725    | +            | cds-CAD5110703.1 |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              |</span>
+<span class="go">| 0114.1       | 4910      | 5045      | -            | cds-CAD5126973.1 |</span>
+<span class="go">| 0117.1       | 13016     | 13019     | +            | cds-CAD5126983.1 |</span>
+<span class="go">| 0117.1       | 13080     | 13144     | +            | cds-CAD5126983.1 |</span>
+<span class="go">| 0117.1       | 38911     | 38997     | -            | cds-CAD5126989.1 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+</span>
+<span class="go">Stranded PyRanges object has 3,040 rows and 5 columns from 61 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Note that with overlap or intersect, we do not keep track of the coordinates of overlapping intervals in the second object (<code class="docutils literal notranslate"><span class="pre">cds</span></code>),
+as we only obtain those in the first object (<code class="docutils literal notranslate"><span class="pre">cor_prom</span></code>). For that task, check methods <code class="docutils literal notranslate"><span class="pre">cluster</span></code> and <code class="docutils literal notranslate"><span class="pre">join</span></code> (not shown here).</p>
+<p>We now want to calculate how long the overlapping regions are. We create a new column named <code class="docutils literal notranslate"><span class="pre">Length</span></code> by subtracting <code class="docutils literal notranslate"><span class="pre">Start</span></code> from <code class="docutils literal notranslate"><span class="pre">End</span></code>.
+This operation is performed element-wise (the 1st value of End minus the 1st value of Start, the 2nd End minus the 2nd Start, etc), a common paradigm of pandas Series.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">prom_in_cds</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="n">prom_in_cds</span><span class="o">.</span><span class="n">End</span> <span class="o">-</span> <span class="n">prom_in_cds</span><span class="o">.</span><span class="n">Start</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prom_in_cds</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+-----------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               | Length    |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         | (int32)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------+-----------|</span>
+<span class="go">| 0001.1       | 320529    | 320532    | +            | cds-CAD5110677.1 | 3         |</span>
+<span class="go">| 0001.1       | 371611    | 371744    | +            | cds-CAD5110692.1 | 133       |</span>
+<span class="go">| 0001.1       | 371870    | 371911    | +            | cds-CAD5110692.1 | 41        |</span>
+<span class="go">| 0001.1       | 434527    | 434725    | +            | cds-CAD5110703.1 | 198       |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              | ...       |</span>
+<span class="go">| 0114.1       | 4910      | 5045      | -            | cds-CAD5126973.1 | 135       |</span>
+<span class="go">| 0117.1       | 13016     | 13019     | +            | cds-CAD5126983.1 | 3         |</span>
+<span class="go">| 0117.1       | 13080     | 13144     | +            | cds-CAD5126983.1 | 64        |</span>
+<span class="go">| 0117.1       | 38911     | 38997     | -            | cds-CAD5126989.1 | 86        |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+-----------+</span>
+<span class="go">Stranded PyRanges object has 3,040 rows and 6 columns from 61 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+</section>
+<section id="pandas-vs-pyranges">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Pandas vs Pyranges</a><a class="headerlink" href="#pandas-vs-pyranges" title="Permalink to this heading"></a></h2>
+<p>It is convenient to think of PyRanges objects as pandas DataFrames decorated with convenient methods for genomic analyses.
+As seen above, PyRanges offers an interface analogous to DataFrame for data access and input/output, and it is similar when printed.
+Also, the columns of both object types are pandas Series.</p>
+<p>Yet, PyRanges is not implemented as a subclass of DataFrame, as we will see shortly, so that it does not offer all its methods.
+When in need of a pandas functionality missing in PyRanges, you can easily obtain a DataFrame version of it with property <code class="docutils literal notranslate"><span class="pre">df</span></code> (a shortcut for method <code class="docutils literal notranslate"><span class="pre">as_df</span></code>).
+Note that this copies all data: avoid it if you can stick to PyRanges functions.</p>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">prom_in_cds</span><span class="o">.</span><span class="n">df</span>
+<span class="go">     Chromosome   Start     End Strand                ID  Length</span>
+<span class="go">0        0001.1  320529  320532      +  cds-CAD5110677.1       3</span>
+<span class="go">1        0001.1  371611  371744      +  cds-CAD5110692.1     133</span>
+<span class="go">2        0001.1  371870  371911      +  cds-CAD5110692.1      41</span>
+<span class="go">3        0001.1  434527  434725      +  cds-CAD5110703.1     198</span>
+<span class="go">4        0001.1  445384  445477      +  cds-CAD5110709.1      93</span>
+<span class="go">...         ...     ...     ...    ...               ...     ...</span>
+<span class="go">3035     0111.1   42092   42201      -  cds-CAD5126964.1     109</span>
+<span class="go">3036     0114.1    4910    5045      -  cds-CAD5126973.1     135</span>
+<span class="go">3037     0117.1   13016   13019      +  cds-CAD5126983.1       3</span>
+<span class="go">3038     0117.1   13080   13144      +  cds-CAD5126983.1      64</span>
+<span class="go">3039     0117.1   38911   38997      -  cds-CAD5126989.1      86</span>
+</pre></div>
+</div>
+<p>[3040 rows x 6 columns]</p>
+</div></blockquote>
+<p>Let’s use the DataFrame for a <code class="docutils literal notranslate"><span class="pre">groupby</span></code> operation wherein we get the aggregated length per promoter of regions overlapping a CDS, as pandas Series:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tot_len</span> <span class="o">=</span> <span class="n">prom_in_cds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Length</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tot_len</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Tot_length&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tot_len</span>
+<span class="go">ID</span>
+<span class="go">cds-CAD5110617.1         73</span>
+<span class="go">cds-CAD5110618.1        235</span>
+<span class="go">cds-CAD5110619.1        235</span>
+<span class="go">cds-CAD5110622.1         73</span>
+<span class="go">cds-CAD5110623.1         73</span>
+<span class="go">                       ...</span>
+<span class="go">cds-DGYR_LOCUS5056       14</span>
+<span class="go">cds-DGYR_LOCUS5675       41</span>
+<span class="go">cds-DGYR_LOCUS7571-2    234</span>
+<span class="go">cds-DGYR_LOCUS9062        4</span>
+<span class="go">cds-DGYR_LOCUS980        99</span>
+<span class="go">Name: Tot_length, Length: 2374, dtype: int32</span>
+</pre></div>
+</div>
+<p>Let’s add this new information (how much of a CDS promoter is overlapping a different CDS) to the <code class="docutils literal notranslate"><span class="pre">cds</span></code> object.
+Since it is one number per CDS, all intervals with the same ID will have the same <code class="docutils literal notranslate"><span class="pre">Tot_length</span></code>. This operation corresponds to a database “join”,
+which is missing from PyRanges functionalities but available as pandas <code class="docutils literal notranslate"><span class="pre">merge</span></code>:</p>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">cds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tot_len</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">Tot_length</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s1">&#39;infer&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span>
+<span class="go">       Chromosome  Start    End Strand                ID  Tot_length</span>
+<span class="go">0          0001.1   7327   7606      +  cds-CAD5110615.1           0</span>
+<span class="go">1          0001.1  46377  47603      +  cds-CAD5110625.1           0</span>
+<span class="go">2          0001.1  48406  49448      +  cds-CAD5110625.1           0</span>
+<span class="go">3          0001.1  46377  47603      +  cds-CAD5110626.1           0</span>
+<span class="go">4          0001.1  48406  48736      +  cds-CAD5110626.1           0</span>
+<span class="go">...           ...    ...    ...    ...               ...         ...</span>
+<span class="go">100035     0117.1  20172  21261      -  cds-CAD5126985.1           0</span>
+<span class="go">100036     0117.1  26816  27881      -  cds-CAD5126988.1           0</span>
+<span class="go">100037     0117.1  36183  38697      -  cds-CAD5126989.1          86</span>
+<span class="go">100038     0117.1  39309  39450      -  cds-CAD5126990.1           0</span>
+<span class="go">100039     0117.1  38911  39256      -  cds-CAD5126990.1           0</span>
+</pre></div>
+</div>
+<p>[100040 rows x 6 columns]</p>
+</div></blockquote>
+<p>Only some CDSs have a promoter overlapping another CDS, so we used how=’left’ when calling <code class="docutils literal notranslate"><span class="pre">merge</span></code>.
+This retains all rows of <code class="docutils literal notranslate"><span class="pre">cds</span></code>, introducing NaN values for IDs missing in <cite>tot_len</cite>. On the next line of code, we filled NaN with zeros.</p>
+<p>Now let’s convert the resulting DataFrame <code class="docutils literal notranslate"><span class="pre">z</span></code> back to PyRanges:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               | Tot_length   |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         | (int64)      |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------+--------------|</span>
+<span class="go">| 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 | 0            |</span>
+<span class="go">| 0001.1       | 46377     | 47603     | +            | cds-CAD5110625.1 | 0            |</span>
+<span class="go">| 0001.1       | 48406     | 49448     | +            | cds-CAD5110625.1 | 0            |</span>
+<span class="go">| 0001.1       | 46377     | 47603     | +            | cds-CAD5110626.1 | 0            |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              | ...          |</span>
+<span class="go">| 0117.1       | 26816     | 27881     | -            | cds-CAD5126988.1 | 0            |</span>
+<span class="go">| 0117.1       | 36183     | 38697     | -            | cds-CAD5126989.1 | 86           |</span>
+<span class="go">| 0117.1       | 39309     | 39450     | -            | cds-CAD5126990.1 | 0            |</span>
+<span class="go">| 0117.1       | 38911     | 39256     | -            | cds-CAD5126990.1 | 0            |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 100,040 rows and 6 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Now let’s dig into the <strong>differences of PyRanges and DataFrame</strong>.
+Say that we want to order our intervals by <code class="docutils literal notranslate"><span class="pre">Tot_length</span></code>. We use PyRanges method <code class="docutils literal notranslate"><span class="pre">sort</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">srt_cds</span> <span class="o">=</span> <span class="n">cds</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;Tot_length&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">srt_cds</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               | Tot_length   |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         | (int64)      |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------+--------------|</span>
+<span class="go">| 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 | 0            |</span>
+<span class="go">| 0001.1       | 2092958   | 2093126   | +            | cds-CAD5111233.1 | 0            |</span>
+<span class="go">| 0001.1       | 2093184   | 2093293   | +            | cds-CAD5111233.1 | 0            |</span>
+<span class="go">| 0001.1       | 2093350   | 2093443   | +            | cds-CAD5111233.1 | 0            |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              | ...          |</span>
+<span class="go">| 0117.1       | 26816     | 27881     | -            | cds-CAD5126988.1 | 0            |</span>
+<span class="go">| 0117.1       | 39309     | 39450     | -            | cds-CAD5126990.1 | 0            |</span>
+<span class="go">| 0117.1       | 38911     | 39256     | -            | cds-CAD5126990.1 | 0            |</span>
+<span class="go">| 0117.1       | 36183     | 38697     | -            | cds-CAD5126989.1 | 86           |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 100,040 rows and 6 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>If we sort the analogous DataFrame using pandas <code class="docutils literal notranslate"><span class="pre">sort_values</span></code>, we see the results does not quite look the same:</p>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Tot_length&#39;</span><span class="p">)</span>
+<span class="go">      Chromosome    Start      End Strand                ID  Tot_length</span>
+<span class="go">0         0001.1     7327     7606      +  cds-CAD5110615.1           0</span>
+<span class="go">64767     0013.1  1245868  1246381      -  cds-CAD5121003.1           0</span>
+<span class="go">64766     0013.1  1246440  1246707      -  cds-CAD5121003.1           0</span>
+<span class="go">64765     0013.1  1246768  1246871      -  cds-CAD5121003.1           0</span>
+<span class="go">64764     0013.1  1246936  1247072      -  cds-CAD5121003.1           0</span>
+<span class="go">...          ...      ...      ...    ...               ...         ...</span>
+<span class="go">9380      0002.1   258719   259098      -  cds-CAD5111666.1         300</span>
+<span class="go">64403     0013.1   777119   777332      -  cds-CAD5120886.1         300</span>
+<span class="go">9381      0002.1   258298   258496      -  cds-CAD5111666.1         300</span>
+<span class="go">64404     0013.1   776667   776756      -  cds-CAD5120886.1         300</span>
+<span class="go">48837     0009.1   731837   731964      +  cds-CAD5118662.1         300</span>
+</pre></div>
+</div>
+<p>[100040 rows x 6 columns]</p>
+</div></blockquote>
+<p>Why is that? Under the hood, each PyRanges object is a <strong>collection of DataFrames</strong>: data is spread into separate tables,
+one for each chromosome/strand pair; e.g. there is a DataFrame with coordinates for + intervals on chr1, one for - intervals on chr1,
+one for + on chr2, one for - on chr2, etc. The user typically does not need to directly access them (but if you do,
+you can check the dictionary-type PyRanges attribute <code class="docutils literal notranslate"><span class="pre">dfs</span></code>).</p>
+<p>Intervals on different chromosomes have no order relative to each other, and they are never mixed up in the same table. Indeed, when inspecting a PyRanges object, you see the message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">For</span> <span class="n">printing</span><span class="p">,</span> <span class="n">the</span> <span class="n">PyRanges</span> <span class="n">was</span> <span class="nb">sorted</span> <span class="n">on</span> <span class="n">Chromosome</span> <span class="ow">and</span> <span class="n">Strand</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>PyRanges <code class="docutils literal notranslate"><span class="pre">sort</span></code> therefore acts on each table independently. Pandas, on the other hand,
+has no problems mixing up rows corresponding to different chromosomes, which explains the discrepancy seen above.</p>
+<p>This leads to another important difference. In pandas, the index is an essential component of the DataFrame,
+providing the row labels, order, and a tool for data access.
+<strong>In PyRanges objects, there is no index</strong>. Their internal tables of course have their own indices, but they
+are purposely hidden from the user as they are not to be queried or relied upon.</p>
+<p>The user should also beware of methods <code class="docutils literal notranslate"><span class="pre">merge</span></code> and <code class="docutils literal notranslate"><span class="pre">join</span></code>, which have different meanings.
+As seen above, in Pandas they are slight variations of database “join”, while in PyRanges they refer to interval manipulation based on genomic overlap.</p>
+</section>
+<section id="method-chaining-and-custom-functions">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Method chaining and custom functions</a><a class="headerlink" href="#method-chaining-and-custom-functions" title="Permalink to this heading"></a></h2>
+<p>Like Pandas, pyranges support method chaining.
+Some useful methods in this sense are: <code class="docutils literal notranslate"><span class="pre">pc</span></code>, which prints the object and returns it for further chaining;
+<code class="docutils literal notranslate"><span class="pre">subset</span></code>, which performs row selection; and <cite>assign</cite>, which adds a column.</p>
+<p>We may chain these to obtain at once the CDS subset, add the length of intervals as new column, drop a couple of columns, then print before and after sorting by length:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span> <span class="n">ann</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">Feature</span><span class="o">==</span><span class="s1">&#39;CDS&#39;</span><span class="p">)</span>
+<span class="go">   .assign(&#39;Length&#39;, lambda x:x.End-x.Start)</span>
+<span class="go">   .drop([&#39;Parent&#39;, &#39;Feature&#39;])</span>
+<span class="go">   .pc()</span>
+<span class="go">   .sort(&#39;Length&#39;)</span>
+<span class="go">   .print()</span>
+<span class="go">    )</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+-----------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               | Length    |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         | (int32)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------+-----------|</span>
+<span class="go">| 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 | 279       |</span>
+<span class="go">| 0001.1       | 46377     | 47603     | +            | cds-CAD5110625.1 | 1226      |</span>
+<span class="go">| 0001.1       | 48406     | 49448     | +            | cds-CAD5110625.1 | 1042      |</span>
+<span class="go">| 0001.1       | 46377     | 47603     | +            | cds-CAD5110626.1 | 1226      |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              | ...       |</span>
+<span class="go">| 0117.1       | 26816     | 27881     | -            | cds-CAD5126988.1 | 1065      |</span>
+<span class="go">| 0117.1       | 36183     | 38697     | -            | cds-CAD5126989.1 | 2514      |</span>
+<span class="go">| 0117.1       | 39309     | 39450     | -            | cds-CAD5126990.1 | 141       |</span>
+<span class="go">| 0117.1       | 38911     | 39256     | -            | cds-CAD5126990.1 | 345       |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+-----------+</span>
+<span class="go">Stranded PyRanges object has 100,040 rows and 6 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+-----------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | ID               | Length    |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)         | (int32)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------------+-----------|</span>
+<span class="go">| 0001.1       | 2789047   | 2789050   | +            | cds-CAD5111421.1 | 3         |</span>
+<span class="go">| 0001.1       | 909263    | 909266    | +            | cds-CAD5110841.1 | 3         |</span>
+<span class="go">| 0001.1       | 1721311   | 1721314   | +            | cds-CAD5111112.1 | 3         |</span>
+<span class="go">| 0001.1       | 651283    | 651286    | +            | cds-CAD5110767.1 | 3         |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...              | ...       |</span>
+<span class="go">| 0117.1       | 38911     | 39256     | -            | cds-CAD5126990.1 | 345       |</span>
+<span class="go">| 0117.1       | 26816     | 27881     | -            | cds-CAD5126988.1 | 1065      |</span>
+<span class="go">| 0117.1       | 20172     | 21261     | -            | cds-CAD5126985.1 | 1089      |</span>
+<span class="go">| 0117.1       | 36183     | 38697     | -            | cds-CAD5126989.1 | 2514      |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------------+-----------+</span>
+<span class="go">Stranded PyRanges object has 100,040 rows and 6 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">assign</span></code> and <code class="docutils literal notranslate"><span class="pre">subset</span></code>, you provide a function which is applied to each DataFrame in the collection.
+In both cases, it must return a Series with the same number of rows as the input PyRanges.
+For <code class="docutils literal notranslate"><span class="pre">subset</span></code>, it must be a boolean Series, which is used as row selector. Another similar method called <code class="docutils literal notranslate"><span class="pre">apply</span></code> also exists.
+Use <code class="docutils literal notranslate"><span class="pre">apply</span></code> when your function returns a DataFrame which can be converted to a PyRanges object (i.e. containing Chromosome, Start, End, Strand columns).</p>
+<p>In the following code, we select only CDS intervals whose center point is within 50 nucleotides from the middle of a chromosome.
+For this, we precompute a table of chromosome sizes from the object <cite>pyf</cite> used earlier, and we use pandas <code class="docutils literal notranslate"><span class="pre">merge</span></code>, through pyranges <code class="docutils literal notranslate"><span class="pre">apply</span></code>,
+to join this table with each dataframe.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+<span class="go">{&#39;Chromosome&#39;:[k for k,v in pyf.items()],</span>
+<span class="go"> &#39;chromsize&#39;:[len(v) for k,v in pyf.items()]}</span>
+<span class="go">    )</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">Feature</span><span class="o">==</span><span class="s1">&#39;CDS&#39;</span><span class="p">)</span>
+<span class="go">  .drop([&#39;Parent&#39;, &#39;Feature&#39;, &#39;ID&#39;])</span>
+<span class="go">  .apply(lambda x:x.merge(chromsizes, on=&#39;Chromosome&#39;))</span>
+<span class="go">  .assign(&#39;midpoint&#39;, lambda x:(x.End+x.Start)/2)</span>
+<span class="go">  .subset(lambda x:abs(x.midpoint - x.chromsize/2)&lt;50)</span>
+<span class="go">    )</span>
+<span class="go">+--------------+-----------+-----------+--------------+-------------+-------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | chromsize   | midpoint    |</span>
+<span class="go">| (object)     | (int32)   | (int32)   | (category)   | (int64)     | (float64)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+-------------+-------------|</span>
+<span class="go">| 0003.1       | 1616314   | 1616368   | +            | 3232594     | 1616341.0   |</span>
+<span class="go">| 0005.1       | 2273266   | 2273365   | +            | 4546684     | 2273315.5   |</span>
+<span class="go">| 0013.1       | 861154    | 861506    | +            | 1722566     | 861330.0    |</span>
+<span class="go">| 0014.1       | 1120851   | 1120981   | -            | 2241898     | 1120916.0   |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...         | ...         |</span>
+<span class="go">| 0034.1       | 98757     | 98889     | -            | 197648      | 98823.0     |</span>
+<span class="go">| 0057.1       | 47117     | 47335     | +            | 94438       | 47226.0     |</span>
+<span class="go">| 0065.1       | 81326     | 81695     | +            | 162924      | 81510.5     |</span>
+<span class="go">| 0098.1       | 63943     | 64035     | +            | 127883      | 63989.0     |</span>
+<span class="go">+--------------+-----------+-----------+--------------+-------------+-------------+</span>
+<span class="go">Stranded PyRanges object has 12 rows and 6 columns from 10 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>A common operation in pandas is group by then apply, i.e. dividing the table in groups and performing certain operations on each group.
+You can do such operations using <code class="docutils literal notranslate"><span class="pre">subset</span></code>, <code class="docutils literal notranslate"><span class="pre">assign</span></code>, or <code class="docutils literal notranslate"><span class="pre">apply</span></code>, depending on what to do with the result.
+Remember that the table of each Chromosome/Strand is processed independently.</p>
+<p>Let’s use this functionality to get the first (5’-most) exon of each CDS group.
+We use pyranges <code class="docutils literal notranslate"><span class="pre">sort</span></code> with the argument ‘5’, which puts intervals in 5’ -&gt; 3’ order, then we apply a groupby+apply pandas chain:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span> <span class="n">ann</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">Feature</span><span class="o">==</span><span class="s1">&#39;CDS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Parent&#39;</span><span class="p">,</span> <span class="s1">&#39;Feature&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()))</span>
+<span class="go">+------------------+--------------+-----------+-----------+--------------+</span>
+<span class="go">| ID               | Chromosome   | Start     | End       | Strand       |</span>
+<span class="go">| (object)         | (category)   | (int32)   | (int32)   | (category)   |</span>
+<span class="go">|------------------+--------------+-----------+-----------+--------------|</span>
+<span class="go">| cds-CAD5110615.1 | 0001.1       | 7327      | 7606      | +            |</span>
+<span class="go">| cds-CAD5110625.1 | 0001.1       | 46377     | 47603     | +            |</span>
+<span class="go">| cds-CAD5110626.1 | 0001.1       | 46377     | 47603     | +            |</span>
+<span class="go">| cds-CAD5110627.1 | 0001.1       | 60099     | 60409     | +            |</span>
+<span class="go">| ...              | ...          | ...       | ...       | ...          |</span>
+<span class="go">| cds-CAD5126985.1 | 0117.1       | 20172     | 21261     | -            |</span>
+<span class="go">| cds-CAD5126988.1 | 0117.1       | 26816     | 27881     | -            |</span>
+<span class="go">| cds-CAD5126989.1 | 0117.1       | 36183     | 38697     | -            |</span>
+<span class="go">| cds-CAD5126990.1 | 0117.1       | 39309     | 39450     | -            |</span>
+<span class="go">+------------------+--------------+-----------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 16,378 rows and 5 columns from 117 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>This concludes our tutorial. The next pages will delve into pyranges functionalities grouped by topic.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="how_to_book.html" class="btn btn-neutral float-right" title="Introduction to PyRanges" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Endre Bakken Stovner and Marco Mariotti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

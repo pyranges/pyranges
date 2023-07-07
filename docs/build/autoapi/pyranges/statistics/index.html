@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyranges.statistics &mdash; pyranges  0.0.124 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="pyranges.stats" href="../stats/index.html" />
+    <link rel="prev" title="pyranges.readers" href="../readers/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pyranges
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial of PyRanges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_book.html">How-to-book</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../data/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../genomicfeatures/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.genomicfeatures</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../get_fasta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.get_fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../helpers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.helpers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../multioverlap/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.multioverlap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../multithreaded/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.multithreaded</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyranges/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.pyranges</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../readers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.readers</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.statistics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stats/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.stats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../version/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyranges</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.statistics</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/pyranges/statistics/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyranges.statistics">
+<span id="pyranges-statistics"></span><h1><a class="reference internal" href="#module-pyranges.statistics" title="pyranges.statistics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyranges.statistics</span></code></a><a class="headerlink" href="#module-pyranges.statistics" title="Permalink to this heading"></a></h1>
+<p>Statistics useful for genomics.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyranges.statistics.StatisticsMethods" title="pyranges.statistics.StatisticsMethods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StatisticsMethods</span></code></a></p></td>
+<td><p>Namespace for statistical comparsion-operations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyranges.statistics.fdr" title="pyranges.statistics.fdr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fdr</span></code></a>(p_vals)</p></td>
+<td><p>Adjust p-values with Benjamini-Hochberg.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyranges.statistics.fisher_exact" title="pyranges.statistics.fisher_exact"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fisher_exact</span></code></a>(tp, fp, fn, tn[, pseudocount])</p></td>
+<td><p>Fisher's exact for contingency tables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyranges.statistics.mcc" title="pyranges.statistics.mcc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mcc</span></code></a>(grs[, genome, labels, strand, verbose])</p></td>
+<td><p>Compute Matthew's correlation coefficient for PyRanges overlaps.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyranges.statistics.rowbased_spearman" title="pyranges.statistics.rowbased_spearman"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rowbased_spearman</span></code></a>(x, y)</p></td>
+<td><p>Fast row-based Spearman's correlation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyranges.statistics.rowbased_pearson" title="pyranges.statistics.rowbased_pearson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rowbased_pearson</span></code></a>(x, y)</p></td>
+<td><p>Fast row-based Pearson's correlation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyranges.statistics.rowbased_rankdata" title="pyranges.statistics.rowbased_rankdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rowbased_rankdata</span></code></a>(data)</p></td>
+<td><p>Rank order of entries in each row.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyranges.statistics.simes" title="pyranges.statistics.simes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simes</span></code></a>(df, groupby, pcol[, keep_position])</p></td>
+<td><p>Apply Simes method for giving dependent events a p-value.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.statistics.fdr">
+<span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">fdr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_vals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#fdr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.fdr" title="Permalink to this definition"></a></dt>
+<dd><p>Adjust p-values with Benjamini-Hochberg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>array-like</em>) – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame where values are order of data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">PValue</span> <span class="o">=</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span>
+<span class="go">+--------------+-----------+-----------+--------------+----------------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | PValue               |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (float64)            |</span>
+<span class="go">|--------------+-----------+-----------+--------------+----------------------|</span>
+<span class="go">| chr1         | 176601938 | 176602038 | +            | 0.005488135039273248 |</span>
+<span class="go">| chr1         | 155082851 | 155082951 | -            | 0.007151893663724195 |</span>
+<span class="go">| chr2         | 211134424 | 211134524 | -            | 0.006027633760716439 |</span>
+<span class="go">| chr9         | 78826761  | 78826861  | -            | 0.005448831829968969 |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...                  |</span>
+<span class="go">| chr16        | 52216522  | 52216622  | +            | 0.004375872112626925 |</span>
+<span class="go">| chr17        | 8085927   | 8086027   | -            | 0.008917730007820798 |</span>
+<span class="go">| chr19        | 17333425  | 17333525  | +            | 0.009636627605010294 |</span>
+<span class="go">| chr22        | 16728001  | 16728101  | +            | 0.003834415188257777 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+----------------------+</span>
+<span class="go">Stranded PyRanges object has 10 rows and 5 columns from 9 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">FDR</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">fdr</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">PValue</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">formatting</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;PValue&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:.4f}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;FDR&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:.4}</span><span class="s2">&quot;</span><span class="p">})</span>
+<span class="go">+--------------+-----------+-----------+--------------+-------------+-------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | PValue      | FDR         |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (float64)   | (float64)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+-------------+-------------|</span>
+<span class="go">| chr1         | 176601938 | 176602038 | +            | 0.0055      | 0.01098     |</span>
+<span class="go">| chr1         | 155082851 | 155082951 | -            | 0.0072      | 0.00894     |</span>
+<span class="go">| chr2         | 211134424 | 211134524 | -            | 0.0060      | 0.01005     |</span>
+<span class="go">| chr9         | 78826761  | 78826861  | -            | 0.0054      | 0.01362     |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...         | ...         |</span>
+<span class="go">| chr16        | 52216522  | 52216622  | +            | 0.0044      | 0.01459     |</span>
+<span class="go">| chr17        | 8085927   | 8086027   | -            | 0.0089      | 0.009909    |</span>
+<span class="go">| chr19        | 17333425  | 17333525  | +            | 0.0096      | 0.009637    |</span>
+<span class="go">| chr22        | 16728001  | 16728101  | +            | 0.0038      | 0.03834     |</span>
+<span class="go">+--------------+-----------+-----------+--------------+-------------+-------------+</span>
+<span class="go">Stranded PyRanges object has 10 rows and 6 columns from 9 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.statistics.fisher_exact">
+<span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">fisher_exact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pseudocount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#fisher_exact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.fisher_exact" title="Permalink to this definition"></a></dt>
+<dd><p>Fisher’s exact for contingency tables.</p>
+<p>Computes the hypotheses two-sided, less and greater at the same time.</p>
+<p>The odds-ratio is</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tp</strong> (<em>array-like</em><em> of </em><em>int</em>) – Top left square of contingency table (true positives).</p></li>
+<li><p><strong>fp</strong> (<em>array-like</em><em> of </em><em>int</em>) – Top right square of contingency table (false positives).</p></li>
+<li><p><strong>fn</strong> (<em>array-like</em><em> of </em><em>int</em>) – Bottom left square of contingency table (false negatives).</p></li>
+<li><p><strong>tn</strong> (<em>array-like</em><em> of </em><em>int</em>) – Bottom right square of contingency table (true negatives).</p></li>
+<li><p><strong>pseudocount</strong> (<em>float</em><em>, </em><em>default 0</em>) – Values &gt; 0 allow Odds Ratio to always be a finite number.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The odds-ratio is computed thusly:</p>
+<p><code class="docutils literal notranslate"><span class="pre">((tp</span> <span class="pre">+</span> <span class="pre">pseudocount)</span> <span class="pre">/</span> <span class="pre">(fp</span> <span class="pre">+</span> <span class="pre">pseudocount))</span> <span class="pre">/</span> <span class="pre">((fn</span> <span class="pre">+</span> <span class="pre">pseudocount)</span> <span class="pre">/</span> <span class="pre">(tn</span> <span class="pre">+</span> <span class="pre">pseudocount))</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with columns OR and P, PLeft and PRight.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pr.stats.fdr</span></code></dt><dd><p>correct for multiple testing</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;TP&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;FP&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span> <span class="s2">&quot;TN&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">29</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s2">&quot;FN&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span>
+<span class="go">   TP  FP  TN  FN</span>
+<span class="go">0  12   5  29   2</span>
+<span class="go">1   0  12  10   2</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">fisher_exact</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">TP</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">FP</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">TN</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">FN</span><span class="p">)</span>
+<span class="go">         OR         P     PLeft    PRight</span>
+<span class="go">0  0.165517  0.080269  0.044555  0.994525</span>
+<span class="go">1  0.000000  0.000067  0.000034  1.000000</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.statistics.mcc">
+<span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">mcc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#mcc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.mcc" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Matthew’s correlation coefficient for PyRanges overlaps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grs</strong> (<em>list</em><em> of </em><a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – PyRanges to compare.</p></li>
+<li><p><strong>genome</strong> (<em>DataFrame</em><em> or </em><em>dict</em><em>, </em><em>default None</em>) – Should contain chromosome sizes. By default, end position of the
+rightmost intervals are used as proxies for the chromosome size, but
+it is recommended to use a genome.</p></li>
+<li><p><strong>labels</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>default None</em>) – Names to give the PyRanges in the output.</p></li>
+<li><p><strong>strand</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to compute correlations per strand.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default False</em>) – Warn if some chromosomes are in the genome, but not in the PyRanges.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;chrM&quot;</span><span class="p">:</span> <span class="mi">16000</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pr</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">chromsizes</span><span class="o">=</span><span class="n">chromsizes</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mcc</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">mcc</span><span class="p">(</span><span class="n">grs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">genome</span><span class="o">=</span><span class="n">chromsizes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mcc</span>
+<span class="go">   T  F     TP  FP  TN  FN       MCC</span>
+<span class="go">0  a  a  15920   0  80   0  1.000000</span>
+<span class="go">1  a  b  15875  65  15  45  0.213109</span>
+<span class="go">3  a  c  15896  72   8  24  0.155496</span>
+<span class="go">2  b  a  15875  45  15  65  0.213109</span>
+<span class="go">5  b  b  15940   0  60   0  1.000000</span>
+<span class="go">6  b  c  15916  52   8  24  0.180354</span>
+<span class="go">4  c  a  15896  24   8  72  0.155496</span>
+<span class="go">7  c  b  15916  24   8  52  0.180354</span>
+<span class="go">8  c  c  15968   0  32   0  1.000000</span>
+</pre></div>
+</div>
+<p>To create a symmetric matrix (useful for heatmaps of correlations):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mcc</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">MCC</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="go">F         a         b         c</span>
+<span class="go">T</span>
+<span class="go">a  1.000000  0.213109  0.155496</span>
+<span class="go">b  0.213109  1.000000  0.180354</span>
+<span class="go">c  0.155496  0.180354  1.000000</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.statistics.rowbased_spearman">
+<span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">rowbased_spearman</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#rowbased_spearman"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.rowbased_spearman" title="Permalink to this definition"></a></dt>
+<dd><p>Fast row-based Spearman’s correlation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>matrix-like</em>) – 2D numerical matrix. Same size as y.</p></li>
+<li><p><strong>y</strong> (<em>matrix-like</em>) – 2D numerical matrix. Same size as x.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array with same length as input, where values are P-values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pyranges.statistics.rowbased_pearson" title="pyranges.statistics.rowbased_pearson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.statistics.rowbased_pearson</span></code></a></dt><dd><p>fast row-based Pearson’s correlation.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pr.stats.fdr</span></code></dt><dd><p>correct for multiple testing</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Perform Spearman’s correlation pairwise on each row in 10x10 matrixes:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">rowbased_spearman</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">array([ 0.07523548, -0.24838724,  0.03703774,  0.24194052,  0.04778621,</span>
+<span class="go">       -0.23913505,  0.12923138,  0.26840486,  0.13292204, -0.29846295])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.statistics.rowbased_pearson">
+<span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">rowbased_pearson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#rowbased_pearson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.rowbased_pearson" title="Permalink to this definition"></a></dt>
+<dd><p>Fast row-based Pearson’s correlation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>matrix-like</em>) – 2D numerical matrix. Same size as y.</p></li>
+<li><p><strong>y</strong> (<em>matrix-like</em>) – 2D numerical matrix. Same size as x.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array with same length as input, where values are P-values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pyranges.statistics.rowbased_spearman" title="pyranges.statistics.rowbased_spearman"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.statistics.rowbased_spearman</span></code></a></dt><dd><p>fast row-based Spearman’s correlation.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pr.stats.fdr</span></code></dt><dd><p>correct for multiple testing</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Perform Pearson’s correlation pairwise on each row in 10x10 matrixes:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">rowbased_pearson</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">array([ 0.20349603, -0.01667236, -0.01448763, -0.00442322,  0.06527234,</span>
+<span class="go">       -0.36710862,  0.14978726,  0.32360286,  0.17209191, -0.08902829])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.statistics.rowbased_rankdata">
+<span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">rowbased_rankdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#rowbased_rankdata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.rowbased_rankdata" title="Permalink to this definition"></a></dt>
+<dd><p>Rank order of entries in each row.</p>
+<p>Same as SciPy rankdata with method=mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>matrix-like</em>) – The data to find order of.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame where values are order of data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([[5, 0, 3, 3, 7, 9, 3, 5, 2, 4],</span>
+<span class="go">       [7, 6, 8, 8, 1, 6, 7, 7, 8, 1],</span>
+<span class="go">       [5, 9, 8, 9, 4, 3, 0, 3, 5, 0]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">rowbased_rankdata</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">     0    1    2    3    4     5    6    7    8    9</span>
+<span class="go">0  7.5  1.0  4.0  4.0  9.0  10.0  4.0  7.5  2.0  6.0</span>
+<span class="go">1  6.0  3.5  9.0  9.0  1.5   3.5  6.0  6.0  9.0  1.5</span>
+<span class="go">2  6.5  9.5  8.0  9.5  5.0   3.5  1.5  3.5  6.5  1.5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyranges.statistics.simes">
+<span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">simes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groupby</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#simes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.simes" title="Permalink to this definition"></a></dt>
+<dd><p>Apply Simes method for giving dependent events a p-value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Data to analyse with Simes.</p></li>
+<li><p><strong>groupby</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Features equal in these columns will be merged with Simes.</p></li>
+<li><p><strong>pcol</strong> (<em>str</em>) – Name of column with p-values.</p></li>
+<li><p><strong>keep_position</strong> (<em>bool</em><em>, </em><em>default False</em>) – Keep columns “Chromosome”, “Start”, “End” and “Strand” if they exist.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pr.stats.fdr</span></code></dt><dd><p>correct for multiple testing</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;Chromosome Start End Strand Gene PValue</span>
+<span class="gp">... </span><span class="s1">1 10 20 + P53 0.0001</span>
+<span class="gp">... </span><span class="s1">1 20 20 + P53 0.0002</span>
+<span class="gp">... </span><span class="s1">1 30 20 + P53 0.0003</span>
+<span class="gp">... </span><span class="s1">2 60 65 - FOX 0.05</span>
+<span class="gp">... </span><span class="s1">2 70 75 - FOX 0.0000001</span>
+<span class="gp">... </span><span class="s1">2 80 90 - FOX 0.0000021&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+-------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | Gene       |      PValue |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)   |   (float64) |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------+-------------|</span>
+<span class="go">|            1 |        10 |        20 | +            | P53        |     0.0001  |</span>
+<span class="go">|            1 |        20 |        20 | +            | P53        |     0.0002  |</span>
+<span class="go">|            1 |        30 |        20 | +            | P53        |     0.0003  |</span>
+<span class="go">|            2 |        60 |        65 | -            | FOX        |     0.05    |</span>
+<span class="go">|            2 |        70 |        75 | -            | FOX        |     1e-07   |</span>
+<span class="go">|            2 |        80 |        90 | -            | FOX        |     2.1e-06 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+-------------+</span>
+<span class="go">Stranded PyRanges object has 6 rows and 6 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">simes</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">simes</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;Gene&quot;</span><span class="p">,</span> <span class="s2">&quot;PValue&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simes</span>
+<span class="go">  Gene         Simes</span>
+<span class="go">0  FOX  3.000000e-07</span>
+<span class="go">1  P53  3.000000e-04</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span>
+<span class="gp">... </span><span class="n">pr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">simes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;Gene&quot;</span><span class="p">,</span> <span class="s2">&quot;PValue&quot;</span><span class="p">,</span> <span class="n">keep_position</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="go">+--------------+-----------+-----------+-------------+------------+------------+</span>
+<span class="go">|   Chromosome |     Start |       End |       Simes | Strand     | Gene       |</span>
+<span class="go">|     (object) |   (int32) |   (int32) |   (float64) | (object)   | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+-------------+------------+------------|</span>
+<span class="go">|            1 |        10 |        20 |      0.0001 | +          | P53        |</span>
+<span class="go">|            2 |        60 |        90 |      1e-07  | -          | FOX        |</span>
+<span class="go">+--------------+-----------+-----------+-------------+------------+------------+</span>
+<span class="go">Stranded PyRanges object has 2 rows and 6 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyranges.statistics.StatisticsMethods">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyranges.statistics.</span></span><span class="sig-name descname"><span class="pre">StatisticsMethods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#StatisticsMethods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.StatisticsMethods" title="Permalink to this definition"></a></dt>
+<dd><p>Namespace for statistical comparsion-operations.</p>
+<p>Accessed with gr.stats.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyranges.statistics.StatisticsMethods.pr">
+<span class="sig-name descname"><span class="pre">pr</span></span><a class="headerlink" href="#pyranges.statistics.StatisticsMethods.pr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyranges.statistics.StatisticsMethods.forbes">
+<span class="sig-name descname"><span class="pre">forbes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chromsizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strandedness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#StatisticsMethods.forbes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.StatisticsMethods.forbes" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Forbes coefficient.</p>
+<p>Ratio which represents observed versus expected co-occurence.</p>
+<p>Described in <code class="docutils literal notranslate"><span class="pre">Forbes</span> <span class="pre">SA</span> <span class="pre">(1907):</span> <span class="pre">On</span> <span class="pre">the</span> <span class="pre">local</span> <span class="pre">distribution</span> <span class="pre">of</span> <span class="pre">certain</span> <span class="pre">Illinois</span> <span class="pre">fishes:</span> <span class="pre">an</span> <span class="pre">essay</span> <span class="pre">in</span> <span class="pre">statistical</span> <span class="pre">ecology.</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Intervals to compare with.</p></li>
+<li><p><strong>chromsizes</strong> (<em>int</em><em>, </em><em>dict</em><em>, </em><em>DataFrame</em><em> or </em><a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Integer representing genome length or mapping from chromosomes
+to its length.</p></li>
+<li><p><strong>strandedness</strong> (<em>{None</em><em>, </em><em>&quot;same&quot;</em><em>, </em><em>&quot;opposite&quot;</em><em>, </em><em>False}</em><em>, </em><em>default None</em><em>, </em><em>i.e. &quot;auto&quot;</em>) – Whether to compute without regards to strand or on same or opposite.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ratio of observed versus expected co-occurence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.statistics.jaccard</span></code></dt><dd><p>compute the jaccard coefficient</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">,</span> <span class="n">gr2</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">(),</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq_background</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chromsizes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">forbes</span><span class="p">(</span><span class="n">gr2</span><span class="p">,</span> <span class="n">chromsizes</span><span class="o">=</span><span class="n">chromsizes</span><span class="p">)</span>
+<span class="go">1.7168314674978278</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyranges.statistics.StatisticsMethods.jaccard">
+<span class="sig-name descname"><span class="pre">jaccard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#StatisticsMethods.jaccard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.StatisticsMethods.jaccard" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Jaccards coefficient.</p>
+<p>Ratio of the intersection and union of two sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Intervals to compare with.</p></li>
+<li><p><strong>chromsizes</strong> (<em>int</em><em>, </em><em>dict</em><em>, </em><em>DataFrame</em><em> or </em><a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Integer representing genome length or mapping from chromosomes
+to its length.</p></li>
+<li><p><strong>strandedness</strong> (<em>{None</em><em>, </em><em>&quot;same&quot;</em><em>, </em><em>&quot;opposite&quot;</em><em>, </em><em>False}</em><em>, </em><em>default None</em><em>, </em><em>i.e. &quot;auto&quot;</em>) – Whether to compute without regards to strand or on same or opposite.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ratio of the intersection and union of two sets.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.statistics.forbes</span></code></dt><dd><p>compute the forbes coefficient</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">,</span> <span class="n">gr2</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">(),</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq_background</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chromsizes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">jaccard</span><span class="p">(</span><span class="n">gr2</span><span class="p">,</span> <span class="n">chromsizes</span><span class="o">=</span><span class="n">chromsizes</span><span class="p">)</span>
+<span class="go">6.657941988519211e-05</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyranges.statistics.StatisticsMethods.relative_distance">
+<span class="sig-name descname"><span class="pre">relative_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyranges/statistics.html#StatisticsMethods.relative_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyranges.statistics.StatisticsMethods.relative_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Compute spatial correllation between two sets.</p>
+<p>Metric which describes relative distance between each interval in one
+set and two closest intervals in another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Intervals to compare with.</p></li>
+<li><p><strong>chromsizes</strong> (<em>int</em><em>, </em><em>dict</em><em>, </em><em>DataFrame</em><em> or </em><a class="reference internal" href="../index.html#pyranges.PyRanges" title="pyranges.PyRanges"><em>PyRanges</em></a>) – Integer representing genome length or mapping from chromosomes
+to its length.</p></li>
+<li><p><strong>strandedness</strong> (<em>{None</em><em>, </em><em>&quot;same&quot;</em><em>, </em><em>&quot;opposite&quot;</em><em>, </em><em>False}</em><em>, </em><em>default None</em><em>, </em><em>i.e. &quot;auto&quot;</em>) – Whether to compute without regards to strand or on same or opposite.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame containing the frequency of each relative distance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.statistics.jaccard</span></code></dt><dd><p>compute the jaccard coefficient</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyranges.statistics.forbes</span></code></dt><dd><p>compute the forbes coefficient</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">,</span> <span class="n">gr2</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">(),</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq_background</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chromsizes</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chromsizes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">relative_distance</span><span class="p">(</span><span class="n">gr2</span><span class="p">)</span>
+<span class="go">    reldist  count  total  fraction</span>
+<span class="go">0      0.00    264   9956  0.026517</span>
+<span class="go">1      0.01    226   9956  0.022700</span>
+<span class="go">2      0.02    206   9956  0.020691</span>
+<span class="go">3      0.03    235   9956  0.023604</span>
+<span class="go">4      0.04    194   9956  0.019486</span>
+<span class="go">5      0.05    241   9956  0.024207</span>
+<span class="go">6      0.06    201   9956  0.020189</span>
+<span class="go">7      0.07    191   9956  0.019184</span>
+<span class="go">8      0.08    192   9956  0.019285</span>
+<span class="go">9      0.09    191   9956  0.019184</span>
+<span class="go">10     0.10    186   9956  0.018682</span>
+<span class="go">11     0.11    203   9956  0.020390</span>
+<span class="go">12     0.12    218   9956  0.021896</span>
+<span class="go">13     0.13    209   9956  0.020992</span>
+<span class="go">14     0.14    201   9956  0.020189</span>
+<span class="go">15     0.15    178   9956  0.017879</span>
+<span class="go">16     0.16    202   9956  0.020289</span>
+<span class="go">17     0.17    197   9956  0.019787</span>
+<span class="go">18     0.18    208   9956  0.020892</span>
+<span class="go">19     0.19    202   9956  0.020289</span>
+<span class="go">20     0.20    191   9956  0.019184</span>
+<span class="go">21     0.21    188   9956  0.018883</span>
+<span class="go">22     0.22    213   9956  0.021394</span>
+<span class="go">23     0.23    192   9956  0.019285</span>
+<span class="go">24     0.24    199   9956  0.019988</span>
+<span class="go">25     0.25    181   9956  0.018180</span>
+<span class="go">26     0.26    172   9956  0.017276</span>
+<span class="go">27     0.27    191   9956  0.019184</span>
+<span class="go">28     0.28    190   9956  0.019084</span>
+<span class="go">29     0.29    192   9956  0.019285</span>
+<span class="go">30     0.30    201   9956  0.020189</span>
+<span class="go">31     0.31    212   9956  0.021294</span>
+<span class="go">32     0.32    213   9956  0.021394</span>
+<span class="go">33     0.33    177   9956  0.017778</span>
+<span class="go">34     0.34    197   9956  0.019787</span>
+<span class="go">35     0.35    163   9956  0.016372</span>
+<span class="go">36     0.36    191   9956  0.019184</span>
+<span class="go">37     0.37    198   9956  0.019888</span>
+<span class="go">38     0.38    160   9956  0.016071</span>
+<span class="go">39     0.39    188   9956  0.018883</span>
+<span class="go">40     0.40    200   9956  0.020088</span>
+<span class="go">41     0.41    188   9956  0.018883</span>
+<span class="go">42     0.42    230   9956  0.023102</span>
+<span class="go">43     0.43    197   9956  0.019787</span>
+<span class="go">44     0.44    224   9956  0.022499</span>
+<span class="go">45     0.45    184   9956  0.018481</span>
+<span class="go">46     0.46    198   9956  0.019888</span>
+<span class="go">47     0.47    187   9956  0.018783</span>
+<span class="go">48     0.48    200   9956  0.020088</span>
+<span class="go">49     0.49    194   9956  0.019486</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../readers/index.html" class="btn btn-neutral float-left" title="pyranges.readers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../stats/index.html" class="btn btn-neutral float-right" title="pyranges.stats" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Endre Bakken Stovner and Marco Mariotti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

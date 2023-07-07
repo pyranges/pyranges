@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How-to-book &mdash; pyranges  0.0.124 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="autoapi/index.html" />
+    <link rel="prev" title="Tutorial of PyRanges" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyranges
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial of PyRanges</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How-to-book</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-to-pyranges">Introduction to PyRanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-creating-pyranges">Loading/Creating PyRanges</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-a-dataframe">Using a DataFrame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-constructor-keywords">Using constructor keywords</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-read-bed-read-gtf-read-gff3-or-read-bam">Using read_bed, read_gtf, read_gff3 or read_bam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-from-dict">Using from_dict</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-pyranges-to-disk">Writing PyRanges to disk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inspecting-pyranges">Inspecting PyRanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accessing-data">Accessing data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#selecting-rows">Selecting rows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selecting-columns">Selecting columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#obtaining-sequences">Obtaining sequences</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#operating-with-data">Operating with data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overlapping-and-matching-pyranges">Overlapping and matching PyRanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary-statistics">Summary statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#computing-with-pyranges">Computing with PyRanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#working-at-the-transcript-level">Working at the transcript level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fetching-external-gene-tracks">Fetching external gene tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rles-run-length-encodings">RLEs: run length encodings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyranges</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">How-to-book</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/how_to_book.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="how-to-book">
+<h1><a class="toc-backref" href="#id1" role="doc-backlink">How-to-book</a><a class="headerlink" href="#how-to-book" title="Permalink to this heading"></a></h1>
+<section id="introduction-to-pyranges">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Introduction to PyRanges</a><a class="headerlink" href="#introduction-to-pyranges" title="Permalink to this heading"></a></h2>
+<p>This is the PyRanges tutorial. For docs, see: <cite>https://pyranges.readthedocs.io/en/latest/</cite></p>
+<nav class="contents" id="contents-of-how-to-pages">
+<p class="topic-title">Contents of How-to pages</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#how-to-book" id="id1">How-to-book</a></p>
+<ul>
+<li><p><a class="reference internal" href="#introduction-to-pyranges" id="id2">Introduction to PyRanges</a></p></li>
+<li><p><a class="reference internal" href="#loading-creating-pyranges" id="id3">Loading/Creating PyRanges</a></p>
+<ul>
+<li><p><a class="reference internal" href="#using-a-dataframe" id="id4">Using a DataFrame</a></p></li>
+<li><p><a class="reference internal" href="#using-constructor-keywords" id="id5">Using constructor keywords</a></p></li>
+<li><p><a class="reference internal" href="#using-read-bed-read-gtf-read-gff3-or-read-bam" id="id6">Using read_bed, read_gtf, read_gff3 or read_bam</a></p></li>
+<li><p><a class="reference internal" href="#using-from-dict" id="id7">Using from_dict</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#writing-pyranges-to-disk" id="id8">Writing PyRanges to disk</a></p></li>
+<li><p><a class="reference internal" href="#inspecting-pyranges" id="id9">Inspecting PyRanges</a></p></li>
+<li><p><a class="reference internal" href="#accessing-data" id="id10">Accessing data</a></p>
+<ul>
+<li><p><a class="reference internal" href="#selecting-rows" id="id11">Selecting rows</a></p></li>
+<li><p><a class="reference internal" href="#selecting-columns" id="id12">Selecting columns</a></p></li>
+<li><p><a class="reference internal" href="#obtaining-sequences" id="id13">Obtaining sequences</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#operating-with-data" id="id14">Operating with data</a></p></li>
+<li><p><a class="reference internal" href="#overlapping-and-matching-pyranges" id="id15">Overlapping and matching PyRanges</a></p></li>
+<li><p><a class="reference internal" href="#summary-statistics" id="id16">Summary statistics</a></p></li>
+<li><p><a class="reference internal" href="#computing-with-pyranges" id="id17">Computing with PyRanges</a></p></li>
+<li><p><a class="reference internal" href="#working-at-the-transcript-level" id="id18">Working at the transcript level</a></p></li>
+<li><p><a class="reference internal" href="#fetching-external-gene-tracks" id="id19">Fetching external gene tracks</a></p></li>
+<li><p><a class="reference internal" href="#rles-run-length-encodings" id="id20">RLEs: run length encodings</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>PyRanges are collections of intervals that support comparison operations (like overlap and intersect) and other methods that are useful for genomic analyses. The ranges can have an arbitrary number of meta-data fields, i.e. columns associated with them.</p>
+<p>The data in PyRanges objects are stored in a pandas dataframe. This means the vast Python ecosystem for high-performance scientific computing is available to manipulate the data in PyRanges objects.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyranges</span> <span class="kn">import</span> <span class="n">PyRanges</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Chromosome Start End Score Strand</span>
+<span class="gp">... </span><span class="s2">chr1 4 7 23.8 +</span>
+<span class="gp">... </span><span class="s2">chr1 6 11 0.13 -</span>
+<span class="gp">... </span><span class="s2">chr2 0 14 42.42 +&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>df1 = pd.read_csv(StringIO(f1), sep=”s+”)
+gr1 = PyRanges(df1)</p>
+<p>Now we can subset the PyRange in various ways:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End |       Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) |   (float64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+-------------+--------------|</span>
+<span class="go">| chr1         |         4 |         7 |       23.8  | +            |</span>
+<span class="go">| chr1         |         6 |        11 |        0.13 | -            |</span>
+<span class="go">| chr2         |         0 |        14 |       42.42 | +            |</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="p">[</span><span class="s2">&quot;chr1&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End |       Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) |   (float64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+-------------+--------------|</span>
+<span class="go">| chr1         |         4 |         7 |        23.8 | +            |</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="p">[</span><span class="s2">&quot;chr1&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End |       Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) |   (float64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+-------------+--------------|</span>
+<span class="go">| chr1         |         6 |        11 |        0.13 | -            |</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="o">.</span><span class="n">Score</span><span class="p">)</span>
+<span class="go">0    23.80</span>
+<span class="go">1     0.13</span>
+<span class="go">2    42.42</span>
+<span class="go">Name: Score, dtype: float64</span>
+</pre></div>
+</div>
+<p>And we can perform comparison operations with two PyRanges:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Chromosome Start End Score Strand</span>
+<span class="gp">... </span><span class="s2">chr1 5 6 -0.01 -</span>
+<span class="gp">... </span><span class="s2">chr1 9 12 200 +</span>
+<span class="gp">... </span><span class="s2">chr3 0 14 21.21 -&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">f2</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;\s+&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr2</span> <span class="o">=</span> <span class="n">PyRanges</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr2</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End |       Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) |   (float64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+-------------+--------------|</span>
+<span class="go">| chr1         |         9 |        12 |      200    | +            |</span>
+<span class="go">| chr1         |         5 |         6 |       -0.01 | -            |</span>
+<span class="go">| chr3         |         0 |        14 |       21.21 | -            |</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">gr2</span><span class="p">,</span> <span class="n">strandedness</span><span class="o">=</span><span class="s2">&quot;opposite&quot;</span><span class="p">))</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End |       Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) |   (float64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+-------------+--------------|</span>
+<span class="go">| chr1         |         5 |         6 |       23.8  | +            |</span>
+<span class="go">| chr1         |         9 |        11 |        0.13 | -            |</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">gr2</span><span class="p">,</span> <span class="n">strandedness</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End |       Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) |   (float64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+-------------+--------------|</span>
+<span class="go">| chr1         |         5 |         6 |       23.8  | +            |</span>
+<span class="go">| chr1         |         9 |        11 |        0.13 | -            |</span>
+<span class="go">+--------------+-----------+-----------+-------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>There are also convenience methods for single PyRanges:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="o">.</span><span class="n">merge</span><span class="p">())</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------|</span>
+<span class="go">| chr1         |         4 |         7 | +            |</span>
+<span class="go">| chr1         |         6 |        11 | -            |</span>
+<span class="go">| chr2         |         0 |        14 | +            |</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The underlying dataframe can always be accessed:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr1</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+<span class="go">      Chromosome  Start  End  Score Strand</span>
+<span class="go">0       chr1      4    7  23.80      +</span>
+<span class="go">1       chr1      6   11   0.13      -</span>
+<span class="go">2       chr2      0   14  42.42      +</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-creating-pyranges">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Loading/Creating PyRanges</a><a class="headerlink" href="#loading-creating-pyranges" title="Permalink to this heading"></a></h2>
+<p>A PyRanges object can be built in four ways:</p>
+<ol class="arabic simple">
+<li><p>from a Pandas dataframe</p></li>
+<li><p>using the PyRanges constructor with the chromosomes, starts and ends (and optionally strands), individually.</p></li>
+<li><p>using one of the custom reader functions for genomic data (read_bed, read_bam or read_gtf, read_gff3)</p></li>
+<li><p>from a dict (like the ones produced with to_example)</p></li>
+</ol>
+<section id="using-a-dataframe">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Using a DataFrame</a><a class="headerlink" href="#using-a-dataframe" title="Permalink to this heading"></a></h3>
+<p>If you instantiate a PyRanges object from a dataframe, it should at least contain the columns Chromosome, Start and End. A column called Strand is optional. Any other columns in the dataframe are treated as metadata.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chipseq</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_example_path</span><span class="p">(</span><span class="s2">&quot;chipseq.bed&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">chipseq</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="s2">&quot;Chromosome Start End Name Score Strand&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">      Chromosome      Start        End Name  Score Strand</span>
+<span class="go">0       chr8   28510032   28510057   U0      0      -</span>
+<span class="go">1       chr7  107153363  107153388   U0      0      -</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">      Chromosome      Start        End Name  Score Strand</span>
+<span class="go">9998       chr1  194245558  194245583   U0      0      +</span>
+<span class="go">9999       chr8   57916061   57916086   U0      0      +</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="using-constructor-keywords">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Using constructor keywords</a><a class="headerlink" href="#using-constructor-keywords" title="Permalink to this heading"></a></h3>
+<p>The other way to instantiate a PyRanges object is to use the constructor with keywords:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">chromosomes</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">Chromosome</span><span class="p">,</span> <span class="n">starts</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">Start</span><span class="p">,</span> <span class="n">ends</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">| Chromosome   | Start     | End       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   |</span>
+<span class="go">|--------------+-----------+-----------|</span>
+<span class="go">| chr1         | 100079649 | 100079674 |</span>
+<span class="go">| chr1         | 212609534 | 212609559 |</span>
+<span class="go">| chr1         | 223587418 | 223587443 |</span>
+<span class="go">| chr1         | 202450161 | 202450186 |</span>
+<span class="go">| ...          | ...       | ...       |</span>
+<span class="go">| chrY         | 11942770  | 11942795  |</span>
+<span class="go">| chrY         | 8316773   | 8316798   |</span>
+<span class="go">| chrY         | 7463444   | 7463469   |</span>
+<span class="go">| chrY         | 7405376   | 7405401   |</span>
+<span class="go">+--------------+-----------+-----------+</span>
+<span class="go">Unstranded PyRanges object has 10,000 rows and 3 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome.</span>
+</pre></div>
+</div>
+<p>It is possible to make PyRanges objects out of basic Python datatypes:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">chromosomes</span><span class="o">=</span><span class="s2">&quot;chr1&quot;</span><span class="p">,</span> <span class="n">strands</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">starts</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ends</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------|</span>
+<span class="go">| chr1         |         0 |         3 | +            |</span>
+<span class="go">| chr1         |         1 |         4 | +            |</span>
+<span class="go">| chr1         |         2 |         5 | +            |</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 4 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">PyRanges</span><span class="p">(</span><span class="n">chromosomes</span><span class="o">=</span><span class="s2">&quot;chr1 chr2 chr3&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">strands</span><span class="o">=</span><span class="s2">&quot;+ - +&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">starts</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ends</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------|</span>
+<span class="go">| chr1         |         0 |         3 | +            |</span>
+<span class="go">| chr2         |         1 |         4 | -            |</span>
+<span class="go">| chr3         |         2 |         5 | +            |</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 4 columns from 3 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+</section>
+<section id="using-read-bed-read-gtf-read-gff3-or-read-bam">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Using read_bed, read_gtf, read_gff3 or read_bam</a><a class="headerlink" href="#using-read-bed-read-gtf-read-gff3-or-read-bam" title="Permalink to this heading"></a></h3>
+<p>The pyranges library can create PyRanges from gff3 common file formats, namely gtf/gff, gff3, bed and bam ^.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ensembl_path</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_example_path</span><span class="p">(</span><span class="s2">&quot;ensembl.gtf&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">read_gtf</span><span class="p">(</span><span class="n">ensembl_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr</span><span class="p">)</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature      | Start     | End       | Score      | +20   |</span>
+<span class="go">| (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | ...   |</span>
+<span class="go">|--------------+------------+--------------+-----------+-----------+------------+-------|</span>
+<span class="go">| 1            | havana     | gene         | 11868     | 14409     | .          | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 11868     | 14409     | .          | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 11868     | 12227     | .          | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 12612     | 12721     | .          | ...   |</span>
+<span class="go">| ...          | ...        | ...          | ...       | ...       | ...        | ...   |</span>
+<span class="go">| 1            | ensembl    | transcript   | 120724    | 133723    | .          | ...   |</span>
+<span class="go">| 1            | ensembl    | exon         | 133373    | 133723    | .          | ...   |</span>
+<span class="go">| 1            | ensembl    | exon         | 129054    | 129223    | .          | ...   |</span>
+<span class="go">| 1            | ensembl    | exon         | 120873    | 120932    | .          | ...   |</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+-------+</span>
+<span class="go">Stranded PyRanges object has 95 rows and 26 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">20 hidden columns: Strand, Frame, gene_id, gene_version, gene_name, gene_source, gene_biotype, ... (+ 13 more.)</span>
+</pre></div>
+</div>
+<p>To read bam files the optional bamread-library must be installed. Use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">bioconda</span> <span class="n">bamread</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">bamread</span>
+</pre></div>
+</div>
+<p>to install it</p>
+<p>read_bam takes the arguments <code class="docutils literal notranslate"><span class="pre">sparse</span></code>, <code class="docutils literal notranslate"><span class="pre">mapq</span></code>, <code class="docutils literal notranslate"><span class="pre">required_flag</span></code>, <code class="docutils literal notranslate"><span class="pre">filter_flag</span></code>, which have the default values True, 0, 0 and 1540, respectively. With sparse True, only the columns <code class="docutils literal notranslate"><span class="pre">['Chromosome',</span> <span class="pre">'Start',</span> <span class="pre">'End',</span> <span class="pre">'Strand',</span> <span class="pre">'Flag']</span></code> are fetched. Setting sparse to False additionally gives you the columns <code class="docutils literal notranslate"><span class="pre">['QueryStart',</span> <span class="pre">'QueryEnd',</span> <span class="pre">'Name',</span> <span class="pre">'Cigar',</span> <span class="pre">'Quality']</span></code>, but is more time and memory-consuming.
+All the reader functions also take the flag <code class="docutils literal notranslate"><span class="pre">as_df</span></code></p>
+</section>
+<section id="using-from-dict">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Using from_dict</a><a class="headerlink" href="#using-from-dict" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">f1</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f1</span><span class="o">.</span><span class="n">to_example</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">{&#39;Chromosome&#39;: [&#39;chr1&#39;, &#39;chr1&#39;, &#39;chr1&#39;], &#39;Start&#39;: [3, 8, 5], &#39;End&#39;: [6, 9, 7], &#39;Name&#39;: [&#39;interval1&#39;, &#39;interval3&#39;, &#39;interval2&#39;], &#39;Score&#39;: [0, 0, 0], &#39;Strand&#39;: [&#39;+&#39;, &#39;+&#39;, &#39;-&#39;]}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         |         3 |         6 | interval1  |         0 | +            |</span>
+<span class="go">| chr1         |         8 |         9 | interval3  |         0 | +            |</span>
+<span class="go">| chr1         |         5 |         7 | interval2  |         0 | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="writing-pyranges-to-disk">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Writing PyRanges to disk</a><a class="headerlink" href="#writing-pyranges-to-disk" title="Permalink to this heading"></a></h2>
+<p>The PyRanges can be written to several formats, namely csv, gtf, gff3 and bigwig.
+If no path-argument is given, the string representation of the data is returned. (It may potentially be very large.) If a path is given, the return value is the object itself. This way the write methods can easily be inserted in method call chains.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">to_gtf</span><span class="p">(</span><span class="s2">&quot;chipseq.gtf&quot;</span><span class="p">)</span>
+<span class="go"># file chipseq.gtf has been created</span>
+</pre></div>
+</div>
+<p>The to_csv method takes the arguments header and sep.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Label&#39;</span><span class="p">,</span> <span class="s1">&#39;Tag&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">chr1  212609534       212609559       U0      0       +</span>
+<span class="go">chr1  169887529       169887554       U0      0       +</span>
+<span class="go">chr1  216711011       216711036       U0      0       +</span>
+<span class="go">chr1  144227079       144227104       U0      0       +</span>
+<span class="go">chr1  148177825       148177850       U0      0       +</span>
+<span class="go">chr1  113486652       113486677       U0      0       +</span>
+<span class="go">chr1  27024083        27024108        U0      0       +</span>
+<span class="go">chr1  37865066        37865091        U0      0       +</span>
+</pre></div>
+</div>
+<p>All to-methods except to_bigwig takes an argument chain which can be set to True if you want the method to return the PyRanges it wrote. It is useful for storing the intermediate results of long call chains.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">f1</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">merge</span><span class="p">()</span><span class="o">...</span>
+</pre></div>
+</div>
+<p>The pyranges library can also create bigwigs, but it needs the library pybigwig which is not installed by default.
+Use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">bioconda</span> <span class="n">pybigwig</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pybigwig</span>
+</pre></div>
+</div>
+<p>to install it.</p>
+<p>The bigwig writer needs to know the chromosome sizes.
+You can fetch these using the pyranges database functions, a pyranges add-on that can be install with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">pip</span> <span class="n">install</span> <span class="n">pyranges_db</span><span class="p">:</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">gr</span><span class="o">.</span><span class="n">to_bigwig</span><span class="p">(</span><span class="s2">&quot;chipseq.bw&quot;</span><span class="p">,</span> <span class="n">chromsizes</span><span class="p">)</span>
+<span class="c1"># file chipseq.bw has been created</span>
+</pre></div>
+</div>
+<p>To create a bigwig from an arbitrary value column, use the value_col argument.
+If you want to write one bigwig for each strand, you need to do it manually.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_bigwig</span><span class="p">(</span><span class="s2">&quot;chipseq_plus.bw&quot;</span><span class="p">,</span> <span class="n">chromsizes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_bigwig</span><span class="p">(</span><span class="s2">&quot;chipseq_minus.bw&quot;</span><span class="p">,</span> <span class="n">chromsizes</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>to_bigwig also takes a flag <code class="docutils literal notranslate"><span class="pre">divide_by</span></code> which takes another PyRanges. Using divide_by creates a log2-normalized bigwig.</p>
+</section>
+<section id="inspecting-pyranges">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Inspecting PyRanges</a><a class="headerlink" href="#inspecting-pyranges" title="Permalink to this heading"></a></h2>
+<p>The PyRanges method print provides an overview of its data:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | U0         | 0         | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...          |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | 0         | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The same method is invoked under the hood anytime we request a string representation:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">gr</span><span class="p">))</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | U0         | 0         | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...          |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | 0         | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>As explained in the tutorial, PyRanges objects consist of collections of DataFrames, organized per chromosome (and strand, if Stranded). When printed, they are displayed as a continuous table, ordered by Chromosome (and strand).</p>
+<p>The window width affects the output of print: columns that do not fit are hidden. When this happens, a message is printed after the table:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">new_col</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">another_col</span> <span class="o">=</span> <span class="mi">99</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+-------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | +3    |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | ...   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+-------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | U0         | 0         | ...   |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...   |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | 0         | ...   |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+-------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">3 hidden columns: Strand, new_col, another_col</span>
+</pre></div>
+</div>
+<p>Only a limited number of rows are displayed, which are taken from the top and bottom of the table. This is 8 by default, and can be redefined through the first argument of print, named n:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+-------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | +3    |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | ...   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+-------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         | 0         | ...   |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...   |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | 0         | ...   |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+-------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">3 hidden columns: Strand, new_col, another_col</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+-------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | +3    |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | ...   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+-------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 148177825 | 148177850 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 113486652 | 113486677 | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 27024083  | 27024108  | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 37865066  | 37865091  | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 47488200  | 47488225  | U0         | 0         | ...   |</span>
+<span class="go">| chr1         | 197075093 | 197075118 | U0         | 0         | ...   |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...   |</span>
+<span class="go">| chrY         | 21707662  | 21707687  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 7761026   | 7761051   | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 22210637  | 22210662  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 14774053  | 14774078  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 16495497  | 16495522  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 7046809   | 7046834   | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | U0         | 0         | ...   |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | 0         | ...   |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+-------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">3 hidden columns: Strand, new_col, another_col</span>
+</pre></div>
+</div>
+<p>Argument formatting allows to fine-tune appearance. It takes a dictionary with any column name as key, and a string as value which follows the python format syntax:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">formatting</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;Score&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="gp">... </span>      <span class="s1">&#39;End&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">{:e}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="gp">... </span>      <span class="s1">&#39;Start&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">{:,}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="gp">... </span>      <span class="s1">&#39;Name&#39;</span><span class="p">:</span><span class="s1">&#39;name=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="gp">... </span>      <span class="p">})</span>
+<span class="go">+--------------+-------------+--------------+------------+-----------+-------+</span>
+<span class="go">| Chromosome   | Start       | End          | Name       | Score     | +3    |</span>
+<span class="go">| (category)   | (int32)     | (int32)      | (object)   | (int64)   | ...   |</span>
+<span class="go">|--------------+-------------+--------------+------------+-----------+-------|</span>
+<span class="go">| chr1         | 212,609,534 | 2.126096e+08 | name=U0    | 0.00      | ...   |</span>
+<span class="go">| chr1         | 169,887,529 | 1.698876e+08 | name=U0    | 0.00      | ...   |</span>
+<span class="go">| chr1         | 216,711,011 | 2.167110e+08 | name=U0    | 0.00      | ...   |</span>
+<span class="go">| chr1         | 144,227,079 | 1.442271e+08 | name=U0    | 0.00      | ...   |</span>
+<span class="go">| ...          | ...         | ...          | ...        | ...       | ...   |</span>
+<span class="go">| chrY         | 15,224,235  | 1.522426e+07 | name=U0    | 0.00      | ...   |</span>
+<span class="go">| chrY         | 13,517,892  | 1.351792e+07 | name=U0    | 0.00      | ...   |</span>
+<span class="go">| chrY         | 8,010,951   | 8.010976e+06 | name=U0    | 0.00      | ...   |</span>
+<span class="go">| chrY         | 7,405,376   | 7.405401e+06 | name=U0    | 0.00      | ...   |</span>
+<span class="go">+--------------+-------------+--------------+------------+-----------+-------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">3 hidden columns: Strand, new_col, another_col</span>
+</pre></div>
+</div>
+<p>PyRanges columns are pandas Series, and they may be of different data types. The types  are shown in the header shown with print (see above). To see them all, use property dtypes:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">dtypes</span>
+<span class="go">Chromosome     category</span>
+<span class="go">Start             int32</span>
+<span class="go">End               int32</span>
+<span class="go">Name             object</span>
+<span class="go">Score             int64</span>
+<span class="go">Strand         category</span>
+<span class="go">new_col          object</span>
+<span class="go">another_col       int64</span>
+<span class="go">dtype: object</span>
+</pre></div>
+</div>
+<p>If you want to inspect more information from a PyRanges object, remember that you can always transform it into a pandas DataFrame, which gives access to all its methods. For example, you may employ pandas info and describe:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="go">RangeIndex: 10000 entries, 0 to 9999</span>
+<span class="go">Data columns (total 8 columns):</span>
+<span class="go">    Column       Non-Null Count  Dtype</span>
+<span class="go"> ---  ------       --------------  -----</span>
+<span class="go"> 0   Chromosome   10000 non-null  category</span>
+<span class="go"> 1   Start        10000 non-null  int32</span>
+<span class="go"> 2   End          10000 non-null  int32</span>
+<span class="go"> 3   Name         10000 non-null  object</span>
+<span class="go"> 4   Score        10000 non-null  int64</span>
+<span class="go"> 5   Strand       10000 non-null  category</span>
+<span class="go"> 6   new_col      10000 non-null  object</span>
+<span class="go"> 7   another_col  10000 non-null  int64</span>
+<span class="go"> dtypes: category(2), int32(2), int64(2), object(2)</span>
+<span class="go"> memory usage: 411.1+ KB</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="go">      Start           End    Score  another_col</span>
+<span class="go">count  1.000000e+04  1.000000e+04  10000.0      10000.0</span>
+<span class="go">mean   8.087570e+07  8.087573e+07      0.0         99.0</span>
+<span class="go">std    5.572825e+07  5.572825e+07      0.0          0.0</span>
+<span class="go">min    1.361100e+04  1.363600e+04      0.0         99.0</span>
+<span class="go">25%    3.550257e+07  3.550260e+07      0.0         99.0</span>
+<span class="go">50%    7.030672e+07  7.030674e+07      0.0         99.0</span>
+<span class="go">75%    1.167902e+08  1.167902e+08      0.0         99.0</span>
+<span class="go">max    2.471349e+08  2.471349e+08      0.0         99.0</span>
+</pre></div>
+</div>
+</section>
+<section id="accessing-data">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Accessing data</a><a class="headerlink" href="#accessing-data" title="Permalink to this heading"></a></h2>
+<section id="selecting-rows">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Selecting rows</a><a class="headerlink" href="#selecting-rows" title="Permalink to this heading"></a></h3>
+<p>As seen in the tutorial, PyRanges provides various ways to select a subset of rows. All of these methods return a (smaller) copy of the original object.</p>
+<p>One way is to index <strong>by genomic region</strong>, which may take any of the following syntaxes:</p>
+<ul class="simple">
+<li><p>chromosome</p></li>
+<li><p>chromosome, position slice</p></li>
+<li><p>chromosome, strand, position slice</p></li>
+</ul>
+<p>Here’s one example for each:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyranges</span> <span class="k">as</span> <span class="nn">pr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span><span class="s1">&#39;chrX&#39;</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chrX         | 13843759  | 13843784  | U0         | 0         | +            |</span>
+<span class="go">| chrX         | 114673546 | 114673571 | U0         | 0         | +            |</span>
+<span class="go">| chrX         | 131816774 | 131816799 | U0         | 0         | +            |</span>
+<span class="go">| chrX         | 45504745  | 45504770  | U0         | 0         | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...          |</span>
+<span class="go">| chrX         | 146694149 | 146694174 | U0         | 0         | -            |</span>
+<span class="go">| chrX         | 5044527   | 5044552   | U0         | 0         | -            |</span>
+<span class="go">| chrX         | 15281263  | 15281288  | U0         | 0         | -            |</span>
+<span class="go">| chrX         | 120273723 | 120273748 | U0         | 0         | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 282 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">:</span><span class="mi">3000000</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         |   1541598 |   1541623 | U0         |         0 | +            |</span>
+<span class="go">| chr1         |   1599121 |   1599146 | U0         |         0 | +            |</span>
+<span class="go">| chr1         |   1325303 |   1325328 | U0         |         0 | -            |</span>
+<span class="go">| chr1         |   1820285 |   1820310 | U0         |         0 | -            |</span>
+<span class="go">| chr1         |   2448322 |   2448347 | U0         |         0 | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">:</span><span class="mi">3000000</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         |   1325303 |   1325328 | U0         |         0 | -            |</span>
+<span class="go">| chr1         |   1820285 |   1820310 | U0         |         0 | -            |</span>
+<span class="go">| chr1         |   2448322 |   2448347 | U0         |         0 | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Simple forms of row selection are done through methods <strong>head</strong> and <strong>tail</strong>, which return the top or bottom N rows, respectively, where N is 8 by default:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         |         0 | +            |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | U0         |         0 | +            |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | U0         |         0 | +            |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | U0         |         0 | +            |</span>
+<span class="go">| chr1         | 148177825 | 148177850 | U0         |         0 | +            |</span>
+<span class="go">| chr1         | 113486652 | 113486677 | U0         |         0 | +            |</span>
+<span class="go">| chr1         |  27024083 |  27024108 | U0         |         0 | +            |</span>
+<span class="go">| chr1         |  37865066 |  37865091 | U0         |         0 | +            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chrY         |  22210637 |  22210662 | U0         |         0 | -            |</span>
+<span class="go">| chrY         |  14774053 |  14774078 | U0         |         0 | -            |</span>
+<span class="go">| chrY         |  16495497 |  16495522 | U0         |         0 | -            |</span>
+<span class="go">| chrY         |   7046809 |   7046834 | U0         |         0 | -            |</span>
+<span class="go">| chrY         |  15224235 |  15224260 | U0         |         0 | -            |</span>
+<span class="go">| chrY         |  13517892 |  13517917 | U0         |         0 | -            |</span>
+<span class="go">| chrY         |   8010951 |   8010976 | U0         |         0 | -            |</span>
+<span class="go">| chrY         |   7405376 |   7405401 | U0         |         0 | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The most important form of row selection is by <strong>indexing with a boolean Series</strong>. This is typically generated from a column through a comparison operator. Let’s see it with some other example data:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |</span>
+<span class="go">| chr1         |      9953 |     10152 | H3K27me3   |         5 | +            |</span>
+<span class="go">| chr1         |     10024 |     10223 | H3K27me3   |         1 | +            |</span>
+<span class="go">| chr1         |     10246 |     10445 | H3K27me3   |         4 | +            |</span>
+<span class="go">| chr1         |    110246 |    110445 | H3K27me3   |         1 | +            |</span>
+<span class="go">| chr1         |      9916 |     10115 | H3K27me3   |         5 | -            |</span>
+<span class="go">| chr1         |      9951 |     10150 | H3K27me3   |         8 | -            |</span>
+<span class="go">| chr1         |      9978 |     10177 | H3K27me3   |         7 | -            |</span>
+<span class="go">| chr1         |     10001 |     10200 | H3K27me3   |         5 | -            |</span>
+<span class="go">| chr1         |     10127 |     10326 | H3K27me3   |         1 | -            |</span>
+<span class="go">| chr1         |     10241 |     10440 | H3K27me3   |         6 | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Below, we produce a boolean Series:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span><span class="o">.</span><span class="n">Score</span> <span class="o">&gt;</span> <span class="mi">5</span>
+<span class="go">1      True</span>
+<span class="go">3     False</span>
+<span class="go">6     False</span>
+<span class="go">9     False</span>
+<span class="go">10    False</span>
+<span class="go">0     False</span>
+<span class="go">2      True</span>
+<span class="go">4      True</span>
+<span class="go">5     False</span>
+<span class="go">7     False</span>
+<span class="go">8      True</span>
+<span class="go">Name: Score, dtype: bool</span>
+</pre></div>
+</div>
+<p>And we use it to select the rows in which the column Score has a value greater than 5:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span><span class="p">[</span><span class="n">gg</span><span class="o">.</span><span class="n">Score</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |</span>
+<span class="go">| chr1         |      9951 |     10150 | H3K27me3   |         8 | -            |</span>
+<span class="go">| chr1         |      9978 |     10177 | H3K27me3   |         7 | -            |</span>
+<span class="go">| chr1         |     10241 |     10440 | H3K27me3   |         6 | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>As pandas users know, these logical operators can be employed with boolean Series:</p>
+<ul class="simple">
+<li><p>“&amp;” =  element-wise AND operator</p></li>
+<li><p>“|” = element-wise OR operator</p></li>
+<li><p>“~” = NOT operator, inverts the values of the Series on its right</p></li>
+</ul>
+<p>When using logical operators, make sure to parenthesize properly.</p>
+<p>Let’s get the + intervals with Score 1 starting before 12,000 or ending after 100,000:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span><span class="p">[</span>
+<span class="gp">... </span>   <span class="p">(</span><span class="n">gg</span><span class="o">.</span><span class="n">Score</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="gp">... </span>   <span class="p">(</span><span class="n">gg</span><span class="o">.</span><span class="n">Strand</span><span class="o">==</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="gp">... </span>   <span class="p">((</span><span class="n">gg</span><span class="o">.</span><span class="n">Start</span><span class="o">&lt;</span><span class="mi">12000</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">gg</span><span class="o">.</span><span class="n">End</span><span class="o">&gt;</span><span class="mi">100000</span><span class="p">))</span>
+<span class="gp">... </span>   <span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         |     10024 |     10223 | H3K27me3   |         1 | +            |</span>
+<span class="go">| chr1         |    110246 |    110445 | H3K27me3   |         1 | +            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Let’s invert the selection, i.e. taking all intervals that do not fit the above criteria:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span><span class="p">[</span><span class="o">~</span><span class="p">(</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">gg</span><span class="o">.</span><span class="n">Score</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">gg</span><span class="o">.</span><span class="n">Strand</span><span class="o">==</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="gp">... </span>     <span class="p">((</span><span class="n">gg</span><span class="o">.</span><span class="n">Start</span><span class="o">&lt;</span><span class="mi">12000</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">gg</span><span class="o">.</span><span class="n">End</span><span class="o">&gt;</span><span class="mi">100000</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span>   <span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |</span>
+<span class="go">| chr1         | 9953      | 10152     | H3K27me3   | 5         | +            |</span>
+<span class="go">| chr1         | 10246     | 10445     | H3K27me3   | 4         | +            |</span>
+<span class="go">| chr1         | 9916      | 10115     | H3K27me3   | 5         | -            |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...          |</span>
+<span class="go">| chr1         | 9978      | 10177     | H3K27me3   | 7         | -            |</span>
+<span class="go">| chr1         | 10001     | 10200     | H3K27me3   | 5         | -            |</span>
+<span class="go">| chr1         | 10127     | 10326     | H3K27me3   | 1         | -            |</span>
+<span class="go">| chr1         | 10241     | 10440     | H3K27me3   | 6         | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 9 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Another way to select rows is <strong>the subset method</strong>, for which you provide a function which is then applied to each DataFrame of the collection, and which must return a boolean Series. Typically, you define a lambda function on-the-fly:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># the following is equivalent to</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span><span class="p">[</span><span class="n">gg</span><span class="o">.</span><span class="n">Score</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">Score</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]))</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | Name       |     Score | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         |     10246 |     10445 | H3K27me3   |         4 | +            |</span>
+<span class="go">| chr1         |     10241 |     10440 | H3K27me3   |         6 | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The method <em>subset</em> is suited for complex pandas operations, and it is also useful in method call chains.</p>
+<p>Lastly, a fairly specific form of row selection is <strong>drop_duplicate_positions</strong>, which gets rid of interval with the same coordinates:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="s2">&quot;Strand&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span><span class="s2">&quot;-&quot;</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID         |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------|</span>
+<span class="go">|            1 |         1 |         4 | +            | a          |</span>
+<span class="go">|            1 |         1 |         4 | +            | b          |</span>
+<span class="go">|            1 |         2 |         9 | +            | c          |</span>
+<span class="go">|            2 |         1 |         4 | +            | d          |</span>
+<span class="go">|            2 |         8 |        12 | -            | e          |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">drop_duplicate_positions</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID         |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------|</span>
+<span class="go">|            1 |         1 |         4 | +            | a          |</span>
+<span class="go">|            1 |         2 |         9 | +            | c          |</span>
+<span class="go">|            2 |         1 |         4 | +            | d          |</span>
+<span class="go">|            2 |         8 |        12 | -            | e          |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+</span>
+<span class="go">Stranded PyRanges object has 4 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Normally, the first instance of duplicated intervals is retained. Through argument keep=False, you can decide to remove them all:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">drop_duplicate_positions</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+</span>
+<span class="go">|   Chromosome |     Start |       End | Strand       | ID         |</span>
+<span class="go">|   (category) |   (int32) |   (int32) | (category)   | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------+------------|</span>
+<span class="go">|            1 |         2 |         9 | +            | c          |</span>
+<span class="go">|            2 |         1 |         4 | +            | d          |</span>
+<span class="go">|            2 |         8 |        12 | -            | e          |</span>
+<span class="go">+--------------+-----------+-----------+--------------+------------+</span>
+<span class="go">Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+</section>
+<section id="selecting-columns">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Selecting columns</a><a class="headerlink" href="#selecting-columns" title="Permalink to this heading"></a></h3>
+<p>As previously seen, single PyRanges column (which are pandas Series) can be extracted through the dot notation:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">chipseq</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">Chromosome</span>
+<span class="go">18      chr1</span>
+<span class="go">70      chr1</span>
+<span class="go">129     chr1</span>
+<span class="go">170     chr1</span>
+<span class="go">196     chr1</span>
+<span class="go">      ...</span>
+<span class="go">3023    chrY</span>
+<span class="go">3131    chrY</span>
+<span class="go">3816    chrY</span>
+<span class="go">3897    chrY</span>
+<span class="go">9570    chrY</span>
+<span class="go">Name: Chromosome, Length: 10000, dtype: category</span>
+<span class="go">Categories (24, object): [&#39;chr1&#39;, &#39;chr10&#39;, &#39;chr11&#39;, &#39;chr12&#39;, ..., &#39;chr8&#39;, &#39;chr9&#39;, &#39;chrX&#39;, &#39;chrY&#39;]</span>
+</pre></div>
+</div>
+<p>The same syntax can be used for the core PyRanges columns (Chromosome, Strand, Start, End) or for metadata columns:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">Name</span>
+<span class="go">18      U0</span>
+<span class="go">70      U0</span>
+<span class="go">129     U0</span>
+<span class="go">170     U0</span>
+<span class="go">196     U0</span>
+<span class="go">      ...</span>
+<span class="go">3023    U0</span>
+<span class="go">3131    U0</span>
+<span class="go">3816    U0</span>
+<span class="go">3897    U0</span>
+<span class="go">9570    U0</span>
+<span class="go">Name: Name, Length: 10000, dtype: object</span>
+</pre></div>
+</div>
+<p>This syntax is analogous to pandas Dataframes. Note that, however, the bracket column selection in pandas does not work in the same way in PyRanges:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">=</span><span class="n">gr</span><span class="o">.</span><span class="n">df</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;End&#39;</span><span class="p">]</span>
+<span class="go">0       212609559</span>
+<span class="go">1       169887554</span>
+<span class="go">2       216711036</span>
+<span class="go">3       144227104</span>
+<span class="go">4       148177850</span>
+<span class="go">        ...</span>
+<span class="go">9995      7046834</span>
+<span class="go">9996     15224260</span>
+<span class="go">9997     13517917</span>
+<span class="go">9998      8010976</span>
+<span class="go">9999      7405401</span>
+<span class="go">Name: End, Length: 10000, dtype: int32</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span><span class="s1">&#39;End&#39;</span><span class="p">]</span>
+<span class="go">Empty PyRanges</span>
+</pre></div>
+</div>
+<p>Because the last expression is evaluated as a genomic region, i.e. a form of row selection: it is searching for intervals on a Chromosome named “End”, and finds none. Indeed, this fetches intervals on the chrY:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span><span class="s1">&#39;chrY&#39;</span><span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chrY         | 12930373  | 12930398  | U0         | 0         | +            |</span>
+<span class="go">| chrY         | 15548022  | 15548047  | U0         | 0         | +            |</span>
+<span class="go">| chrY         | 7194340   | 7194365   | U0         | 0         | +            |</span>
+<span class="go">| chrY         | 21559181  | 21559206  | U0         | 0         | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...          |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | 0         | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 23 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>You can provide a list of column names in the bracket notation to select those columns. Pyranges will still return a PyRanges object, therefore retaining the core columns regardless of whether they were selected or not:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="p">[</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+--------------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         | +            |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | U0         | +            |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | U0         | +            |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | U0         | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...          |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | U0         | -            |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | U0         | -            |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | U0         | -            |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>This is convenient to reduce genome annotation that consists of many columns:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ensembl_path</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_example_path</span><span class="p">(</span><span class="s2">&quot;ensembl.gtf&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ge</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">read_gtf</span><span class="p">(</span><span class="n">ensembl_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ge</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+-------+</span>
+<span class="go">| Chromosome   | Source     | Feature      | Start     | End       | Score      | +20   |</span>
+<span class="go">| (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | ...   |</span>
+<span class="go">|--------------+------------+--------------+-----------+-----------+------------+-------|</span>
+<span class="go">| 1            | havana     | gene         | 11868     | 14409     | .          | ...   |</span>
+<span class="go">| 1            | havana     | transcript   | 11868     | 14409     | .          | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 11868     | 12227     | .          | ...   |</span>
+<span class="go">| 1            | havana     | exon         | 12612     | 12721     | .          | ...   |</span>
+<span class="go">| ...          | ...        | ...          | ...       | ...       | ...        | ...   |</span>
+<span class="go">| 1            | ensembl    | transcript   | 120724    | 133723    | .          | ...   |</span>
+<span class="go">| 1            | ensembl    | exon         | 133373    | 133723    | .          | ...   |</span>
+<span class="go">| 1            | ensembl    | exon         | 129054    | 129223    | .          | ...   |</span>
+<span class="go">| 1            | ensembl    | exon         | 120873    | 120932    | .          | ...   |</span>
+<span class="go">+--------------+------------+--------------+-----------+-----------+------------+-------+</span>
+<span class="go">Stranded PyRanges object has 95 rows and 26 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">      20 hidden columns: Strand, Frame, gene_id, gene_version, gene_name, gene_source, gene_biotype, ... (+ 13 more.)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ge</span><span class="p">[</span> <span class="p">[</span><span class="s1">&#39;gene_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_name&#39;</span><span class="p">]</span> <span class="p">]</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------------+-------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       | gene_id         | gene_name   |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   | (object)        | (object)    |</span>
+<span class="go">|--------------+-----------+-----------+--------------+-----------------+-------------|</span>
+<span class="go">| 1            | 11868     | 14409     | +            | ENSG00000223972 | DDX11L1     |</span>
+<span class="go">| 1            | 11868     | 14409     | +            | ENSG00000223972 | DDX11L1     |</span>
+<span class="go">| 1            | 11868     | 12227     | +            | ENSG00000223972 | DDX11L1     |</span>
+<span class="go">| 1            | 12612     | 12721     | +            | ENSG00000223972 | DDX11L1     |</span>
+<span class="go">| ...          | ...       | ...       | ...          | ...             | ...         |</span>
+<span class="go">| 1            | 120724    | 133723    | -            | ENSG00000238009 | AL627309.1  |</span>
+<span class="go">| 1            | 133373    | 133723    | -            | ENSG00000238009 | AL627309.1  |</span>
+<span class="go">| 1            | 129054    | 129223    | -            | ENSG00000238009 | AL627309.1  |</span>
+<span class="go">| 1            | 120873    | 120932    | -            | ENSG00000238009 | AL627309.1  |</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------------+-------------+</span>
+<span class="go">Stranded PyRanges object has 95 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>The <strong>drop method</strong> is an alternative way of column selection wherein we specify what we want to remove, rather than what to keep:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Name       | Score     | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+-----------+--------------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | U0         | 0         | +            |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | U0         | 0         | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...        | ...       | ...          |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | U0         | 0         | -            |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | U0         | 0         | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+<span class="go">+--------------+-----------+-----------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Score     | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (int64)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+-----------+--------------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | 0         | +            |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | 0         | +            |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | 0         | +            |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | 0         | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...       | ...          |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | 0         | -            |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | 0         | -            |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | 0         | -            |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | 0         | -            |</span>
+<span class="go">+--------------+-----------+-----------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 5 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Without arguments, drop will get rid of all non-core columns:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">| Chromosome   | Start     | End       | Strand       |</span>
+<span class="go">| (category)   | (int32)   | (int32)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+--------------|</span>
+<span class="go">| chr1         | 212609534 | 212609559 | +            |</span>
+<span class="go">| chr1         | 169887529 | 169887554 | +            |</span>
+<span class="go">| chr1         | 216711011 | 216711036 | +            |</span>
+<span class="go">| chr1         | 144227079 | 144227104 | +            |</span>
+<span class="go">| ...          | ...       | ...       | ...          |</span>
+<span class="go">| chrY         | 15224235  | 15224260  | -            |</span>
+<span class="go">| chrY         | 13517892  | 13517917  | -            |</span>
+<span class="go">| chrY         | 8010951   | 8010976   | -            |</span>
+<span class="go">| chrY         | 7405376   | 7405401   | -            |</span>
+<span class="go">+--------------+-----------+-----------+--------------+</span>
+<span class="go">Stranded PyRanges object has 10,000 rows and 4 columns from 24 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>If you want to obtain a DataFrame with certain columns rather than a PyRanges object, get a DataFrame copy through the df property, then perform pandas-style column selection. Obviously, in this case core columns are returned only if explicitly selected:</p>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gr</span><span class="o">.</span><span class="n">df</span> <span class="p">[</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Start&#39;</span><span class="p">]</span> <span class="p">]</span>
+<span class="go">     Name      Start</span>
+<span class="go">0      U0  212609534</span>
+<span class="go">1      U0  169887529</span>
+<span class="go">2      U0  216711011</span>
+<span class="go">3      U0  144227079</span>
+<span class="go">4      U0  148177825</span>
+<span class="go">...   ...        ...</span>
+<span class="go">9995   U0    7046809</span>
+<span class="go">9996   U0   15224235</span>
+<span class="go">9997   U0   13517892</span>
+<span class="go">9998   U0    8010951</span>
+<span class="go">9999   U0    7405376</span>
+</pre></div>
+</div>
+<p>[10000 rows x 2 columns]</p>
+</div></blockquote>
+</section>
+<section id="obtaining-sequences">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Obtaining sequences</a><a class="headerlink" href="#obtaining-sequences" title="Permalink to this heading"></a></h3>
+<p>A common operation is to fetch the sequences corresponding to the intervals represented in the PyRanges object. Function <code class="docutils literal notranslate"><span class="pre">get_sequence</span></code> takes as input a PyRanges object and the path to a fasta file, and returns a Series containing sequences, in the same order as the intervals. It requires package pyfaidx (install with pip install pyfaidx).</p>
+<p>In the tutorial, we saw its usage with a real genome. Let’s make a toy example here:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;minigenome.fa&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fw</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">fw</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&gt;chrZ</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">fw</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;AAAGGGCCCTTTAAAGGGCCCTTTAAAGGGCCCTTT</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;chrZ&quot;</span><span class="p">,</span> <span class="s2">&quot;chrZ&quot;</span><span class="p">,</span> <span class="s2">&quot;chrZ&quot;</span><span class="p">,</span> <span class="s2">&quot;chrZ&quot;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;name&quot;</span><span class="p">:[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;Strand&quot;</span><span class="p">:[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">]</span> <span class="p">})</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | name       | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+--------------|</span>
+<span class="go">| chrZ         |         0 |         3 | a          | +            |</span>
+<span class="go">| chrZ         |         5 |         8 | a          | +            |</span>
+<span class="go">| chrZ         |        10 |        20 | b          | +            |</span>
+<span class="go">| chrZ         |        10 |        20 | c          | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Note the genome sequence in the code above. Let’s run <code class="docutils literal notranslate"><span class="pre">get_sequences</span></code> to obtain the portions corresponding to our intervals:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="s1">&#39;minigenome.fa&#39;</span><span class="p">)</span>
+<span class="go">0           AAA</span>
+<span class="go">1           GCC</span>
+<span class="go">2    TTAAAGGGCC</span>
+<span class="go">3    GGCCCTTTAA</span>
+<span class="go">dtype: object</span>
+</pre></div>
+</div>
+<p>Note that the last two intervals have identical coordinates but are on opposite strands. Function <code class="docutils literal notranslate"><span class="pre">get_sequence</span></code> returns the reverse complement for intervals on the negative strand.</p>
+<p>Since the returned Series has the same length as the PyRanges object, we can assign it to a new column:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span><span class="o">.</span><span class="n">Sequence</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="s1">&#39;minigenome.fa&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+------------+</span>
+<span class="go">| Chromosome   |     Start |       End | name       | Strand       | Sequence   |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   | (category)   | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+--------------+------------|</span>
+<span class="go">| chrZ         |         0 |         3 | a          | +            | AAA        |</span>
+<span class="go">| chrZ         |         5 |         8 | a          | +            | GCC        |</span>
+<span class="go">| chrZ         |        10 |        20 | b          | +            | TTAAAGGGCC |</span>
+<span class="go">| chrZ         |        10 |        20 | c          | -            | GGCCCTTTAA |</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+------------+</span>
+<span class="go">Stranded PyRanges object has 4 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>This allows us to filter by sequence, using pandas string methods. For example, let’s get those that start with G:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span><span class="p">[</span><span class="n">sg</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;G&#39;</span><span class="p">)]</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+------------+</span>
+<span class="go">| Chromosome   |     Start |       End | name       | Strand       | Sequence   |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   | (category)   | (object)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+--------------+------------|</span>
+<span class="go">| chrZ         |         5 |         8 | a          | +            | GCC        |</span>
+<span class="go">| chrZ         |        10 |        20 | c          | -            | GGCCCTTTAA |</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+------------+</span>
+<span class="go">Stranded PyRanges object has 2 rows and 6 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Let’s get those which contain a CC and AA dinucleotides separated by 1-3 nucleotides:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span><span class="p">[</span><span class="n">sg</span><span class="o">.</span><span class="n">Sequence</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;CC.{1,3}AA&#39;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Function <code class="docutils literal notranslate"><span class="pre">get_sequence</span></code> will treat each interval independently. Often, you want to get the sequence of an mRNA, i.e. concatenating exons. Function get_transcript_sequence serves this purpose, and employs argument group_by to group the exons into mRNAs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">get_transcript_sequence</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;minigenome.fa&#39;</span><span class="p">)</span>
+<span class="go">  name    Sequence</span>
+<span class="go">0    a      AAAGCC</span>
+<span class="go">1    b  TTAAAGGGCC</span>
+<span class="go">2    c  GGCCCTTTAA</span>
+</pre></div>
+</div>
+<p>Note that this returns a pandas DataFrame with a row per exon group: its shape is different from the original PyRanges.</p>
+</section>
+</section>
+<section id="operating-with-data">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Operating with data</a><a class="headerlink" href="#operating-with-data" title="Permalink to this heading"></a></h2>
+<p>In this section, we give an overview of methods to modify the data in PyRanges.
+Changing row order
+Methods sort allows to sort intervals, i.e. altering the order of rows in the PyRanges object. When run without arguments, orders interval by increasing Start. Commonly, genomic annotation files are sorted in this way.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;chrA&quot;</span><span class="p">,</span> <span class="s2">&quot;chrA&quot;</span><span class="p">,</span> <span class="s2">&quot;chrB&quot;</span><span class="p">,</span> <span class="s2">&quot;chrB&quot;</span><span class="p">,</span> <span class="s2">&quot;chrB&quot;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">55</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">75</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">88</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">85</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;name&quot;</span><span class="p">:[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;Strand&quot;</span><span class="p">:[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">]</span> <span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | name       | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+--------------|</span>
+<span class="go">| chrA         |        55 |        88 | a          | +            |</span>
+<span class="go">| chrA         |        20 |        30 | a          | +            |</span>
+<span class="go">| chrB         |        65 |        75 | b          | +            |</span>
+<span class="go">| chrB         |        35 |        45 | c          | -            |</span>
+<span class="go">| chrB         |        75 |        85 | c          | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | name       | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+--------------|</span>
+<span class="go">| chrA         |        20 |        30 | a          | +            |</span>
+<span class="go">| chrA         |        55 |        88 | a          | +            |</span>
+<span class="go">| chrB         |        65 |        75 | b          | +            |</span>
+<span class="go">| chrB         |        35 |        45 | c          | -            |</span>
+<span class="go">| chrB         |        75 |        85 | c          | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Remember that <strong>sorting is performed separately for each internal table</strong>: intervals on different chromosome/strands won’t ever cross each other. To have all intervals sorted, work with a DataFrame object instead.</p>
+<p>For intervals on the negative strand, it may be convenient to sort in the opposite order, since for them the leftmost exon is actually the last one in the mRNA. Instead of having to split the PyRanges object for this task, you may run sort with special argument “5”, which will sort intervals in 5’ to 3’ order:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">| Chromosome   |     Start |       End | name       | Strand       |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (object)   | (category)   |</span>
+<span class="go">|--------------+-----------+-----------+------------+--------------|</span>
+<span class="go">| chrA         |        20 |        30 | a          | +            |</span>
+<span class="go">| chrA         |        55 |        88 | a          | +            |</span>
+<span class="go">| chrB         |        65 |        75 | b          | +            |</span>
+<span class="go">| chrB         |        75 |        85 | c          | -            |</span>
+<span class="go">| chrB         |        35 |        45 | c          | -            |</span>
+<span class="go">+--------------+-----------+-----------+------------+--------------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 5 columns from 2 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>Sorting may also take any column name, or a list of colum names, to sort rows by their value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ag</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;Chromosome&quot;</span><span class="p">:</span> <span class="s2">&quot;chrX&quot;</span><span class="p">,</span>
+<span class="gp">... </span>             <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">75</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">88</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">85</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;Strand&quot;</span><span class="p">:[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="s2">&quot;col1&quot;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="gp">... </span>              <span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ag</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------+</span>
+<span class="go">| Chromosome   |     Start |       End | Strand       |      col1 |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (category)   |   (int64) |</span>
+<span class="go">|--------------+-----------+-----------+--------------+-----------|</span>
+<span class="go">| chrX         |        55 |        88 | +            |         1 |</span>
+<span class="go">| chrX         |        65 |        75 | +            |         4 |</span>
+<span class="go">| chrX         |        20 |        30 | +            |         4 |</span>
+<span class="go">| chrX         |        35 |        45 | +            |         2 |</span>
+<span class="go">| chrX         |        75 |        85 | +            |         2 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ag</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;col1&#39;</span><span class="p">)</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------+</span>
+<span class="go">| Chromosome   |     Start |       End | Strand       |      col1 |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (category)   |   (int64) |</span>
+<span class="go">|--------------+-----------+-----------+--------------+-----------|</span>
+<span class="go">| chrX         |        55 |        88 | +            |         1 |</span>
+<span class="go">| chrX         |        35 |        45 | +            |         2 |</span>
+<span class="go">| chrX         |        75 |        85 | +            |         2 |</span>
+<span class="go">| chrX         |        65 |        75 | +            |         4 |</span>
+<span class="go">| chrX         |        20 |        30 | +            |         4 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ag</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span> <span class="s1">&#39;End&#39;</span><span class="p">])</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------+</span>
+<span class="go">| Chromosome   |     Start |       End | Strand       |      col1 |</span>
+<span class="go">| (category)   |   (int32) |   (int32) | (category)   |   (int64) |</span>
+<span class="go">|--------------+-----------+-----------+--------------+-----------|</span>
+<span class="go">| chrX         |        55 |        88 | +            |         1 |</span>
+<span class="go">| chrX         |        35 |        45 | +            |         2 |</span>
+<span class="go">| chrX         |        75 |        85 | +            |         2 |</span>
+<span class="go">| chrX         |        20 |        30 | +            |         4 |</span>
+<span class="go">| chrX         |        65 |        75 | +            |         4 |</span>
+<span class="go">+--------------+-----------+-----------+--------------+-----------+</span>
+<span class="go">Stranded PyRanges object has 5 rows and 5 columns from 1 chromosomes.</span>
+<span class="go">For printing, the PyRanges was sorted on Chromosome and Strand.</span>
+</pre></div>
+</div>
+<p>[add note: index are not allowed. Stil, you can use sort to get rows in a certain order]
+Operations on coordinates
+[change columns as series: p.Start+=1000 …]
+[… however there are more convenient methods: subsequence, spliced_sequence, extend]
+[after extend, show genome_bounds]</p>
+<p>Operations on metadata columns:
+[insert new columns: 1. p.Col1=… or 2. assign method. 3. Assign with multiple ones at once]</p>
+<p>Operations on multiple pyranges
+[concatenation: use pandas and turn to pyranges]</p>
+<p>A common operation on (multiple) pyranges regard overlaps. These are shown in the next page</p>
+</section>
+<section id="overlapping-and-matching-pyranges">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Overlapping and matching PyRanges</a><a class="headerlink" href="#overlapping-and-matching-pyranges" title="Permalink to this heading"></a></h2>
+<p>[present different methods for different aims that all have to do with overlap: merge, cluster, subtract, join, count_overlaps … . Start with a table summarizing differences: input, output].
+[add note: pandas merge: different!]</p>
+</section>
+<section id="summary-statistics">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Summary statistics</a><a class="headerlink" href="#summary-statistics" title="Permalink to this heading"></a></h2>
+<p>[Create count-matrix from multiple PyRanges]
+[all stats methods presented briefly]</p>
+</section>
+<section id="computing-with-pyranges">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Computing with PyRanges</a><a class="headerlink" href="#computing-with-pyranges" title="Permalink to this heading"></a></h2>
+<p>[ready made methods should cover most things]
+[possibility to chain things to save memory]
+[outline strategies for custom methods: apply and similar methods]
+[Also cite the simple but not optimal: convert to dataframes / or iterate through groups of same-chrom dataframes]
+[multiple cores]</p>
+</section>
+<section id="working-at-the-transcript-level">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Working at the transcript level</a><a class="headerlink" href="#working-at-the-transcript-level" title="Permalink to this heading"></a></h2>
+<p>[spliced_subsequence, subsequence, get_transcript_sequence,
+extend (to be developed with group_by),
+boundaries ,
+cumsum groupby as example</p>
+<p>]</p>
+</section>
+<section id="fetching-external-gene-tracks">
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">Fetching external gene tracks</a><a class="headerlink" href="#fetching-external-gene-tracks" title="Permalink to this heading"></a></h2>
+<p>[if pyranges_db is a thing, describe its uses here]</p>
+</section>
+<section id="rles-run-length-encodings">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">RLEs: run length encodings</a><a class="headerlink" href="#rles-run-length-encodings" title="Permalink to this heading"></a></h2>
+<p>[outline as advanced usage. Put everything related to RLEs in a single chapter; keep as last even if you add further chapters]</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial of PyRanges" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="autoapi/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Endre Bakken Stovner and Marco Mariotti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
