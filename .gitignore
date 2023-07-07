@@ -34,3 +34,4 @@ pyranges-*/
 *.bw
 
 !docs/build
+!docs/requirements.txt
