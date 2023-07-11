@@ -89,11 +89,11 @@ The ``ann`` object has lots of columns, most of which are not displayed because 
 
   >>> ann.columns
   Index(['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand',
-       'Frame', 'ID', 'Dbxref', 'gbkey', 'mol_type', 'note', 'Name',
-       'gene_biotype', 'locus_tag', 'Parent', 'Note', 'standard_name',
-       'product', 'protein_id', 'pseudo', 'partial', 'start_range',
-       'end_range'],
-      dtype='object')
+         'Frame', 'ID', 'Dbxref', 'gbkey', 'mol_type', 'note', 'Name',
+         'gene_biotype', 'locus_tag', 'Parent', 'Note', 'standard_name',
+         'product', 'protein_id', 'pseudo', 'partial', 'start_range',
+         'end_range'],
+        dtype='object')
       
       
 Let's select only certain columns:
@@ -115,8 +115,7 @@ Let's select only certain columns:
   | 0349.1       | region       | 0         | 641       | +            | nan              | 0349.1:1..641      |
   +--------------+--------------+-----------+-----------+--------------+------------------+--------------------+
   Stranded PyRanges object has 241,137 rows and 7 columns from 349 chromosomes.
-  For printing, the PyRanges was sorted on Chromosome and Strand. 
-
+  For printing, the PyRanges was sorted on Chromosome and Strand.
 
 As seen above, column selection syntax is analogous to pandas.
 However, a difference is that PyRanges retained the essential columns **Chromosome, Start, End, Strand** even though we did not select them.
@@ -278,7 +277,7 @@ Method ``spliced_subsequence`` allows to obtain a subregion of groups of interva
   +--------------+-----------+-----------+--------------+------------------+
   Stranded PyRanges object has 16,391 rows and 5 columns from 117 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
-    
+
 
 Let's **fetch the sequence** for each of these intervals from our genome fasta file.
 The function ``get_sequence`` returns one sequence per interval, which we assign to a new column of our pyranges object:
@@ -339,12 +338,12 @@ Instead of ``get_sequence``, let's use ``get_transcript_sequence``, which return
 i.e. joining exons together. The sequence is given 5' to 3'.
 
   >>> seq_first = pr.get_transcript_sequence(
-           first, 
-           group_by='ID',
-           path='Dgyro_genome.fa'
-          )
+  ...      first, 
+  ...      group_by='ID',
+  ...      path='Dgyro_genome.fa'
+  ...     )
   >>> seq_first
-  		ID 		Sequence
+                         ID Sequence
   0        cds-CAD5110614.1      ATG
   1        cds-CAD5110615.1      ATG
   2        cds-CAD5110616.1      atg
@@ -356,7 +355,7 @@ i.e. joining exons together. The sequence is given 5' to 3'.
   16375  cds-DGYR_LOCUS9732      ATG
   16376   cds-DGYR_LOCUS980      ATG
   16377  cds-DGYR_LOCUS9980      ATG
-  
+  <BLANKLINE>
   [16378 rows x 2 columns]
 
   
@@ -380,7 +379,7 @@ We also store the IDs of the CDSs with ATG codons in the variable ``is_atg_ids``
   >>> is_atg_ids = seq_first[is_atg].ID
   >>> n_atg = is_atg.sum()
   >>> print(f'There are {n_atg} ATG start codons out of '
-      f'{len(seq_first)} CDSs => {n_atg/len(seq_first):.2%}')
+  ... f'{len(seq_first)} CDSs => {n_atg/len(seq_first):.2%}')
   There are 16339 ATG start codons out of 16378 CDSs => 99.76%
       
 
@@ -396,7 +395,7 @@ By not providing an ``end`` argument, we requested intervals that reach the very
 Let's get their sequence as before, then use pandas function ``value_counts`` to count them:
 
   >>> seq_last = pr.get_transcript_sequence(last, 'ID',
-           'Dgyro_genome.fa')
+  ...      'Dgyro_genome.fa')
   >>> seq_last.Sequence = seq_last.Sequence.str.upper()
   >>> seq_last.Sequence.value_counts()
   TAA    8986
@@ -481,17 +480,17 @@ We can now write this pyranges object to a file, for example in GTF format:
 Let's get the sequence for the canonical CDSs and write it to a tabular file. 
 
   >>> clean_ann_seq = pr.get_transcript_sequence(clean_ann, 'ID',
-                'Dgyro_genome.fa')
+  ...           'Dgyro_genome.fa')
   >>> clean_ann_seq.to_csv('Dgyro_canonical_CDS.seq.tsv', 
-                     sep='\t', index=False)
+  ...                sep='\t', index=False)
                      
 
 
 Note that ``clean_ann_seq`` is a pandas DataFrame. To write sequences in fasta format we use: 
 
   >>> with open('Dgyro_canonical_CDS.fa', 'w') as fw:
-  >>>   for xin, xid, xseq in clean_ann_seq.itertuples():
-  >>>     fw.write(f'>{xid}\n{xseq}\n')
+  ...   for xin, xid, xseq in clean_ann_seq.itertuples():
+  ...     fw.write(f'>{xid}\n{xseq}\n')
   
   
 Extending genomic intervals
@@ -587,8 +586,8 @@ We may use it to remove out-of-bounds intervals, or to retain only their in-boun
   >>> import pyfaidx
   >>> pyf=pyfaidx.Fasta('Dgyro_genome.fa')
   >>> cor_prom = pr.genomicfeatures.genome_bounds(prom,
-                    chromsizes=pyf,
-                    clip=True)
+  ...               chromsizes=pyf,
+  ...               clip=True)
                     
                     
 
@@ -737,7 +736,7 @@ Note that this copies all data: avoid it if you can stick to PyRanges functions.
   3037     0117.1   13016   13019      +  cds-CAD5126983.1       3
   3038     0117.1   13080   13144      +  cds-CAD5126983.1      64
   3039     0117.1   38911   38997      -  cds-CAD5126989.1      86
-  
+  <BLANKLINE>
   [3040 rows x 6 columns]
   
 
@@ -780,7 +779,7 @@ which is missing from PyRanges functionalities but available as pandas ``merge``
   100037     0117.1  36183  38697      -  cds-CAD5126989.1          86
   100038     0117.1  39309  39450      -  cds-CAD5126990.1           0
   100039     0117.1  38911  39256      -  cds-CAD5126990.1           0
-  
+  <BLANKLINE>
   [100040 rows x 6 columns]
   
   
@@ -848,7 +847,7 @@ If we sort the analogous DataFrame using pandas ``sort_values``, we see the resu
   9381      0002.1   258298   258496      -  cds-CAD5111666.1         300
   64404     0013.1   776667   776756      -  cds-CAD5120886.1         300
   48837     0009.1   731837   731964      +  cds-CAD5118662.1         300
-  
+  <BLANKLINE>
   [100040 rows x 6 columns]
   
   
@@ -881,12 +880,12 @@ Some useful methods in this sense are: ``pc``, which prints the object and retur
 We may chain these to obtain at once the CDS subset, add the length of intervals as new column, drop a couple of columns, then print before and after sorting by length:
 
   >>> ( ann.subset(lambda x:x.Feature=='CDS')
-     .assign('Length', lambda x:x.End-x.Start)
-     .drop(['Parent', 'Feature'])
-     .pc()
-     .sort('Length')
-     .print()
-      )
+  ... .assign('Length', lambda x:x.End-x.Start)
+  ... .drop(['Parent', 'Feature'])
+  ... .pc()
+  ... .sort('Length')
+  ... .print()
+  ... )
   +--------------+-----------+-----------+--------------+------------------+-----------+
   | Chromosome   | Start     | End       | Strand       | ID               | Length    |
   | (category)   | (int32)   | (int32)   | (category)   | (object)         | (int32)   |
@@ -932,16 +931,16 @@ to join this table with each dataframe.
 
 
   >>> chromsizes = pd.DataFrame.from_dict(
-  {'Chromosome':[k for k,v in pyf.items()],
-   'chromsize':[len(v) for k,v in pyf.items()]}
-      )
+  ... {'Chromosome':[k for k,v in pyf.items()],
+  ...  'chromsize':[len(v) for k,v in pyf.items()]}
+  ...    )
 
   >>> (ann.subset(lambda x:x.Feature=='CDS')
-    .drop(['Parent', 'Feature', 'ID'])
-    .apply(lambda x:x.merge(chromsizes, on='Chromosome'))
-    .assign('midpoint', lambda x:(x.End+x.Start)/2)
-    .subset(lambda x:abs(x.midpoint - x.chromsize/2)<50)
-      )
+  ... .drop(['Parent', 'Feature', 'ID'])
+  ... .apply(lambda x:x.merge(chromsizes, on='Chromosome'))
+  ... .assign('midpoint', lambda x:(x.End+x.Start)/2)
+  ... .subset(lambda x:abs(x.midpoint - x.chromsize/2)<50)
+  ...  )
   +--------------+-----------+-----------+--------------+-------------+-------------+
   | Chromosome   | Start     | End       | Strand       | chromsize   | midpoint    |
   | (object)     | (int32)   | (int32)   | (category)   | (int64)     | (float64)   |

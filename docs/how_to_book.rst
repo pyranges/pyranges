@@ -28,8 +28,8 @@ The data in PyRanges objects are stored in a pandas dataframe. This means the va
   ... chr1 6 11 0.13 -
   ... chr2 0 14 42.42 +"""
 	
-df1 = pd.read_csv(StringIO(f1), sep="\s+")
-gr1 = PyRanges(df1)
+  >>> df1 = pd.read_csv(StringIO(f1), sep="\s+")
+  >>> gr1 = PyRanges(df1)
 
 
 Now we can subset the PyRange in various ways:
@@ -345,7 +345,9 @@ to install it.
 The bigwig writer needs to know the chromosome sizes. 
 You can fetch these using the pyranges database functions, a pyranges add-on that can be install with::
 
-	pip install pyranges_db:
+	pip install pyranges_db
+	
+
 
   >>> gr.to_bigwig("chipseq.bw", chromsizes)
   # file chipseq.bw has been created 
@@ -1041,7 +1043,7 @@ If you want to obtain a DataFrame with certain columns rather than a PyRanges ob
   9997   U0   13517892
   9998   U0    8010951
   9999   U0    7405376
-    
+  
   [10000 rows x 2 columns]
 
 
