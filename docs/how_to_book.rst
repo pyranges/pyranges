@@ -346,9 +346,8 @@ The bigwig writer needs to know the chromosome sizes.
 You can fetch these using the pyranges database functions, a pyranges add-on that can be install with::
 
 	pip install pyranges_db
-	
 
-
+ 
   >>> gr.to_bigwig("chipseq.bw", chromsizes)
   # file chipseq.bw has been created 
 
