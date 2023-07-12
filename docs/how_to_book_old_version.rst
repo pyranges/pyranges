@@ -3,6 +3,143 @@ How-to-book
 
 
 
+Introduction to PyRanges
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the PyRanges tutorial. For docs, see: `https://pyranges.readthedocs.io/en/latest/`
+
+
+.. contents:: Contents of How-to pages
+   :depth: 3
+
+PyRanges are collections of intervals that support comparison operations (like overlap and intersect) and other methods that are useful for genomic analyses. The ranges can have an arbitrary number of meta-data fields, i.e. columns associated with them.
+
+The data in PyRanges objects are stored in a pandas dataframe. This means the vast Python ecosystem for high-performance scientific computing is available to manipulate the data in PyRanges objects.
+
+
+
+
+  >>> from pyranges import PyRanges
+  >>> import pandas as pd
+  >>> from io import StringIO
+	
+  >>> f1 = """Chromosome Start End Score Strand 
+  ... chr1 4 7 23.8 +
+  ... chr1 6 11 0.13 -
+  ... chr2 0 14 42.42 +"""
+	
+  >>> df1 = pd.read_csv(StringIO(f1), sep="\s+")
+  >>> gr1 = PyRanges(df1)
+
+
+Now we can subset the PyRange in various ways:
+
+
+  >>> print(gr1)
+  +--------------+-----------+-----------+-------------+--------------+
+  | Chromosome   |     Start |       End |       Score | Strand       |
+  | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+  |--------------+-----------+-----------+-------------+--------------|
+  | chr1         |         4 |         7 |       23.8  | +            |
+  | chr1         |         6 |        11 |        0.13 | -            |
+  | chr2         |         0 |        14 |       42.42 | +            |
+  +--------------+-----------+-----------+-------------+--------------+
+  Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
+	
+  >>> print(gr1["chr1", 0:5])
+  +--------------+-----------+-----------+-------------+--------------+
+  | Chromosome   |     Start |       End |       Score | Strand       |
+  | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+  |--------------+-----------+-----------+-------------+--------------|
+  | chr1         |         4 |         7 |        23.8 | +            |
+  +--------------+-----------+-----------+-------------+--------------+
+  Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
+  
+  
+  >>> print(gr1["chr1", "-", 6:100])
+  +--------------+-----------+-----------+-------------+--------------+
+  | Chromosome   |     Start |       End |       Score | Strand       |
+  | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+  |--------------+-----------+-----------+-------------+--------------|
+  | chr1         |         6 |        11 |        0.13 | -            |
+  +--------------+-----------+-----------+-------------+--------------+
+  Stranded PyRanges object has 1 rows and 5 columns from 1 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
+	
+  >>> print(gr1.Score)
+  0    23.80
+  1     0.13
+  2    42.42
+  Name: Score, dtype: float64
+	
+	
+And we can perform comparison operations with two PyRanges:
+
+  >>> f2 = """Chromosome Start End Score Strand
+  ... chr1 5 6 -0.01 -
+  ... chr1 9 12 200 +
+  ... chr3 0 14 21.21 -"""
+	
+  >>> df2 = pd.read_csv(StringIO(f2), sep="\s+")
+  >>> gr2 = PyRanges(df2)
+  >>> print(gr2)
+  +--------------+-----------+-----------+-------------+--------------+
+  | Chromosome   |     Start |       End |       Score | Strand       |
+  | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+  |--------------+-----------+-----------+-------------+--------------|
+  | chr1         |         9 |        12 |      200    | +            |
+  | chr1         |         5 |         6 |       -0.01 | -            |
+  | chr3         |         0 |        14 |       21.21 | -            |
+  +--------------+-----------+-----------+-------------+--------------+
+  Stranded PyRanges object has 3 rows and 5 columns from 2 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
+	
+  >>> print(gr1.intersect(gr2, strandedness="opposite"))
+  +--------------+-----------+-----------+-------------+--------------+
+  | Chromosome   |     Start |       End |       Score | Strand       |
+  | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+  |--------------+-----------+-----------+-------------+--------------|
+  | chr1         |         5 |         6 |       23.8  | +            |
+  | chr1         |         9 |        11 |        0.13 | -            |
+  +--------------+-----------+-----------+-------------+--------------+
+  Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
+	
+  >>> print(gr1.intersect(gr2, strandedness=False))
+  +--------------+-----------+-----------+-------------+--------------+
+  | Chromosome   |     Start |       End |       Score | Strand       |
+  | (category)   |   (int32) |   (int32) |   (float64) | (category)   |
+  |--------------+-----------+-----------+-------------+--------------|
+  | chr1         |         5 |         6 |       23.8  | +            |
+  | chr1         |         9 |        11 |        0.13 | -            |
+  +--------------+-----------+-----------+-------------+--------------+
+  Stranded PyRanges object has 2 rows and 5 columns from 1 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
+
+There are also convenience methods for single PyRanges:
+
+  >>> print(gr1.merge())
+  +--------------+-----------+-----------+--------------+
+  | Chromosome   |     Start |       End | Strand       |
+  | (category)   |   (int32) |   (int32) | (category)   |
+  |--------------+-----------+-----------+--------------|
+  | chr1         |         4 |         7 | +            |
+  | chr1         |         6 |        11 | -            |
+  | chr2         |         0 |        14 | +            |
+  +--------------+-----------+-----------+--------------+
+  Stranded PyRanges object has 3 rows and 4 columns from 2 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
+
+The underlying dataframe can always be accessed:
+
+  >>> print(gr1.df)
+  	Chromosome  Start  End  Score Strand
+  0       chr1      4    7  23.80      +
+  1       chr1      6   11   0.13      -
+  2       chr2      0   14  42.42      +
+
 
 
 Loading/Creating PyRanges
@@ -15,86 +152,37 @@ A PyRanges object can be built in four ways:
 #. from a Pandas dataframe
 #. using the PyRanges constructor with the chromosomes, starts and ends (and optionally strands), individually.
 #. using one of the custom reader functions for genomic data (read_bed, read_bam or read_gtf, read_gff3)
-#. from a dictionary (see below for the required structure)
+#. from a dict (like the ones produced with to_example)
 
 
 Using a DataFrame
 -----------------
 
 
-If you instantiate a PyRanges object from a dataframe, it should at least contain the columns Chromosome, Start and End. Coordinates follow the python standard (0-based, start included, end excluded). A column called Strand is optional. Any other columns in the dataframe are carried over as metadata.
+If you instantiate a PyRanges object from a dataframe, it should at least contain the columns Chromosome, Start and End. A column called Strand is optional. Any other columns in the dataframe are treated as metadata.
 
 
-  >>> import pandas as pd, pyranges as pr
-  >>> df=pd.DataFrame(
-  >>> {'Chromosome':['chr1', 'chr1', 'chr1', 'chr3'],
-  ...  'Start': [5, 20, 80, 10],
-  ...  'End':   [10, 28, 95, 38],
-  ...  'Strand':['+', '+', '-', '+'],
-  ...  'title': ['a', 'b', 'c', 'd']}
-  ... )
-  >>> df
-    Chromosome  Start  End Strand title
-  0       chr1      5   10      +     a
-  1       chr1     20   28      +     b
-  2       chr1     80   95      -     c
-  3       chr3     10   38      +     d
-
-
-To instantiate PyRanges from a dataframe, provide it as argument to the PyRanges constructor:
-
-  >>> p=pr.PyRanges(df)
-  >>> p
-  +--------------+-----------+-----------+--------------+------------+
-  | Chromosome   |     Start |       End | Strand       | title      |
-  | (category)   |   (int32) |   (int32) | (category)   | (object)   |
-  |--------------+-----------+-----------+--------------+------------|
-  | chr1         |         5 |        10 | +            | a          |
-  | chr1         |        20 |        28 | +            | b          |
-  | chr1         |        80 |        95 | -            | c          |
-  | chr3         |        10 |        38 | +            | d          |
-  +--------------+-----------+-----------+--------------+------------+
-  Stranded PyRanges object has 4 rows and 5 columns from 2 chromosomes.
-  For printing, the PyRanges was sorted on Chromosome and Strand.
-
-
-
-A DataFrame is most typically derived from a file. Here we load an example bed file included in the pyranges package as DataFrame, then instantiate a PyRanges object from it.
-
+  >>> import pandas as pd
+  >>> import pyranges as pr
   >>> chipseq = pr.get_example_path("chipseq.bed")
   >>> df = pd.read_csv(chipseq, header=None, names="Chromosome Start End Name Score Strand".split(), sep="\t")
   >>> print(df.head(2))
-    Chromosome      Start        End Name  Score Strand
+  	Chromosome      Start        End Name  Score Strand
   0       chr8   28510032   28510057   U0      0      -
   1       chr7  107153363  107153388   U0      0      -
-  
-  
+
   >>> print(df.tail(2))
-       Chromosome      Start        End Name  Score Strand
+  	Chromosome      Start        End Name  Score Strand
   9998       chr1  194245558  194245583   U0      0      +
   9999       chr8   57916061   57916086   U0      0      +
-  
+	 
   >>> print(pr.PyRanges(df))
-  +--------------+-----------+-----------+------------+-----------+--------------+
-  | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
-  |--------------+-----------+-----------+------------+-----------+--------------|
-  | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
-  | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
-  | chr1         | 216711011 | 216711036 | U0         | 0         | +            |
-  | chr1         | 144227079 | 144227104 | U0         | 0         | +            |
-  | ...          | ...       | ...       | ...        | ...       | ...          |
-  | chrY         | 15224235  | 15224260  | U0         | 0         | -            |
-  | chrY         | 13517892  | 13517917  | U0         | 0         | -            |
-  | chrY         | 8010951   | 8010976   | U0         | 0         | -            |
-  | chrY         | 7405376   | 7405401   | U0         | 0         | -            |
-  +--------------+-----------+-----------+------------+-----------+--------------+
-  Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
-  For printing, the PyRanges was sorted on Chromosome and Strand.
+
 
 	
 Using constructor keywords
 --------------------------
+
 
 The other way to instantiate a PyRanges object is to use the constructor with keywords:
 
@@ -118,8 +206,7 @@ The other way to instantiate a PyRanges object is to use the constructor with ke
   For printing, the PyRanges was sorted on Chromosome.
 
 
-Each column may be provided as Pandas Series, as above, or as  basic Python datatypes:
-
+It is possible to make PyRanges objects out of basic Python datatypes:
 
   >>> gr = pr.PyRanges(chromosomes="chr1", strands="+", starts=[0, 1, 2], ends=(3, 4, 5))
   >>> print(gr)
@@ -150,7 +237,8 @@ Each column may be provided as Pandas Series, as above, or as  basic Python data
 Using read_bed, read_gtf, read_gff3 or read_bam
 -----------------------------------------------
 
-The pyranges library can create PyRanges from gff3 common file formats, namely gtf/gff, gff3, bed and bam. Note that, these files encoded interval coordinates as 1-based, start included, end included; when instancing a PyRanges object they are converted to the python convention.
+
+The pyranges library can create PyRanges from gff3 common file formats, namely gtf/gff, gff3, bed and bam ^.
 
   >>> ensembl_path = pr.get_example_path("ensembl.gtf")
   >>> gr = pr.read_gtf(ensembl_path)
@@ -186,18 +274,11 @@ to install it
     
     
 read_bam takes the arguments ``sparse``, ``mapq``, ``required_flag``, ``filter_flag``, which have the default values True, 0, 0 and 1540, respectively. With sparse True, only the columns ``['Chromosome', 'Start', 'End', 'Strand', 'Flag']`` are fetched. Setting sparse to False additionally gives you the columns ``['QueryStart', 'QueryEnd', 'Name', 'Cigar', 'Quality']``, but is more time and memory-consuming.
-All the reader functions also take the flag ``as_df`` to return a DataFrame instead of a PyRanges object.
+All the reader functions also take the flag ``as_df``
 
 
-
-Using ``from_dict``
--------------------
-
-
-
-With this method, an input dictionary with the structure shown below must be provided:
-
-
+Using from_dict
+---------------
 
   >>> f1 = pr.data.f1()
   >>> d = f1.to_example(n=10)
@@ -217,103 +298,21 @@ With this method, an input dictionary with the structure shown below must be pro
   For printing, the PyRanges was sorted on Chromosome and Strand.
 
 
-Writing to disk
-~~~~~~~~~~~~~~~
+Writing PyRanges to disk
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 The PyRanges can be written to several formats, namely csv, gtf, gff3 and bigwig.
-If no path-argument is given, the string representation of the data is returned. (It may potentially be very large.) If a path is given, it is taken as the path to the file to be written; in this case, the return value is the object itself, to allow inserting write methods into method call chains.
-
-
-Writing in tabular formats
---------------------------
-
-
-Tabular formats such as csv, gtf, gff3 are the most popular for genomic annotations. You can readily write them using the correspondent methods. N
+If no path-argument is given, the string representation of the data is returned. (It may potentially be very large.) If a path is given, the return value is the object itself. This way the write methods can easily be inserted in method call chains.
 
   >>> import pyranges as pr
   >>> gr = pr.data.chipseq()
   >>> gr.to_gtf("chipseq.gtf")
   # file chipseq.gtf has been created 
-  
-  >>> print(gr.head())
-  +--------------+-----------+-----------+------------+-----------+--------------+
-  | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
-  |--------------+-----------+-----------+------------+-----------+--------------|
-  | chr1         | 212609534 | 212609559 | U0         |         0 | +            |
-  | chr1         | 169887529 | 169887554 | U0         |         0 | +            |
-  | chr1         | 216711011 | 216711036 | U0         |         0 | +            |
-  | chr1         | 144227079 | 144227104 | U0         |         0 | +            |
-  | chr1         | 148177825 | 148177850 | U0         |         0 | +            |
-  | chr1         | 113486652 | 113486677 | U0         |         0 | +            |
-  | chr1         |  27024083 |  27024108 | U0         |         0 | +            |
-  | chr1         |  37865066 |  37865091 | U0         |         0 | +            |
-  +--------------+-----------+-----------+------------+-----------+--------------+
-  Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.
-  For printing, the PyRanges was sorted on Chromosome and Strand.
-
-  >>> print(gr.head().to_gtf())
-  chr1	.	.	212609535	212609559	0	+	.	Name "U0";
-  chr1	.	.	169887530	169887554	0	+	.	Name "U0";
-  chr1	.	.	216711012	216711036	0	+	.	Name "U0";
-  chr1	.	.	144227080	144227104	0	+	.	Name "U0";
-  chr1	.	.	148177826	148177850	0	+	.	Name "U0";
-  chr1	.	.	113486653	113486677	0	+	.	Name "U0";
-  chr1	.	.	27024084	27024108	0	+	.	Name "U0";
-  chr1	.	.	37865067	37865091	0	+	.	Name "U0";
-
-  >>> print(gr.head().to_gff3())
-  chr1	.	.	212609535	212609559	0	+	.	Name=U0
-  chr1	.	.	169887530	169887554	0	+	.	Name=U0
-  chr1	.	.	216711012	216711036	0	+	.	Name=U0
-  chr1	.	.	144227080	144227104	0	+	.	Name=U0
-  chr1	.	.	148177826	148177850	0	+	.	Name=U0
-  chr1	.	.	113486653	113486677	0	+	.	Name=U0
-  chr1	.	.	27024084	27024108	0	+	.	Name=U0
-  chr1	.	.	37865067	37865091	0	+	.	Name=U0
-
-Methods to_gff3 and to_gtf have a default mapping of PyRanges columns to GFF/GTF fields. All extra ("metadata") columns are put in the last field:
-
-  >>> gr.Label='something'
-  >>> print(gr.head().to_gtf())
-  chr1	.	.	212609535	212609559	0	+	.	Name "U0"; Label "something";
-  chr1	.	.	169887530	169887554	0	+	.	Name "U0"; Label "something";
-  chr1	.	.	216711012	216711036	0	+	.	Name "U0"; Label "something";
-  chr1	.	.	144227080	144227104	0	+	.	Name "U0"; Label "something";
-  chr1	.	.	148177826	148177850	0	+	.	Name "U0"; Label "something";
-  chr1	.	.	113486653	113486677	0	+	.	Name "U0"; Label "something";
-  chr1	.	.	27024084	27024108	0	+	.	Name "U0"; Label "something";
-  chr1	.	.	37865067	37865091	0	+	.	Name "U0"; Label "something";
-
-Such mapping, as well as which attribute(s) are included as last field, can be altered:
-
-  >>> gr.Tag='sometext'
-  >>> print(gr.head().to_gtf(map_cols={"feature":"Name", "attribute":"Tag"}))
-  chr1	.	U0	212609535	212609559	0	+	.	Tag "sometext";
-  chr1	.	U0	169887530	169887554	0	+	.	Tag "sometext";
-  chr1	.	U0	216711012	216711036	0	+	.	Tag "sometext";
-  chr1	.	U0	144227080	144227104	0	+	.	Tag "sometext";
-  chr1	.	U0	148177826	148177850	0	+	.	Tag "sometext";
-  chr1	.	U0	113486653	113486677	0	+	.	Tag "sometext";
-  chr1	.	U0	27024084	27024108	0	+	.	Tag "sometext";
-  chr1	.	U0	37865067	37865091	0	+	.	Tag "sometext";
-
-Note that the gtf and gff3 formats are 1-based with both Start and End included. Instead, csv uses the python/pyranges notation:
-
-  >>> print(gr.head().to_csv())
-  Chromosome,Start,End,Name,Score,Strand,Label,Tag
-  chr1,212609534,212609559,U0,0,+,something,sometext
-  chr1,169887529,169887554,U0,0,+,something,sometext
-  chr1,216711011,216711036,U0,0,+,something,sometext
-  chr1,144227079,144227104,U0,0,+,something,sometext
-  chr1,148177825,148177850,U0,0,+,something,sometext
-  chr1,113486652,113486677,U0,0,+,something,sometext
-  chr1,27024083,27024108,U0,0,+,something,sometext
-  chr1,37865066,37865091,U0,0,+,something,sometext
 
 
-The ``to_csv`` method takes the arguments header and sep:
+
+The to_csv method takes the arguments header and sep.
 
   >>> print(gr.drop(['Label', 'Tag']).head().to_csv(sep="\t", header=False))
   chr1	212609534	212609559	U0	0	+
@@ -325,14 +324,13 @@ The ``to_csv`` method takes the arguments header and sep:
   chr1	27024083	27024108	U0	0	+
   chr1	37865066	37865091	U0	0	+
 
+All to-methods except to_bigwig takes an argument chain which can be set to True if you want the method to return the PyRanges it wrote. It is useful for storing the intermediate results of long call chains.::
 
-
-
-
-The `bigwig <http://genome.ucsc.edu/goldenPath/help/bigWig.html>`_ format differs substantially from the formats above. Bigwig is a binary format, and it is typically used for large continuous quantitative data along a genome sequence.
+	pr.data().f1().to_csv("bla", chain=True).merge()...
 	
-The pyranges library can also create bigwigs, but it needs the library pybigwig which is not installed by default.
-
+	
+	
+The pyranges library can also create bigwigs, but it needs the library pybigwig which is not installed by default. 
 Use:: 
 	
 	conda install -c bioconda pybigwig
@@ -344,51 +342,28 @@ or::
 
 to install it.
 
-The bigwig writer needs to know the chromosome sizes, provided as a dictionary {chromosome_name: size} or an analogous PyRanges with sizes as End (with Start values set to zero).
- 
-For widely used genome assemblies, you can fetch these using the pyranges database functions, a pyranges add-on that can be install with:
+The bigwig writer needs to know the chromosome sizes. 
+You can fetch these using the pyranges database functions, a pyranges add-on that can be install with:
 
 .. code-block:: bash
 
 	pip install pyranges_db
-	
+
 .. doctest::
 
-  >>> import pyranges_db
-  >>> chromsizes = pyranges_db.ucsc.chromosome_sizes("hg19")
-
-
-
-Alternatively, you can derive chromosome sizes from a fasta file using pyfaidx (install with:
-
-.. code-block:: bash
-
-	conda install -c bioconda pyfaidx 
-	
-or 
-.. code-block:: bash
-
-	pip install pyfaidx
-	
-)
-
-
-  >>> import pyfaidx 
-  >>> p=pyfaidx.Fasta('your_genome.fa')
-  >>> chromsizes={c:len(f)  for c,f in p.items()}
-
-
-Once you obtained chromosome sizes, you are ready to write your PyRanges object to a bigwig file:
-
   >>> gr.to_bigwig("chipseq.bw", chromsizes)
-  >>> # file chipseq.bw has been created 
+  # file chipseq.bw has been created 
 
-Bigwig is typically used to represent a coverage of some type. To compute it from an arbitrary value column, use the value_col argument. See the API for additional options.
+
+
+To create a bigwig from an arbitrary value column, use the value_col argument.
 If you want to write one bigwig for each strand, you need to do it manually.
-
 
   >>> gr["+"].to_bigwig("chipseq_plus.bw", chromsizes)
   >>> gr["-"].to_bigwig("chipseq_minus.bw", chromsizes)
+
+to_bigwig also takes a flag ``divide_by`` which takes another PyRanges. Using divide_by creates a log2-normalized bigwig.
+
 
 
 
