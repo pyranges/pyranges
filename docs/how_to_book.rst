@@ -182,7 +182,7 @@ or::
     
     pip install bamread 
 
-to install it
+to install it.
     
     
 read_bam takes the arguments ``sparse``, ``mapq``, ``required_flag``, ``filter_flag``, which have the default values True, 0, 0 and 1540, respectively. With sparse True, only the columns ``['Chromosome', 'Start', 'End', 'Strand', 'Flag']`` are fetched. Setting sparse to False additionally gives you the columns ``['QueryStart', 'QueryEnd', 'Name', 'Cigar', 'Quality']``, but is more time and memory-consuming.
@@ -366,6 +366,7 @@ Alternatively, you can derive chromosome sizes from a fasta file using pyfaidx (
 	conda install -c bioconda pyfaidx 
 	
 or 
+
 .. code-block:: bash
 
 	pip install pyfaidx
