@@ -19,9 +19,11 @@ print()
 
 os.remove("pyranges_tutorial_data.tar.gz") 
 os.remove("Dgyro_annotation.canonical_CDS.gtf") 
-os.remove("Dgyro_canonical_CDS.fa") 
+#os.remove("Dgyro_canonical_CDS.fa") 
 os.remove("Dgyro_canonical_CDS.seq.tsv") 
 os.remove("Dgyro_genome.fa.fai") 
+
+
     
         
         
