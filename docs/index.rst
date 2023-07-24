@@ -43,7 +43,7 @@ Documentation outline
 
 
 #. 🚀 The `tutorial <https://pyranges-version2.readthedocs.io/en/latest/tutorial.html>`_, on the next page, recommended for all new users
-#. 🚀 The `how-to pages <https://pyranges-version2.readthedocs.io/en/latest/how_to_book.html>`_, further below, where functionalities are grouped by topic
+#. 🚀 The `how-to pages <https://pyranges-version2.readthedocs.io/en/latest/how_to_pages.html>`_, further below, where functionalities are grouped by topic
 #. 🚀 The `API reference <https://pyranges-version2.readthedocs.io/en/latest/autoapi/index.html>`_, where all methods are explained in detail. Old `API reference <https://pyranges.readthedocs.io/>`_ is here. 
 
 .. toctree::
