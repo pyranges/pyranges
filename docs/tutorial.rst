@@ -488,7 +488,7 @@ Let's get the sequence for the canonical CDSs and write it to a tabular file.
 
 Note that ``clean_ann_seq`` is a pandas DataFrame. To write sequences in fasta format we use: 
 
-  >>> with open('Dgyro_canonical_CDS.fa', 'w') as fw:
+  >>> with open('Dgyro_canonical_CDS.fa', 'w') as fw: # doctest: +SKIP
   ...   for xin, xid, xseq in clean_ann_seq.itertuples():
   ...     fw.write(f'>{xid}\n{xseq}\n')
   

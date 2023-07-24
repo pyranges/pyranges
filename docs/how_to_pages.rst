@@ -1,5 +1,5 @@
-How-to-book
-===========
+How-to pages
+============
 
 
 
@@ -27,7 +27,7 @@ If you instantiate a PyRanges object from a dataframe, it should at least contai
 
   >>> import pandas as pd, pyranges as pr
   >>> df=pd.DataFrame(
-  >>> {'Chromosome':['chr1', 'chr1', 'chr1', 'chr3'],
+  ... {'Chromosome':['chr1', 'chr1', 'chr1', 'chr3'],
   ...  'Start': [5, 20, 80, 10],
   ...  'End':   [10, 28, 95, 38],
   ...  'Strand':['+', '+', '-', '+'],
@@ -155,23 +155,24 @@ The pyranges library can create PyRanges from gff3 common file formats, namely g
   >>> ensembl_path = pr.get_example_path("ensembl.gtf")
   >>> gr = pr.read_gtf(ensembl_path)
   >>> print(gr)
-  +--------------+------------+--------------+-----------+-----------+------------+-------+
-  | Chromosome   | Source     | Feature      | Start     | End       | Score      | +20   |
-  | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | ...   |
-  |--------------+------------+--------------+-----------+-----------+------------+-------|
-  | 1            | havana     | gene         | 11868     | 14409     | .          | ...   |
-  | 1            | havana     | transcript   | 11868     | 14409     | .          | ...   |
-  | 1            | havana     | exon         | 11868     | 12227     | .          | ...   |
-  | 1            | havana     | exon         | 12612     | 12721     | .          | ...   |
-  | ...          | ...        | ...          | ...       | ...       | ...        | ...   |
-  | 1            | ensembl    | transcript   | 120724    | 133723    | .          | ...   |
-  | 1            | ensembl    | exon         | 133373    | 133723    | .          | ...   |
-  | 1            | ensembl    | exon         | 129054    | 129223    | .          | ...   |
-  | 1            | ensembl    | exon         | 120873    | 120932    | .          | ...   |
-  +--------------+------------+--------------+-----------+-----------+------------+-------+
+  +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------+
+  | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | gene_name   | gene_source    | +14   |
+  | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | (object)       | ...   |
+  |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------|
+  | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...             | ...            | ...         | ...            | ...   |
+  | 1            | ensembl    | transcript   | 120724    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  | 1            | ensembl    | exon         | 133373    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  | 1            | ensembl    | exon         | 129054    | 129223    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  | 1            | ensembl    | exon         | 120873    | 120932    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------+
   Stranded PyRanges object has 95 rows and 26 columns from 1 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
-  20 hidden columns: Strand, Frame, gene_id, gene_version, gene_name, gene_source, gene_biotype, ... (+ 13 more.)
+  14 hidden columns: gene_biotype, transcript_id, transcript_version, transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, exon_number, exon_id, exon_version, ... (+ 3 more.)
+
 
 
 To read bam files the optional bamread-library must be installed. Use::
@@ -234,7 +235,7 @@ Tabular formats such as csv, gtf, gff3 are the most popular for genomic annotati
   >>> import pyranges as pr
   >>> gr = pr.data.chipseq()
   >>> gr.to_gtf("chipseq.gtf")
-  # file chipseq.gtf has been created 
+  >>> #file chipseq.gtf has been created 
   
   >>> print(gr.head())
   +--------------+-----------+-----------+------------+-----------+--------------+
@@ -253,8 +254,8 @@ Tabular formats such as csv, gtf, gff3 are the most popular for genomic annotati
   Stranded PyRanges object has 8 rows and 6 columns from 1 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
 
-  >>> print(gr.head().to_gtf())
-  chr1	.	.	212609535	212609559	0	+	.	Name "U0";
+  >>> print(gr.head().to_gtf()) # doctest: +NORMALIZE_WHITESPACE
+  chr1	.	.	212609535	212609559	0	+	.	Name "U0"; 
   chr1	.	.	169887530	169887554	0	+	.	Name "U0";
   chr1	.	.	216711012	216711036	0	+	.	Name "U0";
   chr1	.	.	144227080	144227104	0	+	.	Name "U0";
@@ -262,8 +263,9 @@ Tabular formats such as csv, gtf, gff3 are the most popular for genomic annotati
   chr1	.	.	113486653	113486677	0	+	.	Name "U0";
   chr1	.	.	27024084	27024108	0	+	.	Name "U0";
   chr1	.	.	37865067	37865091	0	+	.	Name "U0";
-
-  >>> print(gr.head().to_gff3())
+  <BLANKLINE>
+  
+  >>> print(gr.head().to_gff3()) # doctest: +NORMALIZE_WHITESPACE
   chr1	.	.	212609535	212609559	0	+	.	Name=U0
   chr1	.	.	169887530	169887554	0	+	.	Name=U0
   chr1	.	.	216711012	216711036	0	+	.	Name=U0
@@ -272,11 +274,13 @@ Tabular formats such as csv, gtf, gff3 are the most popular for genomic annotati
   chr1	.	.	113486653	113486677	0	+	.	Name=U0
   chr1	.	.	27024084	27024108	0	+	.	Name=U0
   chr1	.	.	37865067	37865091	0	+	.	Name=U0
+  <BLANKLINE>
+  
 
 Methods to_gff3 and to_gtf have a default mapping of PyRanges columns to GFF/GTF fields. All extra ("metadata") columns are put in the last field:
 
   >>> gr.Label='something'
-  >>> print(gr.head().to_gtf())
+  >>> print(gr.head().to_gtf()) # doctest: +NORMALIZE_WHITESPACE
   chr1	.	.	212609535	212609559	0	+	.	Name "U0"; Label "something";
   chr1	.	.	169887530	169887554	0	+	.	Name "U0"; Label "something";
   chr1	.	.	216711012	216711036	0	+	.	Name "U0"; Label "something";
@@ -285,11 +289,12 @@ Methods to_gff3 and to_gtf have a default mapping of PyRanges columns to GFF/GTF
   chr1	.	.	113486653	113486677	0	+	.	Name "U0"; Label "something";
   chr1	.	.	27024084	27024108	0	+	.	Name "U0"; Label "something";
   chr1	.	.	37865067	37865091	0	+	.	Name "U0"; Label "something";
+  <BLANKLINE>
 
 Such mapping, as well as which attribute(s) are included as last field, can be altered:
 
   >>> gr.Tag='sometext'
-  >>> print(gr.head().to_gtf(map_cols={"feature":"Name", "attribute":"Tag"}))
+  >>> print(gr.head().to_gtf(map_cols={"feature":"Name", "attribute":"Tag"})) # doctest: +NORMALIZE_WHITESPACE
   chr1	.	U0	212609535	212609559	0	+	.	Tag "sometext";
   chr1	.	U0	169887530	169887554	0	+	.	Tag "sometext";
   chr1	.	U0	216711012	216711036	0	+	.	Tag "sometext";
@@ -298,6 +303,7 @@ Such mapping, as well as which attribute(s) are included as last field, can be a
   chr1	.	U0	113486653	113486677	0	+	.	Tag "sometext";
   chr1	.	U0	27024084	27024108	0	+	.	Tag "sometext";
   chr1	.	U0	37865067	37865091	0	+	.	Tag "sometext";
+  <BLANKLINE>
 
 Note that the gtf and gff3 formats are 1-based with both Start and End included. Instead, csv uses the python/pyranges notation:
 
@@ -311,11 +317,11 @@ Note that the gtf and gff3 formats are 1-based with both Start and End included.
   chr1,113486652,113486677,U0,0,+,something,sometext
   chr1,27024083,27024108,U0,0,+,something,sometext
   chr1,37865066,37865091,U0,0,+,something,sometext
-
+  <BLANKLINE>
 
 The ``to_csv`` method takes the arguments header and sep:
 
-  >>> print(gr.drop(['Label', 'Tag']).head().to_csv(sep="\t", header=False))
+  >>> print(gr.drop(['Label', 'Tag']).head().to_csv(sep="\t", header=False)) # doctest: +NORMALIZE_WHITESPACE
   chr1	212609534	212609559	U0	0	+
   chr1	169887529	169887554	U0	0	+
   chr1	216711011	216711036	U0	0	+
@@ -324,6 +330,7 @@ The ``to_csv`` method takes the arguments header and sep:
   chr1	113486652	113486677	U0	0	+
   chr1	27024083	27024108	U0	0	+
   chr1	37865066	37865091	U0	0	+
+  <BLANKLINE>
 
 
 
@@ -354,12 +361,12 @@ For widely used genome assemblies, you can fetch these using the pyranges databa
 	
 .. doctest::
 
-  >>> import pyranges_db
-  >>> chromsizes = pyranges_db.ucsc.chromosome_sizes("hg19")
+  >>> import pyranges_db # doctest: +SKIP
+  >>> chromsizes = pyranges_db.ucsc.chromosome_sizes("hg19") # doctest: +SKIP
 
 
 
-Alternatively, you can derive chromosome sizes from a fasta file using pyfaidx (install with:
+Alternatively, you can derive chromosome sizes from a fasta file using pyfaidx. Install with:
 
 .. code-block:: bash
 
@@ -371,25 +378,25 @@ or
 
 	pip install pyfaidx
 	
-)
 
 
-  >>> import pyfaidx 
-  >>> p=pyfaidx.Fasta('your_genome.fa')
-  >>> chromsizes={c:len(f)  for c,f in p.items()}
+
+  >>> import pyfaidx # doctest: +SKIP
+  >>> p=pyfaidx.Fasta('your_genome.fa') # doctest: +SKIP
+  >>> chromsizes={c:len(f)  for c,f in p.items()} # doctest: +SKIP
 
 
 Once you obtained chromosome sizes, you are ready to write your PyRanges object to a bigwig file:
 
-  >>> gr.to_bigwig("chipseq.bw", chromsizes)
+  >>> gr.to_bigwig("chipseq.bw", chromsizes) # doctest: +SKIP
   >>> # file chipseq.bw has been created 
 
 Bigwig is typically used to represent a coverage of some type. To compute it from an arbitrary value column, use the value_col argument. See the API for additional options.
 If you want to write one bigwig for each strand, you need to do it manually.
 
 
-  >>> gr["+"].to_bigwig("chipseq_plus.bw", chromsizes)
-  >>> gr["-"].to_bigwig("chipseq_minus.bw", chromsizes)
+  >>> gr["+"].to_bigwig("chipseq_plus.bw", chromsizes) # doctest: +SKIP
+  >>> gr["-"].to_bigwig("chipseq_minus.bw", chromsizes) # doctest: +SKIP
 
 
 
@@ -447,69 +454,67 @@ The window width affects the output of print: columns that do not fit are hidden
   >>> gr.new_col = 'value'
   >>> gr.another_col = 99
   >>> gr.print()
-  +--------------+-----------+-----------+------------+-----------+-------+
-  | Chromosome   | Start     | End       | Name       | Score     | +3    |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | ...   |
-  |--------------+-----------+-----------+------------+-----------+-------|
-  | chr1         | 212609534 | 212609559 | U0         | 0         | ...   |
-  | chr1         | 169887529 | 169887554 | U0         | 0         | ...   |
-  | chr1         | 216711011 | 216711036 | U0         | 0         | ...   |
-  | chr1         | 144227079 | 144227104 | U0         | 0         | ...   |
-  | ...          | ...       | ...       | ...        | ...       | ...   |
-  | chrY         | 15224235  | 15224260  | U0         | 0         | ...   |
-  | chrY         | 13517892  | 13517917  | U0         | 0         | ...   |
-  | chrY         | 8010951   | 8010976   | U0         | 0         | ...   |
-  | chrY         | 7405376   | 7405401   | U0         | 0         | ...   |
-  +--------------+-----------+-----------+------------+-----------+-------+
+  +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
+  | Chromosome   | Start     | End       | Name       | Score     | Strand       | new_col    | another_col   |
+  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  |--------------+-----------+-----------+------------+-----------+--------------+------------+---------------|
+  | chr1         | 212609534 | 212609559 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 169887529 | 169887554 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 216711011 | 216711036 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 144227079 | 144227104 | U0         | 0         | +            | value      | 99            |
+  | ...          | ...       | ...       | ...        | ...       | ...          | ...        | ...           |
+  | chrY         | 15224235  | 15224260  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 13517892  | 13517917  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 8010951   | 8010976   | U0         | 0         | -            | value      | 99            |
+  | chrY         | 7405376   | 7405401   | U0         | 0         | -            | value      | 99            |
+  +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
   Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
-  3 hidden columns: Strand, new_col, another_col
+
 
 Only a limited number of rows are displayed, which are taken from the top and bottom of the table. This is 8 by default, and can be redefined through the first argument of print, named n:
 
   >>> gr.print(2)
-  +--------------+-----------+-----------+------------+-----------+-------+
-  | Chromosome   | Start     | End       | Name       | Score     | +3    |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | ...   |
-  |--------------+-----------+-----------+------------+-----------+-------|
-  | chr1         | 212609534 | 212609559 | U0         | 0         | ...   |
-  | ...          | ...       | ...       | ...        | ...       | ...   |
-  | chrY         | 7405376   | 7405401   | U0         | 0         | ...   |
-  +--------------+-----------+-----------+------------+-----------+-------+
+  +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
+  | Chromosome   | Start     | End       | Name       | Score     | Strand       | new_col    | another_col   |
+  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  |--------------+-----------+-----------+------------+-----------+--------------+------------+---------------|
+  | chr1         | 212609534 | 212609559 | U0         | 0         | +            | value      | 99            |
+  | ...          | ...       | ...       | ...        | ...       | ...          | ...        | ...           |
+  | chrY         | 7405376   | 7405401   | U0         | 0         | -            | value      | 99            |
+  +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
   Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
-  3 hidden columns: Strand, new_col, another_col
 
   >>> gr.print(n=20)
-  +--------------+-----------+-----------+------------+-----------+-------+
-  | Chromosome   | Start     | End       | Name       | Score     | +3    |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | ...   |
-  |--------------+-----------+-----------+------------+-----------+-------|
-  | chr1         | 212609534 | 212609559 | U0         | 0         | ...   |
-  | chr1         | 169887529 | 169887554 | U0         | 0         | ...   |
-  | chr1         | 216711011 | 216711036 | U0         | 0         | ...   |
-  | chr1         | 144227079 | 144227104 | U0         | 0         | ...   |
-  | chr1         | 148177825 | 148177850 | U0         | 0         | ...   |
-  | chr1         | 113486652 | 113486677 | U0         | 0         | ...   |
-  | chr1         | 27024083  | 27024108  | U0         | 0         | ...   |
-  | chr1         | 37865066  | 37865091  | U0         | 0         | ...   |
-  | chr1         | 47488200  | 47488225  | U0         | 0         | ...   |
-  | chr1         | 197075093 | 197075118 | U0         | 0         | ...   |
-  | ...          | ...       | ...       | ...        | ...       | ...   |
-  | chrY         | 21707662  | 21707687  | U0         | 0         | ...   |
-  | chrY         | 7761026   | 7761051   | U0         | 0         | ...   |
-  | chrY         | 22210637  | 22210662  | U0         | 0         | ...   |
-  | chrY         | 14774053  | 14774078  | U0         | 0         | ...   |
-  | chrY         | 16495497  | 16495522  | U0         | 0         | ...   |
-  | chrY         | 7046809   | 7046834   | U0         | 0         | ...   |
-  | chrY         | 15224235  | 15224260  | U0         | 0         | ...   |
-  | chrY         | 13517892  | 13517917  | U0         | 0         | ...   |
-  | chrY         | 8010951   | 8010976   | U0         | 0         | ...   |
-  | chrY         | 7405376   | 7405401   | U0         | 0         | ...   |
-  +--------------+-----------+-----------+------------+-----------+-------+
+  +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
+  | Chromosome   | Start     | End       | Name       | Score     | Strand       | new_col    | another_col   |
+  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  |--------------+-----------+-----------+------------+-----------+--------------+------------+---------------|
+  | chr1         | 212609534 | 212609559 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 169887529 | 169887554 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 216711011 | 216711036 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 144227079 | 144227104 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 148177825 | 148177850 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 113486652 | 113486677 | U0         | 0         | +            | value      | 99            |
+  | chr1         | 27024083  | 27024108  | U0         | 0         | +            | value      | 99            |
+  | chr1         | 37865066  | 37865091  | U0         | 0         | +            | value      | 99            |
+  | chr1         | 47488200  | 47488225  | U0         | 0         | +            | value      | 99            |
+  | chr1         | 197075093 | 197075118 | U0         | 0         | +            | value      | 99            |
+  | ...          | ...       | ...       | ...        | ...       | ...          | ...        | ...           |
+  | chrY         | 21707662  | 21707687  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 7761026   | 7761051   | U0         | 0         | -            | value      | 99            |
+  | chrY         | 22210637  | 22210662  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 14774053  | 14774078  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 16495497  | 16495522  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 7046809   | 7046834   | U0         | 0         | -            | value      | 99            |
+  | chrY         | 15224235  | 15224260  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 13517892  | 13517917  | U0         | 0         | -            | value      | 99            |
+  | chrY         | 8010951   | 8010976   | U0         | 0         | -            | value      | 99            |
+  | chrY         | 7405376   | 7405401   | U0         | 0         | -            | value      | 99            |
+  +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
   Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
-  3 hidden columns: Strand, new_col, another_col
 
 Argument formatting allows to fine-tune appearance. It takes a dictionary with any column name as key, and a string as value which follows the python format syntax:
 
@@ -519,23 +524,22 @@ Argument formatting allows to fine-tune appearance. It takes a dictionary with a
   ... 	    'Start':'{:,}',
   ... 	    'Name':'name={}',
   ... 	    })
-  +--------------+-------------+--------------+------------+-----------+-------+
-  | Chromosome   | Start       | End          | Name       | Score     | +3    |
-  | (category)   | (int32)     | (int32)      | (object)   | (int64)   | ...   |
-  |--------------+-------------+--------------+------------+-----------+-------|
-  | chr1         | 212,609,534 | 2.126096e+08 | name=U0    | 0.00      | ...   |
-  | chr1         | 169,887,529 | 1.698876e+08 | name=U0    | 0.00      | ...   |
-  | chr1         | 216,711,011 | 2.167110e+08 | name=U0    | 0.00      | ...   |
-  | chr1         | 144,227,079 | 1.442271e+08 | name=U0    | 0.00      | ...   |
-  | ...          | ...         | ...          | ...        | ...       | ...   |
-  | chrY         | 15,224,235  | 1.522426e+07 | name=U0    | 0.00      | ...   |
-  | chrY         | 13,517,892  | 1.351792e+07 | name=U0    | 0.00      | ...   |
-  | chrY         | 8,010,951   | 8.010976e+06 | name=U0    | 0.00      | ...   |
-  | chrY         | 7,405,376   | 7.405401e+06 | name=U0    | 0.00      | ...   |
-  +--------------+-------------+--------------+------------+-----------+-------+
+  +--------------+-------------+--------------+------------+-----------+--------------+------------+---------------+
+  | Chromosome   | Start       | End          | Name       | Score     | Strand       | new_col    | another_col   |
+  | (category)   | (int32)     | (int32)      | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  |--------------+-------------+--------------+------------+-----------+--------------+------------+---------------|
+  | chr1         | 212,609,534 | 2.126096e+08 | name=U0    | 0.00      | +            | value      | 99            |
+  | chr1         | 169,887,529 | 1.698876e+08 | name=U0    | 0.00      | +            | value      | 99            |
+  | chr1         | 216,711,011 | 2.167110e+08 | name=U0    | 0.00      | +            | value      | 99            |
+  | chr1         | 144,227,079 | 1.442271e+08 | name=U0    | 0.00      | +            | value      | 99            |
+  | ...          | ...         | ...          | ...        | ...       | ...          | ...        | ...           |
+  | chrY         | 15,224,235  | 1.522426e+07 | name=U0    | 0.00      | -            | value      | 99            |
+  | chrY         | 13,517,892  | 1.351792e+07 | name=U0    | 0.00      | -            | value      | 99            |
+  | chrY         | 8,010,951   | 8.010976e+06 | name=U0    | 0.00      | -            | value      | 99            |
+  | chrY         | 7,405,376   | 7.405401e+06 | name=U0    | 0.00      | -            | value      | 99            |
+  +--------------+-------------+--------------+------------+-----------+--------------+------------+---------------+
   Stranded PyRanges object has 10,000 rows and 8 columns from 24 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
-  3 hidden columns: Strand, new_col, another_col
 
 
 PyRanges columns are pandas Series, and they may be of different data types. The types  are shown in the header shown with print (see above). To see them all, use property dtypes:
@@ -557,21 +561,21 @@ If you want to inspect more information from a PyRanges object, remember that yo
   <class 'pandas.core.frame.DataFrame'>
   RangeIndex: 10000 entries, 0 to 9999
   Data columns (total 8 columns):
-      Column       Non-Null Count  Dtype
-   ---  ------       --------------  -----
+   #   Column       Non-Null Count  Dtype   
+  ---  ------       --------------  -----   
    0   Chromosome   10000 non-null  category
-   1   Start        10000 non-null  int32
-   2   End          10000 non-null  int32
-   3   Name         10000 non-null  object
-   4   Score        10000 non-null  int64
+   1   Start        10000 non-null  int32   
+   2   End          10000 non-null  int32   
+   3   Name         10000 non-null  object  
+   4   Score        10000 non-null  int64   
    5   Strand       10000 non-null  category
-   6   new_col      10000 non-null  object
-   7   another_col  10000 non-null  int64
-   dtypes: category(2), int32(2), int64(2), object(2)
-   memory usage: 411.1+ KB
+   6   new_col      10000 non-null  object  
+   7   another_col  10000 non-null  int64   
+  dtypes: category(2), int32(2), int64(2), object(2)
+  memory usage: 411.1+ KB
 
   >>> gr.df.describe()
-        Start           End    Score  another_col
+                Start           End    Score  another_col
   count  1.000000e+04  1.000000e+04  10000.0      10000.0
   mean   8.087570e+07  8.087573e+07      0.0         99.0
   std    5.572825e+07  5.572825e+07      0.0          0.0
@@ -685,7 +689,7 @@ Simple forms of row selection are done through methods **head** and **tail**, wh
 
 The most important form of row selection is by **indexing with a boolean Series**. This is typically generated from a column through a comparison operator. Let's see it with some other example data:
 
-  >>> gg = pr.data.chipseq()
+  >>> gg = pr.data.aorta()
   >>> gg.print(n=20)
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -705,6 +709,7 @@ The most important form of row selection is by **indexing with a boolean Series*
   +--------------+-----------+-----------+------------+-----------+--------------+
   Stranded PyRanges object has 11 rows and 6 columns from 1 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
+
 
 Below, we produce a boolean Series:
 
@@ -792,8 +797,7 @@ Another way to select rows is **the subset method**, for which you provide a fun
 
 
   
-  >>> # the following is equivalent to
-  >>> gg[gg.Score.isin([2,4,6]]
+  >>> # the following is equivalent to gg[gg.Score.isin([2, 4, 6])
   >>> gg.subset(lambda x:x.Score.isin([2,4,6]))
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
@@ -871,7 +875,7 @@ As previously seen, single PyRanges column (which are pandas Series) can be extr
   129     chr1
   170     chr1
   196     chr1
-  	...
+  	  ... 
   3023    chrY
   3131    chrY
   3816    chrY
@@ -888,7 +892,7 @@ The same syntax can be used for the core PyRanges columns (Chromosome, Strand, S
   129     U0
   170     U0
   196     U0
-  	...
+  	  ..
   3023    U0
   3131    U0
   3816    U0
@@ -905,7 +909,7 @@ This syntax is analogous to pandas Dataframes. Note that, however, the bracket c
   2       216711036
   3       144227104
   4       148177850
-  	  ...
+            ...    
   9995      7046834
   9996     15224260
   9997     13517917
@@ -961,23 +965,24 @@ This is convenient to reduce genome annotation that consists of many columns:
   >>> ensembl_path = pr.get_example_path("ensembl.gtf")
   >>> ge = pr.read_gtf(ensembl_path)
   >>> ge
-  +--------------+------------+--------------+-----------+-----------+------------+-------+
-  | Chromosome   | Source     | Feature      | Start     | End       | Score      | +20   |
-  | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | ...   |
-  |--------------+------------+--------------+-----------+-----------+------------+-------|
-  | 1            | havana     | gene         | 11868     | 14409     | .          | ...   |
-  | 1            | havana     | transcript   | 11868     | 14409     | .          | ...   |
-  | 1            | havana     | exon         | 11868     | 12227     | .          | ...   |
-  | 1            | havana     | exon         | 12612     | 12721     | .          | ...   |
-  | ...          | ...        | ...          | ...       | ...       | ...        | ...   |
-  | 1            | ensembl    | transcript   | 120724    | 133723    | .          | ...   |
-  | 1            | ensembl    | exon         | 133373    | 133723    | .          | ...   |
-  | 1            | ensembl    | exon         | 129054    | 129223    | .          | ...   |
-  | 1            | ensembl    | exon         | 120873    | 120932    | .          | ...   |
-  +--------------+------------+--------------+-----------+-----------+------------+-------+
+  +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------+
+  | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | gene_name   | gene_source    | +14   |
+  | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | (object)       | ...   |
+  |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------|
+  | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | 1            | havana     | exon         | 11868     | 12227     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | 1            | havana     | exon         | 12612     | 12721     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
+  | ...          | ...        | ...          | ...       | ...       | ...        | ...          | ...        | ...             | ...            | ...         | ...            | ...   |
+  | 1            | ensembl    | transcript   | 120724    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  | 1            | ensembl    | exon         | 133373    | 133723    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  | 1            | ensembl    | exon         | 129054    | 129223    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  | 1            | ensembl    | exon         | 120873    | 120932    | .          | -            | .          | ENSG00000238009 | 6              | AL627309.1  | ensembl_havana | ...   |
+  +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------+
   Stranded PyRanges object has 95 rows and 26 columns from 1 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
-	20 hidden columns: Strand, Frame, gene_id, gene_version, gene_name, gene_source, gene_biotype, ... (+ 13 more.)
+  14 hidden columns: gene_biotype, transcript_id, transcript_version, transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, exon_number, exon_id, exon_version, ... (+ 3 more.)
+
 
   >>> ge[ ['gene_id', 'gene_name'] ]
   +--------------+-----------+-----------+--------------+-----------------+-------------+
@@ -1001,7 +1006,6 @@ The **drop method** is an alternative way of column selection wherein we specify
 
 
   >>> gr.print()
-  >>> gr.drop(['Name']).print()
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
   | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
@@ -1018,6 +1022,8 @@ The **drop method** is an alternative way of column selection wherein we specify
   +--------------+-----------+-----------+------------+-----------+--------------+
   Stranded PyRanges object has 10,000 rows and 6 columns from 24 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
+  
+  >>> gr.drop(['Name']).print()
   +--------------+-----------+-----------+-----------+--------------+
   | Chromosome   | Start     | End       | Score     | Strand       |
   | (category)   | (int32)   | (int32)   | (int64)   | (category)   |
@@ -1071,7 +1077,7 @@ If you want to obtain a DataFrame with certain columns rather than a PyRanges ob
   9997   U0   13517892
   9998   U0    8010951
   9999   U0    7405376
-  
+  <BLANKLINE>
   [10000 rows x 2 columns]
 
 
@@ -1084,7 +1090,7 @@ A common operation is to fetch the sequences corresponding to the intervals repr
 
 In the tutorial, we saw its usage with a real genome. Let's make a toy example here:
 
-  >>> with open('minigenome.fa', 'w') as fw:
+  >>> with open('minigenome.fa', 'w') as fw: # doctest: +SKIP
   ...     fw.write('>chrZ\n')
   ...     fw.write('AAAGGGCCCTTTAAAGGGCCCTTTAAAGGGCCCTTT\n')
 
@@ -1155,6 +1161,14 @@ Let's get those which contain a CC and AA dinucleotides separated by 1-3 nucleot
 
 
   >>> sg[sg.Sequence.str.contains(r'CC.{1,3}AA', regex=True)]
+  +--------------+-----------+-----------+------------+--------------+------------+
+  | Chromosome   |     Start |       End | name       | Strand       | Sequence   |
+  | (category)   |   (int32) |   (int32) | (object)   | (category)   | (object)   |
+  |--------------+-----------+-----------+------------+--------------+------------|
+  | chrZ         |        10 |        20 | c          | -            | GGCCCTTTAA |
+  +--------------+-----------+-----------+------------+--------------+------------+
+  Stranded PyRanges object has 1 rows and 6 columns from 1 chromosomes.
+  For printing, the PyRanges was sorted on Chromosome and Strand.
 
 
 

@@ -41,19 +41,19 @@ http://dx.doi.org/10.1093/bioinformatics/btz615
 Documentation outline
 ~~~~~~~~~~~~~~~~~~~~~
 
-The PyRanges documentation is structured in three parts:
 
-#. The tutorial, on the next page, recommended for all new users
-#. The how-to pages, further below, where functionalities are grouped by topic
-#. The `API reference <https://pyranges.readthedocs.io/>`_, where all methods are explained in detail
+#. 🚀 The tutorial, on the next page, recommended for all new users
+#. 🚀 The how-to pages, further below, where functionalities are grouped by topic
+#. 🚀 The `API reference <https://pyranges.readthedocs.io/>`_, where all methods are explained in detail. Old `API reference <https://pyranges.readthedocs.io/>`_ is here. 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :hidden:
    :caption: Contents:
 
    tutorial
    
-   how_to_book
+   how_to_pages
 
        
 
