@@ -353,20 +353,8 @@ to install it.
 
 The bigwig writer needs to know the chromosome sizes, provided as a dictionary {chromosome_name: size} or an analogous PyRanges with sizes as End (with Start values set to zero).
  
-For widely used genome assemblies, you can fetch these using the pyranges database functions, a pyranges add-on that can be install with:
 
-.. code-block:: bash
-
-	pip install pyranges_db
-	
-.. doctest::
-
-  >>> import pyranges_db # doctest: +SKIP
-  >>> chromsizes = pyranges_db.ucsc.chromosome_sizes("hg19") # doctest: +SKIP
-
-
-
-Alternatively, you can derive chromosome sizes from a fasta file using pyfaidx. Install with:
+You can derive chromosome sizes from a fasta file using pyfaidx. Install with:
 
 .. code-block:: bash
 
@@ -380,6 +368,7 @@ or
 	
 
 
+.. doctest::
 
   >>> import pyfaidx # doctest: +SKIP
   >>> p=pyfaidx.Fasta('your_genome.fa') # doctest: +SKIP
