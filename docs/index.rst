@@ -42,9 +42,9 @@ Documentation outline
 ~~~~~~~~~~~~~~~~~~~~~
 
 
-🚀 :doc:`The tutorial <./tutorial>` , on the next page, recommended for all new users
-🚀 :doc:`The how-to pages <./how_to_pages>`, further below, where functionalities are grouped by topic
-🚀 The `API reference <./build/autoapi/index.html>`, where all methods are explained in detail. Old `API reference <https://pyranges.readthedocs.io/>`_ is here. 
+#. 🚀 :doc:`The tutorial <./tutorial>` , on the next page, recommended for all new users
+#. 🚀 :doc:`The how-to pages <./how_to_pages>`, further below, where functionalities are grouped by topic
+#. 🚀 The `API reference <./build/autoapi/index.html>`_, where all methods are explained in detail. Old `API reference <https://pyranges.readthedocs.io/>`_ is here. 
 
 .. toctree::
    :maxdepth: 2
