@@ -370,7 +370,7 @@ or
 
 .. doctest::
 
-  >>> import pyfaidx # doctest: +SKIP
+  >>> import pyfaidx
   >>> p=pyfaidx.Fasta('your_genome.fa') # doctest: +SKIP
   >>> chromsizes={c:len(f)  for c,f in p.items()} # doctest: +SKIP
 
