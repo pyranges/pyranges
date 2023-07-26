@@ -32,7 +32,7 @@ release = ' 0.0.124'
 # ones.
 extensions = [   'autoapi.extension', 'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon', 'sphinx.ext.intersphinx'
 ]
 
 autoapi_dirs = ['../pyranges']
