@@ -1079,7 +1079,7 @@ A common operation is to fetch the sequences corresponding to the intervals repr
 
 In the tutorial, we saw its usage with a real genome. Let's make a toy example here:
 
-  >>> with open('minigenome.fa', 'w') as fw: # doctest: +SKIP
+  >>> with open('minigenome.fa', 'w') as fw:
   ...     fw.write('>chrZ\n')
   ...     fw.write('AAAGGGCCCTTTAAAGGGCCCTTTAAAGGGCCCTTT\n')
 
