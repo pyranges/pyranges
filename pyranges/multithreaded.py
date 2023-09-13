@@ -1,24 +1,22 @@
-import numpy as np
+import os
 
+import numpy as np
 import pandas as pd
+from natsort import natsorted  # type: ignore
 
 import pyranges as pr
 
-from natsort import natsorted
-
-import os
-
 ray = None
 
-def get_n_args(f):
 
+def get_n_args(f):
     import inspect
+
     nparams = len(inspect.signature(f).parameters)
     return nparams
 
 
 def call_f(f, nparams, df, odf, kwargs):
-
     if nparams == 3:
         return f.remote(df, odf, **kwargs)
     else:
@@ -26,7 +24,6 @@ def call_f(f, nparams, df, odf, kwargs):
 
 
 def call_f_single(f, nparams, df, **kwargs):
-
     if nparams == 2:
         return f.remote(df, **kwargs)
     else:
@@ -34,7 +31,7 @@ def call_f_single(f, nparams, df, **kwargs):
 
 
 class suppress_stdout_stderr(object):
-    '''
+    """
     A context manager for doing a "deep suppression" of stdout and stderr in
     Python, i.e. will suppress all print, even if the print originates in a
     compiled C/Fortran sub-function.
@@ -42,7 +39,7 @@ class suppress_stdout_stderr(object):
     to stderr just before a script exits, and after the context manager has
     exited (at least, I think that is why it lets exceptions through).
 
-    '''
+    """
 
     def __init__(self):
         # Open a pair of null files
@@ -65,7 +62,6 @@ class suppress_stdout_stderr(object):
 
 
 def merge_dfs(df1, df2):
-
     if not df1.empty and not df2.empty:
         return pd.concat([df1, df2], sort=False).reset_index(drop=True)
 
@@ -79,7 +75,6 @@ def merge_dfs(df1, df2):
 
 
 def process_results(results, keys):
-
     results_dict = {k: r for k, r in zip(keys, results) if r is not None}
 
     try:
@@ -109,7 +104,6 @@ def process_results(results, keys):
 
 
 def make_sparse(df):
-
     if "Strand" in df:
         cols = "Chromosome Start End Strand".split()
     else:
@@ -119,25 +113,21 @@ def make_sparse(df):
 
 
 def make_binary_sparse(kwargs, df, odf):
-
     sparse = kwargs.get("sparse")
 
     if not sparse:
         return df, odf
 
     if sparse.get("self"):
-
         df = make_sparse(df)
 
     if sparse.get("other"):
-
         odf = make_sparse(odf)
 
     return df, odf
 
 
 def make_unary_sparse(kwargs, df):
-
     sparse = kwargs.get("sparse").get("self")
 
     if sparse:
@@ -168,32 +158,38 @@ def ray_initialized():
 
 
 def get_multithreaded_funcs(function, nb_cpu):
-
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
+
         _merge_dfs = ray.remote(merge_dfs)
         get = ray.get
         function = ray.remote(function)
     else:
-        _merge_dfs = lambda: "dummy value"
+
+        def _merge_dfs():
+            return "dummy value"
+
         _merge_dfs.remote = merge_dfs
-        get = lambda x: x
+
+        def get(x):
+            return x
+
         function.remote = function
 
     return function, get, _merge_dfs
 
-def pyrange_apply(function, self, other, **kwargs):
 
+def pyrange_apply(function, self, other, **kwargs):
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
 
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
+
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
 
-    function, get, _merge_dfs = get_multithreaded_funcs(
-        function, nb_cpu=nb_cpu)
+    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
 
     strandedness = kwargs["strandedness"]
 
@@ -208,8 +204,9 @@ def pyrange_apply(function, self, other, **kwargs):
     assert strandedness in ["same", "opposite", False, None]
 
     if strandedness:
-        assert self.stranded and other.stranded, \
-            "Can only do stranded operations when both PyRanges contain strand info"
+        assert (
+            self.stranded and other.stranded
+        ), "Can only do stranded operations when both PyRanges contain strand info"
 
     results = []
 
@@ -222,9 +219,7 @@ def pyrange_apply(function, self, other, **kwargs):
     other_dfs = other.dfs
 
     if strandedness:
-
         for (c, s), df in items:
-
             os = strand_dict[s]
 
             if not (c, os) in other.keys() or len(other[c, os].values()) == 0:
@@ -238,12 +233,9 @@ def pyrange_apply(function, self, other, **kwargs):
             results.append(result)
 
     else:
-
         if self.stranded and not other.stranded:
-
             for (c, s), df in items:
-
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odf = dummy
                 else:
                     odf = other_dfs[c]
@@ -253,10 +245,8 @@ def pyrange_apply(function, self, other, **kwargs):
                 results.append(result)
 
         elif not self.stranded and other.stranded:
-
             for c, df in items:
-
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odf = dummy
                 else:
                     odf1 = other_dfs.get((c, "+"), dummy)
@@ -270,10 +260,8 @@ def pyrange_apply(function, self, other, **kwargs):
                 results.append(result)
 
         elif self.stranded and other.stranded:
-
             for (c, s), df in self.items():
-
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odfs = pr.PyRanges(dummy)
                 else:
                     odfp = other_dfs.get((c, "+"), dummy)
@@ -294,9 +282,8 @@ def pyrange_apply(function, self, other, **kwargs):
                 results.append(result)
 
         else:
-
             for c, df in items:
-                if not c in other_chromosomes:
+                if c not in other_chromosomes:
                     odf = dummy
                 else:
                     odf = other_dfs[c]
@@ -317,29 +304,25 @@ def pyrange_apply(function, self, other, **kwargs):
 
 
 def pyrange_apply_single(function, self, **kwargs):
-
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
     strand = kwargs["strand"]
 
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
+
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
 
-    function, get, _merge_dfs = get_multithreaded_funcs(
-        function, nb_cpu=nb_cpu)
+    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
 
     if strand:
-        assert self.stranded, \
-            "Can only do stranded operation when PyRange contains strand info"
+        assert self.stranded, "Can only do stranded operation when PyRange contains strand info"
 
     results = []
 
     if strand:
-
         for (c, s), df in self.items():
-
             kwargs["chromosome"] = c
             _strand = s
             kwargs["strand"] = _strand
@@ -351,10 +334,8 @@ def pyrange_apply_single(function, self, **kwargs):
         keys = self.keys()
 
     elif not self.stranded:
-
         keys = []
         for c, df in self.items():
-
             kwargs["chromosome"] = c
 
             df = make_unary_sparse(kwargs, df)
@@ -363,10 +344,8 @@ def pyrange_apply_single(function, self, **kwargs):
             keys.append(c)
 
     else:
-
         keys = []
         for c in self.chromosomes:
-
             kwargs["chromosome"] = c
 
             dfs = self[c]
@@ -394,14 +373,12 @@ def pyrange_apply_single(function, self, **kwargs):
 
 
 def _lengths(df):
-
     lengths = df.End - df.Start
 
     return lengths
 
 
 def _tss(df, **kwargs):
-
     df = df.copy(deep=True)
     dtype = df.dtypes["Start"]
     slack = kwargs.get("slack", 0)
@@ -416,8 +393,8 @@ def _tss(df, **kwargs):
 
     return df
 
-def _tes(df, **kwargs):
 
+def _tes(df, **kwargs):
     df = df.copy(deep=True)
     dtype = df.dtypes["Start"]
     slack = kwargs.get("slack", 0)
@@ -434,15 +411,11 @@ def _tes(df, **kwargs):
 
 
 def _extend(df, **kwargs):
-
     df = df.copy()
     dtype = df.Start.dtype
     slack = kwargs["ext"]
 
-    assert isinstance(
-        slack,
-        (int, dict)), "Extend parameter must be integer or dict, is {}".format(
-            type(slack))
+    assert isinstance(slack, (int, dict)), "Extend parameter must be integer or dict, is {}".format(type(slack))
 
     if isinstance(slack, int):
         df.loc[:, "Start"] = df.Start - slack
@@ -450,18 +423,17 @@ def _extend(df, **kwargs):
         df.End = df.End + slack
     else:
         strand = df.Strand.iloc[0]
-        slack_dict = slack
         five_end_slack = slack.get("5")
         three_end_slack = slack.get("3")
 
-        if five_end_slack and strand=='+':
+        if five_end_slack and strand == "+":
             df.loc[:, "Start"] -= five_end_slack
-        elif five_end_slack and strand=='-':
+        elif five_end_slack and strand == "-":
             df.loc[:, "End"] += five_end_slack
 
-        if three_end_slack and strand=='-':
+        if three_end_slack and strand == "-":
             df.loc[:, "Start"] -= three_end_slack
-        elif three_end_slack and strand=='+':
+        elif three_end_slack and strand == "+":
             df.loc[:, "End"] += three_end_slack
 
     df = df.astype({"Start": dtype, "End": dtype})
@@ -470,23 +442,19 @@ def _extend(df, **kwargs):
 
     return df
 
-def _extend_grp(df, **kwargs):
 
+def _extend_grp(df, **kwargs):
     df = df.copy()
     dtype = df.Start.dtype
     slack = kwargs["ext"]
     by = kwargs["group_by"]
-    g=df.groupby(by)
-    
-    assert isinstance(
-        slack,
-        (int, dict)), "Extend parameter must be integer or dict, is {}".format(
-            type(slack))
+    g = df.groupby(by)
 
+    assert isinstance(slack, (int, dict)), "Extend parameter must be integer or dict, is {}".format(type(slack))
 
-    minstarts_pos=g.Start.idxmin()
-    maxends_pos=g.End.idxmax()    
-    
+    minstarts_pos = g.Start.idxmin()
+    maxends_pos = g.End.idxmax()
+
     if isinstance(slack, int):
         df.loc[minstarts_pos, "Start"] = df.Start - slack
         df.loc[df.Start < 0, "Start"] = 0
@@ -494,18 +462,17 @@ def _extend_grp(df, **kwargs):
 
     else:
         strand = df.Strand.iloc[0]
-        slack_dict = slack
         five_end_slack = slack.get("5")
         three_end_slack = slack.get("3")
 
-        if   five_end_slack and strand=='+':
+        if five_end_slack and strand == "+":
             df.loc[minstarts_pos, "Start"] -= five_end_slack
-        elif five_end_slack and strand=='-':
+        elif five_end_slack and strand == "-":
             df.loc[maxends_pos, "End"] += five_end_slack
 
-        if   three_end_slack and strand=='-':
+        if three_end_slack and strand == "-":
             df.loc[minstarts_pos, "Start"] -= three_end_slack
-        elif three_end_slack and strand=='+':
+        elif three_end_slack and strand == "+":
             df.loc[maxends_pos, "End"] += three_end_slack
 
     df = df.astype({"Start": dtype, "End": dtype})
@@ -516,16 +483,15 @@ def _extend_grp(df, **kwargs):
 
 
 def pyrange_apply_chunks(function, self, as_pyranges, **kwargs):
-
     nparams = get_n_args(function)
     nb_cpu = kwargs.get("nb_cpu", 1)
     if nb_cpu > 1:
-        import ray
+        import ray  # type: ignore
+
         with suppress_stdout_stderr():
             ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
 
-    function, get, _merge_dfs = get_multithreaded_funcs(
-        function, nb_cpu=nb_cpu)
+    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
 
     keys = []
     lengths = []
@@ -533,8 +499,7 @@ def pyrange_apply_chunks(function, self, as_pyranges, **kwargs):
     for k, v in self.items():
         dfs = np.array_split(v, nb_cpu)
         lengths.append(len(dfs))
-        results.extend(
-            [call_f_single(function, nparams, df, **kwargs) for df in dfs])
+        results.extend([call_f_single(function, nparams, df, **kwargs) for df in dfs])
         keys.append(k)
 
     results = get(results)

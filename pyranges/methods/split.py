@@ -1,18 +1,7 @@
 import pandas as pd
 
+
 def _split(df, **kwargs):
-
-    """Blah blah.
-
-    Example
-    -------
-
-    >>> 5
-    5
-
-    TODO: would be sped up if used numpy instead of pandas for everything?
-    """
-
     strand = kwargs.get("strand", False)
 
     dtype = df.Start.dtype
@@ -23,8 +12,8 @@ def _split(df, **kwargs):
 
     _ends = points.shift(-1)
 
-    points = points[:-1]
-    _ends = _ends[:-1]
+    points = points.iloc[:-1]
+    _ends = _ends.iloc[:-1]
     features = pd.concat([points, _ends], axis=1).astype(dtype)
     features.columns = "Start End".split()
 

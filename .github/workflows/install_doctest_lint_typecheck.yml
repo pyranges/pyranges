@@ -1,0 +1,91 @@
+name: linting-typechecking-doctests
+
+# Source: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#using-multiple-python-versions
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  install_and_test:
+    runs-on: ubuntu-latest
+    strategy:
+      # You can use PyPy versions in python-version.
+      # For example, pypy2.7 and pypy3.9
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: pip install .
+      - name: Install add-ons
+        run: pip install pyrle pybigwig bamread pyfaidx fisher
+      - run: pip install pytest
+      - name: doctests
+        env:
+          GITHUB_ACTIONS: true
+        run: |
+          shopt -s globstar  # allow recursive globs
+          python -m doctest pyranges/**.py
+      - name: unittests
+        env:
+          GITHUB_ACTIONS: true
+        run: |
+          pytest tests/unit
+
+  isort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - run: pip install isort
+      - run: isort --profile black -l 120 --check --diff .
+
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.0"
+          max-line-length: "120"
+      - run: pip install black
+      - run: black -l 120 --check --diff pyranges tests
+
+  flake8:
+    runs-on: ubuntu-latest
+    name: Lint
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+      - name: flake8 Lint install
+        run: pip install flake8
+      - name: flake8 Lint
+        run: flake8 --max-line-length=120 --ignore E203,E501,W503 pyranges
+
+  mypy:
+    runs-on: ubuntu-latest
+    name: Mypy
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install mypy
+        run: pip install mypy
+      - name: mypy
+        run: |
+          pip install numpy  # for the typing stubs
+          python -m pip install pandas-stubs types-setuptools types-tabulate 
+          mypy pyranges

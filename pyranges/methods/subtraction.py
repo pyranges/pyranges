@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
-
-from ncls import NCLS
+from ncls import NCLS  # type: ignore
 
 
 def add_rows_per_group(df):
@@ -10,6 +8,7 @@ def add_rows_per_group(df):
     df = pd.concat([df, last_rows], ignore_index=True)
     df = df.sort_values("__ix__", ascending=True)
     return df
+
 
 # def _subtraction(scdf, **kwargs):
 #     if scdf.empty:
@@ -44,8 +43,8 @@ def add_rows_per_group(df):
 
 #     return scdf[~remove_mask]
 
-def _subtraction(scdf, ocdf, **kwargs):
 
+def _subtraction(scdf, ocdf, **kwargs):
     if ocdf.empty or scdf.empty:
         return scdf
 
@@ -62,7 +61,8 @@ def _subtraction(scdf, ocdf, **kwargs):
     o = NCLS(ocdf.Start.values, ocdf.End.values, ocdf.index.values)
 
     idx_self, new_starts, new_ends = o.set_difference_helper(
-        scdf.Start.values, scdf.End.values, scdf.index.values, scdf.__num__.values)
+        scdf.Start.values, scdf.End.values, scdf.index.values, scdf.__num__.values
+    )
 
     missing_idx = pd.Index(scdf.index).difference(idx_self)
 

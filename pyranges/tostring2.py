@@ -1,13 +1,17 @@
-import pandas as pd
-import natsort
-
+import functools
+import os
 import shutil
+from typing import Optional
+
+import natsort  # type: ignore
+import pandas as pd
 
 sort_cols = "Start End".split()
 
+GITHUB_ACTIONS = os.environ.get("GITHUB_ACTIONS", False)
+
 
 def _get_stranded_f(self, half_entries, f, sort=False):
-
     counter = 0
     dfs = []
 
@@ -51,7 +55,6 @@ def _get_stranded_f(self, half_entries, f, sort=False):
 
 
 def _get_unstranded_f(self, half_entries, f, sort=False):
-
     chromosomes = self.chromosomes
 
     if f == "tail":
@@ -62,7 +65,6 @@ def _get_unstranded_f(self, half_entries, f, sort=False):
     counter = 0
     dfs = []
     for chromosome in chromosomes:
-
         cdf = self.dfs.get((chromosome), default)
         cdf = getattr(cdf, f)(half_entries)
 
@@ -84,7 +86,6 @@ def _get_unstranded_f(self, half_entries, f, sort=False):
 
 
 def _get_df(self, n, sort):
-
     half_entries = int(n / 2)
 
     if len(self) <= n:
@@ -110,17 +111,22 @@ def _get_df(self, n, sort):
 
 
 def show_pos_merge_position(df):
-
     # all_dots = df.Start == "..."
 
     cols_to_drop = "Chromosome Start End".split()
     if "Strand" in df:
-        pos = df.Chromosome.astype(str) + " " + df.Start.astype(
-            str) + "-" + df.End.astype(str) + " " + df.Strand.astype(str)
+        pos = (
+            df.Chromosome.astype(str)
+            + " "
+            + df.Start.astype(str)
+            + "-"
+            + df.End.astype(str)
+            + " "
+            + df.Strand.astype(str)
+        )
         cols_to_drop.append("Strand")
     else:
-        pos = df.Chromosome.astype(str) + " " + df.Start.astype(
-            str) + "-" + df.End.astype(str)
+        pos = df.Chromosome.astype(str) + " " + df.Start.astype(str) + "-" + df.End.astype(str)
 
     df = df.drop(cols_to_drop, axis=1)
     df.insert(0, "- Position -", pos)
@@ -131,7 +137,6 @@ def show_pos_merge_position(df):
 
 
 def get_columns_dtypes(self):
-
     _df = next(iter(self.dfs.values()))
     dtypes = [
         str(d)
@@ -145,7 +150,6 @@ def get_columns_dtypes(self):
 
 
 def build_header(columns_dtypes):
-
     header = []
     for c, d in columns_dtypes.items():
         cd = "".join([str(c), "\n(", d, ")"])
@@ -155,7 +159,6 @@ def build_header(columns_dtypes):
 
 
 def add_hidden_col_dotdot(df, n_hidden_cols):
-
     ddd = pd.Series("...", index=df.index)
     ddd.name = "+{}\n...".format(n_hidden_cols)
     df = pd.concat([df, ddd], axis=1)
@@ -163,22 +166,19 @@ def add_hidden_col_dotdot(df, n_hidden_cols):
     return df
 
 
-def grow_string_representation(df, columns_dtypes):
-
+def _grow_string_representation(df, columns_dtypes, terminal_width: Optional[int] = None):
     from tabulate import tabulate
 
-    terminal_width = shutil.get_terminal_size().columns
+    _terminal_width = shutil.get_terminal_size().columns if terminal_width is None else terminal_width
     magic_number = 10  # length of '| ...   |' to append if there are hidden columns
 
     if len(columns_dtypes) < 15:
-
         header = build_header(columns_dtypes)
-        str_repr = tabulate(
-            df, headers=header, tablefmt='psql', showindex=False)
+        str_repr = tabulate(df, headers=header, tablefmt="psql", showindex=False)
 
         table_width = len(str_repr.split("\n", 1)[0])
 
-        if table_width <= terminal_width:
+        if table_width <= _terminal_width:
             return str_repr, []
 
     header = build_header({k: columns_dtypes[k] for k in columns_dtypes})
@@ -192,68 +192,64 @@ def grow_string_representation(df, columns_dtypes):
 
     i = 3
     for i, c in enumerate(df.columns[3:], 3):
-
         new_build_df = pd.concat([build_df, df[c]], axis=1)
 
-        _header = header[:i]
         new_str_repr = tabulate(
-            new_build_df,
-            headers=new_build_df.columns,
-            tablefmt='psql',
-            showindex=False)
+            new_build_df, headers=list(new_build_df.columns), tablefmt="psql", showindex=False  # type: ignore
+        )
 
         table_width = len(new_str_repr.split("\n", 1)[0])
 
-        if table_width >= terminal_width - magic_number:
+        if table_width >= _terminal_width - magic_number:
             break
         else:
             str_repr = new_str_repr
             build_df = new_build_df
 
     if i < total_columns:
-
         new_build_df = add_hidden_col_dotdot(build_df, len(original_header[i:]))
         str_repr = tabulate(
-            new_build_df,
-            headers=new_build_df.columns,
-            tablefmt='psql',
-            showindex=False)
+            new_build_df, headers=list(new_build_df.columns), tablefmt="psql", showindex=False  # type: ignore
+        )
 
     return str_repr, original_header[i:]
 
 
-def untraditional_strand_info(self, str_repr_width):
+# ugly hack to make doctests pass in github actions
+grow_string_representation = functools.partial(
+    _grow_string_representation,
+    terminal_width=250 if GITHUB_ACTIONS else None,
+)
 
+
+def untraditional_strand_info(self, str_repr_width):
     _ustr = ""
     if "Strand" in self.columns and not self.stranded:
         strands = []
         for _, df in self:
             strands.extend(list(df.Strand.drop_duplicates()))
 
-        untraditional_strands = [
-            "'" + str(s) + "'" for s in set(strands) - set("+-")
-        ]
+        untraditional_strands = ["'" + str(s) + "'" for s in set(strands) - set("+-")]
         n_untraditional_strands = len(untraditional_strands)
 
         if n_untraditional_strands:
             ustr = "Considered unstranded due to these Strand values: {}"
             for i in range(n_untraditional_strands + 1):
-                _ustr = ustr.format(", ".join(untraditional_strands[:i+1]))
+                _ustr = ustr.format(", ".join(untraditional_strands[: i + 1]))
                 if len(_ustr) > str_repr_width - 20:
                     break
 
             if i < n_untraditional_strands - 1:
-                untraditional_strands = untraditional_strands[:i + 1]
+                untraditional_strands = untraditional_strands[: i + 1]
                 untraditional_strands.append("...")
-                _ustr = ustr.format(
-                    ", ".join(untraditional_strands)) + " (+ {} more.)".format(
-                        n_untraditional_strands - i - 1)
+                _ustr = ustr.format(", ".join(untraditional_strands)) + " (+ {} more.)".format(
+                    n_untraditional_strands - i - 1
+                )
 
     return _ustr
 
 
 def hidden_columns_info(hidden_columns, str_repr_width):
-
     n_hidden_cols = len(hidden_columns)
     _hstr = ""
     if n_hidden_cols:
@@ -267,20 +263,19 @@ def hidden_columns_info(hidden_columns, str_repr_width):
             hidden_columns = hidden_columns[:i]
             hidden_columns.append("...")
 
-            _hstr = hstr.format(", ".join(
-                hidden_columns)) + " (+ {} more.)".format(n_hidden_cols - i)
+            _hstr = hstr.format(", ".join(hidden_columns)) + " (+ {} more.)".format(n_hidden_cols - i)
 
     return _hstr
 
 
 def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
-
     n_intervals = len(self)
     n_chromosomes = len(self.chromosomes)
 
     stranded = "Stranded" if self.stranded else "Unstranded"
     str1 = "{} PyRanges object has {:,} rows and {:,} columns from {} chromosomes.".format(
-        stranded, n_intervals, len(self.columns), n_chromosomes)
+        stranded, n_intervals, len(self.columns), n_chromosomes
+    )
 
     str_repr_width = len(str_repr.split("\n", 1)[0])
 
@@ -288,10 +283,12 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
 
     ustr = untraditional_strand_info(self, str_repr_width)
 
-    order = {(True, True): "Chromosome, Start, End and Strand.",
-            (True, False): "Chromosome, Start, End and Strand.",
-            (False, False): "Chromosome.",
-            (False, True): "Chromosome and Strand."}[sort, self.stranded]
+    order = {
+        (True, True): "Chromosome, Start, End and Strand.",
+        (True, False): "Chromosome, Start, End and Strand.",
+        (False, False): "Chromosome.",
+        (False, True): "Chromosome and Strand.",
+    }[sort, self.stranded]
 
     order = "For printing, the PyRanges was sorted on " + order
 
@@ -301,7 +298,6 @@ def add_text_to_str_repr(self, str_repr, hidden_columns, sort):
 
 
 def tostring(self, n=8, merge_position=False, formatting=None, sort=False):
-
     if len(self) == 0:
         return "Empty PyRanges"
 
@@ -335,16 +331,3 @@ def tostring(self, n=8, merge_position=False, formatting=None, sort=False):
     str_repr = add_text_to_str_repr(self, str_repr, hidden_columns, sort)
 
     return str_repr
-
-
-if __name__ == "__main__":
-
-    from pyranges.tostring2 import _get_stranded_f, _get_unstranded_f
-    from pyranges.tostring2 import tostring
-    import pyranges as pr
-    gr = pr.data.chipseq()
-    df = gr.df
-    _get_stranded_f(gr, 2, "head")
-    _get_unstranded_f(gr.unstrand(), 6, "tail")
-
-    tostring(gr)

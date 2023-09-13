@@ -1,31 +1,49 @@
-import numpy as np
-
-import pandas as pd
 import csv
 
-from natsort import natsorted
+import numpy as np
+import pandas as pd
+from natsort import natsorted  # type: ignore
 
-_gtf_columns={"seqname": "Chromosome",
-             "source": "Source",
-             "feature": "Feature",
-             "start": "Start",
-             "end": "End",
-             "score": "Score",
-             "strand": "Strand",
-             "frame": "Frame",
-             #"attribute": "Attribute"  # filled with all others columns
+_gtf_columns = {
+    "seqname": "Chromosome",
+    "source": "Source",
+    "feature": "Feature",
+    "start": "Start",
+    "end": "End",
+    "score": "Score",
+    "strand": "Strand",
+    "frame": "Frame",
+    # "attribute": "Attribute"  # filled with all others columns
 }
 
-_gff3_columns=_gtf_columns.copy()
-_gff3_columns['phase'] = _gff3_columns.pop('frame')
+_gff3_columns = _gtf_columns.copy()
+_gff3_columns["phase"] = _gff3_columns.pop("frame")
 
-_ordered_gtf_columns= ["seqname", "source", "feature", "start", "end", "score", "strand", "frame", "attribute"]
-_ordered_gff3_columns=["seqname", "source", "feature", "start", "end", "score", "strand", "phase", "attribute"]
-
+_ordered_gtf_columns = [
+    "seqname",
+    "source",
+    "feature",
+    "start",
+    "end",
+    "score",
+    "strand",
+    "frame",
+    "attribute",
+]
+_ordered_gff3_columns = [
+    "seqname",
+    "source",
+    "feature",
+    "start",
+    "end",
+    "score",
+    "strand",
+    "phase",
+    "attribute",
+]
 
 
 def _fill_missing(df, all_columns):
-
     columns = list(df.columns)
 
     if not df.get(all_columns) is None:
@@ -44,7 +62,6 @@ def _fill_missing(df, all_columns):
 
 
 def _bed(df, keep):
-
     all_columns = "Chromosome Start End Name Score Strand".split()
 
     outdf = _fill_missing(df, all_columns)
@@ -59,18 +76,17 @@ def _bed(df, keep):
 
 
 def _gtf(df, mapping):
+    pr_col2gff_col = {v: k for k, v in mapping.items()}
 
-    pr_col2gff_col={v:k for k, v in mapping.items()}
-    
-    df=df.rename(columns=pr_col2gff_col) #copying here
+    df = df.rename(columns=pr_col2gff_col)  # copying here
     df.loc[:, "start"] = df.start + 1
     all_columns = _ordered_gtf_columns[:-1]
     columns = list(df.columns)
- 
+
     outdf = _fill_missing(df, all_columns)
-    
-    if 'attribute' in df.columns:
-        attribute = mapping['attribute'] + ' "' + df.attribute + '";'
+
+    if "attribute" in df.columns:
+        attribute = mapping["attribute"] + ' "' + df.attribute + '";'
     else:
         # gotten all needed columns, need to join the rest
         rest = set(df.columns) - set(all_columns)
@@ -92,11 +108,10 @@ def _gtf(df, mapping):
 
 
 def _to_gtf(self, path=None, compression="infer", map_cols=None):
-
-    mapping=_gtf_columns.copy()
+    mapping = _gtf_columns.copy()
     if map_cols:
         mapping.update(map_cols)
-    
+
     gr = self
 
     outdfs = [_gtf(v, mapping) for k, v in sorted(gr.dfs.items())]
@@ -111,18 +126,14 @@ def _to_gtf(self, path=None, compression="infer", map_cols=None):
                 compression=compression,
                 mode=mode,
                 sep="\t",
-                quoting=csv.QUOTE_NONE)
+                quoting=csv.QUOTE_NONE,
+            )
             mode = "a"
     else:
-        return "".join([
-            outdf.to_csv(
-                index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
-            for outdf in outdfs
-        ])
+        return "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for outdf in outdfs])
 
 
 def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
-
     gr = self
 
     if path:
@@ -135,19 +146,20 @@ def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
                 header=header,
                 mode=mode,
                 sep=sep,
-                quoting=csv.QUOTE_NONE)
+                quoting=csv.QUOTE_NONE,
+            )
             mode = "a"
             header = False
     else:
-        return "".join([
-            outdf.to_csv(
-                index=False, header=header, sep=sep, quoting=csv.QUOTE_NONE)
-            for _, outdf in sorted(gr.dfs.items())
-        ])
+        return "".join(
+            [
+                outdf.to_csv(index=False, header=header, sep=sep, quoting=csv.QUOTE_NONE)
+                for _, outdf in sorted(gr.dfs.items())
+            ]
+        )
 
 
 def _to_bed(self, path=None, sep="\t", keep=True, compression="infer"):
-
     gr = self
 
     outdfs = natsorted(gr.dfs.items())
@@ -163,26 +175,24 @@ def _to_bed(self, path=None, sep="\t", keep=True, compression="infer"):
                 compression=compression,
                 mode=mode,
                 sep="\t",
-                quoting=csv.QUOTE_NONE)
+                quoting=csv.QUOTE_NONE,
+            )
             mode = "a"
 
     else:
-
-        res = "".join([
-            outdf.to_csv(
-                index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
-            for outdf in outdfs
-        ])
+        res = "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for outdf in outdfs])
         return res
 
 
 def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=None, dryrun=False):
-
     try:
-        import pyBigWig
+        import pyBigWig  # type: ignore
     except ModuleNotFoundError:
-        print("pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it.")
+        print(
+            "pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it."
+        )
         import sys
+
         sys.exit(1)
 
     if not divide:
@@ -190,7 +200,7 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=N
     else:
         gr = self.to_rle(rpm=rpm, strand=False, value_col=value_col)
         divide_by = self.to_rle(rpm=rpm, strand=False)
-        c = (gr / divide_by)
+        c = gr / divide_by
         new_pyrles = {}
         for k, v in c.items():
             v.values = np.log2(v.values)
@@ -201,7 +211,7 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=N
 
     unique_chromosomes = gr.chromosomes
 
-    subset = ['Chromosome', 'Start', 'End', 'Score']
+    subset = ["Chromosome", "Start", "End", "Score"]
 
     gr = gr[subset].unstrand()
 
@@ -227,14 +237,14 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=N
 
         bw.addEntries(chromosomes, starts, ends=ends, values=values)
 
+
 def _to_gff3(self, path=None, compression="infer", map_cols=None):
-    
-    mapping=_gff3_columns.copy()
+    mapping = _gff3_columns.copy()
     if map_cols:
         mapping.update(map_cols)
 
     gr = self
-    
+
     outdfs = [_gff3(v, mapping) for k, v in sorted(gr.dfs.items())]
 
     if path:
@@ -247,31 +257,29 @@ def _to_gff3(self, path=None, compression="infer", map_cols=None):
                 compression=compression,
                 mode=mode,
                 sep="\t",
-                quoting=csv.QUOTE_NONE)
+                quoting=csv.QUOTE_NONE,
+            )
             mode = "a"
     else:
-        return "".join([
-            outdf.to_csv(
-                index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE)
-            for outdf in outdfs
-        ])
-
-
+        return "".join(
+            [outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_MINIMAL) for outdf in outdfs]
+        )
 
 
 def _gff3(df, mapping):
-    
-    pr_col2gff_col={v:k for k, v in mapping.items()}
-    
-    df=df.rename(columns=pr_col2gff_col) #copying here
+    pr_col2gff_col = {v: k for k, v in mapping.items()}
+
+    df = df.rename(columns=pr_col2gff_col)  # copying here
     df.loc[:, "start"] = df.start + 1
     all_columns = _ordered_gff3_columns[:-1]
     columns = list(df.columns)
 
     outdf = _fill_missing(df, all_columns)
-    
-    if 'attribute' in mapping:
-        attribute = mapping['attribute'] + '=' + df.attribute        
+
+    if "attribute" in mapping:
+        attribute_name = mapping["attribute"]
+        attribute_value = df.attribute.iloc[0]
+        attribute = f"{attribute_name}={attribute_value}"
     else:
         # gotten all needed columns, need to join the rest
         rest = set(df.columns) - set(all_columns)
@@ -283,9 +291,9 @@ def _gff3(df, mapping):
             isnull = col.isnull()
             col = col.astype(str).str.replace("nan", "")
             if i != total_cols:
-                new_val = c + '=' + col + ';'
+                new_val = c + "=" + col + ";"
             else:
-                new_val = c + '=' + col
+                new_val = c + "=" + col
             rest_df.loc[:, c] = rest_df[c].astype(str)
             rest_df.loc[~isnull, c] = new_val
             rest_df.loc[isnull, c] = ""
@@ -294,6 +302,7 @@ def _gff3(df, mapping):
     outdf.insert(outdf.shape[1], "attribute", attribute)
 
     return outdf
+
 
 # def _to_bam(df, filename, header=None, chromsizes=None):
 

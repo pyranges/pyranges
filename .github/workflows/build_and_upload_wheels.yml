@@ -1,0 +1,35 @@
+name: Build and upload to PyPI
+
+# Source: https://raw.githubusercontent.com/pypa/cibuildwheel/main/examples/github-deploy.yml
+
+env:
+  CIBW_SKIP: "cp36-*"
+
+# Build on every branch push, tag push, and pull request change:
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_upload_wheels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build SDist and wheel
+        run: pipx run build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*
+
+      - name: Check metadata
+        run: pipx run twine check dist/*
+
+      - uses: pypa/gh-action-pypi-publish@v1.5.0
+        with:
+          user: ${{ secrets.PYPI_USER }}
+          password: ${{ secrets.PYPI_PROD_PASSWORD }}
+          verbose: true
+          # To test: repository_url: https://test.pypi.org/legacy/
