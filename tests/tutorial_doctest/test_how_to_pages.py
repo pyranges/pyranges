@@ -1,9 +1,9 @@
 import doctest, os, sys, subprocess
 #unittest, 
 
-#thepath = "/home/anandia/pyranges/"
-#sys.path.insert(0, thepath)
-#from pyranges import *
+thepath = "/home/anandia/pyranges/"
+sys.path.insert(0, thepath)
+from pyranges import *
 
 def test_how_to_pages():
 
@@ -12,7 +12,7 @@ def test_how_to_pages():
 	subprocess.run(["pip", "install", "pyfaidx"])
 
 
-	#os.chdir('../tests/')
+	os.chdir('../tests/')
 	failure_count2, test_count2 = doctest.testfile('/home/anandia/pyranges/docs/how_to_pages.rst')
 	if not failure_count2:
 	    print('All tests in the how_to_pages were successful!')
