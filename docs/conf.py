@@ -13,6 +13,7 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 
 
@@ -31,10 +32,7 @@ release = ' 0.0.124'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [   'autoapi.extension', 'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon', 'sphinx.ext.intersphinx'
-]
+extensions = ['autoapi.extension', 'sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon', 'sphinx.ext.intersphinx']
 
 autoapi_dirs = ['../pyranges']
 
