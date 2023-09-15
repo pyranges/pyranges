@@ -245,13 +245,8 @@ class GenomicFeaturesMethods:
 
 
 def _outside_bounds(df, **kwargs):
-<<<<<<< HEAD
-    
-    df = df.copy()
-=======
     df = df.copy()
 
->>>>>>> upstream/master
     chromsizes = kwargs.get("chromsizes")
 
     if not isinstance(chromsizes, dict):
@@ -274,24 +269,6 @@ def _outside_bounds(df, **kwargs):
 
     else:
         starts_outright = df.Start >= size
-<<<<<<< HEAD
-
-        if only_right:
-            df.loc[ends_outright, "End"] = size
-
-            # removing intervals completely out of bounds
-            df = df[~starts_outright]
-
-        else:
-            ends_outleft = df.End <= 0
-
-            df.loc[ends_outright, "End"] = size
-            df.loc[starts_outleft, "Start"] = 0
-
-            # removing intervals completely out of bounds:
-            df = df[~starts_outright & ~ends_outleft]
-=======
->>>>>>> upstream/master
 
         if only_right:
             df.loc[ends_outright, "End"] = size
@@ -310,10 +287,6 @@ def _outside_bounds(df, **kwargs):
 
     return df
 
-<<<<<<< HEAD
-def genome_bounds(gr, chromsizes, clip=False, only_right=False):
-=======
->>>>>>> upstream/master
 
 def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     """Remove or clip intervals outside of genome bounds.
@@ -396,40 +369,11 @@ def genome_bounds(gr, chromsizes, clip=False, only_right=False):
     KeyError: '3'
     """
 
-<<<<<<< HEAD
-
-    if isinstance(chromsizes, pr.PyRanges):
-        chromsizes = {
-            k: v
-            for k, v in zip(chromsizes.Chromosome, chromsizes.End)
-        }
-
-    elif isinstance(chromsizes, dict):
-        pass
-
-    else:
-
-        try:
-            import pyfaidx
-            if isinstance(chromsizes, pyfaidx.Fasta):
-                chromsizes={
-                    k: len(chromsizes[k])
-                    for k in chromsizes.keys()
-                }
-        except:
-            pass
-
-    assert isinstance(chromsizes, dict), \
-            "ERROR chromsizes must be a dictionary, or a PyRanges, or a pyfaidx.Fasta object"
-
-    return gr.apply(_outside_bounds, chromsizes=chromsizes, clip=clip, only_right=only_right)
-=======
     if isinstance(chromsizes, pr.PyRanges):
         chromsizes = {k: v for k, v in zip(chromsizes.Chromosome, chromsizes.End)}
 
     elif isinstance(chromsizes, dict):
         pass
->>>>>>> upstream/master
 
     else:
         try:

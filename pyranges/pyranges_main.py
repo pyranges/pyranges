@@ -969,18 +969,6 @@ class PyRanges:
         kwargs = fill_kwargs(kwargs)
 
         result = pyrange_apply_single(_bounds, self, **kwargs)
-<<<<<<< HEAD:pyranges/pyranges.py
-        return pr.PyRanges(result)        
-        
-    def calculate_frame(self, by):
-        """Calculate the frame of each genomic interval, assuming all are coding sequences (CDS), and add it as column inplace.
-  
-        After this, the input Pyranges will contain an added "Frame" column, which determines the base of the CDS that is the first base of a codon.  
-        Resulting values are in range between 0 and 2 included. 0 indicates that the first base of the CDS is the first base of a codon, 
-        1 indicates the second base and 2 indicates the third base of the CDS.      
-        While the 5'-most interval of each transcript has always 0 frame, the following ones may have any of these values.
-   
-=======
         return pr.PyRanges(result)
 
     def calculate_frame(self, by):
@@ -991,28 +979,18 @@ class PyRanges:
         1 indicates the second base and 2 indicates the third base of the CDS.
         While the 5'-most interval of each transcript has always 0 frame, the following ones may have any of these values.
 
->>>>>>> upstream/master:pyranges/pyranges_main.py
         Parameters
         ----------
         by : str or list of str
 
-<<<<<<< HEAD:pyranges/pyranges.py
-            Column(s) to group by the intervals: coding exons belonging to the same transcript have the same values in this/these column(s). 
-  
-=======
             Column(s) to group by the intervals: coding exons belonging to the same transcript have the same values in this/these column(s).
 
->>>>>>> upstream/master:pyranges/pyranges_main.py
         Returns
         -------
         None
             The "Frame" column is added inplace.
 
-<<<<<<< HEAD:pyranges/pyranges.py
-  
-=======
 
->>>>>>> upstream/master:pyranges/pyranges_main.py
         Examples
         --------
         >>> p= pr.from_dict({"Chromosome": [1,1,1,2,2],
@@ -1023,11 +1001,7 @@ class PyRanges:
         >>> p
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-<<<<<<< HEAD:pyranges/pyranges.py
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |
-=======
         |   (category) | (category)   |   (int64) |   (int64) | (object)        |
->>>>>>> upstream/master:pyranges/pyranges_main.py
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         1 |        10 | t1              |
         |            1 | +            |        31 |        45 | t1              |
@@ -1039,17 +1013,6 @@ class PyRanges:
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
         >>> p.calculate_frame(by=['transcript_id'])
-<<<<<<< HEAD:pyranges/pyranges.py
-        >>> p        
-        +--------------+--------------+-----------+-----------+-----------------+-----------+
-        |   Chromosome | Strand       |     Start |       End | transcript_id   |     Frame |
-        |   (category) | (category)   |   (int32) |   (int32) | (object)        |   (int32) |
-        |--------------+--------------+-----------+-----------+-----------------+-----------|
-        |            1 | +            |         1 |        10 | t1              |         0 |
-        |            1 | +            |        31 |        45 | t1              |         0 |
-        |            1 | +            |        52 |        90 | t1              |         2 |
-        |            2 | -            |       101 |       130 | t2              |         2 |
-=======
         >>> p
         +--------------+--------------+-----------+-----------+-----------------+-----------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |     Frame |
@@ -1059,45 +1022,10 @@ class PyRanges:
         |            1 | +            |        31 |        45 | t1              |         9 |
         |            1 | +            |        52 |        90 | t1              |        23 |
         |            2 | -            |       101 |       130 | t2              |        17 |
->>>>>>> upstream/master:pyranges/pyranges_main.py
         |            2 | -            |       201 |       218 | t2              |         0 |
         +--------------+--------------+-----------+-----------+-----------------+-----------+
         Stranded PyRanges object has 5 rows and 6 columns from 2 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
-<<<<<<< HEAD:pyranges/pyranges.py
-  
-        """
-        #Column to save the initial index
-        self.__index__=np.arange(len(self))
-
-        #Filtering for desired columns
-        if type(by) is list:
-          l=by
-        else:
-          l=[by]
-        sorted_p=self[['Strand','__index__']+l]
-  
-        #Sorting by 5' (Intervals on + are sorted by ascending order and - are sorted by descending order)
-        sorted_p=sorted_p.sort(by='5')
-        
-        #Creating a column saving the length for the intervals (for selenoprofiles and ensembl)
-        sorted_p.__length__=sorted_p.End-sorted_p.Start
-  
-        #Creating a column saving the cummulative length for the intervals
-        for k, df in sorted_p:
-          sorted_p.dfs[k]['__cumsum__'] = df.groupby(by=by).__length__.cumsum()
-  
-        #Creating a frame column
-        sorted_p.Frame=(sorted_p.__cumsum__-sorted_p.__length__)%3
-  
-        #Appending the Frame of sorted_p by the index of p
-        sorted_p=sorted_p.apply(lambda df: df.sort_values(by='__index__'))
-
-        self.Frame=sorted_p.Frame
-  
-        #Drop __index__ column
-        self.apply(lambda df: df.drop('__index__', axis=1, inplace=True))
-=======
 
         """
         # Column to save the initial index
@@ -1127,7 +1055,6 @@ class PyRanges:
 
         # Drop __index__ column
         self.apply(lambda df: df.drop("__index__", axis=1, inplace=True))
->>>>>>> upstream/master:pyranges/pyranges_main.py
 
     @property
     def chromosomes(self):
@@ -1169,11 +1096,7 @@ class PyRanges:
 
         Warning
         -------
-<<<<<<< HEAD:pyranges/pyranges.py
-        
-=======
 
->>>>>>> upstream/master:pyranges/pyranges_main.py
         Bookended intervals (i.e. the End of a PyRanges interval is the Start of
         another one) are by default considered to overlap.
         Avoid this with slack=-1.
@@ -3022,49 +2945,6 @@ class PyRanges:
 
             return pd.concat(_lengths).reset_index(drop=True)
 
-
-
-    def make_stranded(self, method='to_plus'):
-
-        """Returns a PyRanges copy which is ensured to be stranded.
-
-        Parameters
-        ----------
-
-        method : {"to_plus", "remove"}, default "to_plus"
-        
-            If "to_plus" (default), if a Strand column is present and contains any invalid values 
-            (anything other than "+" or "-"), they are turned into "+". 
-            If "remove", rows with invalid Strand value are omitted
-
-        Returns
-        -------
-        PyRanges
-
-            A stranded PyRanges 
-
-        """
-        
-        if self.stranded:
-            return self.copy()
-        
-        elif not hasattr(self, 'Strand'):
-            return pr.PyRanges( self.df.assign(Strand='+') )
-        
-        elif method=='to_plus':
-            return pr.PyRanges(
-                self.df.assign(Strand=
-                               lambda x:x.Strand.cat.set_categories(['+', '-']).fillna('+')
-                               ))
-        
-        elif method=='remove':
-            d=self.df
-            return pr.PyRanges( d[d.Strand.cat.isin(['+', '-'])] )
-        
-        else:
-            raise Exception(f'make_stranded ERROR method must be "to_plus" or "remove", got {method} instead')
-        
-
     def max_disjoint(self, strand=None, slack=0, **kwargs):
         """Find the maximal disjoint set of intervals.
 
@@ -4440,11 +4320,7 @@ class PyRanges:
         >>> p.spliced_subsequence(3, -3, by='transcript_id')
         +--------------+--------------+-----------+-----------+-----------------+
         |   Chromosome | Strand       |     Start |       End | transcript_id   |
-<<<<<<< HEAD:pyranges/pyranges.py
-        |   (category) | (category)   |   (int64) |   (int32) | (object)        |
-=======
         |   (category) | (category)   |   (int64) |   (int64) | (object)        |
->>>>>>> upstream/master:pyranges/pyranges_main.py
         |--------------+--------------+-----------+-----------+-----------------|
         |            1 | +            |         4 |        11 | t1              |
         |            1 | +            |        40 |        57 | t1              |
@@ -4470,20 +4346,12 @@ class PyRanges:
         if not strand:
             sorted_p = self.sort()
         else:
-<<<<<<< HEAD:pyranges/pyranges.py
-            sorted_p = self.sort('5')
-
-        result = pyrange_apply_single(_spliced_subseq, sorted_p, **kwargs)
-                   
-=======
             sorted_p = self.sort("5")
 
         result = pyrange_apply_single(_spliced_subseq, sorted_p, **kwargs)
 
->>>>>>> upstream/master:pyranges/pyranges_main.py
         return pr.PyRanges(result)
 
-    
     def split(self, strand=None, between=False, nb_cpu=1):
         """Split into non-overlapping intervals.
 
@@ -4923,11 +4791,7 @@ class PyRanges:
         from pyranges.methods.subsequence import _subseq
 
         if strand is None:
-<<<<<<< HEAD:pyranges/pyranges.py
-            strand=True if self.stranded else False
-=======
             strand = True if self.stranded else False
->>>>>>> upstream/master:pyranges/pyranges_main.py
 
         kwargs.update({"strand": strand, "by": by, "start": start, "end": end})
         kwargs = fill_kwargs(kwargs)

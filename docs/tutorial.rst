@@ -68,7 +68,7 @@ Let's import libraries and load the annotation into a PyRanges object called ``a
   >>> ann
   +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+--------------------+---------------+------------+-------------+-------+
   | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | ID                 | Dbxref        | gbkey      | mol_type    | +13   |
-  | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)           | (object)      | (object)   | (object)    | ...   |
+  | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)           | (object)      | (object)   | (object)    | ...   |
   |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+--------------------+---------------+------------+-------------+-------|
   | 0001.1       | EMBL       | region       | 0         | 3609319   | .          | +            | .          | 0001.1:1..3609319  | taxon:2664684 | Src        | genomic DNA | ...   |
   | 0001.1       | EMBL       | gene         | 7326      | 7606      | .          | +            | .          | gene-DGYR_LOCUS1   | nan           | Gene       | nan         | ...   |
@@ -102,7 +102,7 @@ Let's select only certain columns:
   >>> ann
   +--------------+--------------+-----------+-----------+--------------+------------------+--------------------+
   | Chromosome   | Feature      | Start     | End       | Strand       | Parent           | ID                 |
-  | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)         | (object)           |
+  | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)         | (object)           |
   |--------------+--------------+-----------+-----------+--------------+------------------+--------------------|
   | 0001.1       | region       | 0         | 3609319   | +            | nan              | 0001.1:1..3609319  |
   | 0001.1       | gene         | 7326      | 7606      | +            | nan              | gene-DGYR_LOCUS1   |
@@ -175,7 +175,7 @@ Let's further reduce the width of the cds object. We showcase an alternative met
   >>> cds
   +--------------+-----------+-----------+--------------+------------------+
   | Chromosome   | Start     | End       | Strand       | ID               |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   | 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 |
   | 0001.1       | 46377     | 47603     | +            | cds-CAD5110625.1 |
@@ -198,7 +198,7 @@ The code below will show only intervals completely included in the specified pos
   >>> cds['0002.1', 145000:150000]
   +--------------+-----------+-----------+--------------+------------------+
   |   Chromosome |     Start |       End | Strand       | ID               |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)         |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   |          2.1 |    146123 |    146246 | +            | cds-CAD5111630.1 |
   |          2.1 |    146306 |    147077 | +            | cds-CAD5111630.1 |
@@ -224,7 +224,7 @@ So, for example, this is also valid:
   >>> cds['0002.1', "-", 145000:150000]
   +--------------+-----------+-----------+--------------+------------------+
   |   Chromosome |     Start |       End | Strand       | ID               |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)         |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   |          2.1 |    145002 |    145116 | -            | cds-CAD5111629.1 |
   |          2.1 |    145176 |    145262 | -            | cds-CAD5111629.1 |
@@ -263,7 +263,7 @@ Method ``spliced_subsequence`` allows to obtain a subregion of groups of interva
   >>> first
   +--------------+-----------+-----------+--------------+------------------+
   | Chromosome   | Start     | End       | Strand       | ID               |
-  | (category)   | (int64)   | (int32)   | (category)   | (object)         |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   | 0001.1       | 7327      | 7330      | +            | cds-CAD5110615.1 |
   | 0001.1       | 46377     | 46380     | +            | cds-CAD5110625.1 |
@@ -286,7 +286,7 @@ The function ``get_sequence`` returns one sequence per interval, which we assign
   >>> first
   +--------------+-----------+-----------+--------------+------------------+------------+
   | Chromosome   | Start     | End       | Strand       | ID               | Sequence   |
-  | (category)   | (int64)   | (int32)   | (category)   | (object)         | (object)   |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         | (object)   |
   |--------------+-----------+-----------+--------------+------------------+------------|
   | 0001.1       | 7327      | 7330      | +            | cds-CAD5110615.1 | ATG        |
   | 0001.1       | 46377     | 46380     | +            | cds-CAD5110625.1 | ATG        |
@@ -314,7 +314,7 @@ Let's look at those sequences, using a row selector as before:
   >>> first [ first.Sequence.str.len() != 3 ]
   +--------------+-----------+-----------+--------------+------------------+------------+
   | Chromosome   | Start     | End       | Strand       | ID               | Sequence   |
-  | (category)   | (int32)   | (int64)   | (category)   | (object)         | (object)   |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         | (object)   |
   |--------------+-----------+-----------+--------------+------------------+------------|
   | 0001.1       | 667699    | 667700    | -            | cds-CAD5110773.1 | a          |
   | 0001.1       | 667641    | 667643    | -            | cds-CAD5110773.1 | TG         |
@@ -456,7 +456,7 @@ Then we subset the ann pyranges object:
   >>> clean_ann
   +--------------+--------------+-----------+-----------+--------------+---------------------+------------------+
   | Chromosome   | Feature      | Start     | End       | Strand       | Parent              | ID               |
-  | (category)   | (category)   | (int32)   | (int32)   | (category)   | (object)            | (object)         |
+  | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)            | (object)         |
   |--------------+--------------+-----------+-----------+--------------+---------------------+------------------|
   | 0001.1       | CDS          | 7327      | 7606      | +            | rna-DGYR_LOCUS1     | cds-CAD5110615.1 |
   | 0001.1       | CDS          | 46377     | 47603     | +            | rna-DGYR_LOCUS4     | cds-CAD5110625.1 |
@@ -502,7 +502,7 @@ Before we begin, let's peek into our object ``cds``:
   >>> cds.head()
   +--------------+-----------+-----------+--------------+------------------+
   |   Chromosome |     Start |       End | Strand       | ID               |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)         |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   |          1.1 |      7327 |      7606 | +            | cds-CAD5110615.1 |
   |          1.1 |     46377 |     47603 | +            | cds-CAD5110625.1 |
@@ -523,7 +523,7 @@ First, we use the method ``extend`` to obtain intervals which include the CDS an
   >>> g.head()
   +--------------+-----------+-----------+--------------+------------------+
   |   Chromosome |     Start |       End | Strand       | ID               |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)         |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   |          1.1 |      7027 |      7606 | +            | cds-CAD5110615.1 |
   |          1.1 |     46077 |     47603 | +            | cds-CAD5110625.1 |
@@ -547,7 +547,7 @@ We can use method ``spliced_subsequence`` again to get it:
   >>> prom.head()
   +--------------+-----------+-----------+--------------+------------------+
   |   Chromosome |     Start |       End | Strand       | ID               |
-  |   (category) |   (int64) |   (int32) | (category)   | (object)         |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   |          1.1 |      7027 |      7327 | +            | cds-CAD5110615.1 |
   |          1.1 |     46077 |     46377 | +            | cds-CAD5110625.1 |
@@ -569,7 +569,7 @@ Indeed, we see there are cases of the first type:
   >>> prom[prom.Start<0]
   +--------------+-----------+-----------+--------------+---------------------+
   |   Chromosome |     Start |       End | Strand       | ID                  |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)            |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)            |
   |--------------+-----------+-----------+--------------+---------------------|
   |         12.1 |      -129 |       171 | +            | cds-DGYR_LOCUS8189  |
   |         18.1 |       -12 |       288 | +            | cds-DGYR_LOCUS10365 |
@@ -601,7 +601,7 @@ The intervals above (and also the right-side out-of-bounds, though we don't insp
   >>> cor_prom[cor_prom.ID.isin(outofbounds_left)]
   +--------------+-----------+-----------+--------------+---------------------+
   |   Chromosome |     Start |       End | Strand       | ID                  |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)            |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)            |
   |--------------+-----------+-----------+--------------+---------------------|
   |         12.1 |         0 |       171 | +            | cds-DGYR_LOCUS8189  |
   |         18.1 |         0 |       288 | +            | cds-DGYR_LOCUS10365 |
@@ -620,7 +620,7 @@ Let's see if any of the promoter regions overlap other CDSs. Pyranges offers man
   >>> cor_prom.overlap(cds, strandedness=False)
   +--------------+-----------+-----------+--------------+------------------+
   | Chromosome   | Start     | End       | Strand       | ID               |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   | 0001.1       | 320232    | 320532    | +            | cds-CAD5110677.1 |
   | 0001.1       | 371611    | 371911    | +            | cds-CAD5110692.1 |
@@ -645,7 +645,7 @@ There are many promoters overlapping CDSs. Let's get the overlapping regions onl
   >>> prom_in_cds
   +--------------+-----------+-----------+--------------+------------------+
   | Chromosome   | Start     | End       | Strand       | ID               |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   | 0001.1       | 320529    | 320532    | +            | cds-CAD5110677.1 |
   | 0001.1       | 371611    | 371744    | +            | cds-CAD5110692.1 |
@@ -671,7 +671,7 @@ We want to remove redundancy in the object above. We use the method ``merge`` to
   >>> prom_in_cds
   +--------------+-----------+-----------+--------------+------------------+
   | Chromosome   | Start     | End       | Strand       | ID               |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         |
   |--------------+-----------+-----------+--------------+------------------|
   | 0001.1       | 320529    | 320532    | +            | cds-CAD5110677.1 |
   | 0001.1       | 371611    | 371744    | +            | cds-CAD5110692.1 |
@@ -697,7 +697,7 @@ This operation is performed element-wise (the 1st value of End minus the 1st val
   >>> prom_in_cds
   +--------------+-----------+-----------+--------------+------------------+-----------+
   | Chromosome   | Start     | End       | Strand       | ID               | Length    |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         | (int32)   |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         | (int64)   |
   |--------------+-----------+-----------+--------------+------------------+-----------|
   | 0001.1       | 320529    | 320532    | +            | cds-CAD5110677.1 | 3         |
   | 0001.1       | 371611    | 371744    | +            | cds-CAD5110692.1 | 133       |
@@ -757,7 +757,7 @@ Let's use the DataFrame for a ``groupby`` operation wherein we get the aggregate
   cds-DGYR_LOCUS7571-2    234
   cds-DGYR_LOCUS9062        4
   cds-DGYR_LOCUS980        99
-  Name: Tot_length, Length: 2374, dtype: int32
+  Name: Tot_length, Length: 2374, dtype: int64
   
   
 Let's add this new information (how much of a CDS promoter is overlapping a different CDS) to the ``cds`` object.
@@ -792,7 +792,7 @@ Now let's convert the resulting DataFrame ``z`` back to PyRanges:
   >>> cds
   +--------------+-----------+-----------+--------------+------------------+--------------+
   | Chromosome   | Start     | End       | Strand       | ID               | Tot_length   |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         | (int64)      |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         | (int64)      |
   |--------------+-----------+-----------+--------------+------------------+--------------|
   | 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 | 0            |
   | 0001.1       | 46377     | 47603     | +            | cds-CAD5110625.1 | 0            |
@@ -816,7 +816,7 @@ Say that we want to order our intervals by ``Tot_length``. We use PyRanges metho
   >>> srt_cds
   +--------------+-----------+-----------+--------------+------------------+--------------+
   | Chromosome   | Start     | End       | Strand       | ID               | Tot_length   |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         | (int64)      |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         | (int64)      |
   |--------------+-----------+-----------+--------------+------------------+--------------|
   | 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 | 0            |
   | 0001.1       | 2092958   | 2093126   | +            | cds-CAD5111233.1 | 0            |
@@ -888,7 +888,7 @@ We may chain these to obtain at once the CDS subset, add the length of intervals
   ... )
   +--------------+-----------+-----------+--------------+------------------+-----------+
   | Chromosome   | Start     | End       | Strand       | ID               | Length    |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         | (int32)   |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         | (int64)   |
   |--------------+-----------+-----------+--------------+------------------+-----------|
   | 0001.1       | 7327      | 7606      | +            | cds-CAD5110615.1 | 279       |
   | 0001.1       | 46377     | 47603     | +            | cds-CAD5110625.1 | 1226      |
@@ -904,7 +904,7 @@ We may chain these to obtain at once the CDS subset, add the length of intervals
   For printing, the PyRanges was sorted on Chromosome and Strand.
   +--------------+-----------+-----------+--------------+------------------+-----------+
   | Chromosome   | Start     | End       | Strand       | ID               | Length    |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)         | (int32)   |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)         | (int64)   |
   |--------------+-----------+-----------+--------------+------------------+-----------|
   | 0001.1       | 2789047   | 2789050   | +            | cds-CAD5111421.1 | 3         |
   | 0001.1       | 909263    | 909266    | +            | cds-CAD5110841.1 | 3         |
@@ -943,7 +943,7 @@ to join this table with each dataframe.
   ...  )
   +--------------+-----------+-----------+--------------+-------------+-------------+
   | Chromosome   | Start     | End       | Strand       | chromsize   | midpoint    |
-  | (object)     | (int32)   | (int32)   | (category)   | (int64)     | (float64)   |
+  | (object)     | (int64)   | (int64)   | (category)   | (int64)     | (float64)   |
   |--------------+-----------+-----------+--------------+-------------+-------------|
   | 0003.1       | 1616314   | 1616368   | +            | 3232594     | 1616341.0   |
   | 0005.1       | 2273266   | 2273365   | +            | 4546684     | 2273315.5   |
@@ -970,7 +970,7 @@ We use pyranges ``sort`` with the argument '5', which puts intervals in 5' -> 3'
   >>> ( ann.subset(lambda x:x.Feature=='CDS').drop(['Parent', 'Feature']).sort('5').apply(lambda x:x.groupby('ID', as_index=False).first()))
   +------------------+--------------+-----------+-----------+--------------+
   | ID               | Chromosome   | Start     | End       | Strand       |
-  | (object)         | (category)   | (int32)   | (int32)   | (category)   |
+  | (object)         | (category)   | (int64)   | (int64)   | (category)   |
   |------------------+--------------+-----------+-----------+--------------|
   | cds-CAD5110615.1 | 0001.1       | 7327      | 7606      | +            |
   | cds-CAD5110625.1 | 0001.1       | 46377     | 47603     | +            |

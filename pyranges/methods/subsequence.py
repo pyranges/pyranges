@@ -11,11 +11,7 @@ def _subseq(scdf, **kwargs):
 
     by = kwargs.get("by") if kwargs.get("by") else "__i__"
     if not type(by) is list:
-<<<<<<< HEAD
-        by=[by]
-=======
         by = [by]
->>>>>>> upstream/master
 
     strand = kwargs.get("strand")
     # at this point, strand is False if:
@@ -25,32 +21,14 @@ def _subseq(scdf, **kwargs):
     #   1. it was input as True to subsequence and passed  to pyrange_apply_single as True,
     #      which updates it to '-' or '+' before calling _subseq, or
     #   2. it was called with strand=None and self is stranded
-<<<<<<< HEAD
-    if strand!='-':
-        strand='+'
-=======
     if strand != "-":
         strand = "+"
->>>>>>> upstream/master
     # now, unstranded or strand==None cases are treated like all intervals are on the + strand
 
     # creating j which holds the boundaries per group
     # j contains one row per group; columns: Start  End (+ by columns); indexed by __i__
     agg_dict = {"__i__": "first", "Start": "min", "End": "max"}
     for b in by:
-<<<<<<< HEAD
-        agg_dict[b]="first"
-    
-    if kwargs.get("by"):
-        j=scdf.groupby(by, dropna=False)[ ["Start", "End", "__i__"] + by ].agg(agg_dict).set_index("__i__")
-    else:
-        j=scdf.groupby(by, dropna=False)[ ["Start", "End", "__i__"]  ].agg(agg_dict).set_index("__i__")
-        j.insert(0, "__i__",  j.index)
-        j.index.name = None
-
-    start = kwargs.get("start") if kwargs.get("start") else 0
-    end = kwargs.get("end") if kwargs.get("end") else (j.End-j.Start).max()
-=======
         agg_dict[b] = "first"
 
     if kwargs.get("by"):
@@ -62,7 +40,6 @@ def _subseq(scdf, **kwargs):
 
     start = kwargs.get("start") if kwargs.get("start") else 0
     end = kwargs.get("end") if kwargs.get("end") else (j.End - j.Start).max()
->>>>>>> upstream/master
 
     # below we add columns starts, ends to j
     # start and ends define the desired start and end, with one row per group (transcript).

@@ -22,6 +22,8 @@ os.remove("Dgyro_annotation.canonical_CDS.gtf")
 #os.remove("Dgyro_canonical_CDS.fa") 
 os.remove("Dgyro_canonical_CDS.seq.tsv") 
 os.remove("Dgyro_genome.fa.fai") 
+os.remove("Dgyro_annotation.gff")
+os.remove("Dgyro_genome.fa")
 
 
     

@@ -47,7 +47,7 @@ To instantiate PyRanges from a dataframe, provide it as argument to the PyRanges
   >>> p
   +--------------+-----------+-----------+--------------+------------+
   | Chromosome   |     Start |       End | Strand       | title      |
-  | (category)   |   (int32) |   (int32) | (category)   | (object)   |
+  | (category)   |   (int64) |   (int64) | (category)   | (object)   |
   |--------------+-----------+-----------+--------------+------------|
   | chr1         |         5 |        10 | +            | a          |
   | chr1         |        20 |        28 | +            | b          |
@@ -77,7 +77,7 @@ A DataFrame is most typically derived from a file. Here we load an example bed f
   >>> print(pr.PyRanges(df))
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
   | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -102,7 +102,7 @@ The other way to instantiate a PyRanges object is to use the constructor with ke
   >>> print(gr)
   +--------------+-----------+-----------+
   | Chromosome   | Start     | End       |
-  | (category)   | (int32)   | (int32)   |
+  | (category)   | (int64)   | (int64)   |
   |--------------+-----------+-----------|
   | chr1         | 100079649 | 100079674 |
   | chr1         | 212609534 | 212609559 |
@@ -125,7 +125,7 @@ Each column may be provided as Pandas Series, as above, or as  basic Python data
   >>> print(gr)
   +--------------+-----------+-----------+--------------+
   | Chromosome   |     Start |       End | Strand       |
-  | (category)   |   (int32) |   (int32) | (category)   |
+  | (category)   |   (int64) |   (int64) | (category)   |
   |--------------+-----------+-----------+--------------|
   | chr1         |         0 |         3 | +            |
   | chr1         |         1 |         4 | +            |
@@ -138,7 +138,7 @@ Each column may be provided as Pandas Series, as above, or as  basic Python data
   >>> print(gr)
   +--------------+-----------+-----------+--------------+
   | Chromosome   |     Start |       End | Strand       |
-  | (category)   |   (int32) |   (int32) | (category)   |
+  | (category)   |   (int64) |   (int64) | (category)   |
   |--------------+-----------+-----------+--------------|
   | chr1         |         0 |         3 | +            |
   | chr2         |         1 |         4 | -            |
@@ -157,7 +157,7 @@ The pyranges library can create PyRanges from gff3 common file formats, namely g
   >>> print(gr)
   +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------+
   | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | gene_name   | gene_source    | +14   |
-  | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | (object)       | ...   |
+  | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | (object)       | ...   |
   |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------|
   | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
   | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
@@ -208,7 +208,7 @@ With this method, an input dictionary with the structure shown below must be pro
   >>> print(pr.from_dict(d))
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         |         3 |         6 | interval1  |         0 | +            |
   | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -240,7 +240,7 @@ Tabular formats such as csv, gtf, gff3 are the most popular for genomic annotati
   >>> print(gr.head())
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | U0         |         0 | +            |
   | chr1         | 169887529 | 169887554 | U0         |         0 | +            |
@@ -401,7 +401,7 @@ The PyRanges method print provides an overview of its data:
   >>> gr.print()
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
   | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -421,7 +421,7 @@ The same method is invoked under the hood anytime we request a string representa
   >>> print(str(gr))
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
   | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -445,7 +445,7 @@ The window width affects the output of print: columns that do not fit are hidden
   >>> gr.print()
   +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       | new_col    | another_col   |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
   |--------------+-----------+-----------+------------+-----------+--------------+------------+---------------|
   | chr1         | 212609534 | 212609559 | U0         | 0         | +            | value      | 99            |
   | chr1         | 169887529 | 169887554 | U0         | 0         | +            | value      | 99            |
@@ -466,7 +466,7 @@ Only a limited number of rows are displayed, which are taken from the top and bo
   >>> gr.print(2)
   +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       | new_col    | another_col   |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
   |--------------+-----------+-----------+------------+-----------+--------------+------------+---------------|
   | chr1         | 212609534 | 212609559 | U0         | 0         | +            | value      | 99            |
   | ...          | ...       | ...       | ...        | ...       | ...          | ...        | ...           |
@@ -478,7 +478,7 @@ Only a limited number of rows are displayed, which are taken from the top and bo
   >>> gr.print(n=20)
   +--------------+-----------+-----------+------------+-----------+--------------+------------+---------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       | new_col    | another_col   |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   | (object)   | (int64)       |
   |--------------+-----------+-----------+------------+-----------+--------------+------------+---------------|
   | chr1         | 212609534 | 212609559 | U0         | 0         | +            | value      | 99            |
   | chr1         | 169887529 | 169887554 | U0         | 0         | +            | value      | 99            |
@@ -515,7 +515,7 @@ Argument formatting allows to fine-tune appearance. It takes a dictionary with a
   ... 	    })
   +--------------+-------------+--------------+------------+-----------+--------------+------------+---------------+
   | Chromosome   | Start       | End          | Name       | Score     | Strand       | new_col    | another_col   |
-  | (category)   | (int32)     | (int32)      | (object)   | (int64)   | (category)   | (object)   | (int64)       |
+  | (category)   | (int64)     | (int64)      | (object)   | (int64)   | (category)   | (object)   | (int64)       |
   |--------------+-------------+--------------+------------+-----------+--------------+------------+---------------|
   | chr1         | 212,609,534 | 2.126096e+08 | name=U0    | 0.00      | +            | value      | 99            |
   | chr1         | 169,887,529 | 1.698876e+08 | name=U0    | 0.00      | +            | value      | 99            |
@@ -535,8 +535,8 @@ PyRanges columns are pandas Series, and they may be of different data types. The
 
   >>> gr.dtypes
   Chromosome     category
-  Start             int32
-  End               int32
+  Start             int64
+  End               int64
   Name             object
   Score             int64
   Strand         category
@@ -553,15 +553,15 @@ If you want to inspect more information from a PyRanges object, remember that yo
    #   Column       Non-Null Count  Dtype   
   ---  ------       --------------  -----   
    0   Chromosome   10000 non-null  category
-   1   Start        10000 non-null  int32   
-   2   End          10000 non-null  int32   
+   1   Start        10000 non-null  int64   
+   2   End          10000 non-null  int64   
    3   Name         10000 non-null  object  
    4   Score        10000 non-null  int64   
    5   Strand       10000 non-null  category
    6   new_col      10000 non-null  object  
    7   another_col  10000 non-null  int64   
-  dtypes: category(2), int32(2), int64(2), object(2)
-  memory usage: 411.1+ KB
+  dtypes: category(2), int64(2), int64(2), object(2)
+  memory usage: 489.3+ KB
 
   >>> gr.df.describe()
                 Start           End    Score  another_col
@@ -598,7 +598,7 @@ Here's one example for each:
   >>> gr['chrX']
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chrX         | 13843759  | 13843784  | U0         | 0         | +            |
   | chrX         | 114673546 | 114673571 | U0         | 0         | +            |
@@ -616,7 +616,7 @@ Here's one example for each:
   >>> gr['chr1', 1000000:3000000]
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         |   1541598 |   1541623 | U0         |         0 | +            |
   | chr1         |   1599121 |   1599146 | U0         |         0 | +            |
@@ -630,7 +630,7 @@ Here's one example for each:
   >>> gr['chr1', '-', 1000000:3000000]
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         |   1325303 |   1325328 | U0         |         0 | -            |
   | chr1         |   1820285 |   1820310 | U0         |         0 | -            |
@@ -644,7 +644,7 @@ Simple forms of row selection are done through methods **head** and **tail**, wh
   >>> gr.head()
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | U0         |         0 | +            |
   | chr1         | 169887529 | 169887554 | U0         |         0 | +            |
@@ -661,7 +661,7 @@ Simple forms of row selection are done through methods **head** and **tail**, wh
   >>> gr.tail()
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chrY         |  22210637 |  22210662 | U0         |         0 | -            |
   | chrY         |  14774053 |  14774078 | U0         |         0 | -            |
@@ -682,7 +682,7 @@ The most important form of row selection is by **indexing with a boolean Series*
   >>> gg.print(n=20)
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |
   | chr1         |      9953 |     10152 | H3K27me3   |         5 | +            |
@@ -721,7 +721,7 @@ And we use it to select the rows in which the column Score has a value greater t
   >>> gg[gg.Score>5]
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |
   | chr1         |      9951 |     10150 | H3K27me3   |         8 | -            |
@@ -748,7 +748,7 @@ Let's get the + intervals with Score 1 starting before 12,000 or ending after 10
   ...    ]
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         |     10024 |     10223 | H3K27me3   |         1 | +            |
   | chr1         |    110246 |    110445 | H3K27me3   |         1 | +            |
@@ -766,7 +766,7 @@ Let's invert the selection, i.e. taking all intervals that do not fit the above 
   ...    ]
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
   | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            |
@@ -790,7 +790,7 @@ Another way to select rows is **the subset method**, for which you provide a fun
   >>> gg.subset(lambda x:x.Score.isin([2,4,6]))
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         |     10246 |     10445 | H3K27me3   |         4 | +            |
   | chr1         |     10241 |     10440 | H3K27me3   |         6 | -            |
@@ -811,7 +811,7 @@ Lastly, a fairly specific form of row selection is **drop_duplicate_positions**,
   >>> p
   +--------------+-----------+-----------+--------------+------------+
   |   Chromosome |     Start |       End | Strand       | ID         |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)   |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)   |
   |--------------+-----------+-----------+--------------+------------|
   |            1 |         1 |         4 | +            | a          |
   |            1 |         1 |         4 | +            | b          |
@@ -826,7 +826,7 @@ Lastly, a fairly specific form of row selection is **drop_duplicate_positions**,
   >>> p.drop_duplicate_positions()
   +--------------+-----------+-----------+--------------+------------+
   |   Chromosome |     Start |       End | Strand       | ID         |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)   |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)   |
   |--------------+-----------+-----------+--------------+------------|
   |            1 |         1 |         4 | +            | a          |
   |            1 |         2 |         9 | +            | c          |
@@ -841,7 +841,7 @@ Normally, the first instance of duplicated intervals is retained. Through argume
   >>> p.drop_duplicate_positions(keep=False)
   +--------------+-----------+-----------+--------------+------------+
   |   Chromosome |     Start |       End | Strand       | ID         |
-  |   (category) |   (int32) |   (int32) | (category)   | (object)   |
+  |   (category) |   (int64) |   (int64) | (category)   | (object)   |
   |--------------+-----------+-----------+--------------+------------|
   |            1 |         2 |         9 | +            | c          |
   |            2 |         1 |         4 | +            | d          |
@@ -904,7 +904,7 @@ This syntax is analogous to pandas Dataframes. Note that, however, the bracket c
   9997     13517917
   9998      8010976
   9999      7405401
-  Name: End, Length: 10000, dtype: int32
+  Name: End, Length: 10000, dtype: int64
 
   >>> gr['End']
   Empty PyRanges
@@ -914,7 +914,7 @@ Because the last expression is evaluated as a genomic region, i.e. a form of row
   >>> gr['chrY']
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chrY         | 12930373  | 12930398  | U0         | 0         | +            |
   | chrY         | 15548022  | 15548047  | U0         | 0         | +            |
@@ -934,7 +934,7 @@ You can provide a list of column names in the bracket notation to select those c
   >>> gr[ ['Name'] ]
   +--------------+-----------+-----------+------------+--------------+
   | Chromosome   | Start     | End       | Name       | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (category)   |
   |--------------+-----------+-----------+------------+--------------|
   | chr1         | 212609534 | 212609559 | U0         | +            |
   | chr1         | 169887529 | 169887554 | U0         | +            |
@@ -956,7 +956,7 @@ This is convenient to reduce genome annotation that consists of many columns:
   >>> ge
   +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------+
   | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id         | gene_version   | gene_name   | gene_source    | +14   |
-  | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | (object)       | ...   |
+  | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)        | (object)       | (object)    | (object)       | ...   |
   |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-----------------+----------------+-------------+----------------+-------|
   | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
   | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972 | 5              | DDX11L1     | havana         | ...   |
@@ -976,7 +976,7 @@ This is convenient to reduce genome annotation that consists of many columns:
   >>> ge[ ['gene_id', 'gene_name'] ]
   +--------------+-----------+-----------+--------------+-----------------+-------------+
   | Chromosome   | Start     | End       | Strand       | gene_id         | gene_name   |
-  | (category)   | (int32)   | (int32)   | (category)   | (object)        | (object)    |
+  | (category)   | (int64)   | (int64)   | (category)   | (object)        | (object)    |
   |--------------+-----------+-----------+--------------+-----------------+-------------|
   | 1            | 11868     | 14409     | +            | ENSG00000223972 | DDX11L1     |
   | 1            | 11868     | 14409     | +            | ENSG00000223972 | DDX11L1     |
@@ -997,7 +997,7 @@ The **drop method** is an alternative way of column selection wherein we specify
   >>> gr.print()
   +--------------+-----------+-----------+------------+-----------+--------------+
   | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
   |--------------+-----------+-----------+------------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
   | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -1015,7 +1015,7 @@ The **drop method** is an alternative way of column selection wherein we specify
   >>> gr.drop(['Name']).print()
   +--------------+-----------+-----------+-----------+--------------+
   | Chromosome   | Start     | End       | Score     | Strand       |
-  | (category)   | (int32)   | (int32)   | (int64)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (int64)   | (category)   |
   |--------------+-----------+-----------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | 0         | +            |
   | chr1         | 169887529 | 169887554 | 0         | +            |
@@ -1035,7 +1035,7 @@ Without arguments, drop will get rid of all non-core columns:
   >>> gr.drop()
   +--------------+-----------+-----------+--------------+
   | Chromosome   | Start     | End       | Strand       |
-  | (category)   | (int32)   | (int32)   | (category)   |
+  | (category)   | (int64)   | (int64)   | (category)   |
   |--------------+-----------+-----------+--------------|
   | chr1         | 212609534 | 212609559 | +            |
   | chr1         | 169887529 | 169887554 | +            |
@@ -1091,7 +1091,7 @@ In the tutorial, we saw its usage with a real genome. Let's make a toy example h
   >>> sg 
   +--------------+-----------+-----------+------------+--------------+
   | Chromosome   |     Start |       End | name       | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   | (category)   |
   |--------------+-----------+-----------+------------+--------------|
   | chrZ         |         0 |         3 | a          | +            |
   | chrZ         |         5 |         8 | a          | +            |
@@ -1120,7 +1120,7 @@ Since the returned Series has the same length as the PyRanges object, we can ass
   >>> sg
   +--------------+-----------+-----------+------------+--------------+------------+
   | Chromosome   |     Start |       End | name       | Strand       | Sequence   |
-  | (category)   |   (int32) |   (int32) | (object)   | (category)   | (object)   |
+  | (category)   |   (int64) |   (int64) | (object)   | (category)   | (object)   |
   |--------------+-----------+-----------+------------+--------------+------------|
   | chrZ         |         0 |         3 | a          | +            | AAA        |
   | chrZ         |         5 |         8 | a          | +            | GCC        |
@@ -1137,7 +1137,7 @@ This allows us to filter by sequence, using pandas string methods. For example, 
   >>> sg[sg.Sequence.str.startswith('G')]
   +--------------+-----------+-----------+------------+--------------+------------+
   | Chromosome   |     Start |       End | name       | Strand       | Sequence   |
-  | (category)   |   (int32) |   (int32) | (object)   | (category)   | (object)   |
+  | (category)   |   (int64) |   (int64) | (object)   | (category)   | (object)   |
   |--------------+-----------+-----------+------------+--------------+------------|
   | chrZ         |         5 |         8 | a          | +            | GCC        |
   | chrZ         |        10 |        20 | c          | -            | GGCCCTTTAA |
@@ -1152,7 +1152,7 @@ Let's get those which contain a CC and AA dinucleotides separated by 1-3 nucleot
   >>> sg[sg.Sequence.str.contains(r'CC.{1,3}AA', regex=True)]
   +--------------+-----------+-----------+------------+--------------+------------+
   | Chromosome   |     Start |       End | name       | Strand       | Sequence   |
-  | (category)   |   (int32) |   (int32) | (object)   | (category)   | (object)   |
+  | (category)   |   (int64) |   (int64) | (object)   | (category)   | (object)   |
   |--------------+-----------+-----------+------------+--------------+------------|
   | chrZ         |        10 |        20 | c          | -            | GGCCCTTTAA |
   +--------------+-----------+-----------+------------+--------------+------------+
@@ -1191,7 +1191,7 @@ Methods sort allows to sort intervals, i.e. altering the order of rows in the Py
   >>> sg
   +--------------+-----------+-----------+------------+--------------+
   | Chromosome   |     Start |       End | name       | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   | (category)   |
   |--------------+-----------+-----------+------------+--------------|
   | chrA         |        55 |        88 | a          | +            |
   | chrA         |        20 |        30 | a          | +            |
@@ -1205,7 +1205,7 @@ Methods sort allows to sort intervals, i.e. altering the order of rows in the Py
   >>> sg.sort()
   +--------------+-----------+-----------+------------+--------------+
   | Chromosome   |     Start |       End | name       | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   | (category)   |
   |--------------+-----------+-----------+------------+--------------|
   | chrA         |        20 |        30 | a          | +            |
   | chrA         |        55 |        88 | a          | +            |
@@ -1225,7 +1225,7 @@ For intervals on the negative strand, it may be convenient to sort in the opposi
   >>> sg.sort('5')
   +--------------+-----------+-----------+------------+--------------+
   | Chromosome   |     Start |       End | name       | Strand       |
-  | (category)   |   (int32) |   (int32) | (object)   | (category)   |
+  | (category)   |   (int64) |   (int64) | (object)   | (category)   |
   |--------------+-----------+-----------+------------+--------------|
   | chrA         |        20 |        30 | a          | +            |
   | chrA         |        55 |        88 | a          | +            |
@@ -1247,7 +1247,7 @@ Sorting may also take any column name, or a list of colum names, to sort rows by
   >>> ag
   +--------------+-----------+-----------+--------------+-----------+
   | Chromosome   |     Start |       End | Strand       |      col1 |
-  | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+  | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
   |--------------+-----------+-----------+--------------+-----------|
   | chrX         |        55 |        88 | +            |         1 |
   | chrX         |        65 |        75 | +            |         4 |
@@ -1261,7 +1261,7 @@ Sorting may also take any column name, or a list of colum names, to sort rows by
   >>> ag.sort('col1')
   +--------------+-----------+-----------+--------------+-----------+
   | Chromosome   |     Start |       End | Strand       |      col1 |
-  | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+  | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
   |--------------+-----------+-----------+--------------+-----------|
   | chrX         |        55 |        88 | +            |         1 |
   | chrX         |        35 |        45 | +            |         2 |
@@ -1275,7 +1275,7 @@ Sorting may also take any column name, or a list of colum names, to sort rows by
   >>> ag.sort(['col1', 'End'])
   +--------------+-----------+-----------+--------------+-----------+
   | Chromosome   |     Start |       End | Strand       |      col1 |
-  | (category)   |   (int32) |   (int32) | (category)   |   (int64) |
+  | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
   |--------------+-----------+-----------+--------------+-----------|
   | chrX         |        55 |        88 | +            |         1 |
   | chrX         |        35 |        45 | +            |         2 |
