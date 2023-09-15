@@ -1,7 +1,6 @@
 import doctest
 import os
 import subprocess
-import sys
 
 
 def test_tutorial():

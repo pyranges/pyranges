@@ -1,7 +1,5 @@
 import doctest
 import os
-import subprocess
-import sys
 
 
 def test_how_to_pages():
