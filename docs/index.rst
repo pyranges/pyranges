@@ -42,9 +42,10 @@ Documentation outline
 ~~~~~~~~~~~~~~~~~~~~~
 
 
-#. 🚀 :doc:`The tutorial <./tutorial>` , on the next page, recommended for all new users
+#. 🚀 :doc:`The tutorial <./tutorial>`, on the next page, recommended for all new users
 #. 🚀 :doc:`The how-to pages <./how_to_pages>`, further below, where functionalities are grouped by topic
 #. 🚀 The `API reference <./autoapi/index.html>`_, where all methods are explained in detail.
+#. 🚀 :doc:`The developer guide <./developer_guide>`, to follow in order to contribute to PyRanges.
 
 .. toctree::
    :maxdepth: 2
@@ -54,6 +55,8 @@ Documentation outline
    tutorial
    
    how_to_pages
+
+   developer_guide
 
        
 
