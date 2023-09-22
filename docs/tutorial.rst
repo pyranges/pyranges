@@ -1,5 +1,5 @@
-Tutorial of PyRanges
-====================
+Tutorial
+========
 
 PyRanges objects represent sequence intervals ("ranges") such as genomic regions.
 Examples include gene annotations, mapped reads, protein domains, and results from

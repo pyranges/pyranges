@@ -1,10 +1,9 @@
-Developer guide for pyranges
-============================
+Developer guide
+===============
 
 PyRanges is mainly developed by Endre Bakken Stovner and by the Comparative Genomics lab of 
 Marco Mariotti. It follows the guidelines for open source software, and external contributors 
-are welcome. The code is centralized on github, at `https://github.com/pyranges/pyranges 
-<https://github.com/pyranges/pyranges>`_
+are welcome. The code is centralized on github, at https://github.com/pyranges/pyranges
 
 Bugs and feature requests can be reported as github issues. You may also contribute by submitting 
 your own code edits, either to deal with issues or to add new functionalities. The code will be 

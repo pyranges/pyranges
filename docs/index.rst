@@ -3,46 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Introduction
-============
+The PyRanges documentation
+==========================
+PyRanges is a Python library specifically designed for efficient and intuitive manipulation of genomics data,
+particularly genomic intervals (like genes, genomic features, or reads).
+The library is optimized for fast querying and manipulation of genomic annotations.
 
-Installation
-~~~~~~~~~~~~
-
-The preferred way to install pyranges is through the bioconda channel::
-
-    conda install -c bioconda pyranges
-
-You can also try pip::
-
-    pip install pyranges
-
-PyRanges has some dependencies that are optional. They need to be manually installed if you require their functionality::
-
-    pyfaidx: fetch sequences from fasta # pip install pyfaidx
-    ray: multicpu   # pip install -U ray
-    pybigwig: write bigwigs # pip install pybigwig
-                            # or conda install -c bioconda pybigwig
-    bamread: read bam files # pip install bamread
-                            # or conda install -c bioconda bamread
-    fisher: fast fisher exact # pip install fisher
-                              # or conda install -c bioconda fisher
-
-
-Since these are not needed for 99.9% percent of the pyranges functionality, they are kept separate to prevent the possibility of the pyranges-install failing due to dependencies that fail installation or conflicting dependencies.
+PyRanges is open source, and hosted at github: https://github.com/pyranges/pyranges
 
 
 Citation
 ~~~~~~~~
 
-http://dx.doi.org/10.1093/bioinformatics/btz615
+Stovner EB, Sætrom P (2020) PyRanges: efficient comparison of genomic intervals in Python. *Bioinformatics 36(3):918-919*  http://dx.doi.org/10.1093/bioinformatics/btz615
 
 
 Documentation outline
 ~~~~~~~~~~~~~~~~~~~~~
 
-
-#. 🚀 :doc:`The tutorial <./tutorial>`, on the next page, recommended for all new users
+#. 🚀 :doc:`Installation instructions <./installation>`
+#. 🚀 :doc:`The tutorial <./tutorial>`,  recommended for all new users
 #. 🚀 :doc:`The how-to pages <./how_to_pages>`, further below, where functionalities are grouped by topic
 #. 🚀 The `API reference <./autoapi/index.html>`_, where all methods are explained in detail.
 #. 🚀 :doc:`The developer guide <./developer_guide>`, to follow in order to contribute to PyRanges.
@@ -52,8 +32,10 @@ Documentation outline
    :hidden:
    :caption: Contents:
 
+   installation
+
    tutorial
-   
+
    how_to_pages
 
    developer_guide

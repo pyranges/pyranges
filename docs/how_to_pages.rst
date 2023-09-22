@@ -1286,63 +1286,65 @@ Sorting may also take any column name, or a list of colum names, to sort rows by
   Stranded PyRanges object has 5 rows and 5 columns from 1 chromosomes.
   For printing, the PyRanges was sorted on Chromosome and Strand.
 
-[add note: index are not allowed. Stil, you can use sort to get rows in a certain order]
-Operations on coordinates
-[change columns as series: p.Start+=1000 ...]
-[... however there are more convenient methods: subsequence, spliced_sequence, extend]
-[after extend, show genome_bounds]
 
-Operations on metadata columns:
-[insert new columns: 1. p.Col1=... or 2. assign method. 3. Assign with multiple ones at once]
+..
+    [add note: index are not allowed. Stil, you can use sort to get rows in a certain order]
+    Operations on coordinates
+    [change columns as series: p.Start+=1000 ...]
+    [... however there are more convenient methods: subsequence, spliced_sequence, extend]
+    [after extend, show genome_bounds]
 
-Operations on multiple pyranges
-[concatenation: use pandas and turn to pyranges]
+    Operations on metadata columns:
+    [insert new columns: 1. p.Col1=... or 2. assign method. 3. Assign with multiple ones at once]
 
-A common operation on (multiple) pyranges regard overlaps. These are shown in the next page
+    Operations on multiple pyranges
+    [concatenation: use pandas and turn to pyranges]
 
-
-Overlapping and matching PyRanges
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-[present different methods for different aims that all have to do with overlap: merge, cluster, subtract, join, count_overlaps ... . Start with a table summarizing differences: input, output]. 
-[add note: pandas merge: different!]
-
-Summary statistics
-~~~~~~~~~~~~~~~~~~
-
-[Create count-matrix from multiple PyRanges]
-[all stats methods presented briefly]
-
-Computing with PyRanges
-~~~~~~~~~~~~~~~~~~~~~~~
-
-[ready made methods should cover most things]
-[possibility to chain things to save memory]
-[outline strategies for custom methods: apply and similar methods]
-[Also cite the simple but not optimal: convert to dataframes / or iterate through groups of same-chrom dataframes]
-[multiple cores]
-
-Working at the transcript level
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-[spliced_subsequence, subsequence, get_transcript_sequence, 
-extend (to be developed with group_by),
-boundaries ,
-cumsum groupby as example
-
-]
+    A common operation on (multiple) pyranges regard overlaps. These are shown in the next page
 
 
-Fetching external gene tracks 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Overlapping and matching PyRanges
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[if pyranges_db is a thing, describe its uses here]
+    [present different methods for different aims that all have to do with overlap: merge, cluster, subtract, join, count_overlaps ... . Start with a table summarizing differences: input, output]. 
+    [add note: pandas merge: different!]
+
+    Summary statistics
+    ~~~~~~~~~~~~~~~~~~
+
+    [Create count-matrix from multiple PyRanges]
+    [all stats methods presented briefly]
+
+    Computing with PyRanges
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    [ready made methods should cover most things]
+    [possibility to chain things to save memory]
+    [outline strategies for custom methods: apply and similar methods]
+    [Also cite the simple but not optimal: convert to dataframes / or iterate through groups of same-chrom dataframes]
+    [multiple cores]
+
+    Working at the transcript level
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    [spliced_subsequence, subsequence, get_transcript_sequence, 
+    extend (to be developed with group_by),
+    boundaries ,
+    cumsum groupby as example
+
+    ]
 
 
-RLEs: run length encodings
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Fetching external gene tracks 
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[outline as advanced usage. Put everything related to RLEs in a single chapter; keep as last even if you add further chapters]
+    [if pyranges_db is a thing, describe its uses here]
+
+
+    RLEs: run length encodings
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    [outline as advanced usage. Put everything related to RLEs in a single chapter; keep as last even if you add further chapters]
 
 
 
