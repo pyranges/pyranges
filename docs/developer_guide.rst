@@ -23,9 +23,9 @@ Tests
 Tests are an essential part of continuous integration. Briefly, they ensure that code edits do not 
 break existing functions. Various layers of tests are implemented in pyranges:
 
-* **unit tests**: quick and compulsory tests about the main pyranges functionalities
-* **doctest**: quick and compulsory tests that ensures that the code in the documentation (tutorial and how-to-pages) gives the expected results
-* **property based tests**: time-consuming tests that involve the generation of random data to check that the results of pyranges functions match that of other reference bioinformatic tools. These tests are not compulsory: the core development team runs them when the code backbone is edited.
+- **unit tests**: quick and compulsory tests about the main pyranges functionalities
+- **doctest**: quick and compulsory tests that ensures that the code in the documentation (tutorial and how-to-pages) gives the expected results
+- **property based tests**: time-consuming tests that involve the generation of random data to check that the results of pyranges functions match that of other reference bioinformatic tools. These tests are not compulsory: the core development team runs them when the code backbone is edited.
 
 If the code submitted to pyranges does not pass the compulsory tests, it will not be integrated. 
 Therefore, we highly recommend developers to run tests before code submissions, as explained 
@@ -56,10 +56,10 @@ Pyranges code follows strict guidelines about its formatting and non-redundancy.
 not upon the developer: instead, this is achieved by running dedicated software that polishes, 
 formats, and "lints" the code before its integration in the main repository. These tools are used:
 
-* **black**: code formatter
-* **flake8**: code linting
-* **isort**: sort import statements
-* **mypy**: type checking (optional, for functions with a defined return type)
+- **black**: code formatter
+- **flake8**: code linting
+- **isort**: sort import statements
+- **mypy**: type checking (optional, for functions with a defined return type)
 
 
 
@@ -247,9 +247,9 @@ list of the code edits. When you're ready, click "Open pull request".
 Every now and then, the core development team considers that a new pyranges version should be 
 released. To do so:
 
-* Update the version number in the pyproject.toml file
-* Find the "Build and upload to PyPI" workflow in the left menu of the github actions at `https://github.com/pyranges/pyranges/actions/ <https://github.com/pyranges/pyranges/actions/>`_
-* Click the "Run workflow" button on the right
+- Update the version number in the pyproject.toml file
+- Find the "Build and upload to PyPI" workflow in the left menu of the github actions at `https://github.com/pyranges/pyranges/actions/ <https://github.com/pyranges/pyranges/actions/>`_
+- Click the "Run workflow" button on the right
 
 Next, check that everything worked correctly, by confirming that a new pyranges installation via 
 pip selects the new version.
