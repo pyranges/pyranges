@@ -1,3 +1,8 @@
+# 0.0.130 (27.09.2023) (@marco-mariotti)
+- Added new documentation centralized at readthedocs (including tutorial, how-to-pages, dev guide)
+- Shrunk README accordingly
+- Added new tests based on doctests
+
 # 0.0.129 (29.06.2023)
 - Fix join left category error #342 for real
 
