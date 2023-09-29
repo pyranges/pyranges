@@ -2,8 +2,7 @@ import pandas as pd
 
 
 def assert_df_equal(df1, df2):
-
-    print("-"*100)
+    print("-" * 100)
     print("df1")
     print(df1)
     print("df2")

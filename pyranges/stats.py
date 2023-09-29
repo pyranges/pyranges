@@ -1,1 +1,1 @@
-from pyranges.statistics import *
+from pyranges.statistics import *  # noqa: F401, F403

@@ -1,14 +1,12 @@
-from ncls import NCLS
 import pandas as pd
+from ncls import NCLS  # type: ignore
 
 
 def create_ncls(df):
-
     return NCLS(df.Start.values, df.End.values, df.index.values)
 
 
 def find_overlaps(df, start, end):
-
     n = create_ncls(df)
 
     idxes = []
@@ -19,13 +17,11 @@ def find_overlaps(df, start, end):
 
 
 def get_slice(self, val):
-
     # 100:999
 
     d = {}
 
     for k, df in self.items():
-
         start = val.start or 0
         stop = val.stop or max(df.End.max(), start)
         idxes = find_overlaps(df, start, stop)
@@ -35,7 +31,6 @@ def get_slice(self, val):
 
 
 def get_string(self, val):
-
     if val in self.chromosomes:
         if self.stranded:
             return {k: self.dfs[k] for k in self.keys() if k[0] == val}
@@ -49,7 +44,6 @@ def get_string(self, val):
 
 
 def get_tuple(self, val):
-
     if len(val) == 2:
         dfs = get_double(self, val)
     elif len(val) == 3:
@@ -59,9 +53,7 @@ def get_tuple(self, val):
 
 
 def get_double(self, val):
-
-    if len(val) == 2 and val[0] in self.chromosomes and isinstance(
-            val[1], slice):
+    if len(val) == 2 and val[0] in self.chromosomes and isinstance(val[1], slice):
         chromosome, loc = val
         start = loc.start or 0
         if self.stranded:
@@ -102,7 +94,6 @@ def get_double(self, val):
 
     # "chr1", "+"
     if len(val) == 2 and val[1] in "+ -".split():
-
         chromosome, strand = val
 
         if (chromosome, strand) in self.dfs:
@@ -112,7 +103,6 @@ def get_double(self, val):
 
 
 def get_triple(self, val):
-
     # "chr1", "+", 5:10
     chromosome, strand, loc = val
     start = loc.start or 0

@@ -7,11 +7,11 @@ def _drop(self, drop=None, like=None):
     if isinstance(drop, str):
         drop = [drop]
 
-    if not drop is None:
+    if drop is not None:
         for i in "Chromosome Start End".split():
-            assert not i in drop, "Cannot drop {}".format(i)
+            assert i not in drop, "Cannot drop {}".format(i)
 
-    want_to_drop_strand = (isinstance(drop, str) and drop == "Strand" or (isinstance(drop, list) and "Strand" in drop))
+    want_to_drop_strand = isinstance(drop, str) and drop == "Strand" or (isinstance(drop, list) and "Strand" in drop)
     if not self.stranded or want_to_drop_strand:
         always_keep = "Chromosome Start End".split()
     else:
@@ -21,6 +21,7 @@ def _drop(self, drop=None, like=None):
 
     if like:
         import re
+
         r = re.compile(like)
         _to_drop = [c for c in self.columns if r.search(c) is not None]
     elif not drop:
@@ -43,7 +44,6 @@ def _drop(self, drop=None, like=None):
 
 
 def _keep(self, keep):
-
     columns = self.columns
     if not self.stranded:
         always_keep = "Chromosome Start End".split()
@@ -60,7 +60,7 @@ def _keep(self, keep):
 
     columns = self.columns
 
-    keep = [c for c in keep if not c in always_keep]
+    keep = [c for c in keep if c not in always_keep]
     new_order = []
     i = 0
     for c in columns:

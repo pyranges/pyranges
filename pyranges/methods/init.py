@@ -1,36 +1,23 @@
-import sys
 import numpy as np
 import pandas as pd
-from natsort import natsorted
 
-from pyranges.statistics import StatisticsMethods
-from pyranges.genomicfeatures import GenomicFeaturesMethods
 from pyranges import PyRanges
-from pyranges.helpers import single_value_key, get_key_from_df
+from pyranges.genomicfeatures import GenomicFeaturesMethods
+from pyranges.helpers import get_key_from_df, single_value_key
+from pyranges.statistics import StatisticsMethods
 
 
-def set_dtypes(df, int64):
+def set_dtypes(df):
+    from pandas.api.types import CategoricalDtype
 
-    # if extended is None:
-    #     extended = False if df.Start.dtype == np.int32 else True
+    dtypes = {
+        "Start": np.int64,
+        "End": np.int64,
+        "Chromosome": "category",
+    }
 
-    if not int64:
-        dtypes = {
-            "Start": np.int32,
-            "End": np.int32,
-            "Chromosome": "category",
-            "Strand": "category",
-        }
-    else:
-        dtypes = {
-            "Start": np.int64,
-            "End": np.int64,
-            "Chromosome": "category",
-            "Strand": "category",
-        }
-
-    if "Strand" not in df:
-        del dtypes["Strand"]
+    if "Strand" in df:
+        dtypes["Strand"] = CategoricalDtype([".", "-", "+"], ordered=True)
 
     # need to ascertain that object columns do not consist of multiple types
     # https://github.com/biocore-ntnu/epic2/issues/32
@@ -46,14 +33,12 @@ def set_dtypes(df, int64):
 
 
 def create_df_dict(df, stranded):
-
     chrs = df.Chromosome.cat.remove_unused_categories()
 
     df["Chromosome"] = chrs
 
     if stranded:
         grpby_key = "Chromosome Strand".split()
-        df["Strand"] = df.Strand.cat.remove_unused_categories()
     else:
         grpby_key = "Chromosome"
 
@@ -61,12 +46,10 @@ def create_df_dict(df, stranded):
 
 
 def create_pyranges_df(chromosomes, starts, ends, strands=None):
-
     if isinstance(chromosomes, str) or isinstance(chromosomes, int):
         chromosomes = pd.Series([chromosomes] * len(starts), dtype="category")
 
     if strands is not None:
-
         if isinstance(strands, str):
             strands = pd.Series([strands] * len(starts), dtype="category")
 
@@ -74,16 +57,12 @@ def create_pyranges_df(chromosomes, starts, ends, strands=None):
         lengths = list(str(len(s)) for s in columns)
         assert (
             len(set(lengths)) == 1
-        ), "chromosomes, starts, ends and strands must be of equal length. But are {}".format(
-            ", ".join(lengths)
-        )
+        ), "chromosomes, starts, ends and strands must be of equal length. But are {}".format(", ".join(lengths))
         colnames = "Chromosome Start End Strand".split()
     else:
         columns = [chromosomes, starts, ends]
         lengths = list(str(len(s)) for s in columns)
-        assert (
-            len(set(lengths)) == 1
-        ), "chromosomes, starts and ends must be of equal length. But are {}".format(
+        assert len(set(lengths)) == 1, "chromosomes, starts and ends must be of equal length. But are {}".format(
             ", ".join(lengths)
         )
         colnames = "Chromosome Start End".split()
@@ -112,9 +91,7 @@ def check_strandedness(df):
 
     contains_more_than_plus_minus_in_strand_col = False
 
-    if str(df.Strand.dtype) == "category" and (
-        set(df.Strand.cat.categories) - set("+-")
-    ):
+    if str(df.Strand.dtype) == "category" and (set(df.Strand.cat.categories) - set("+-")):
         contains_more_than_plus_minus_in_strand_col = True
     elif not ((df.Strand == "+") | (df.Strand == "-")).all():
         contains_more_than_plus_minus_in_strand_col = True
@@ -132,7 +109,6 @@ def _init(
     starts=None,
     ends=None,
     strands=None,
-    int64=False,
     copy_df=True,
 ):
     # TODO: add categorize argument with dict of args to categorize?
@@ -151,18 +127,16 @@ def _init(
         df = create_pyranges_df(chromosomes, starts, ends, strands)
 
     if isinstance(df, pd.DataFrame):
-
         df = df.reset_index(drop=True)
 
         stranded = check_strandedness(df)
 
-        df = set_dtypes(df, int64)
+        df = set_dtypes(df)
 
         self.__dict__["dfs"] = create_df_dict(df, stranded)
 
     # df is actually dict of dfs
     else:
-
         empty_removed = {k: v.copy() for k, v in df.items() if not v.empty}
 
         _single_value_key = True
@@ -170,7 +144,6 @@ def _init(
         _strand_valid = True
         _has_strand = True
         for key, df in empty_removed.items():
-
             _key = get_key_from_df(df)
             _single_value_key = single_value_key(df) and _single_value_key
             _key_same = (_key == key) and _key_same

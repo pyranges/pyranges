@@ -1,84 +1,49 @@
 ---
 title: "PyRanges documentation"
-author: "Endre Bakken Stovner"
+author: "Endre Bakken Stovner and Marco Mariotti"
 date: "`r Sys.Date()`"
 site: "bookdown::bookdown_site"
 output:
   bookdown::gitbook: default
 documentclass: book
+css: "pyranges.css"
+
 ---
 
-# Introduction to PyRanges
+# Introduction
 
-This is the PyRanges' tutorial. For docs, see: https://pyranges.readthedocs.io/en/latest/ 
+## Installation
 
-PyRanges are collections of intervals that support comparison operations (like
-overlap and intersect) and other methods that are useful for genomic
-analyses. The ranges can have an arbitrary number of meta-data fields, i.e.
-columns associated with them.
+The preferred way to install pyranges is through the bioconda channel:
 
-The data in PyRanges objects are stored in a pandas dataframe. This means the
-vast Python ecosystem for high-performance scientific computing is available to
-manipulate the data in PyRanges-objects.
+    conda install -c bioconda pyranges
 
+You can also try pip:
 
-```{python tidy=FALSE}
-import pyranges as pr
-from pyranges import PyRanges
+    pip install pyranges
 
-import pandas as pd
+PyRanges has some dependencies that are optional. They need to be manually installed if you require their functionality:
 
-from io import StringIO
+    pyfaidx: fetch sequences from fasta # pip install pyfaidx
+    ray: multicpu   # pip install -U ray
+    pybigwig: write bigwigs # pip install pybigwig
+                            # or conda install -c bioconda pybigwig
+    bamread: read bam files # pip install bamread
+                            # or conda install -c bioconda bamread
+    fisher: fast fisher exact # pip install fisher
+                              # or conda install -c bioconda fisher
 
-f1 = """Chromosome Start End Score Strand
-chr1 4 7 23.8 +
-chr1 6 11 0.13 -
-chr2 0 14 42.42 +"""
+Since these are not needed for 99.9% percent of the pyranges functionality, they are kept separate to prevent the possibility of the pyranges-install failing due to dependencies that fail installation or conflicting dependencies.
 
-df1 = pd.read_csv(StringIO(f1), sep="\s+")
+## Citation
 
-gr1 = PyRanges(df1)
-```
+http://dx.doi.org/10.1093/bioinformatics/btz615
 
-Now we can subset the PyRange in various ways:
+## Documentation outline
 
-```{python}
-print(gr1)
-print(gr1["chr1", 0:5])
+The PyRanges documentation is structured in three parts:
 
-print(gr1["chr1", "-", 6:100])
+1. The tutorial, on the next page, recommended for all new users
+2. The how-to pages, further below, where functionalities are grouped by topic
+3. The [API reference](https://pyranges.readthedocs.io/), where all methods are explained in detail
 
-print(gr1.Score)
-```
-
-And we can perform comparison operations with two PyRanges:
-
-```{python}
-f2 = """Chromosome Start End Score Strand
-chr1 5 6 -0.01 -
-chr1 9 12 200 +
-chr3 0 14 21.21 -"""
-
-df2 = pd.read_csv(StringIO(f2), sep="\s+")
-
-gr2 = PyRanges(df2)
-
-print(gr2)
-
-print(gr1.intersect(gr2, strandedness="opposite"))
-
-print(gr1.intersect(gr2, strandedness=False))
-
-```
-
-There are also convenience methods for single PyRanges:
-
-```{python}
-print(gr1.merge())
-```
-
-The underlying dataframe can always be accessed:
-
-```{python}
-print(gr1.df)
-```

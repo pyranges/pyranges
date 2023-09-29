@@ -11,7 +11,7 @@ Examples
 >>> pr.data.f1()
 +--------------+-----------+-----------+------------+-----------+--------------+
 | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-| (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+| (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
 |--------------+-----------+-----------+------------+-----------+--------------|
 | chr1         |         3 |         6 | interval1  |         0 | +            |
 | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -21,32 +21,43 @@ Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 For printing, the PyRanges was sorted on Chromosome and Strand.
 """
 
+import pandas as pd
 import pkg_resources
 
 import pyranges as pr
-import pandas as pd
 
-__all__ = ["f1", "f2", "chipseq", "chipseq_background", "aorta", "aorta2",
-           "ensembl_gtf", "gencode_gtf", "ucsc_bed", "control_bam", "cpg", "exons", "chromsizes"]
+__all__ = [
+    "f1",
+    "f2",
+    "chipseq",
+    "chipseq_background",
+    "aorta",
+    "aorta2",
+    "ensembl_gtf",
+    "gencode_gtf",
+    "ucsc_bed",
+    "control_bam",
+    "cpg",
+    "exons",
+    "chromsizes",
+]
+
 
 def get_example_path(basename):
-
-    full_path = pkg_resources.resource_filename(
-        "pyranges", "example_data/{}".format(basename))
+    full_path = pkg_resources.resource_filename("pyranges", "example_data/{}".format(basename))
 
     if full_path.endswith(".bam"):
-        _hack_to_load_idx = pkg_resources.resource_filename(
-            "pyranges", "example_data/{}.bai".format(basename))
+        # hack to load index too
+        pkg_resources.resource_filename("pyranges", "example_data/{}.bai".format(basename))
 
     return full_path
 
 
 def aorta():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-    >>> # | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+    >>> # | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
     >>> # |--------------+-----------+-----------+------------+-----------+--------------|
     >>> # | chr1         | 9939      | 10138     | H3K27me3   | 7         | +            |
     >>> # | chr1         | 9953      | 10152     | H3K27me3   | 5         | +            |
@@ -68,11 +79,10 @@ def aorta():
 
 
 def aorta2():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-    >>> # | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+    >>> # | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
     >>> # |--------------+-----------+-----------+------------+-----------+--------------|
     >>> # | chr1         | 10073     | 10272     | Input      | 1         | +            |
     >>> # | chr1         | 10280     | 10479     | Input      | 1         | +            |
@@ -92,18 +102,18 @@ def aorta2():
 
     return pr.read_bed(full_path)
 
-def bw():
 
+def bw():
     full_path = get_example_path("bw.bw")
 
     return pr.read_bigwig(full_path)
 
-def chipseq():
 
+def chipseq():
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-    >>> # | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+    >>> # | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
     >>> # |--------------+-----------+-----------+------------+-----------+--------------|
     >>> # | chr1         | 212609534 | 212609559 | U0         | 0         | +            |
     >>> # | chr1         | 169887529 | 169887554 | U0         | 0         | +            |
@@ -125,11 +135,10 @@ def chipseq():
 
 
 def chipseq_background():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name       | Score     | Strand       |
-    >>> # | (category)   | (int32)   | (int32)   | (object)   | (int64)   | (category)   |
+    >>> # | (category)   | (int64)   | (int64)   | (object)   | (int64)   | (category)   |
     >>> # |--------------+-----------+-----------+------------+-----------+--------------|
     >>> # | chr1         | 39036822  | 39036847  | U0         | 0         | +            |
     >>> # | chr1         | 224145989 | 224146014 | U0         | 0         | +            |
@@ -149,12 +158,12 @@ def chipseq_background():
 
     return pr.read_bed(full_path)
 
-def chromsizes():
 
+def chromsizes():
     """
     >>> # +--------------+-----------+-----------+
     >>> # | Chromosome   | Start     | End       |
-    >>> # | (category)   | (int32)   | (int32)   |
+    >>> # | (category)   | (int64)   | (int64)   |
     >>> # |--------------+-----------+-----------|
     >>> # | chr1         | 0         | 249250621 |
     >>> # | chr2         | 0         | 243199373 |
@@ -176,12 +185,10 @@ def chromsizes():
 
 
 def control_bam():
-
-
     """
     >>> # +--------------+-----------+-----------+--------------+------------+
     >>> # | Chromosome   | Start     | End       | Strand       | Flag       |
-    >>> # | (category)   | (int32)   | (int32)   | (category)   | (uint16)   |
+    >>> # | (category)   | (int64)   | (int64)   | (category)   | (uint16)   |
     >>> # |--------------+-----------+-----------+--------------+------------|
     >>> # | chr1         | 887771    | 887796    | +            | 16         |
     >>> # | chr1         | 994660    | 994685    | +            | 16         |
@@ -203,12 +210,10 @@ def control_bam():
 
 
 def cpg():
-
-
     """
     >>> # +--------------+-----------+-----------+-----------+
     >>> # | Chromosome   | Start     | End       | CpG       |
-    >>> # | (category)   | (int32)   | (int32)   | (int64)   |
+    >>> # | (category)   | (int64)   | (int64)   | (int64)   |
     >>> # |--------------+-----------+-----------+-----------|
     >>> # | chrX         | 64181     | 64793     | 62        |
     >>> # | chrX         | 69133     | 70029     | 100       |
@@ -226,21 +231,16 @@ def cpg():
 
     full_path = get_example_path("cpg.bed")
 
-    df = pd.read_csv(
-        full_path,
-        sep="\t",
-        header=None,
-        names="Chromosome Start End CpG".split())
+    df = pd.read_csv(full_path, sep="\t", header=None, names="Chromosome Start End CpG".split())
 
     return pr.PyRanges(df)
 
 
 def ensembl_gtf():
-
     """
     >>> # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------+
     >>> # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_biotype                       | +19   |
-    >>> # | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)                           | ...   |
+    >>> # | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)                           | ...   |
     >>> # |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+------------------------------------+-------|
     >>> # | 1            | havana     | gene         | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
     >>> # | 1            | havana     | transcript   | 11868     | 14409     | .          | +            | .          | transcribed_unprocessed_pseudogene | ...   |
@@ -263,11 +263,10 @@ def ensembl_gtf():
 
 
 def exons():
-
     """
     >>> # +--------------+-----------+-----------+----------------------------------------+-----------+--------------+
     >>> # | Chromosome   | Start     | End       | Name                                   | Score     | Strand       |
-    >>> # | (category)   | (int32)   | (int32)   | (object)                               | (int64)   | (category)   |
+    >>> # | (category)   | (int64)   | (int64)   | (object)                               | (int64)   | (category)   |
     >>> # |--------------+-----------+-----------+----------------------------------------+-----------+--------------|
     >>> # | chrX         | 135721701 | 135721963 | NR_038462_exon_0_0_chrX_135721702_f    | 0         | +            |
     >>> # | chrX         | 135574120 | 135574598 | NM_001727_exon_2_0_chrX_135574121_f    | 0         | +            |
@@ -287,12 +286,12 @@ def exons():
 
     return pr.read_bed(full_path)
 
-def f1():
 
+def f1():
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-    >>> # | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+    >>> # | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
     >>> # |--------------+-----------+-----------+------------+-----------+--------------|
     >>> # | chr1         |         3 |         6 | interval1  |         0 | +            |
     >>> # | chr1         |         8 |         9 | interval3  |         0 | +            |
@@ -308,11 +307,10 @@ def f1():
 
 
 def f2():
-
     """
     >>> # +--------------+-----------+-----------+------------+-----------+--------------+
     >>> # | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-    >>> # | (category)   |   (int32) |   (int32) | (object)   |   (int64) | (category)   |
+    >>> # | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
     >>> # |--------------+-----------+-----------+------------+-----------+--------------|
     >>> # | chr1         |         1 |         2 | a          |         0 | +            |
     >>> # | chr1         |         6 |         7 | b          |         0 | -            |
@@ -326,13 +324,11 @@ def f2():
     return pr.read_bed(full_path)
 
 
-
 def gencode_gtf():
-
     """
     >>> # +--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------------+-------+
     >>> # | Chromosome   | Source     | Feature      | Start     | End       | Score      | Strand       | Frame      | gene_id           | +15   |
-    >>> # | (category)   | (object)   | (category)   | (int32)   | (int32)   | (object)   | (category)   | (object)   | (object)          | ...   |
+    >>> # | (category)   | (object)   | (category)   | (int64)   | (int64)   | (object)   | (category)   | (object)   | (object)          | ...   |
     >>> # |--------------+------------+--------------+-----------+-----------+------------+--------------+------------+-------------------+-------|
     >>> # | chr1         | HAVANA     | gene         | 11868     | 14409     | .          | +            | .          | ENSG00000223972.5 | ...   |
     >>> # | chr1         | HAVANA     | transcript   | 11868     | 14409     | .          | +            | .          | ENSG00000223972.5 | ...   |
@@ -354,14 +350,11 @@ def gencode_gtf():
     return pr.read_gtf(full_path)
 
 
-
-
 def ucsc_bed():
-
     """
     >>> # +--------------+-----------+-----------+------------+------------+-----------------+--------------+---------------+-------------------+
     >>> # | Chromosome   | Start     | End       | Feature    | gene_id    | transcript_id   | Strand       | exon_number   | transcript_name   |
-    >>> # | (category)   | (int32)   | (int32)   | (object)   | (object)   | (float64)       | (category)   | (float64)     | (object)          |
+    >>> # | (category)   | (int64)   | (int64)   | (object)   | (object)   | (float64)       | (category)   | (float64)     | (object)          |
     >>> # |--------------+-----------+-----------+------------+------------+-----------------+--------------+---------------+-------------------|
     >>> # | chr1         | 12776117  | 12788726  | gene       | AADACL3    | nan             | +            | nan           | nan               |
     >>> # | chr1         | 169075927 | 169101957 | gene       | ATP1B1     | nan             | +            | nan           | nan               |

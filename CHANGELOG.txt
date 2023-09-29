@@ -1,3 +1,41 @@
+# 0.0.130 (27.09.2023) (@marco-mariotti)
+- Added new documentation centralized at readthedocs (including tutorial, how-to-pages, dev guide)
+- Shrunk README accordingly
+- Added new tests based on doctests
+
+# 0.0.129 (29.06.2023)
+- Fix join left category error #342 for real
+
+# 0.0.128 (27.06.2023)
+- Fix join left category error #342
+
+# 0.0.127 (19.05.2023)
+- Fix tostring regression
+
+# 0.0.126 (17.05.2023)
+- add preserve_order to join (@aallahyar)
+
+# 0.0.125 (09.05.2023)
+- fix read_gtf error
+
+# 0.0.124 (01.05.2023)
+- make pyrle optional
+
+# 0.0.123 (01.05.2023)
+- fix gtf reading (@fairliereese)
+- fix FutureWarning split.py (@y9c)
+- add ignore_bad line to read_gtf to skip unparseable lines.
+
+# 0.0.122 (01.05.2023) (@marco-mariotti)
+- genomicfeatures.genome_bounds can use a pyfaidx object as chromsizes
+- add option genome_bounds to only clip right out-of-bounds 
+- genome_bounds bugfix: modified df in-place
+
+# 0.0.121 (01.05.2023)
+- update numpy types
+- reformat with black
+- fix doctests
+
 # 0.0.120 (08.12.2022)
 - fix error in null_types when a variable is pandas.StringDtype (@mkanai)
 
