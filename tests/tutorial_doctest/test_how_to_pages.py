@@ -9,4 +9,3 @@ def test_how_to_pages():
         print("All tests in the how_to_pages were successful!")
     FILES = ["minigenome.fa", "minigenome.fa.fai", "chipseq.gtf"]
     [Path(f).unlink() for f in FILES]
-
