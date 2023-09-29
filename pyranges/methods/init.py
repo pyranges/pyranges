@@ -42,7 +42,7 @@ def create_df_dict(df, stranded):
     else:
         grpby_key = "Chromosome"
 
-    return {k: v for k, v in df.groupby(grpby_key,observed=False)}
+    return {k: v for k, v in df.groupby(grpby_key, observed=False)}
 
 
 def create_pyranges_df(chromosomes, starts, ends, strands=None):

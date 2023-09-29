@@ -2,6 +2,7 @@ import doctest
 import os
 from pathlib import Path
 
+
 def test_how_to_pages():
     failure_count2, test_count2 = doctest.testfile("../../docs/how_to_pages.rst")
     if not failure_count2:
