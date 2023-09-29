@@ -67,7 +67,7 @@ Task sequence
 ~~~~~~~~~~~~~
 
 
-1. set up your developer environment
+1. Set up your developer environment
 ------------------------------------
 
 We recommend creating an environment dedicated to the development of pyranges:
@@ -168,7 +168,7 @@ To run the **doctest**, run this:
 
 .. code:: bash
 
-	pt.test tests/tutorial_doctest
+	py.test tests/tutorial_doctest
 
 To run the non-compulsory **property-based tests**, run:
 
@@ -180,8 +180,16 @@ If all tests have worked correctly, you are ready to submit your code for integr
 main pyranges repository; that is to say, to open a "pull request". Before you can do that, you 
 have to update your remote repository, i.e. your pyranges fork at github.
 
+7. Log your changes
+----------------------
 
-7. Push to your remote repository
+Bump the version with all the changes in pyproject.toml. After bumping the version in pyproject.toml,
+it's essential to document your changes in the CHANGE_LOG.txt file. This log should provide a clear and
+concise summary of the modifications, additions, and fixes made in each version of your project. Include
+relevant details such as feature enhancements, bug fixes, and any other notable alterations to help
+maintain a transparent and informative record of your project's evolution.
+
+8. Push to your remote repository
 ---------------------------------
 
 Run this command to list all the local files you modified:
@@ -225,7 +233,7 @@ You will be requested your github credentials. Note that your online password ma
 case, google how to set up a github token that you can use.
 
 
-8. Open a pull request
+9. Open a pull request
 ----------------------
 
 The easiest way to open a pull request is through the github website. Go to **your** 
@@ -241,7 +249,7 @@ github issues (i.e. paste their http address). On the rest of the page, you are 
 list of the code edits. When you're ready, click "Open pull request".
 
 
-9. Core team only: upload to PypI
+10. Core team only: upload to PypI
 ---------------------------------
 
 Every now and then, the core development team considers that a new pyranges version should be 
