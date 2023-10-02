@@ -183,8 +183,8 @@ have to update your remote repository, i.e. your pyranges fork at github.
 7. Log your changes
 ----------------------
 
-Bump the version with all the changes in pyproject.toml. After bumping the version in pyproject.toml,
-it's essential to document your changes in the CHANGE_LOG.txt file. This log should provide a clear and
+First, bump the version number in the file pyproject.toml. Then, it's essential to document your changes 
+in the CHANGE_LOG.txt file. This log should provide a clear and
 concise summary of the modifications, additions, and fixes made in each version of your project. Include
 relevant details such as feature enhancements, bug fixes, and any other notable alterations to help
 maintain a transparent and informative record of your project's evolution.
@@ -249,7 +249,7 @@ github issues (i.e. paste their http address). On the rest of the page, you are 
 list of the code edits. When you're ready, click "Open pull request".
 
 
-10. Core team only: upload to PypI
+10. Core team only: upload to PyPI
 ---------------------------------
 
 Every now and then, the core development team considers that a new pyranges version should be 
