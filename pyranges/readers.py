@@ -6,10 +6,9 @@ import pandas as pd
 from natsort import natsorted  # type: ignore
 
 import pyranges as pr
+from pyranges.out import _ordered_gff3_columns, _ordered_gtf_columns
 from pyranges.pyranges_main import PyRanges
 
-from pyranges.out import _ordered_gtf_columns
-from pyranges.out import _ordered_gff3_columns
 
 def rename_core_attrs(df, ftype, rename_attr=False):
     """Deduplicate columns from GTF attributes that share names
@@ -39,12 +38,12 @@ def rename_core_attrs(df, ftype, rename_attr=False):
         DataFrame with deduplicated column names
     """
 
-    if ftype == 'gtf':
+    if ftype == "gtf":
         core_cols = _ordered_gtf_columns
-    elif ftype == 'gff3':
+    elif ftype == "gff3":
         core_cols = _ordered_gff3_columns
 
-    dupe_core_cols = list(set(df.columns)&set(core_cols))
+    dupe_core_cols = list(set(df.columns) & set(core_cols))
 
     # if duplicate columns were found
     if len(dupe_core_cols) > 0:
@@ -55,10 +54,11 @@ def rename_core_attrs(df, ftype, rename_attr=False):
             print("Renaming attributes with suffix '_attr'")
             dupe_core_dict = dict()
             for c in dupe_core_cols:
-                 dupe_core_dict[c] = f"{c}_attr"
+                dupe_core_dict[c] = f"{c}_attr"
             df.rename(dupe_core_dict, axis=1, inplace=True)
 
     return df
+
 
 def read_bed(f, as_df=False, nrows=None):
     """Return bed file as PyRanges.
@@ -375,10 +375,7 @@ def read_gtf(
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(f, as_df, nrows, _skiprows,
-                           duplicate_attr,
-                           rename_attr,
-                           ignore_bad=ignore_bad)
+        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, rename_attr, ignore_bad=ignore_bad)
     else:
         gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
 
@@ -422,7 +419,7 @@ def read_gtf_full(
     df = pd.concat(dfs, sort=False)
     df.loc[:, "Start"] = df.Start - 1
 
-    df = rename_core_attrs(df, ftype='gtf', rename_attr=rename_attr)
+    df = rename_core_attrs(df, ftype="gtf", rename_attr=rename_attr)
 
     if not as_df:
         return PyRanges(df)
@@ -618,6 +615,7 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
         return PyRanges(df)
     else:
         return df
+
 
 def read_bigwig(f, as_df=False):
     try:
