@@ -1,3 +1,6 @@
+# 0.0.131 (04.10.2023) (@fairliereese)
+- Added option to read_gtf to rename columns that have reserved names in pyranges https://github.com/pyranges/pyranges/issues/341
+
 # 0.0.130 (27.09.2023) (@marco-mariotti)
 - Added new documentation centralized at readthedocs (including tutorial, how-to-pages, dev guide)
 - Shrunk README accordingly
