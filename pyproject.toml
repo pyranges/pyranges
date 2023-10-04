@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyranges"
-version = "0.0.127"
+version = "0.0.130"
 description = "GenomicRanges for Python."
 readme = "README.md"
-authors = [{ name = "Endre Bakken Stovner", email = "endbak@pm.me" }]
+authors = [{ name = "Endre Bakken Stovner", email = "endbak@pm.me" },
+      	   { name = "Marco Mariotti", email = "marco.mariotti@ub.edu" }]
 license = { text = "MIT" }
 classifiers = [
     "Programming Language :: Python :: 3",

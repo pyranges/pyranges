@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Introduction</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <section id="introduction">
+        <h1>Introduction</h1>
+        <!-- pyranges documentation master file, created by
+sphinx-quickstart on Fri Jun 23 11:27:13 2023.
+You can adapt this file completely to your liking, but it should at least
+contain the root `toctree` directive. -->
+        <section id="installation">
+            <h2>Installation</h2>
+            <p>The preferred way to install pyranges is through the bioconda channel:</p>
+            <pre>conda install -c bioconda pyranges</pre>
+            <p>You can also try pip:</p>
+            <pre>pip install pyranges</pre>
+            <p>PyRanges has some dependencies that are optional. They need to be manually installed if you require their functionality:</p>
+            <pre>pyfaidx: fetch sequences from fasta # pip install pyfaidx
+ray: multicpu   # pip install -U ray
+pybigwig: write bigwigs # pip install pybigwig
+                        # or conda install -c bioconda pybigwig
+bamread: read bam files # pip install bamread
+                        # or conda install -c bioconda bamread
+fisher: fast fisher exact # pip install fisher
+                          # or conda install -c bioconda fisher</pre>
+            <p>Since these are not needed for 99.9% percent of the pyranges functionality, they are kept separate to prevent the possibility of the pyranges-install failing due to dependencies that fail installation or conflicting dependencies.</p>
+        </section>
+        <section id="citation">
+            <h2>Citation</h2>
+            <p><a href="http://dx.doi.org/10.1093/bioinformatics/btz615">http://dx.doi.org/10.1093/bioinformatics/btz615</a></p>
+        </section>
+        <section id="documentation-outline">
+            <h2>Documentation outline</h2>
+            <ol type="1">
+                <li>🚀 The tutorial, on the next page, recommended for all new users</li>
+                <li>🚀 The how-to pages, further below, where functionalities are grouped by topic</li>
+                <li>🚀 The <a href="https://pyranges.readthedocs.io/">API reference</a>, where all methods are explained in detail. Old <a href="https://pyranges.readthedocs.io/">API reference</a> is here.</li>
+            </ol>
+            <div>
+                <h1>System Message: ERROR/3 (/home/anandia/pyranges/docs/index.rst line 49)</h1>
+                <p>Unknown directive type "toctree".</p>
+                <pre>.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Contents:
+
+   tutorial
+
+   how_to_pages
+
+
+</pre>
+            </div>
+            <!-- * :ref:`search` -->
+            <!-- * :ref:`modindex` -->
+        </section>
+    </section>
+</body>
+</html>
