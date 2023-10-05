@@ -6,7 +6,58 @@ import pandas as pd
 from natsort import natsorted  # type: ignore
 
 import pyranges as pr
+from pyranges.out import _ordered_gff3_columns, _ordered_gtf_columns
 from pyranges.pyranges_main import PyRanges
+
+
+def rename_core_attrs(df, ftype, rename_attr=False):
+    """Deduplicate columns from GTF attributes that share names
+    with the default 8 columns by appending "_attr" to each name if
+    rename_attr==True. Otherwise throw an error informing user of
+    formatting issues.
+
+    Parameters
+    ----------
+    df : pandas DataFrame
+
+        DataFrame from read_gtf
+
+    ftype : str
+
+        {'gtf' or 'gff3'}
+
+        rename_attr : bool, default False
+
+            Whether to rename (potential) attributes with reserved column names
+            with the suffix '_attr' or to just raise an error (default)
+
+    Returns
+    -------
+    df : pandas DataFrame
+
+        DataFrame with deduplicated column names
+    """
+
+    if ftype == "gtf":
+        core_cols = _ordered_gtf_columns
+    elif ftype == "gff3":
+        core_cols = _ordered_gff3_columns
+
+    dupe_core_cols = list(set(df.columns) & set(core_cols))
+
+    # if duplicate columns were found
+    if len(dupe_core_cols) > 0:
+        print(f"Found attributes with reserved names: {dupe_core_cols}.")
+        if not rename_attr:
+            raise ValueError
+        else:
+            print("Renaming attributes with suffix '_attr'")
+            dupe_core_dict = dict()
+            for c in dupe_core_cols:
+                dupe_core_dict[c] = f"{c}_attr"
+            df.rename(dupe_core_dict, axis=1, inplace=True)
+
+    return df
 
 
 def read_bed(f, as_df=False, nrows=None):
@@ -248,6 +299,7 @@ def read_gtf(
     as_df=False,
     nrows=None,
     duplicate_attr=False,
+    rename_attr=False,
     ignore_bad: bool = False,
 ):
     """Read files in the Gene Transfer Format.
@@ -273,6 +325,11 @@ def read_gtf(
     duplicate_attr : bool, default False
 
         Whether to handle (potential) duplicate attributes or just keep last one.
+
+    rename_attr : bool, default False
+
+        Whether to rename (potential) attributes with reserved column names
+        with the suffix '_attr' or to just raise an error (default)
 
     ignore_bad : bool, default False
 
@@ -318,7 +375,7 @@ def read_gtf(
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad)
+        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, rename_attr, ignore_bad=ignore_bad)
     else:
         gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
 
@@ -331,13 +388,13 @@ def read_gtf_full(
     nrows=None,
     skiprows=0,
     duplicate_attr=False,
+    rename_attr=False,
     ignore_bad: bool = False,
     chunksize: int = int(1e5),  # for unit-testing purposes
 ):
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
-
     df_iter = pd.read_csv(
         f,
         sep="\t",
@@ -361,6 +418,8 @@ def read_gtf_full(
 
     df = pd.concat(dfs, sort=False)
     df.loc[:, "Start"] = df.Start - 1
+
+    df = rename_core_attrs(df, ftype="gtf", rename_attr=rename_attr)
 
     if not as_df:
         return PyRanges(df)
