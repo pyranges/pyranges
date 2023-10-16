@@ -12,8 +12,7 @@ The library is optimized for fast querying and manipulation of genomic annotatio
 
 ## Documentation
 
-The pyranges documentation is centralized at <https://pyranges.readthedocs.io/>
-Visit it to find installation instructions, API, tutorial, and how-to-pages.
+The pyranges documentation, including installation instructions, API, tutorial, and how-to-pages, is available at <https://pyranges.readthedocs.io/>
 
 ## Features
 
@@ -34,4 +33,13 @@ Stovner EB, Sætrom P (2020) PyRanges: efficient comparison of genomic intervals
   - use pyranges in Stack Overflow/biostars questions and answers
   - star the repo (possibly important for github visibility and as a proxy for project popularity)
   - if you are a business using pyranges, please give to one of the charities listed at https://www.givewell.org/
+
+## Asking for help
+
+If you encounter bugs, or the documentation is not enough a cannot accomplish a specific task of interest, or if you'd like new features implemented, open an Issue at github: https://github.com/pyranges/pyranges/issues
+
+## Contributing to pyranges
+
+Pyranges accepts code contributions in form of pull request. For details, visit https://pyranges.readthedocs.io/developer_guide.html
+
 

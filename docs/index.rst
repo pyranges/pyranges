@@ -27,6 +27,12 @@ Documentation outline
 #. 🚀 The `API reference <./autoapi/index.html>`_, where all methods are explained in detail.
 #. 🚀 :doc:`The developer guide <./developer_guide>`, to follow in order to contribute to PyRanges.
 
+Asking for help
+~~~~~~~~~~~~~~~
+
+If you encounter bugs, or the documentation is not enough a cannot accomplish a specific task of interest, or if you'd like new features implemented, open an Issue at github: https://github.com/pyranges/pyranges/issues
+
+
 .. toctree::
    :maxdepth: 2
    :hidden:
