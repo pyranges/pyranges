@@ -17,7 +17,7 @@ def _cluster(df, **kwargs):
     if count:
         _count = cdf.groupby("Cluster").Cluster.count()
         _count.name = "Count"
-        cdf = cdf.merge(_count, on="Cluster")
+        cdf = cdf.merge_overlaps(_count, on="Cluster")
 
     return cdf
 
@@ -53,6 +53,6 @@ def _cluster_by(df, **kwargs):
     if count:
         _count = cdf.groupby("Cluster").Cluster.count()
         _count.name = "Count"
-        cdf = cdf.merge(_count, on="Cluster")
+        cdf = cdf.merge_overlaps(_count, on="Cluster")
 
     return cdf

@@ -237,7 +237,7 @@ def _to_bigwig(
 
     subset = ["Chromosome", "Start", "End", "Score"]
 
-    gr = gr[subset].unstrand()
+    gr = gr[subset].remove_strand()
 
     gr = gr.sort()
 
@@ -266,7 +266,7 @@ def _to_bigwig(
 
 def _to_gff3(
     self: PyRanges, path: None = None, compression: str = "infer", map_cols: Optional[Dict[str, str]] = None
-) -> str:
+) -> str | None:
     mapping = _gff3_columns.copy()
     if map_cols:
         mapping.update(map_cols)

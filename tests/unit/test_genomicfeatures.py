@@ -9,7 +9,7 @@ def compute_introns_single(df, by):
     id_column = by_to_id[by]
     df = df.sort_values("Start End".split())
     g = df[df.Feature == by]
-    x = pr.PyRanges(df[df.Feature == "exon"]).merge(by=id_column, strand=False)
+    x = pr.PyRanges(df[df.Feature == "exon"]).merge_overlaps(by=id_column, strand=False)
     if not len(x) or not len(g):
         return
     x.Strand = "-"
@@ -67,7 +67,7 @@ def _introns_correct(full, genes, exons, introns, by):
         if gene_id not in expected_results:
             continue
         expected = expected_results[gene_id]
-        exons = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == "exon").merge(by=id_column)
+        exons = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == "exon").merge_overlaps(by=id_column)
         genes = pr.PyRanges(based_on[gene_id]).subset(lambda df: df.Feature == by)
         _introns = pr.PyRanges(idf)
         assert len(exons.intersect(_introns)) == 0
@@ -83,7 +83,7 @@ def test_introns_single():
     "Assert that our fast method of computing introns is the same as the slow, correct one in compute_introns_single"
 
     gr = pr.data.gencode_gtf()[["gene_id", "Feature"]]
-    exons = gr[gr.Feature == "exon"].merge(by="gene_id")
+    exons = gr[gr.Feature == "exon"].merge_overlaps(by="gene_id")
     exons.Feature = "exon"
     exons = exons.df
     df = pd.concat([gr[gr.Feature == "gene"].df, exons], sort=False)

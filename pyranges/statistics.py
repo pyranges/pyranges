@@ -249,7 +249,7 @@ def mcc(
         _labels = combinations_with_replacement(labels, r=2)
 
     # remove all non-loc columns before computation
-    grs = [gr.merge(strand=strand) for gr in grs]
+    grs = [gr.merge_overlaps(strand=strand) for gr in grs]
 
     if _genome is not None:
         genome_length = int(_genome.End.sum())
@@ -314,8 +314,8 @@ def mcc(
             continue
 
         else:
-            j = t.join(f, strandedness=strandedness)
-            tp_gr = j.new_position("intersection").merge(strand=strand)
+            j = t.join_overlaps(f, strandedness=strandedness)
+            tp_gr = j.new_position("intersection").merge_overlaps(strand=strand)
             if strand:
                 for _strand in "+ -".split():
                     tp = tp_gr[_strand].length
@@ -747,8 +747,8 @@ class StatisticsMethods:
         kwargs = pr.pyranges_main.fill_kwargs(kwargs)
         strand = True if kwargs.get("strandedness") else False
 
-        reference_length = self.pr.merge(strand=strand).length
-        query_length = other.merge(strand=strand).length
+        reference_length = self.pr.merge_overlaps(strand=strand).length
+        query_length = other.merge_overlaps(strand=strand).length
 
         intersection_sum = self.pr.set_intersect(other, strandedness=strandedness).lengths().sum()
 
@@ -803,7 +803,7 @@ class StatisticsMethods:
 
         union_sum = 0
         for gr in [self.pr, other]:
-            union_sum += gr.merge(strand=strand).lengths().sum()
+            union_sum += gr.merge_overlaps(strand=strand).lengths().sum()
 
         denominator = union_sum - intersection_sum
         if denominator == 0:

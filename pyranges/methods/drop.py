@@ -37,7 +37,7 @@ def _drop(self, drop=None, like=None):
 
     # need to use unstrand to remove "+"/"-" from dict
     if "Strand" in _to_drop and self.stranded:
-        self = self.unstrand()
+        self = self.remove_strand()
         _to_drop = [d for d in _to_drop if not d == "Strand"]
 
     return self.apply(lambda df: df.drop(_to_drop, axis=1))

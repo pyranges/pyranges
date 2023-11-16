@@ -232,7 +232,7 @@ class GenomicFeaturesMethods:
             return pr.PyRanges()
 
         exons = gr.subset(lambda df: df.Feature == "exon")
-        exons = exons.merge(by=id_column)
+        exons = exons.merge_overlaps(by=id_column)
 
         by_gr = gr.subset(lambda df: df.Feature == by)
 

@@ -9,7 +9,7 @@ def test_stranded():
     cpg = pr.data.cpg()
     exons = pr.data.exons()
 
-    j = cpg.join(exons)
+    j = cpg.join_overlaps(exons)
 
     assert j.stranded
 
@@ -31,7 +31,7 @@ def test_unstrand():
     cpg = pr.data.cpg()
     print(exons)
     print(exons.columns)
-    x = exons.unstrand()
+    x = exons.remove_strand()
     print(x.stranded)
     print(x)
     print(x.columns)
@@ -39,4 +39,4 @@ def test_unstrand():
         assert not df.index.duplicated().sum()
 
     # x = pr.PyRanges(x.df.reset_index(drop=True))
-    cpg.join(x)
+    cpg.join_overlaps(x)

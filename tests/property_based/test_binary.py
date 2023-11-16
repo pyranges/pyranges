@@ -288,7 +288,7 @@ def test_subtraction(gr, gr2, strandedness):
     )
 
     print("subtracting" * 50)
-    result = gr.subtract(gr2, strandedness=strandedness)
+    result = gr.range_subtract(gr2, strandedness=strandedness)
 
     print("bedtools_result")
     print(bedtools_df)
@@ -384,7 +384,7 @@ def test_join(gr, gr2, strandedness):
         dtype={"Chromosome": "category", "Strand": "category"},
     ).drop("Chromosome_b Overlap".split(), axis=1)
 
-    result = gr.join(gr2, strandedness=strandedness)
+    result = gr.join_overlaps(gr2, strandedness=strandedness)
 
     if result.df.empty:
         assert bedtools_df.empty

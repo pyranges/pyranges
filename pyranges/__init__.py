@@ -31,8 +31,12 @@ get_transcript_sequence = get_transcript_sequence
 read_gff = read_gtf
 
 Chromsizes = Union[Dict[str, int], Dict[Tuple[str, str], int]]
-MIN_COLUMNS = ["Chromosome", "Start", "End", "Strand"]
-MIN_COLUMNS_WITH_STRAND = [*MIN_COLUMNS, "Strand"]
+CHROM_COL = "Chromosome"
+START_COL = "Start"
+END_COL = "End"
+STRAND_COL = "Strand"
+MIN_COLUMNS = [CHROM_COL, START_COL, END_COL]
+MIN_COLUMNS_WITH_STRAND = [*MIN_COLUMNS, STRAND_COL]
 
 
 def empty(with_strand: bool = False) -> "PyRanges":
@@ -58,7 +62,7 @@ def from_args(
         _chromosomes = pd.Series(chromosomes, dtype="category")
 
     columns: List[pd.Series] = [_chromosomes, pd.Series(starts), pd.Series(ends)]
-    colnames = ["Chromosome", "Start", "End"]
+    colnames = [CHROM_COL, START_COL, "End"]
     if strands is not None:
         if isinstance(strands, str):
             _strands = pd.Series([strands] * len(starts), dtype="category")
@@ -149,7 +153,7 @@ def from_dfs(dfs: Union[Dict[str, pd.DataFrame], Dict[Tuple[str, str], pd.DataFr
     if not _strand_valid:
         df = pd.concat(empty_removed.values()).reset_index(drop=True)
 
-        groupby_cols = ["Chromosome"]
+        groupby_cols = [CHROM_COL]
 
         empty_removed = {k[0]: v for k, v in df.groupby(groupby_cols)}  # type: ignore
 
@@ -297,7 +301,7 @@ def itergrs(prs: Iterable[PyRanges], strand=None, keys=False):
         strand = all([gr.stranded for gr in prs])
 
     if strand is False and any([gr.stranded for gr in prs]):
-        prs = [gr.unstrand() for gr in prs]
+        prs = [gr.remove_strand() for gr in prs]
 
     grs_per_chromosome = defaultdict(list)
     keys = [gr.dfs.keys() for gr in prs]
@@ -394,20 +398,20 @@ def random(
     if chromsizes is None:
         df = data.chromsizes().df
     elif isinstance(chromsizes, dict):
-        df = pd.DataFrame({"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())})
+        df = pd.DataFrame({CHROM_COL: list(chromsizes.keys()), "End": list(chromsizes.values())})
     else:
         df = chromsizes.df
 
     p = df.End / df.End.sum()
 
     n_per_chrom = pd.Series(np.random.choice(df.index, size=n, p=p)).value_counts(sort=False).to_frame()
-    n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
+    n_per_chrom.insert(1, CHROM_COL, df.loc[n_per_chrom.index].Chromosome)
     n_per_chrom.columns = pd.Index("Count Chromosome".split())
 
     random_dfs = []
     for _, (count, chrom) in n_per_chrom.iterrows():
         r = np.random.randint(0, df[df.Chromosome == chrom].End - length, size=count)
-        _df = pd.DataFrame({"Chromosome": chrom, "Start": r, "End": r + length})
+        _df = pd.DataFrame({CHROM_COL: chrom, START_COL: r, "End": r + length})
         random_dfs.append(_df)
 
     random_df = pd.concat(random_dfs)

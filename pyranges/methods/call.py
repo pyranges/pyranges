@@ -33,7 +33,7 @@ def _call(self, f, strand=None, as_pyranges=True, **kwargs):
         strand = self.stranded
 
     if self.stranded and not strand:
-        self = self.unstrand()
+        self = self.remove_strand()
 
     result = self.apply(f, strand=strand, as_pyranges=False, **kwargs)
 

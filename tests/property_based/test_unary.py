@@ -69,7 +69,7 @@ def test_merge(gr, strand):
             )
 
     print("bedtools_df\n", bedtools_df)
-    result = gr.merge(strand=strand, count=True)
+    result = gr.merge_overlaps(strand=strand, count=True)
     print("result\n", result.df)
 
     if not bedtools_df.empty:
@@ -208,7 +208,7 @@ def test_cluster_by(gr, strand):
 @given(gr=dfs_min_with_id())  # pylint: disable=no-value-for-parameter
 def test_merge_by(gr, strand):
     print(gr)
-    result = gr.merge(by="ID").df.drop("ID", axis=1)
+    result = gr.merge_overlaps(by="ID").df.drop("ID", axis=1)
 
     df = gr.df
 
@@ -216,7 +216,7 @@ def test_merge_by(gr, strand):
     for _, gdf in df.groupby("ID"):
         grs.append(pr.PyRanges(gdf))
 
-    expected = pr.concat([gr.merge() for gr in grs]).df
+    expected = pr.concat([gr.merge_overlaps() for gr in grs]).df
 
     print(expected)
     print(result)
@@ -257,7 +257,7 @@ def test_windows(gr):
 
     print("bedtools_df\n", bedtools_df)
 
-    result = gr.window(10)["Chromosome Start End".split()].unstrand()
+    result = gr.window(10)["Chromosome Start End".split()].remove_strand()
     print("result\n", result.df)
 
     if not bedtools_df.empty:

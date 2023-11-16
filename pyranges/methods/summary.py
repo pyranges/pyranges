@@ -11,7 +11,7 @@ def _summary(self, to_stdout=True, return_df=False):
     total_lengths["pyrange"] = [self.length]
 
     if self.stranded:
-        c = self.merge(strand=True)
+        c = self.merge_overlaps(strand=True)
         lengths["coverage_forward"] = c["+"].lengths()
         lengths["coverage_reverse"] = c["-"].lengths()
         total_lengths["coverage_forward"] = [c["+"].length]

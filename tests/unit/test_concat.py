@@ -21,12 +21,12 @@ def test_concat_stranded_tranded(f1, f2):
 
 
 def test_concat_unstranded_unstranded(f1, f2):
-    assert_equal_length_before_after(f1.unstrand(), f2.unstrand())
+    assert_equal_length_before_after(f1.remove_strand(), f2.remove_strand())
 
 
 def test_concat_stranded_unstranded(f1, f2):
-    assert_equal_length_before_after(f1, f2.unstrand())
+    assert_equal_length_before_after(f1, f2.remove_strand())
 
 
 def test_concat_unstranded_stranded(f1, f2):
-    assert_equal_length_before_after(f1.unstrand(), f2)
+    assert_equal_length_before_after(f1.remove_strand(), f2)

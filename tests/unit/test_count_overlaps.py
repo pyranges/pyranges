@@ -17,7 +17,7 @@ chr1    713800    714800 -
 chr1    32    34 -"""
 
 grs = {n: pr.from_string(s) for n, s in zip(["a", "b", "c"], [a, b, c])}
-unstranded_grs = {n: gr.unstrand() for n, gr in grs.items()}
+unstranded_grs = {n: gr.remove_strand() for n, gr in grs.items()}
 
 features = pr.from_args(
     chromosomes=["chr1"] * 4,
@@ -25,7 +25,7 @@ features = pr.from_args(
     ends=[10, 20, 30, 40],
     strands=["+", "+", "+", "-"],
 )
-unstranded_features = features.unstrand()
+unstranded_features = features.remove_strand()
 
 
 def test_strand_vs_strand_same():

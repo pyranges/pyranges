@@ -61,7 +61,7 @@ def _subseq(scdf, **kwargs):
         j.rename(columns={"starts": "__min__", "ends": "__max__"}, inplace=True)
 
     # I'm maintaing the original row order
-    scdf = scdf.merge(j[by + ["__min__", "__max__"]], on=by).set_index("__i__").loc[orig_order]
+    scdf = scdf.merge_overlaps(j[by + ["__min__", "__max__"]], on=by).set_index("__i__").loc[orig_order]
 
     # instead of simply using starts and ends as computed above, we're dealing here with potential out of bounds:
     r = scdf[~((scdf.Start >= scdf.__max__) | (scdf.End <= scdf.__min__))].copy()
