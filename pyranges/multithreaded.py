@@ -1,88 +1,46 @@
-import os
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from natsort import natsorted  # type: ignore
+from pandas.core.frame import DataFrame
 
-import pyranges as pr
-
-ray = None
-
-
-def get_n_args(f):
-    import inspect
-
-    nparams = len(inspect.signature(f).parameters)
-    return nparams
+if TYPE_CHECKING:
+    from pyranges.pyranges_main import PyRanges
 
 
-def call_f(f, nparams, df, odf, kwargs):
-    if nparams == 3:
-        return f.remote(df, odf, **kwargs)
-    else:
-        return f.remote(df, odf)
-
-
-def call_f_single(f, nparams, df, **kwargs):
-    if nparams == 2:
-        return f.remote(df, **kwargs)
-    else:
-        return f.remote(df)
-
-
-class suppress_stdout_stderr(object):
-    """
-    A context manager for doing a "deep suppression" of stdout and stderr in
-    Python, i.e. will suppress all print, even if the print originates in a
-    compiled C/Fortran sub-function.
-       This will not suppress raised exceptions, since exceptions are printed
-    to stderr just before a script exits, and after the context manager has
-    exited (at least, I think that is why it lets exceptions through).
-
-    """
-
-    def __init__(self):
-        # Open a pair of null files
-        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
-        # Save the actual stdout (1) and stderr (2) file descriptors.
-        self.save_fds = (os.dup(1), os.dup(2))
-
-    def __enter__(self):
-        # Assign the null pointers to stdout and stderr.
-        os.dup2(self.null_fds[0], 1)
-        os.dup2(self.null_fds[1], 2)
-
-    def __exit__(self, *_):
-        # Re-assign the real stdout/stderr back to (1) and (2)
-        os.dup2(self.save_fds[0], 1)
-        os.dup2(self.save_fds[1], 2)
-        # Close the null files
-        os.close(self.null_fds[0])
-        os.close(self.null_fds[1])
-
-
-def merge_dfs(df1, df2):
+def merge_dfs(df1: DataFrame, df2: DataFrame) -> DataFrame:
     if not df1.empty and not df2.empty:
         return pd.concat([df1, df2], sort=False).reset_index(drop=True)
 
     elif df1.empty and df2.empty:
         # can this happen?
-        return None
+        return pd.DataFrame()
     elif df1.empty:
         return df2
     else:
         return df1
 
 
-def process_results(results, keys):
+def process_results(results: List[Any], keys: Union[List[str], List[Tuple[str, str]]]) -> dict:
     results_dict = {k: r for k, r in zip(keys, results) if r is not None}
 
     try:
-        first_item = next(iter(results_dict.values()))
+        next(iter(results_dict.values()))
     except StopIteration:  # empty collection
         return results_dict
 
-    if not isinstance(first_item, pd.DataFrame):
+    # An arbitrary operation might make the keys in the dict and df out of sync.
+    # This fixes that by having the PyRanges initializer find the correct keys again..
+    try:
+        if all(isinstance(v, pd.DataFrame) for v in results_dict.values()):
+            df = pd.concat(results_dict.values())
+            import pyranges as pr
+
+            _results_dict = pr.PyRanges(df).dfs
+        else:
+            return results_dict
+    except (ValueError, TypeError):
         return results_dict
 
     to_delete = []
@@ -100,10 +58,10 @@ def process_results(results, keys):
     for k in to_delete:
         del results_dict[k]
 
-    return results_dict
+    return _results_dict
 
 
-def make_sparse(df):
+def make_sparse(df: DataFrame) -> DataFrame:
     if "Strand" in df:
         cols = "Chromosome Start End Strand".split()
     else:
@@ -112,7 +70,7 @@ def make_sparse(df):
     return df[cols]
 
 
-def make_binary_sparse(kwargs, df, odf):
+def make_binary_sparse(kwargs: Dict[str, Any], df: DataFrame, odf: DataFrame) -> Tuple[DataFrame, DataFrame]:
     sparse = kwargs.get("sparse")
 
     if not sparse:
@@ -127,70 +85,15 @@ def make_binary_sparse(kwargs, df, odf):
     return df, odf
 
 
-def make_unary_sparse(kwargs, df):
-    sparse = kwargs.get("sparse").get("self")
+def make_unary_sparse(kwargs: Dict[str, Any], df: DataFrame) -> DataFrame:
+    sparse = kwargs.get("sparse", {}).get("self")
 
-    if sparse:
-        df = make_sparse(df)
-
-    return df
+    return make_sparse(df) if sparse else df
 
 
-def ray_initialized():
-    def test_function():
-        pass
-
-    try:
-        test_function = ray.remote(test_function)
-    except Exception as e:
-        if isinstance(e, NameError):
-            return False
-
-        raise e
-
-    try:
-        test_function.remote()
-    except Exception as e:
-        if "RayConnectionError" in str(type(e)):
-            return True
-        else:
-            raise e
-
-
-def get_multithreaded_funcs(function, nb_cpu):
-    if nb_cpu > 1:
-        import ray  # type: ignore
-
-        _merge_dfs = ray.remote(merge_dfs)
-        get = ray.get
-        function = ray.remote(function)
-    else:
-
-        def _merge_dfs():
-            return "dummy value"
-
-        _merge_dfs.remote = merge_dfs
-
-        def get(x):
-            return x
-
-        function.remote = function
-
-    return function, get, _merge_dfs
-
-
-def pyrange_apply(function, self, other, **kwargs):
-    nparams = get_n_args(function)
-    nb_cpu = kwargs.get("nb_cpu", 1)
-
-    if nb_cpu > 1:
-        import ray  # type: ignore
-
-        with suppress_stdout_stderr():
-            ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
-
-    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
-
+def pyrange_apply(
+    function: Callable, self: "PyRanges", other: "PyRanges", **kwargs
+) -> Union[Dict[Tuple[str, str], Any], Dict[str, Any]]:
     strandedness = kwargs["strandedness"]
 
     other_strand = {"+": "-", "-": "+"}
@@ -210,7 +113,6 @@ def pyrange_apply(function, self, other, **kwargs):
 
     results = []
 
-    items = natsorted(self.dfs.items())
     keys = natsorted(self.dfs.keys())
 
     dummy = pd.DataFrame(columns="Chromosome Start End".split())
@@ -219,7 +121,8 @@ def pyrange_apply(function, self, other, **kwargs):
     other_dfs = other.dfs
 
     if strandedness:
-        for (c, s), df in items:
+        for c, s in self.chromosomes_and_strands:
+            df = self._dfs_with_strand[c, s]
             os = strand_dict[s]
 
             if not (c, os) in other.keys() or len(other[c, os].values()) == 0:
@@ -228,49 +131,60 @@ def pyrange_apply(function, self, other, **kwargs):
                 odf = other[c, os].values()[0]
 
             df, odf = make_binary_sparse(kwargs, df, odf)
-            result = call_f(function, nparams, df, odf, kwargs)
+
+            try:
+                result = function(df, odf, **kwargs)
+            except TypeError:
+                result = function(df, odf)
 
             results.append(result)
 
     else:
         if self.stranded and not other.stranded:
-            for (c, s), df in items:
+            for (c, s), df in self._dfs_with_strand.items():
                 if c not in other_chromosomes:
                     odf = dummy
                 else:
-                    odf = other_dfs[c]
+                    odf = other._dfs_without_strands[c]
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
-                result = call_f(function, nparams, df, odf, kwargs)
+
+                try:
+                    result = function(df, odf, **kwargs)
+                except TypeError:
+                    result = function(df, odf)
                 results.append(result)
 
         elif not self.stranded and other.stranded:
-            for c, df in items:
+            for c, df in self._dfs_without_strand.items():
                 if c not in other_chromosomes:
                     odf = dummy
                 else:
-                    odf1 = other_dfs.get((c, "+"), dummy)
-                    odf2 = other_dfs.get((c, "-"), dummy)
+                    odf1 = other._dfs_with_strand.get((c, "+"), dummy)
+                    odf2 = other._dfs_with_strand.get((c, "-"), dummy)
 
-                    odf = _merge_dfs.remote(odf1, odf2)
+                    odf = merge_dfs(odf1, odf2)
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
-                result = call_f(function, nparams, df, odf, kwargs)
+                try:
+                    result = function(df, odf, **kwargs)
+                except TypeError:
+                    result = function(df, odf)
                 results.append(result)
 
         elif self.stranded and other.stranded:
-            for (c, s), df in self.items():
+            for (c, s), df in self._dfs_with_strand.items():
                 if c not in other_chromosomes:
-                    odfs = pr.PyRanges(dummy)
+                    odfs = [dummy]
                 else:
-                    odfp = other_dfs.get((c, "+"), dummy)
-                    odfm = other_dfs.get((c, "-"), dummy)
+                    odfp = other_dfs.get((c, "+"), dummy)  # type: ignore
+                    odfm = other_dfs.get((c, "-"), dummy)  # type: ignore
 
                     odfs = [odfp, odfm]
 
                 if len(odfs) == 2:
-                    odf = _merge_dfs.remote(*odfs)
+                    odf = merge_dfs(*odfs)
                 elif len(odfs) == 1:
                     odf = odfs[0]
                 else:
@@ -278,74 +192,69 @@ def pyrange_apply(function, self, other, **kwargs):
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
-                result = call_f(function, nparams, df, odf, kwargs)
+                try:
+                    result = function(df, odf, **kwargs)
+                except TypeError:
+                    result = function(df, odf)
                 results.append(result)
 
         else:
-            for c, df in items:
+            for c, df in self._dfs_without_strand.items():
                 if c not in other_chromosomes:
                     odf = dummy
                 else:
-                    odf = other_dfs[c]
+                    odf = other._dfs_without_strand[c]
 
                 df, odf = make_binary_sparse(kwargs, df, odf)
 
-                result = call_f(function, nparams, df, odf, kwargs)
+                try:
+                    result = function(df, odf, **kwargs)
+                except TypeError:
+                    result = function(df, odf)
                 results.append(result)
 
-    results = get(results)
-
-    results = process_results(results, keys)
-
-    if nb_cpu > 1:
-        ray.shutdown()
-
-    return results
+    return process_results(results, keys)
 
 
-def pyrange_apply_single(function, self, **kwargs):
-    nparams = get_n_args(function)
-    nb_cpu = kwargs.get("nb_cpu", 1)
+def pyrange_apply_single(function: Callable, self: "PyRanges", **kwargs) -> Any:
     strand = kwargs["strand"]
-
-    if nb_cpu > 1:
-        import ray  # type: ignore
-
-        with suppress_stdout_stderr():
-            ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
-
-    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
 
     if strand:
         assert self.stranded, "Can only do stranded operation when PyRange contains strand info"
 
     results = []
 
+    keys: List = []
     if strand:
-        for (c, s), df in self.items():
+        for (c, s), df in self._dfs_with_strand.items():  # type: ignore
             kwargs["chromosome"] = c
             _strand = s
             kwargs["strand"] = _strand
 
-            df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, **kwargs)
+            try:
+                result = function(df, **kwargs)
+            except TypeError:
+                result = function(df)
             results.append(result)
 
         keys = self.keys()
 
     elif not self.stranded:
-        keys = []
-        for c, df in self.items():
+        for c, df in self._dfs_without_strand.items():
             kwargs["chromosome"] = c
+            assert isinstance(c, str)
 
-            df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, **kwargs)
+            try:
+                result = function(df, **kwargs)
+            except TypeError:
+                result = function(df)
+
             results.append(result)
             keys.append(c)
 
     else:
-        keys = []
         for c in self.chromosomes:
+            assert isinstance(c, str)
             kwargs["chromosome"] = c
 
             dfs = self[c]
@@ -353,23 +262,20 @@ def pyrange_apply_single(function, self, **kwargs):
             if len(dfs.keys()) == 2:
                 df, df2 = dfs.values()
                 # merge strands
-                df = _merge_dfs.remote(df, df2)
+                df = merge_dfs(df, df2)
             else:
                 df = dfs.values()[0]
 
-            df = make_unary_sparse(kwargs, df)
-            result = call_f_single(function, nparams, df, **kwargs)
-            results.append(result)
             keys.append(c)
 
-    results = get(results)
+            try:
+                result = function(df, **kwargs)
+            except TypeError:
+                result = function(df)
 
-    if nb_cpu > 1:
-        ray.shutdown()
+            results.append(result)
 
-    results = process_results(results, keys)
-
-    return results
+    return process_results(results, keys)
 
 
 def _lengths(df):
@@ -378,7 +284,7 @@ def _lengths(df):
     return lengths
 
 
-def _tss(df, **kwargs):
+def _tss(df: DataFrame, **kwargs) -> DataFrame:
     df = df.copy(deep=True)
     dtype = df.dtypes["Start"]
     slack = kwargs.get("slack", 0)
@@ -394,7 +300,7 @@ def _tss(df, **kwargs):
     return df
 
 
-def _tes(df, **kwargs):
+def _tes(df: DataFrame, **kwargs) -> DataFrame:
     df = df.copy(deep=True)
     dtype = df.dtypes["Start"]
     slack = kwargs.get("slack", 0)
@@ -410,7 +316,7 @@ def _tes(df, **kwargs):
     return df
 
 
-def _extend(df, **kwargs):
+def _extend(df: DataFrame, **kwargs) -> DataFrame:
     df = df.copy()
     dtype = df.Start.dtype
     slack = kwargs["ext"]
@@ -443,7 +349,7 @@ def _extend(df, **kwargs):
     return df
 
 
-def _extend_grp(df, **kwargs):
+def _extend_grp(df: pd.DataFrame, **kwargs):
     df = df.copy()
     dtype = df.Start.dtype
     slack = kwargs["ext"]
@@ -480,47 +386,3 @@ def _extend_grp(df, **kwargs):
     assert (df.Start < df.End).all(), "Some intervals are negative or zero length after applying extend!"
 
     return df
-
-
-def pyrange_apply_chunks(function, self, as_pyranges, **kwargs):
-    nparams = get_n_args(function)
-    nb_cpu = kwargs.get("nb_cpu", 1)
-    if nb_cpu > 1:
-        import ray  # type: ignore
-
-        with suppress_stdout_stderr():
-            ray.init(num_cpus=nb_cpu, ignore_reinit_error=True)
-
-    function, get, _merge_dfs = get_multithreaded_funcs(function, nb_cpu=nb_cpu)
-
-    keys = []
-    lengths = []
-    results = []
-    for k, v in self.items():
-        dfs = np.array_split(v, nb_cpu)
-        lengths.append(len(dfs))
-        results.extend([call_f_single(function, nparams, df, **kwargs) for df in dfs])
-        keys.append(k)
-
-    results = get(results)
-
-    _results = []
-    start = 0
-    for _, length in zip(keys, lengths):
-        end = start + length
-        _r = results[start:end]
-
-        if as_pyranges:
-            _results.append(pd.concat(_r))
-        else:
-            _results.append(_r)
-
-        start = end
-
-    results = _results
-    if nb_cpu > 1:
-        ray.shutdown()
-
-    results = process_results(results, keys)
-
-    return results

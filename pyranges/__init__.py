@@ -1,7 +1,9 @@
 from __future__ import print_function
 
+import itertools
 import sys
 from collections import defaultdict
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -12,6 +14,7 @@ import pyranges as pr
 import pyranges.genomicfeatures as gf  # NOQA: F401
 from pyranges import data, statistics
 from pyranges.get_fasta import get_fasta, get_sequence, get_transcript_sequence
+from pyranges.helpers import get_key_from_df, single_value_key
 from pyranges.methods.concat import concat
 from pyranges.multioverlap import count_overlaps
 from pyranges.pyranges_main import PyRanges
@@ -27,8 +30,53 @@ get_transcript_sequence = get_transcript_sequence
 
 read_gff = read_gtf
 
+Chromsizes = Union[Dict[str, int], Dict[Tuple[str, str], int]]
 
-def from_dict(d, int64=False):
+
+def from_args(
+    chromosomes: Union[Sequence[str], Sequence[int]],
+    starts: Sequence[int],
+    ends: Sequence[int],
+    strands: Optional[Union[str, Sequence[str]]] = None,
+) -> "PyRanges":
+    if isinstance(chromosomes, str) or isinstance(chromosomes, int):
+        _chromosomes = pd.Series([chromosomes] * len(starts), dtype="category")
+    else:
+        _chromosomes = pd.Series(chromosomes, dtype="category")
+
+    columns: List[pd.Series] = [_chromosomes, pd.Series(starts), pd.Series(ends)]
+    colnames = ["Chromosome", "Start", "End"]
+    if strands is not None:
+        if isinstance(strands, str):
+            _strands = pd.Series([strands] * len(starts), dtype="category")
+        else:
+            _strands = pd.Series(strands, dtype="category")
+
+        columns.append(_strands)
+        colnames.append("Strand")
+
+    lengths = list(str(len(s)) for s in columns)
+    assert len(set(lengths)) == 1, "[{colnames} must be of equal length. But are {columns}".format(
+        colnames=", ".join(colnames), columns=", ".join(lengths)
+    )
+
+    idx = range(len(starts))
+    series_to_concat = []
+    for s in columns:
+        if isinstance(s, pd.Series):
+            s = pd.Series(s.values, index=idx)
+        else:
+            s = pd.Series(s, index=idx)
+
+        series_to_concat.append(s)
+
+    df = pd.concat(series_to_concat, axis=1)
+    df.columns = pd.Index(colnames)
+
+    return pr.PyRanges(df)
+
+
+def from_dict(d: Dict[str, Iterable]) -> PyRanges:
     """Create a PyRanges from dict.
 
     Parameters
@@ -36,10 +84,6 @@ def from_dict(d, int64=False):
     d : dict of array-like
 
         Dict with data.
-
-    int64 : bool, default False.
-
-        Whether to use 64-bit integers for starts and ends.
 
     Warning
     -------
@@ -69,10 +113,40 @@ def from_dict(d, int64=False):
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
 
-    return PyRanges(pd.DataFrame(d), int64=int64)
+    return PyRanges(pd.DataFrame(d))
 
 
-def from_string(s, int64=False):
+def from_dfs(dfs: Union[Dict[str, pd.DataFrame], Dict[Tuple[str, str], pd.DataFrame]]) -> "PyRanges":
+    df: pd.DataFrame
+    empty_removed = {k: v.copy() for k, v in dfs.items() if not v.empty}
+
+    _strand_valid = True
+    for key, df in empty_removed.items():
+        _key = get_key_from_df(df)
+        if not single_value_key(df):
+            raise ValueError("All Chromosome/Strand vals in a df must be the same.")
+        _key_same = _key == key
+
+        if isinstance(_key, tuple):
+            _strand_valid = _strand_valid and (_key[1] in ["+", "-"])
+
+        if _strand_valid and not _key_same:
+            raise ValueError(f"All keys must be the same, but df has {_key} and dict had {key}.")
+
+    if not _strand_valid:
+        df = pd.concat(empty_removed.values()).reset_index(drop=True)
+
+        groupby_cols = ["Chromosome"]
+
+        empty_removed = {k[0]: v for k, v in df.groupby(groupby_cols)}  # type: ignore
+
+    gr = PyRanges()
+    gr.__dict__["dfs"] = empty_removed
+
+    return gr  # type: ignore
+
+
+def from_string(s: str) -> PyRanges:
     """Create a PyRanges from multiline string.
 
     Parameters
@@ -80,10 +154,6 @@ def from_string(s, int64=False):
     s : str
 
         String with data.
-
-    int64 : bool, default False.
-
-        Whether to use 64-bit integers for starts and ends.
 
     See Also
     --------
@@ -120,10 +190,10 @@ def from_string(s, int64=False):
 
     df = pd.read_csv(StringIO(s), sep=r"\s+", index_col=None)
 
-    return PyRanges(df, int64=int64)
+    return PyRanges(df)
 
 
-def itergrs(prs, strand=None, keys=False):
+def itergrs(prs: Iterable[PyRanges], strand=None, keys=False):
     r"""Iterate over multiple PyRanges at once.
 
     Parameters
@@ -217,14 +287,13 @@ def itergrs(prs, strand=None, keys=False):
         prs = [gr.unstrand() for gr in prs]
 
     grs_per_chromosome = defaultdict(list)
-    set_keys = set()
-    for gr in prs:
-        set_keys.update(gr.dfs.keys())
+    keys = [gr.dfs.keys() for gr in prs]
+    set_keys: Union[Set[str], Set[Tuple[str, str]]] = set(itertools.chain.from_iterable(keys))
 
     empty_dfs = [pd.DataFrame(columns=gr.columns) for gr in prs]
     for gr, empty in zip(prs, empty_dfs):
         for k in set_keys:
-            df = gr.dfs.get(k, empty)
+            df = gr.dfs.get(k, empty)  # type: ignore
             grs_per_chromosome[k].append(df)
 
     if not keys:
@@ -233,7 +302,13 @@ def itergrs(prs, strand=None, keys=False):
         return iter(natsorted(grs_per_chromosome.items()))
 
 
-def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=None):
+def random(
+    n: int = 1000,
+    length: int = 100,
+    chromsizes: Optional[Chromsizes] = None,
+    strand: bool = True,
+    seed: Optional[int] = None,
+):
     """Return PyRanges with random intervals.
 
     Parameters
@@ -254,9 +329,9 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
 
         Data should have strand.
 
-    int64 : bool, default False
+    seed : int, default None
 
-        Use int64 to represent Start and End.
+        Seed for random number generator.
 
     Examples
     --------
@@ -304,8 +379,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
     """
 
     if chromsizes is None:
-        chromsizes = data.chromsizes()
-        df = chromsizes.df
+        df = data.chromsizes().df
     elif isinstance(chromsizes, dict):
         df = pd.DataFrame({"Chromosome": list(chromsizes.keys()), "End": list(chromsizes.values())})
     else:
@@ -315,7 +389,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
 
     n_per_chrom = pd.Series(np.random.choice(df.index, size=n, p=p)).value_counts(sort=False).to_frame()
     n_per_chrom.insert(1, "Chromosome", df.loc[n_per_chrom.index].Chromosome)
-    n_per_chrom.columns = "Count Chromosome".split()
+    n_per_chrom.columns = pd.Index("Count Chromosome".split())
 
     random_dfs = []
     for _, (count, chrom) in n_per_chrom.iterrows():
@@ -328,7 +402,7 @@ def random(n=1000, length=100, chromsizes=None, strand=True, int64=False, seed=N
         s = np.random.choice("+ -".split(), size=n)
         random_df.insert(3, "Strand", s)
 
-    return PyRanges(random_df, int64=int64)
+    return PyRanges(random_df)
 
 
 """Namespace for statistcal functions.
@@ -338,201 +412,16 @@ See Also
 pyranges.statistics : statistcal methods for genomics."""
 
 
-def to_bigwig(gr, path, chromosome_sizes):
-    """Write df to bigwig.
-
-    Must contain the columns Chromosome, Start, End and Score. All others are ignored.
-
-    Parameters
-    ----------
-    path : str
-
-        Where to write bigwig.
-
-    chromosome_sizes : PyRanges or dict
-
-        If dict: map of chromosome names to chromosome length.
-
-    Examples
-    --------
-
-    Extended example with how to prepare your data for writing bigwigs:
-
-    >>> d =  {'Chromosome': ['chr1', 'chr1', 'chr1'], 'Start': [1, 4, 6],
-    ...       'End': [7, 8, 10], 'Strand': ['+', '-', '-'],
-    ...       'Value': [10, 20, 30]}
-    >>> import pyranges as pr
-    >>> gr = pr.from_dict(d)
-    >>> hg19 = pr.data.chromsizes()
-    >>> print(hg19)
-    +--------------+-----------+-----------+
-    | Chromosome   | Start     | End       |
-    | (category)   | (int64)   | (int64)   |
-    |--------------+-----------+-----------|
-    | chr1         | 0         | 249250621 |
-    | chr2         | 0         | 243199373 |
-    | chr3         | 0         | 198022430 |
-    | chr4         | 0         | 191154276 |
-    | ...          | ...       | ...       |
-    | chr22        | 0         | 51304566  |
-    | chrM         | 0         | 16571     |
-    | chrX         | 0         | 155270560 |
-    | chrY         | 0         | 59373566  |
-    +--------------+-----------+-----------+
-    Unstranded PyRanges object has 25 rows and 3 columns from 25 chromosomes.
-    For printing, the PyRanges was sorted on Chromosome.
-
-    Overlapping intervals are invalid in bigwigs:
-
-    >>> to_bigwig(gr, "outpath.bw", hg19)
-    Traceback (most recent call last):
-    ...
-    AssertionError: Can only write one strand at a time. Use an unstranded PyRanges or subset on strand first.
-
-    >>> to_bigwig(gr["-"], "outpath.bw", hg19)
-    Traceback (most recent call last):
-    ...
-    AssertionError: Intervals must not overlap.
-
-    >>> gr
-    +--------------+-----------+-----------+--------------+-----------+
-    | Chromosome   |     Start |       End | Strand       |     Value |
-    | (category)   |   (int64) |   (int64) | (category)   |   (int64) |
-    |--------------+-----------+-----------+--------------+-----------|
-    | chr1         |         1 |         7 | +            |        10 |
-    | chr1         |         4 |         8 | -            |        20 |
-    | chr1         |         6 |        10 | -            |        30 |
-    +--------------+-----------+-----------+--------------+-----------+
-    Stranded PyRanges object has 3 rows and 5 columns from 1 chromosomes.
-    For printing, the PyRanges was sorted on Chromosome and Strand.
-
-    >>> value = gr.to_rle(rpm=False, value_col="Value")
-    >>> value
-    chr1 +
-    --
-    +--------+-----+------+
-    | Runs   | 1   | 6    |
-    |--------+-----+------|
-    | Values | 0.0 | 10.0 |
-    +--------+-----+------+
-    Rle of length 7 containing 2 elements (avg. length 3.5)
-    <BLANKLINE>
-    chr1 -
-    --
-    +--------+-----+------+------+------+
-    | Runs   | 4   | 2    | 2    | 2    |
-    |--------+-----+------+------+------|
-    | Values | 0.0 | 20.0 | 50.0 | 30.0 |
-    +--------+-----+------+------+------+
-    Rle of length 10 containing 4 elements (avg. length 2.5)
-    RleDict object with 2 chromosomes/strand pairs.
-
-    >>> raw = gr.to_rle(rpm=False)
-    >>> raw
-    chr1 +
-    --
-    +--------+-----+-----+
-    | Runs   | 1   | 6   |
-    |--------+-----+-----|
-    | Values | 0.0 | 1.0 |
-    +--------+-----+-----+
-    Rle of length 7 containing 2 elements (avg. length 3.5)
-    <BLANKLINE>
-    chr1 -
-    --
-    +--------+-----+-----+-----+-----+
-    | Runs   | 4   | 2   | 2   | 2   |
-    |--------+-----+-----+-----+-----|
-    | Values | 0.0 | 1.0 | 2.0 | 1.0 |
-    +--------+-----+-----+-----+-----+
-    Rle of length 10 containing 4 elements (avg. length 2.5)
-    RleDict object with 2 chromosomes/strand pairs.
-
-    >>> result = (value / raw).apply_values(np.log10)
-    >>> result
-    chr1 +
-    --
-    +--------+-----+-----+
-    | Runs   | 1   | 6   |
-    |--------+-----+-----|
-    | Values | nan | 1.0 |
-    +--------+-----+-----+
-    Rle of length 7 containing 2 elements (avg. length 3.5)
-    <BLANKLINE>
-    chr1 -
-    --
-    +--------+-----+--------------------+--------------------+--------------------+
-    | Runs   | 4   | 2                  | 2                  | 2                  |
-    |--------+-----+--------------------+--------------------+--------------------|
-    | Values | nan | 1.3010300397872925 | 1.3979400396347046 | 1.4771212339401245 |
-    +--------+-----+--------------------+--------------------+--------------------+
-    Rle of length 10 containing 4 elements (avg. length 2.5)
-    RleDict object with 2 chromosomes/strand pairs.
-
-    >>> out = result.numbers_only().to_ranges()
-    >>> out
-    +--------------+-----------+-----------+-------------+--------------+
-    | Chromosome   |     Start |       End |       Score | Strand       |
-    | (category)   |   (int64) |   (int64) |   (float64) | (category)   |
-    |--------------+-----------+-----------+-------------+--------------|
-    | chr1         |         1 |         7 |     1       | +            |
-    | chr1         |         4 |         6 |     1.30103 | -            |
-    | chr1         |         6 |         8 |     1.39794 | -            |
-    | chr1         |         8 |        10 |     1.47712 | -            |
-    +--------------+-----------+-----------+-------------+--------------+
-    Stranded PyRanges object has 4 rows and 5 columns from 1 chromosomes.
-    For printing, the PyRanges was sorted on Chromosome and Strand.
-
-    >>> to_bigwig(out["-"], "deleteme_reverse.bw", hg19)
-    >>> to_bigwig(out["+"], "deleteme_forward.bw", hg19)
-    """
-
-    try:
-        import pyBigWig  # type: ignore
-    except ModuleNotFoundError:
-        print(
-            "pybigwig must be installed to create bigwigs. Use `conda install -c bioconda pybigwig` or `pip install pybigwig` to install it."
-        )
-        import sys
-
-        sys.exit(1)
-
-    assert (
-        len(gr.strands) <= 1
-    ), "Can only write one strand at a time. Use an unstranded PyRanges or subset on strand first."
-    assert np.sum(gr.lengths()) == gr.merge().length, "Intervals must not overlap."
-
-    df = gr.df
-
-    unique_chromosomes = list(df.Chromosome.drop_duplicates())
-
-    if not isinstance(chromosome_sizes, dict):
-        size_df = chromosome_sizes.df
-        chromosome_sizes = {k: v for k, v in zip(size_df.Chromosome, size_df.End)}
-
-    header = [(c, int(chromosome_sizes[c])) for c in unique_chromosomes]
-
-    bw = pyBigWig.open(path, "w")
-    bw.addHeader(header)
-
-    chromosomes = df.Chromosome.tolist()
-    starts = df.Start.tolist()
-    ends = df.End.tolist()
-    values = df.Score.tolist()
-
-    bw.addEntries(chromosomes, starts, ends=ends, values=values)
-
-
-def version_info():
+def version_info() -> None:
     import importlib
 
-    def update_version_info(version_info, library):
-        if importlib.util.find_spec(library):
+    def update_version_info(_version_info, library) -> None:
+        if importlib.util.find_spec(library):  # type: ignore
             version = importlib.import_module(library).__version__
         else:
             version = "not installed"
 
-        version_info[library] = version
+        _version_info[library] = version
 
     version_info = {
         "pyranges version": pr.__version__,
@@ -557,7 +446,6 @@ def version_info():
 __all__ = [
     "from_string",
     "from_dict",
-    "to_bigwig",
     "count_overlaps",
     "random",
     "itergrs",

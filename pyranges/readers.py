@@ -1,6 +1,8 @@
 from __future__ import print_function
 
 import sys
+from pathlib import Path
+from typing import List, Optional, Union
 
 import pandas as pd
 from natsort import natsorted  # type: ignore
@@ -9,7 +11,7 @@ import pyranges as pr
 from pyranges.pyranges_main import PyRanges
 
 
-def read_bed(f, as_df=False, nrows=None):
+def read_bed(f: Union[str, Path], /, nrows: Optional[int] = None) -> pr.PyRanges:
     """Return bed file as PyRanges.
 
     This is a reader for files that follow the bed format. They can have from
@@ -24,11 +26,7 @@ def read_bed(f, as_df=False, nrows=None):
 
         Path to bed file
 
-    as_df : bool, default False
-
-        Whether to return as pandas DataFrame instead of PyRanges.
-
-    nrows : int, default None
+    nrows : Optional int, default None
 
         Number of rows to return.
 
@@ -55,27 +53,18 @@ def read_bed(f, as_df=False, nrows=None):
     +--------------+-----------+-----------+------------+-----------+--------------+
     Stranded PyRanges object has 5 rows and 6 columns from 1 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
-
-    >>> pr.read_bed(path, as_df=True, nrows=5)
-      Chromosome  Start    End      Name  Score Strand
-    0       chr1   9916  10115  H3K27me3      5      -
-    1       chr1   9939  10138  H3K27me3      7      +
-    2       chr1   9951  10150  H3K27me3      8      -
-    3       chr1   9953  10152  H3K27me3      5      +
-    4       chr1   9978  10177  H3K27me3      7      -
-
     """
 
     columns = (
         "Chromosome Start End Name Score Strand ThickStart ThickEnd ItemRGB BlockCount BlockSizes BlockStarts".split()
     )
-
-    if f.endswith(".gz"):
+    path = Path(f)
+    if path.name.endswith(".gz"):
         import gzip
 
-        first_start = gzip.open(f).readline().split()[1]
+        first_start = gzip.open(path).readline().decode().split()[1]
     else:
-        first_start = open(f).readline().split()[1]
+        first_start = open(path).readline().split()[1]
 
     header = None
 
@@ -85,22 +74,19 @@ def read_bed(f, as_df=False, nrows=None):
         header = 0
 
     df = pd.read_csv(
-        f,
-        dtype={"Chromosome": "category", "Strand": "category"},
+        path,
+        dtype={"Chromosome": "category", "Strand": "category"},  # type: ignore
         nrows=nrows,
         header=header,
         sep="\t",
     )
 
-    df.columns = columns[: df.shape[1]]
+    df.columns = pd.Index(columns[: df.shape[1]])
 
-    if not as_df:
-        return PyRanges(df)
-    else:
-        return df
+    return PyRanges(df)
 
 
-def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1540):
+def read_bam(f: Union[str, Path], /, sparse=True, mapq=0, required_flag=0, filter_flag=1540) -> pr.PyRanges:
     """Return bam file as PyRanges.
 
     Parameters
@@ -112,10 +98,6 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     sparse : bool, default True
 
         Whether to return only.
-
-    as_df : bool, default False
-
-        Whether to return as pandas DataFrame instead of PyRanges.
 
     mapq : int, default 0
 
@@ -159,7 +141,7 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
     Stranded PyRanges object has 10,000 rows and 5 columns from 25 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
     """
-
+    path = Path(f)
     try:
         import bamread  # type: ignore
     except ImportError:
@@ -185,22 +167,17 @@ def read_bam(f, sparse=True, as_df=False, mapq=0, required_flag=0, filter_flag=1
         sys.exit(1)
 
     if sparse:
-        df = bamread.read_bam(f, mapq, required_flag, filter_flag)
+        df = bamread.read_bam(path, mapq, required_flag, filter_flag)
     else:
         try:
-            df = bamread.read_bam_full(f, mapq, required_flag, filter_flag)
+            df = bamread.read_bam_full(path, mapq, required_flag, filter_flag)
         except AttributeError:
             print("bamread version 0.0.6 or higher is required to read bam non-sparsely.")
 
-    if as_df:
-        return df
-    else:
-        return PyRanges(df)
-
-    # return bamread.read_bam(f, mapq, required_flag, filter_flag)
+    return PyRanges(df)
 
 
-def _fetch_gene_transcript_exon_id(attribute, annotation=None):
+def _fetch_gene_transcript_exon_id(attribute: pd.Series, annotation: Optional[str] = None) -> pd.DataFrame:
     no_quotes = attribute.str.replace('"', "").str.replace("'", "")
 
     df = no_quotes.str.extract(
@@ -208,48 +185,48 @@ def _fetch_gene_transcript_exon_id(attribute, annotation=None):
         expand=True,
     )  # .iloc[:, [1, 2, 3]]
 
-    df.columns = "gene_id transcript_id exon_number exon_id".split()
+    df.columns = pd.Index("gene_id transcript_id exon_number exon_id".split())
 
     if annotation == "ensembl":
-        newdf = []
+        newdfs = []
         for c in "gene_id transcript_id exon_id".split():
             r = df[c].astype(str).str.extract(r"(\d+)").astype(float)
-            newdf.append(r)
+            newdfs.append(r)
 
-        newdf = pd.concat(newdf, axis=1)
+        newdf = pd.concat(newdfs, axis=1)
         newdf.insert(2, "exon_number", df["exon_number"])
         df = newdf
 
     return df
 
 
-def skiprows(f):
+def skiprows(f: Path) -> int:
     try:
         import gzip
 
-        fh = gzip.open(f)
-        for i, l in enumerate(fh):
-            if l.decode()[0] != "#":
+        zh = gzip.open(f)
+        for i, zl in enumerate(zh):
+            if zl.decode()[0] != "#":
                 break
+        zh.close()
     except (OSError, TypeError):  # not a gzipped file, or StringIO
         fh = open(f)
         for i, l in enumerate(fh):
             if l[0] != "#":
                 break
-
-    fh.close()
+        fh.close()
 
     return i
 
 
 def read_gtf(
-    f,
+    f: Union[str, Path],
+    /,
     full=True,
-    as_df=False,
     nrows=None,
     duplicate_attr=False,
     ignore_bad: bool = False,
-):
+) -> pr.PyRanges:
     """Read files in the Gene Transfer Format.
 
     Parameters
@@ -261,10 +238,6 @@ def read_gtf(
     full : bool, default True
 
         Whether to read and interpret the annotation column.
-
-    as_df : bool, default False
-
-        Whether to return as pandas DataFrame instead of PyRanges.
 
     nrows : int, default None
 
@@ -282,8 +255,7 @@ def read_gtf(
     ----
 
     The GTF format encodes both Start and End as 1-based included.
-    PyRanges (and also the DF returned by this function, if as_df=True), instead
-    encodes intervals as 0-based, Start included and End excluded.
+    PyRanges encodes intervals as 0-based, Start included and End excluded.
 
     See Also
     --------
@@ -315,31 +287,32 @@ def read_gtf(
     >>> # 18 hidden columns: gene_name, gene_source, gene_biotype, transcript_id, transcript_version, transcript_name, transcript_source, transcript_biotype, tag, transcript_support_level, ... (+ 8 more.)
     """
 
-    _skiprows = skiprows(f)
+    path = Path(f)
+    _skiprows = skiprows(path)
 
     if full:
-        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad)
+        gr = read_gtf_full(path, nrows, _skiprows, duplicate_attr, ignore_bad=ignore_bad)
     else:
-        gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
+        gr = read_gtf_restricted(path, _skiprows, nrows=None)
 
     return gr
 
 
 def read_gtf_full(
-    f,
-    as_df=False,
+    f: Union[str, Path],
     nrows=None,
     skiprows=0,
     duplicate_attr=False,
     ignore_bad: bool = False,
     chunksize: int = int(1e5),  # for unit-testing purposes
-):
+) -> pr.PyRanges:
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
+    path = Path(f)
 
     df_iter = pd.read_csv(
-        f,
+        path,
         sep="\t",
         header=None,
         names=names,
@@ -353,7 +326,7 @@ def read_gtf_full(
 
     dfs = []
     for df in df_iter:
-        extra = _to_rows(df.Attribute, ignore_bad=ignore_bad)
+        extra = _to_rows(df.Attribute.astype(str), ignore_bad=ignore_bad)
         df = df.drop("Attribute", axis=1)
         extra.set_index(df.index, inplace=True)
         ndf = pd.concat([df, extra], axis=1, sort=False)
@@ -362,30 +335,23 @@ def read_gtf_full(
     df = pd.concat(dfs, sort=False)
     df.loc[:, "Start"] = df.Start - 1
 
-    if not as_df:
-        return PyRanges(df)
-    else:
-        return df
+    return PyRanges(df)
 
 
-def parse_kv_fields(line):
+def parse_kv_fields(line: str) -> List[List[str]]:
     # rstrip: allows for GFF not having a last ";", or having final spaces
     return [kv.replace('""', '"NA"').replace('"', "").split(None, 1) for kv in line.rstrip("; ").split("; ")]
 
 
-def to_rows(anno, ignore_bad: bool = False):
-    rowdicts = []
+def to_rows(anno: pd.Series, ignore_bad: bool = False) -> pd.DataFrame:
     try:
-        line = anno.head(1)
-        for line in line:
-            line.replace('"', "").replace(";", "").split()
+        row = anno.head(1)
+        for entry in row:
+            str(entry).replace('"', "").replace(";", "").split()
     except AttributeError:
-        raise Exception(
-            "Invalid attribute string: {line}. If the file is in GFF3 format, use pr.read_gff3 instead.".format(
-                line=line
-            )
-        )
+        raise Exception(f"Invalid attribute string: {entry}. If the file is in GFF3 format, use pr.read_gff3 instead.")
 
+    rowdicts = []
     try:
         for line in anno:
             rowdicts.append({k: v for k, v in parse_kv_fields(line)})
@@ -397,7 +363,7 @@ def to_rows(anno, ignore_bad: bool = False):
     return pd.DataFrame.from_records(rowdicts)
 
 
-def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
+def to_rows_keep_duplicates(anno: pd.Series, ignore_bad: bool = False) -> pd.DataFrame:
     rowdicts = []
     try:
         for line in anno:
@@ -406,11 +372,9 @@ def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
             # rstrip: allows for GFF not having a last ";", or having final spaces
             for k, v in tuple(parse_kv_fields(line)):
                 if k not in rowdict:
-                    rowdict[k] = v
-                elif k in rowdict and isinstance(rowdict[k], list):
-                    rowdict[k].append(v)
+                    rowdict[k] = [v]
                 else:
-                    rowdict[k] = [rowdict[k], v]
+                    rowdict[k].append(v)
 
             rowdicts.append({k: ",".join(v) if isinstance(v, list) else v for k, v in rowdict.items()})
     except ValueError:
@@ -421,7 +385,7 @@ def to_rows_keep_duplicates(anno, ignore_bad: bool = False):
     return pd.DataFrame.from_records(rowdicts)
 
 
-def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
+def read_gtf_restricted(f: Union[str, Path], skiprows: Optional[int], nrows: Optional[int] = None) -> pr.PyRanges:
     """seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
     # source - name of the program that generated this feature, or the data source (database or project name)
     feature - feature type name, e.g. Gene, Variation, Similarity
@@ -433,17 +397,18 @@ def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
     attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature.
     """
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
+    path = Path(f)
 
     df_iter = pd.read_csv(
-        f,
+        path,
         sep="\t",
         comment="#",
         usecols=[0, 2, 3, 4, 5, 6, 8],
         header=None,
         names="Chromosome Feature Start End Score Strand Attribute".split(),
-        dtype=dtypes,
+        dtype=dtypes,  # type: ignore
         chunksize=int(1e5),
-        skiprows=skiprows,
+        skiprows=skiprows if skiprows is not None else False,
         nrows=nrows,
     )
 
@@ -455,7 +420,7 @@ def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
             cols_to_concat = "Chromosome Start End Strand Feature Score".split()
 
         extract = _fetch_gene_transcript_exon_id(df.Attribute)
-        extract.columns = "gene_id transcript_id exon_number exon_id".split()
+        extract.columns = pd.Index("gene_id transcript_id exon_number exon_id".split())
 
         extract.exon_number = extract.exon_number.astype(float)
 
@@ -468,13 +433,10 @@ def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
 
     df.loc[:, "Start"] = df.Start - 1
 
-    if not as_df:
-        return PyRanges(df)
-    else:
-        return df
+    return PyRanges(df)
 
 
-def to_rows_gff3(anno):
+def to_rows_gff3(anno) -> pd.DataFrame:
     rowdicts = []
 
     for line in list(anno):
@@ -485,7 +447,7 @@ def to_rows_gff3(anno):
     return pd.DataFrame.from_records(rowdicts).set_index(anno.index)
 
 
-def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
+def read_gff3(f: Union[str, Path], full: bool = True, as_df: bool = False, nrows: Optional[int] = None) -> pr.PyRanges:
     """Read files in the General Feature Format.
 
     Parameters
@@ -519,22 +481,23 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
     pyranges.read_gtf : read files in the Gene Transfer Format
     """
 
-    _skiprows = skiprows(f)
+    path = Path(f)
+    _skiprows = skiprows(path)
 
     if not full:
-        return read_gtf_restricted(f, _skiprows, as_df=as_df, nrows=nrows)
+        return read_gtf_restricted(path, _skiprows, nrows=nrows)
 
     dtypes = {"Chromosome": "category", "Feature": "category", "Strand": "category"}
 
     names = "Chromosome Source Feature Start End Score Strand Frame Attribute".split()
 
     df_iter = pd.read_csv(
-        f,
+        path,
         comment="#",
         sep="\t",
         header=None,
         names=names,
-        dtype=dtypes,
+        dtype=dtypes,  # type: ignore
         chunksize=int(1e5),
         skiprows=_skiprows,
         nrows=nrows,
@@ -552,13 +515,10 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
 
     df.loc[:, "Start"] = df.Start - 1
 
-    if not as_df:
-        return PyRanges(df)
-    else:
-        return df
+    return PyRanges(df)
 
 
-def read_bigwig(f, as_df=False):
+def read_bigwig(f: Union[str, Path]) -> pr.PyRanges:
     try:
         import pyBigWig  # type: ignore
     except ModuleNotFoundError:
@@ -589,7 +549,8 @@ def read_bigwig(f, as_df=False):
     >>> gr
     """
 
-    bw = pyBigWig.open(f)
+    path = Path(f)
+    bw = pyBigWig.open(path)
 
     size = int(1e5)
     chromosomes = bw.chroms()
@@ -626,4 +587,4 @@ def read_bigwig(f, as_df=False):
             }
         )
 
-    return pr.PyRanges(dfs)
+    return pr.from_dfs(dfs)

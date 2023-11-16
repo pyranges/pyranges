@@ -1,5 +1,3 @@
-from os import environ
-
 import hypothesis.strategies as st
 import numpy as np
 import pandas as pd
@@ -108,7 +106,7 @@ def dfs_min2(draw):  # nosec
     # if not strand:
     #     df = df.drop("Strand", axis=1)
 
-    gr = PyRanges(df, int64=True)
+    gr = PyRanges(df)
     # gr = PyRanges(df)
 
     # do not sort like this, use pyranges sort
@@ -134,7 +132,7 @@ def dfs_min(draw):  # nosec
     # if not strand:
     #     df = df.drop("Strand", axis=1)
 
-    gr = PyRanges(df, int64=True)
+    gr = PyRanges(df)
     # print(gr)
     # raise
     # gr = PyRanges(df)
@@ -159,7 +157,7 @@ def dfs_no_min(draw):  # nosec
     # if not strand:
     #     df = df.drop("Strand", axis=1)
 
-    gr = PyRanges(df, int64=True)
+    gr = PyRanges(df)
     # gr = PyRanges(df)
 
     # do not sort like this, use pyranges sort

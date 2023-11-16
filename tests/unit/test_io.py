@@ -1,7 +1,9 @@
 import numpy as np
+import pandas as pd
 from pandas.testing import assert_frame_equal
 
 import pyranges as pr
+from pyranges.readers import to_rows_keep_duplicates
 
 ensembl_gtf = "tests/unit/test_data/ensembl.gtf"
 
@@ -57,3 +59,9 @@ def test_read_gff3():
 
 def test_read_bed():
     pr.read_bed("pyranges/example_data/chipseq.bed")
+
+
+def test_to_rows_keep_duplicates():
+    anno = pd.Series(["gene DDX11L1; gene sonic; unique hi"])
+    result = to_rows_keep_duplicates(anno)
+    assert result.to_dict(orient="index") == {0: {'gene': 'DDX11L1,sonic', "unique": "hi"}}

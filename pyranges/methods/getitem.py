@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-from pyranges import PyRanges
+import pyranges as pr
 from pyranges.methods.drop import _keep
-from pyranges.subset import get_booldict, get_slice, get_string, get_tuple
+from pyranges.subset import get_2_tuple, get_booldict, get_chromosome_strand_loc, get_slice, get_string
 
 
 def _getitem(self, val):
@@ -12,7 +12,12 @@ def _getitem(self, val):
     elif isinstance(val, str):
         dfs = get_string(self, val)
     elif isinstance(val, tuple):
-        dfs = get_tuple(self, val)
+        if len(val) == 2:
+            dfs = get_2_tuple(self, val[0], val[1])
+        elif len(val) == 3:
+            dfs = get_chromosome_strand_loc(self, val[0], val[1], val[2])
+        else:
+            raise ValueError("Indexing tuple must be of length 2 or 3. Tuple was: {}".format(str(val)))
     elif isinstance(val, slice):
         dfs = get_slice(self, val)
     elif isinstance(val, dict):
@@ -32,5 +37,4 @@ def _getitem(self, val):
     else:
         raise Exception("Not a valid subsetter: {}".format(str(val)))
 
-    gr = PyRanges(dfs)
-    return gr
+    return pr.from_dfs(dfs)

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyranges"
-version = "0.0.128"
+version = "0.0.129"
 description = "GenomicRanges for Python."
 readme = "README.md"
 authors = [{ name = "Endre Bakken Stovner", email = "endbak@pm.me" }]
@@ -23,7 +23,11 @@ keywords = ["bioinformatics", "genomicranges", "genomics"]
 dependencies = ["pandas", "ncls>=0.0.63", "tabulate", "sorted_nearest>=0.0.33", "natsort"]
 
 [project.optional-dependencies]
-dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
+pyranges_addons = ["pyrle", "bamread", "bwread", "fisher"]
+
+[project.development-dependencies]
+dev = ["ruff", "mypy"]
+
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -19,7 +19,7 @@ chr1    32    34 -"""
 grs = {n: pr.from_string(s) for n, s in zip(["a", "b", "c"], [a, b, c])}
 unstranded_grs = {n: gr.unstrand() for n, gr in grs.items()}
 
-features = pr.PyRanges(
+features = pr.from_args(
     chromosomes=["chr1"] * 4,
     starts=[0, 10, 20, 30],
     ends=[10, 20, 30, 40],

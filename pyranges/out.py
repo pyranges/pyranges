@@ -1,8 +1,13 @@
 import csv
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
 from natsort import natsorted  # type: ignore
+from pandas.core.frame import DataFrame
+
+from pyranges.pyranges_main import PyRanges
 
 _gtf_columns = {
     "seqname": "Chromosome",
@@ -13,7 +18,6 @@ _gtf_columns = {
     "score": "Score",
     "strand": "Strand",
     "frame": "Frame",
-    # "attribute": "Attribute"  # filled with all others columns
 }
 
 _gff3_columns = _gtf_columns.copy()
@@ -43,39 +47,39 @@ _ordered_gff3_columns = [
 ]
 
 
-def _fill_missing(df, all_columns):
+def _fill_missing(df: DataFrame, all_columns: List[str]) -> DataFrame:
     columns = list(df.columns)
 
-    if not df.get(all_columns) is None:
-        outdf = df.get(all_columns)
+    if set(columns).intersection(set(all_columns)) == set(all_columns):
+        return df[all_columns]
     else:
         missing = set(all_columns) - set(columns)
         missing_idx = {all_columns.index(m): m for m in missing}
         not_missing = set(columns).intersection(set(all_columns))
         not_missing_ordered = sorted(not_missing, key=all_columns.index)
-        outdf = df.get(not_missing_ordered)
+        outdf = df[not_missing_ordered]
 
-        for idx, missing in sorted(missing_idx.items()):
-            outdf.insert(idx, missing, ".")
+        for idx, _missing in sorted(missing_idx.items()):
+            outdf.insert(idx, _missing, ".")
 
-    return outdf
+        return outdf
 
 
-def _bed(df, keep):
+def _bed(df: DataFrame, keep: bool) -> DataFrame:
     all_columns = "Chromosome Start End Name Score Strand".split()
 
     outdf = _fill_missing(df, all_columns)
 
-    noncanonical = set(df.columns) - set(all_columns)
+    noncanonical = list(set(df.columns) - set(all_columns))
     noncanonical = [c for c in df.columns if c in noncanonical]
 
     if keep:
-        return pd.concat([outdf, df.get(noncanonical)], axis=1)
+        return pd.concat([outdf, df[noncanonical]], axis=1)
     else:
         return outdf
 
 
-def _gtf(df, mapping):
+def _gtf(df: DataFrame, mapping: Dict[str, str]) -> DataFrame:
     pr_col2gff_col = {v: k for k, v in mapping.items()}
 
     df = df.rename(columns=pr_col2gff_col)  # copying here
@@ -89,14 +93,14 @@ def _gtf(df, mapping):
         attribute = mapping["attribute"] + ' "' + df.attribute + '";'
     else:
         # gotten all needed columns, need to join the rest
-        rest = set(df.columns) - set(all_columns)
-        rest = sorted(rest, key=columns.index)
-        rest_df = df.get(rest).copy()
+        _rest = set(df.columns) - set(all_columns)
+        rest = sorted(_rest, key=columns.index)
+        rest_df = df[rest].copy()
         for c in rest_df:
-            col = rest_df[c]
+            col = pd.Series(rest_df[c])
             isnull = col.isnull()
             col = col.astype(str).str.replace("nan", "")
-            new_val = c + ' "' + col + '";'
+            new_val = str(c) + ' "' + col + '";'
             rest_df.loc[:, c] = rest_df[c].astype(str)
             rest_df.loc[~isnull, c] = new_val
             rest_df.loc[isnull, c] = ""
@@ -107,7 +111,9 @@ def _gtf(df, mapping):
     return outdf
 
 
-def _to_gtf(self, path=None, compression="infer", map_cols=None):
+def _to_gtf(
+    self: PyRanges, path: Optional[str] = None, compression: str = "infer", map_cols: Optional[Dict[str, str]] = None
+) -> Optional[str]:
     mapping = _gtf_columns.copy()
     if map_cols:
         mapping.update(map_cols)
@@ -121,19 +127,26 @@ def _to_gtf(self, path=None, compression="infer", map_cols=None):
         for outdf in outdfs:
             outdf.to_csv(
                 path,
+                sep="\t",
                 index=False,
                 header=False,
                 compression=compression,
                 mode=mode,
-                sep="\t",
                 quoting=csv.QUOTE_NONE,
-            )
+            )  # type: ignore
             mode = "a"
+        return None
     else:
         return "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for outdf in outdfs])
 
 
-def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
+def _to_csv(
+    self: PyRanges,
+    path: Optional[Union[Path, str]] = None,
+    sep: str = ",",
+    header: bool = True,
+    compression: str = "infer",
+) -> Optional[str]:
     gr = self
 
     if path:
@@ -150,6 +163,7 @@ def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
             )
             mode = "a"
             header = False
+        return None
     else:
         return "".join(
             [
@@ -159,7 +173,9 @@ def _to_csv(self, path=None, sep=",", header=True, compression="infer"):
         )
 
 
-def _to_bed(self, path=None, sep="\t", keep=True, compression="infer"):
+def _to_bed(
+    self: PyRanges, path: Optional[str] = None, sep: str = "\t", keep: bool = True, compression: str = "infer"
+) -> Optional[str]:
     gr = self
 
     outdfs = natsorted(gr.dfs.items())
@@ -176,15 +192,23 @@ def _to_bed(self, path=None, sep="\t", keep=True, compression="infer"):
                 mode=mode,
                 sep="\t",
                 quoting=csv.QUOTE_NONE,
-            )
+            )  # type: ignore
             mode = "a"
-
+        return None
     else:
         res = "".join([outdf.to_csv(index=False, header=False, sep="\t", quoting=csv.QUOTE_NONE) for outdf in outdfs])
         return res
 
 
-def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=None, dryrun=False):
+def _to_bigwig(
+    self: PyRanges,
+    path: None,
+    chromosome_sizes: Union[PyRanges, dict],
+    rpm: bool = True,
+    divide: Optional[bool] = False,
+    value_col: Optional[str] = None,
+    dryrun: bool = False,
+) -> Optional[PyRanges]:
     try:
         import pyBigWig  # type: ignore
     except ModuleNotFoundError:
@@ -237,8 +261,12 @@ def _to_bigwig(self, path, chromosome_sizes, rpm=True, divide=False, value_col=N
 
         bw.addEntries(chromosomes, starts, ends=ends, values=values)
 
+    return None
 
-def _to_gff3(self, path=None, compression="infer", map_cols=None):
+
+def _to_gff3(
+    self: PyRanges, path: None = None, compression: str = "infer", map_cols: Optional[Dict[str, str]] = None
+) -> str:
     mapping = _gff3_columns.copy()
     if map_cols:
         mapping.update(map_cols)
@@ -266,7 +294,7 @@ def _to_gff3(self, path=None, compression="infer", map_cols=None):
         )
 
 
-def _gff3(df, mapping):
+def _gff3(df, mapping) -> pd.DataFrame:
     pr_col2gff_col = {v: k for k, v in mapping.items()}
 
     df = df.rename(columns=pr_col2gff_col)  # copying here
@@ -283,8 +311,8 @@ def _gff3(df, mapping):
     else:
         # gotten all needed columns, need to join the rest
         rest = set(df.columns) - set(all_columns)
-        rest = sorted(rest, key=columns.index)
-        rest_df = df.get(rest).copy()
+        _rest = sorted(rest, key=columns.index)
+        rest_df = df.get(_rest).copy()
         total_cols = rest_df.shape[1]
         for i, c in enumerate(rest_df, 1):
             col = rest_df[c]

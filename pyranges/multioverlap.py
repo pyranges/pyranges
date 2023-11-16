@@ -1,9 +1,17 @@
+from typing import Dict, Optional
+
 import numpy as np
 
 import pyranges as pr
+from pyranges.pyranges_main import PyRanges
 
 
-def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
+def count_overlaps(
+    grs: Dict[str, PyRanges],
+    features: Optional[PyRanges] = None,
+    strandedness: Optional[str] = None,
+    how: Optional[str] = None,
+) -> PyRanges:
     """Count overlaps in multiple pyranges.
 
     Parameters
@@ -26,11 +34,6 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
 
         What intervals to report. By default reports all overlapping intervals. "containment"
         reports intervals where the overlapping is contained within it.
-
-    nb_cpu : int, default 1
-
-        How many cpus to use. Can at most use 1 per chromosome or chromosome/strand tuple.
-        Will only lead to speedups on large datasets.
 
     Examples
     --------
@@ -91,7 +94,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     >>> pr.count_overlaps(grs)
     +--------------+-----------+-----------+-----------+-----------+-----------+
     | Chromosome   | Start     | End       | a         | b         | c         |
-    | (object)     | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   |
+    | (category)   | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   |
     |--------------+-----------+-----------+-----------+-----------+-----------|
     | chr1         | 6         | 8         | 1         | 0         | 0         |
     | chr1         | 8         | 10        | 1         | 0         | 1         |
@@ -106,7 +109,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     Unstranded PyRanges object has 12 rows and 6 columns from 1 chromosomes.
     For printing, the PyRanges was sorted on Chromosome.
 
-    >>> gr = pr.PyRanges(chromosomes=["chr1"] * 4, starts=[0, 10, 20, 30], ends=[10, 20, 30, 40])
+    >>> gr = pr.from_args(chromosomes=["chr1"] * 4, starts=[0, 10, 20, 30], ends=[10, 20, 30, 40])
     >>> gr
     +--------------+-----------+-----------+
     | Chromosome   |     Start |       End |
@@ -136,10 +139,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
 
     kwargs = {
         "as_pyranges": False,
-        "nb_cpu": nb_cpu,
-        "strandedness": strandedness,
         "how": how,
-        "nb_cpu": nb_cpu,
     }
     names = list(grs.keys())
 
@@ -154,7 +154,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
         gr = gr.drop()
 
         kwargs["name"] = name
-        features.apply_pair(gr, _count_overlaps, **kwargs)  # count overlaps modifies the ranges in-place
+        features.apply_pair(gr, _count_overlaps, strandedness, **kwargs)  # count overlaps modifies the ranges in-place
 
     def to_int(df):
         df[names] = df[names].astype(np.int64)
