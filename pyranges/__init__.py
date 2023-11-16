@@ -31,6 +31,19 @@ get_transcript_sequence = get_transcript_sequence
 read_gff = read_gtf
 
 Chromsizes = Union[Dict[str, int], Dict[Tuple[str, str], int]]
+MIN_COLUMNS = ["Chromosome", "Start", "End", "Strand"]
+MIN_COLUMNS_WITH_STRAND = [*MIN_COLUMNS, "Strand"]
+
+
+def empty(with_strand: bool = False) -> "PyRanges":
+    """Create an empty PyRanges.
+
+    Parameters
+    ----------
+    with_strand : bool, default False
+        Whether to create a PyRanges with strand information.
+    """
+    return pr.PyRanges(pd.DataFrame(MIN_COLUMNS_WITH_STRAND if with_strand else MIN_COLUMNS))
 
 
 def from_args(

@@ -5599,18 +5599,10 @@ class PyRanges:
         For printing, the PyRanges was sorted on Chromosome.
         """
 
-        if not self.stranded and "Strand" in self.columns:
-            return self.drop("Strand")
-        elif not self.stranded:
+        if "Strand" in self.columns:
+            return pr.PyRanges(pd.concat(df.drop("Strand", axis=1) for df in self.values()))
+        else:
             return self
-
-        gr = pr.concat([self["+"], self["-"]])
-
-        dfs = []
-        for _, df in gr.dfs.items():
-            dfs.append(df.drop("Strand", axis=1).reset_index(drop=True))
-
-        return pr.PyRanges(pd.concat(dfs).reset_index(drop=True))
 
     def values(self) -> List[pd.DataFrame]:
         """Return the underlying pd.DataFrames."""

@@ -144,7 +144,7 @@ def count_overlaps(
     names = list(grs.keys())
 
     if features is None:
-        features = pr.concat(grs.values()).split(between=True)
+        features = pr.concat(list(grs.values())).split(between=True)
     else:
         features = features.copy()
 
