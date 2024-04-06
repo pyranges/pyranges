@@ -123,10 +123,11 @@ def read_bed(f, as_df=False, nrows=None):
 
     if f.endswith(".gz"):
         import gzip
-
-        first_start = gzip.open(f).readline().split()[1]
+        with gzip.open(f) as of:
+            first_start = of.readline().split()[1]
     else:
-        first_start = open(f).readline().split()[1]
+        with open(f) as of:
+            first_start = of.readline().split()[1]
 
     header = None
 
