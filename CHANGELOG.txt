@@ -1,3 +1,6 @@
+# 0.0.132 (07.04.2024) (@Isy89)
+- Fix ResourceWarning in pyranges/readers.py function read_bed due to unclosed file. #377
+
 # 0.0.131 (04.10.2023) (@fairliereese)
 - Added option to read_gtf to rename columns that have reserved names in pyranges https://github.com/pyranges/pyranges/issues/341
 
