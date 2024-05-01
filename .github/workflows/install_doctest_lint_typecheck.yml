@@ -20,10 +20,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install
-        run: pip install .
+        run: pip install .[dev]
       - name: Install add-ons
         run: pip install pyrle pybigwig bamread pyfaidx fisher
-      - run: pip install pytest
       - name: doctests
         env:
           GITHUB_ACTIONS: true
@@ -44,7 +43,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - run: pip install isort
       - run: isort --profile black -l 120 --check --diff .
 
   black:
@@ -56,7 +54,6 @@ jobs:
         with:
           python-version: "3.11.0"
           max-line-length: "120"
-      - run: pip install black
       - run: black -l 120 --check --diff pyranges tests
 
   flake8:
@@ -67,8 +64,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Python environment
         uses: actions/setup-python@v4
-      - name: flake8 Lint install
-        run: pip install flake8
       - name: flake8 Lint
         run: flake8 --max-line-length=120 --ignore E203,E501,W503 pyranges
 
@@ -82,8 +77,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install mypy
-        run: pip install mypy
+      - name: Install stubs
+        run: mypy --install-types
       - name: mypy
         run: |
           pip install numpy  # for the typing stubs

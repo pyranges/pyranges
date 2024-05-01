@@ -375,7 +375,15 @@ def read_gtf(
     _skiprows = skiprows(f)
 
     if full:
-        gr = read_gtf_full(f, as_df, nrows, _skiprows, duplicate_attr, rename_attr, ignore_bad=ignore_bad)
+        gr = read_gtf_full(
+            f,
+            as_df,
+            nrows,
+            _skiprows,
+            duplicate_attr,
+            rename_attr,
+            ignore_bad=ignore_bad,
+        )
     else:
         gr = read_gtf_restricted(f, _skiprows, as_df=False, nrows=None)
 
