@@ -29,7 +29,7 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@v1.5.0
         with:
-          user: ${{ secrets.PYPI_USER }}
-          password: ${{ secrets.PYPI_PROD_PASSWORD }}
+          user: ${{ secrets.PYRANGES_1_PYPI_USER }}
+          password: ${{ secrets.PYRANGES_1_PYPI_PASSWORD }}
           verbose: true
           # To test: repository_url: https://test.pypi.org/legacy/
