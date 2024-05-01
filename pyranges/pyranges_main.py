@@ -40,7 +40,6 @@ def fill_kwargs(kwargs):
 
 
 class PyRanges:
-
     """Two-dimensional representation of genomic intervals and their annotations.
 
     A PyRanges object must have the columns Chromosome, Start and End. These

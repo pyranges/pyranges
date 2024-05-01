@@ -677,7 +677,6 @@ def chromsizes_as_int(chromsizes):
 
 
 class StatisticsMethods:
-
     """Namespace for statistical comparsion-operations.
 
     Accessed with gr.stats."""

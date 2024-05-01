@@ -9,7 +9,6 @@ __all__ = ["genome_bounds", "tile_genome", "GenomicFeaturesMethods"]
 
 
 class GenomicFeaturesMethods:
-
     """Namespace for methods using feature information.
 
     Accessed through `gr.features`."""
