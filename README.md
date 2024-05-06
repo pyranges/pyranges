@@ -21,7 +21,7 @@ The pyranges documentation, including installation instructions, API, tutorial, 
   - featureful
   - pythonic/pandastic
   - supports chaining with a terse syntax
-  - uses Pandas DataFrames, so the whole Python data science stack works on PyRanges.
+  - uses Pandas DataFrames, so the whole Python data science stack works on PyRanges
 
 ## Paper/Cite
 
