@@ -619,7 +619,7 @@ def _introns2(df, exons, **kwargs):
     original_ids = original_ids.drop(
         ["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1
     ).sort_values("by_id")
-    introns=introns.drop(columns=["by_id"]) # to allow for different dtype assignment
+    introns = introns.drop(columns=["by_id"])  # to allow for different dtype assignment
     introns.loc[:, "by_id"] = original_ids[id_column].to_numpy()
     introns = introns.merge(df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme"))
     introns = introns.drop([c for c in introns.columns if c.endswith("_dropme")], axis=1)
