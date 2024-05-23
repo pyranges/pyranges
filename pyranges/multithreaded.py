@@ -448,7 +448,7 @@ def _extend_grp(df, **kwargs):
     dtype = df.Start.dtype
     slack = kwargs["ext"]
     by = kwargs["group_by"]
-    g = df.groupby(by)
+    g = df.groupby(by, observed=False)
 
     assert isinstance(slack, (int, dict)), "Extend parameter must be integer or dict, is {}".format(type(slack))
 

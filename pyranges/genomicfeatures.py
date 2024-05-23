@@ -479,7 +479,7 @@ def tile_genome(genome, tile_size, tile_last=False):
 def _keep_transcript_with_most_exons(df):
     transcripts_with_most_exons = []
 
-    for _, gdf in df.groupby("gene_id"):
+    for _, gdf in df.groupby("gene_id", observed=False):
         max_exon = gdf.exon_number.max()
         max_transcript = gdf.loc[gdf.exon_number == max_exon].Transcript.iloc[0]
 
@@ -619,7 +619,8 @@ def _introns2(df, exons, **kwargs):
     original_ids = original_ids.drop(
         ["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1
     ).sort_values("by_id")
-    introns.loc[:, "by_id"] = original_ids[id_column].values
+    introns=introns.drop(columns=["by_id"]) # to allow for different dtype assignment
+    introns.loc[:, "by_id"] = original_ids[id_column].to_numpy()
     introns = introns.merge(df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme"))
     introns = introns.drop([c for c in introns.columns if c.endswith("_dropme")], axis=1)
 

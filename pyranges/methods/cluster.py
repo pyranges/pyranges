@@ -15,7 +15,7 @@ def _cluster(df, **kwargs):
     cdf.insert(df.shape[1], "Cluster", ids)
 
     if count:
-        _count = cdf.groupby("Cluster").Cluster.count()
+        _count = cdf.groupby("Cluster", observed=False).Cluster.count()
         _count.name = "Count"
         cdf = cdf.merge(_count, on="Cluster")
 
@@ -51,7 +51,7 @@ def _cluster_by(df, **kwargs):
     cdf.insert(cdf.shape[1], "Cluster", ids)
 
     if count:
-        _count = cdf.groupby("Cluster").Cluster.count()
+        _count = cdf.groupby("Cluster", observed=False).Cluster.count()
         _count.name = "Count"
         cdf = cdf.merge(_count, on="Cluster")
 

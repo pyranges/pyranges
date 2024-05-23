@@ -32,9 +32,13 @@ def _subseq(scdf, **kwargs):
         agg_dict[b] = "first"
 
     if kwargs.get("by"):
-        j = scdf.groupby(by, dropna=False)[["Start", "End", "__i__"] + by].agg(agg_dict).set_index("__i__")
+        j = (
+            scdf.groupby(by, dropna=False, observed=False)[["Start", "End", "__i__"] + by]
+            .agg(agg_dict)
+            .set_index("__i__")
+        )
     else:
-        j = scdf.groupby(by, dropna=False)[["Start", "End", "__i__"]].agg(agg_dict).set_index("__i__")
+        j = scdf.groupby(by, dropna=False, observed=False)[["Start", "End", "__i__"]].agg(agg_dict).set_index("__i__")
         j.insert(0, "__i__", j.index)
         j.index.name = None
 

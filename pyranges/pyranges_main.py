@@ -1042,7 +1042,7 @@ class PyRanges:
 
         # Creating a column saving the cummulative length for the intervals
         for k, df in sorted_p:
-            sorted_p.dfs[k]["__cumsum__"] = df.groupby(by=by).__length__.cumsum()
+            sorted_p.dfs[k]["__cumsum__"] = df.groupby(by=by, observed=False).__length__.cumsum()
 
         # Creating a frame column
         sorted_p.Frame = sorted_p.__cumsum__ - sorted_p.__length__
@@ -2755,10 +2755,10 @@ class PyRanges:
         if ties in ["first", "last"]:
             for c, df in result:
                 df = df.sort_values(["__IX__", "Distance"])
-                grpby = df.groupby("__k__", sort=False)
+                grpby = df.groupby("__k__", sort=False, observed=False)
                 dfs = []
                 for k, kdf in grpby:
-                    grpby2 = kdf.groupby("__IX__", sort=False)
+                    grpby2 = kdf.groupby("__IX__", sort=False, observed=False)
                     _df = grpby2.head(k)
                     dfs.append(_df)
 
@@ -2772,7 +2772,7 @@ class PyRanges:
                 dfs = []
 
                 df = df.sort_values(["__IX__", "Distance"])
-                grpby = df.groupby("__k__", sort=False)
+                grpby = df.groupby("__k__", sort=False, observed=False)
 
                 for k, kdf in grpby:
                     if ties:
@@ -2791,7 +2791,7 @@ class PyRanges:
                             k,
                         )
                         _df = kdf.reindex(lx)
-                        _df = _df.groupby("__IX__").head(k)
+                        _df = _df.groupby("__IX__", observed=False).head(k)
                     dfs.append(_df)
 
                 if dfs:

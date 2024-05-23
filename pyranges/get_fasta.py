@@ -222,4 +222,4 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     z = gr.df
     z["Sequence"] = get_sequence(gr, path=path, pyfaidx_fasta=pyfaidx_fasta)
 
-    return z.groupby(group_by, as_index=False).agg({"Sequence": "".join})
+    return z.groupby(group_by, as_index=False, observed=False).agg({"Sequence": "".join})

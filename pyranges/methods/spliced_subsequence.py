@@ -24,7 +24,7 @@ def _spliced_subseq(scdf, **kwargs):
     scdf.insert(scdf.shape[1], "__length__", scdf.End - scdf.Start)
     scdf.insert(scdf.shape[1], "__i__", scdf.index)
 
-    g = scdf.groupby(by, dropna=False)
+    g = scdf.groupby(by, dropna=False, observed=False)
     scdf.insert(scdf.shape[1], "__cumsum__", g.__length__.cumsum())
 
     start = kwargs.get("start") if kwargs.get("start") else 0
