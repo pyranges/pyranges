@@ -1,3 +1,6 @@
+# 0.0.133/4 (10.05.2024)
+- Only bump version
+
 # 0.0.132 (07.04.2024) (@Isy89)
 - Fix ResourceWarning in pyranges/readers.py function read_bed due to unclosed file. #377
 
