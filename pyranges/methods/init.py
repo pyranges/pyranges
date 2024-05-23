@@ -157,9 +157,9 @@ def _init(
             df = pd.concat(empty_removed.values()).reset_index(drop=True)
 
             if _has_strand and _strand_valid:
-                empty_removed = df.groupby(["Chromosome", "Strand"])
+                empty_removed = df.groupby(["Chromosome", "Strand"], observed=False)
             else:
-                empty_removed = df.groupby("Chromosome")
+                empty_removed = df.groupby("Chromosome", observed=False)
 
             empty_removed = {k: v for (k, v) in empty_removed}
 

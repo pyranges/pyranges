@@ -30,7 +30,7 @@ def compute_introns_single(df, by):
     cols[1] = "End"
     x = x[cols]
     x.columns = original_cols
-    x.loc[:, "Start"] = x.Start.shift()
+    x.loc[:, "Start"] = x.Start.shift(fill_value=-1)
     x.at[x.index[0], "Start"] = g.Start.iloc[0]
     x.at[x.index[-1], "End"] = g.End.iloc[0]
     x.loc[:, "Start"] = x.Start.astype(int)

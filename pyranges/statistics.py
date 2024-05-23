@@ -529,7 +529,7 @@ def rowbased_rankdata(data):
     dense = pd.DataFrame(dense)
 
     ranks = []
-    for _nonzero, nzdf in obs.groupby(nonzero, sort=False):
+    for _nonzero, nzdf in obs.groupby(nonzero, sort=False, observed=False):
         nz = np.apply_along_axis(lambda r: np.nonzero(r)[0], 1, nzdf)
 
         _count = np.column_stack([nz, np.ones(len(nz)) * len_r])
@@ -632,7 +632,7 @@ def simes(df, groupby, pcol, keep_position=False):
     sorter = groupby + [pcol]
 
     sdf = df[positions + sorter].sort_values(sorter)
-    g = sdf.groupby(positions + groupby)
+    g = sdf.groupby(positions + groupby, observed=False)
 
     ranks = g.cumcount().values + 1
     size = g.size().values
@@ -654,13 +654,13 @@ def simes(df, groupby, pcol, keep_position=False):
         if stranded:
             grpby_dict["Strand"] = "first"
 
-        simes = sdf.groupby(groupby).agg(grpby_dict).reset_index()
+        simes = sdf.groupby(groupby, observed=False).agg(grpby_dict).reset_index()
         columns = list(simes.columns)
         columns.append(columns[0])
         del columns[0]
         simes = simes[columns]
     else:
-        simes = sdf.groupby(groupby).Simes.min().reset_index()
+        simes = sdf.groupby(groupby, observed=False).Simes.min().reset_index()
 
     return simes
 

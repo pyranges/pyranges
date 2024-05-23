@@ -13,7 +13,7 @@ def _bounds(scdf, **kwargs):
     if "Strand" in scdf.columns:
         agg_dict["Strand"] = "first"
 
-    res = scdf.groupby(by).agg(agg_dict).reset_index()
+    res = scdf.groupby(by, observed=False).agg(agg_dict).reset_index()
     res = res.reindex(columns=[c for c in col_order if c in res.columns])
 
     return res

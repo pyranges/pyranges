@@ -3,7 +3,7 @@ from ncls import NCLS  # type: ignore
 
 
 def add_rows_per_group(df):
-    last_rows = df.groupby("__ix__").last().reset_index()
+    last_rows = df.groupby("__ix__", observed=False).last().reset_index()
     last_rows.loc[:, "__last__"] = True
     df = pd.concat([df, last_rows], ignore_index=True)
     df = df.sort_values("__ix__", ascending=True)
