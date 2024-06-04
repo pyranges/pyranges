@@ -40,6 +40,6 @@ If you encounter bugs, or the documentation is not enough a cannot accomplish a 
 
 ## Contributing to pyranges
 
-Pyranges accepts code contributions in form of pull request. For details, visit https://pyranges.readthedocs.io/developer_guide.html
+Pyranges accepts code contributions in form of pull request. For details, visit [https://pyranges.readthedocs.io/developer_guide.html](https://pyranges.readthedocs.io/en/latest/developer_guide.html)
 
 
