@@ -1,3 +1,6 @@
+# 0.0.135 (10.05.2025)
+- Replace deprecated pkg_resources with importlib
+
 # 0.0.133/4 (10.05.2024)
 - Only bump version
 
