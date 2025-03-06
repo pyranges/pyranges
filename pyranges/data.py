@@ -21,8 +21,9 @@ Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 For printing, the PyRanges was sorted on Chromosome and Strand.
 """
 
+import importlib.resources
+
 import pandas as pd
-import pkg_resources
 
 import pyranges as pr
 
@@ -44,13 +45,13 @@ __all__ = [
 
 
 def get_example_path(basename):
-    full_path = pkg_resources.resource_filename("pyranges", "example_data/{}".format(basename))
+    full_path = importlib.resources.files("pyranges").joinpath("example_data/{}".format(basename))
 
-    if full_path.endswith(".bam"):
+    if full_path.suffix == ".bam":
         # hack to load index too
-        pkg_resources.resource_filename("pyranges", "example_data/{}.bai".format(basename))
+        importlib.resources.files("pyranges").joinpath("example_data/{}.bai".format(basename))
 
-    return full_path
+    return str(full_path)
 
 
 def aorta():

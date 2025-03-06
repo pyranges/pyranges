@@ -1,11 +1,11 @@
 from __future__ import print_function
 
+import importlib
 import sys
 from collections import defaultdict
 
 import numpy as np
 import pandas as pd
-import pkg_resources
 from natsort import natsorted  # type: ignore
 
 import pyranges as pr
@@ -17,7 +17,7 @@ from pyranges.multioverlap import count_overlaps
 from pyranges.pyranges_main import PyRanges
 from pyranges.readers import read_bam, read_bed, read_bigwig, read_gff3, read_gtf  # NOQA: F401
 
-__version__ = pkg_resources.get_distribution("pyranges").version
+__version__ = importlib.metadata.version("pyranges")
 
 get_example_path = data.get_example_path
 stats = statistics
