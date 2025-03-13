@@ -80,10 +80,10 @@ def null_types(h):
         elif "string" in d or d == "object":
             null = "-1"
         elif d == "category":
-            tmp_cat = h2[n].copy()
-            tmp_cat = tmp_cat.cat.add_categories("-1")
-            h2[n] = tmp_cat
             null = "-1"
+            tmp_cat = h2[n].copy()
+            if null not in tmp_cat.cat.categories:
+                h2[n] = tmp_cat.cat.add_categories(null)
         else:
             raise Exception("Unknown dtype {} in a column {}".format(d, n))
 
