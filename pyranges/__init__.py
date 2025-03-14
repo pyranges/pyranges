@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import importlib
+import importlib.metadata
 import sys
 from collections import defaultdict
 

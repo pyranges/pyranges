@@ -1,3 +1,9 @@
+# 0.0.136 (11.03.2025)
+- Fix regression on importlib.metadata that create an AttributeError on py<3.13
+
+# 0.0.135 (10.05.2025)
+- Replace deprecated pkg_resources with importlib
+
 # 0.0.135 (10.05.2025)
 - Replace deprecated pkg_resources with importlib
 
