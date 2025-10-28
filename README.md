@@ -10,9 +10,13 @@ The library is optimized for fast querying and manipulation of genomic annotatio
 
 *"Finally ... This was what Python badly needed for years."* - Heng Li
 
+## Deprecation note!
+This repo currently hosts the "version 0" of pyranges. A redesigned, faster version1 is available at https://github.com/pyranges/pyranges_1.x
+Version 1 will soon replace version 0. We encourage existing v0 users to migrate to v1 (see guide at https://pyranges1.readthedocs.io/en/latest/migration_guide.html), and new users to directly adopt v1.
+
 ## Documentation
 
-The pyranges documentation, including installation instructions, API, tutorial, and how-to-pages, is available at <https://pyranges.readthedocs.io/>
+The pyranges documentation, including installation instructions, API, tutorial, and how-to-pages, of version 0 is available at <https://pyranges.readthedocs.io/>
 
 ## Features
 
