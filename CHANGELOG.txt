@@ -7,6 +7,7 @@
 - Add a coverage extra requiring pyrle >= 0.0.45
 - Fix window with sorted_nearest 0.0.41 and fisher_exact with fisher 0.2, retaining support for older fisher versions
 - Fix remaining string dtype and NumPy scalar representations in doctests
+- Test Python 3.11-3.15 in CI, with pandas 2 on Python 3.11 and pandas 3 on newer versions
 
 # 0.0.136 (11.03.2025)
 - Fix regression on importlib.metadata that create an AttributeError on py<3.13
