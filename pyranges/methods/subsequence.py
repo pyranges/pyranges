@@ -69,8 +69,8 @@ def _subseq(scdf, **kwargs):
 
     # instead of simply using starts and ends as computed above, we're dealing here with potential out of bounds:
     r = scdf[~((scdf.Start >= scdf.__max__) | (scdf.End <= scdf.__min__))].copy()
-    r.loc[:, "Start"] = np.maximum(r.Start, r.__min__)
-    r.loc[:, "End"] = np.minimum(r.End, r.__max__)
+    r["Start"] = np.maximum(r.Start, r.__min__)
+    r["End"] = np.minimum(r.End, r.__max__)
 
     r = r.drop(["__min__", "__max__"], axis=1)
 

@@ -63,9 +63,7 @@ def f2(names):
 def chromsizes():
     from io import StringIO
 
-    df = pd.read_csv(
-        StringIO(
-            """
+    sizes = """
 chr1                     249250621
 chr2                     243199373
 chr3                     198022430
@@ -90,7 +88,9 @@ chrY                      59373566
 chr19                     59128983
 chr22                     51304566
 chr21                     48129895"""
-        ),
+
+    df = pd.read_csv(
+        StringIO(sizes),
         sep=r"\s+",
         header=None,
         index_col=0,

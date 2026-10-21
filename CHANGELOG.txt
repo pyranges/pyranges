@@ -1,3 +1,14 @@
+# 0.1.6 (23.09.2026)
+- Support pandas 3 (and keep supporting pandas 1.5 and 2.x); the pandas<3 pin is removed
+- Fix empty (Chromosome, Strand) groups appearing in PyRanges under pandas 3, which broke extend, slack, stranded joins and more
+- Fix join, to_gff3, features.introns, count_overlaps and apply_chunks under pandas 3
+- Doctests now show pandas 3 output (string columns print as `(str)`); they run on pandas >= 2.3
+- to_rle/coverage on pandas 3 requires pyrle >= 0.0.45
+- Add a coverage extra requiring pyrle >= 0.0.45
+- Fix window with sorted_nearest 0.0.41 and fisher_exact with fisher 0.2, retaining support for older fisher versions
+- Fix remaining string dtype and NumPy scalar representations in doctests
+- Test Python 3.11-3.15 in CI, with pandas 2 on Python 3.11 and pandas 3 on newer versions
+
 # 0.0.136 (11.03.2025)
 - Fix regression on importlib.metadata that create an AttributeError on py<3.13
 

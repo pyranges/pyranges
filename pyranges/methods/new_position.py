@@ -52,7 +52,7 @@ def _new_position(df, **kwargs):
     else:
         raise Exception("Invalid new pos: {}. Use False/None/union/intersection.".format(new_pos))
 
-    df.loc[:, "Start"] = new_starts
-    df.loc[:, "End"] = new_ends
+    df["Start"] = new_starts
+    df["End"] = new_ends
 
     return df

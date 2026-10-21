@@ -5,6 +5,12 @@
 This repo currently hosts the "version 0" of pyranges. A redesigned, faster version 1 is available at https://github.com/pyranges/pyranges1
 Version 1 will soon replace version 0. We encourage existing v0 users to migrate to v1 (see guide at https://pyranges1.readthedocs.io/en/latest/migration_guide.html), and new users to directly adopt v1. Read about v1 in our preprint at https://doi.org/10.64898/2025.12.11.693639
 
+## Recent changes
+
+Version 0.1.6 supports pandas 3 (pandas 1.5 and 2.x are still supported). With pandas 3, `to_rle` and coverage need pyrle >= 0.0.45. See [CHANGELOG.txt](CHANGELOG.txt) for all changes.
+
+Install coverage support with `pip install 'pyranges[coverage]'`.
+
 ## Introduction
 
 PyRanges is a Python library specifically designed for efficient and intuitive manipulation of genomics data,

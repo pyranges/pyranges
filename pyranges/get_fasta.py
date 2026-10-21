@@ -75,17 +75,17 @@ def get_sequence(gr, path=None, pyfaidx_fasta=None):
     >>> seq
     0      CAT
     1    ATTAC
-    dtype: object
+    dtype: str
 
     >>> gr.seq = seq
     >>> gr
-    +--------------+-----------+-----------+------------+
-    | Chromosome   |     Start |       End | seq        |
-    | (category)   |   (int64) |   (int64) | (object)   |
-    |--------------+-----------+-----------+------------|
-    | chr1         |         5 |         8 | CAT        |
-    | chr1         |         0 |         5 | ATTAC      |
-    +--------------+-----------+-----------+------------+
+    +--------------+-----------+-----------+---------+
+    | Chromosome   |     Start |       End | seq     |
+    | (category)   |   (int64) |   (int64) | (str)   |
+    |--------------+-----------+-----------+---------|
+    | chr1         |         5 |         8 | CAT     |
+    | chr1         |         0 |         5 | ATTAC   |
+    +--------------+-----------+-----------+---------+
     Unstranded PyRanges object has 2 rows and 4 columns from 1 chromosomes.
     For printing, the PyRanges was sorted on Chromosome.
 
@@ -185,7 +185,7 @@ def get_transcript_sequence(gr, group_by, path=None, pyfaidx_fasta=None):
     >>> gr
     +--------------+-----------+-----------+--------------+--------------+
     | Chromosome   |     Start |       End | Strand       | transcript   |
-    | (category)   |   (int64) |   (int64) | (category)   | (object)     |
+    | (category)   |   (int64) |   (int64) | (category)   | (str)        |
     |--------------+-----------+-----------+--------------+--------------|
     | chr1         |         0 |         4 | +            | t1           |
     | chr1         |         9 |        13 | -            | t2           |

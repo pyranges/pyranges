@@ -8,10 +8,9 @@ jobs:
   install_and_test:
     runs-on: ubuntu-latest
     strategy:
-      # You can use PyPy versions in python-version.
-      # For example, pypy2.7 and pypy3.9
+      fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
     steps:
       - uses: actions/checkout@v3
@@ -21,15 +20,17 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install
         run: pip install .
+      - name: Use pandas 2 on the oldest tested Python
+        if: matrix.python-version == '3.11'
+        run: pip install 'pandas>=2.3,<3'
       - name: Install add-ons
-        run: pip install pyrle pybigwig bamread pyfaidx fisher
+        run: pip install ".[coverage]" pybigwig bamread pyfaidx fisher
       - run: pip install pytest
       - name: doctests
         env:
           GITHUB_ACTIONS: true
         run: |
-          shopt -s globstar  # allow recursive globs
-          python -m doctest pyranges/**.py
+          pytest --doctest-modules pyranges
       - name: unittests
         env:
           GITHUB_ACTIONS: true

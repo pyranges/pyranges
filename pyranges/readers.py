@@ -94,16 +94,16 @@ def read_bed(f, as_df=False, nrows=None):
 
     >>> path = pr.get_example_path("aorta.bed")
     >>> pr.read_bed(path, nrows=5)
-    +--------------+-----------+-----------+------------+-----------+--------------+
-    | Chromosome   |     Start |       End | Name       |     Score | Strand       |
-    | (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
-    |--------------+-----------+-----------+------------+-----------+--------------|
-    | chr1         |      9939 |     10138 | H3K27me3   |         7 | +            |
-    | chr1         |      9953 |     10152 | H3K27me3   |         5 | +            |
-    | chr1         |      9916 |     10115 | H3K27me3   |         5 | -            |
-    | chr1         |      9951 |     10150 | H3K27me3   |         8 | -            |
-    | chr1         |      9978 |     10177 | H3K27me3   |         7 | -            |
-    +--------------+-----------+-----------+------------+-----------+--------------+
+    +--------------+-----------+-----------+----------+-----------+--------------+
+    | Chromosome   |     Start |       End | Name     |     Score | Strand       |
+    | (category)   |   (int64) |   (int64) | (str)    |   (int64) | (category)   |
+    |--------------+-----------+-----------+----------+-----------+--------------|
+    | chr1         |      9939 |     10138 | H3K27me3 |         7 | +            |
+    | chr1         |      9953 |     10152 | H3K27me3 |         5 | +            |
+    | chr1         |      9916 |     10115 | H3K27me3 |         5 | -            |
+    | chr1         |      9951 |     10150 | H3K27me3 |         8 | -            |
+    | chr1         |      9978 |     10177 | H3K27me3 |         7 | -            |
+    +--------------+-----------+-----------+----------+-----------+--------------+
     Stranded PyRanges object has 5 rows and 6 columns from 1 chromosomes.
     For printing, the PyRanges was sorted on Chromosome and Strand.
 
@@ -427,7 +427,7 @@ def read_gtf_full(
         dfs.append(ndf)
 
     df = pd.concat(dfs, sort=False)
-    df.loc[:, "Start"] = df.Start - 1
+    df["Start"] = df.Start - 1
 
     df = rename_core_attrs(df, ftype="gtf", rename_attr=rename_attr)
 
@@ -535,7 +535,7 @@ def read_gtf_restricted(f, skiprows, as_df=False, nrows=None):
 
     df = pd.concat(dfs, sort=False)
 
-    df.loc[:, "Start"] = df.Start - 1
+    df["Start"] = df.Start - 1
 
     if not as_df:
         return PyRanges(df)
@@ -619,7 +619,7 @@ def read_gff3(f, full=True, annotation=None, as_df=False, nrows=None):
 
     df = pd.concat(dfs, sort=False)
 
-    df.loc[:, "Start"] = df.Start - 1
+    df["Start"] = df.Start - 1
 
     if not as_df:
         return PyRanges(df)

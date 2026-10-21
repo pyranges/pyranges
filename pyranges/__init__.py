@@ -59,7 +59,7 @@ def from_dict(d, int64=False):
     >>> pr.from_dict(d)
     +--------------+-----------+-----------+--------------+------------------+
     |   Chromosome |     Start |       End | Strand       | ArbitraryValue   |
-    |   (category) |   (int64) |   (int64) | (category)   | (object)         |
+    |   (category) |   (int64) |   (int64) | (category)   | (str)            |
     |--------------+-----------+-----------+--------------+------------------|
     |            1 |         1 |         4 | +            | a                |
     |            1 |         2 |         9 | +            | b                |

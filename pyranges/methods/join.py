@@ -77,7 +77,7 @@ def null_types(h):
         # or string "-1" for strings, objects, and cats
         if "int" in d or "float" in d:
             null = -1
-        elif "string" in d or d == "object":
+        elif "str" in d or d == "object":
             null = "-1"
         elif d == "category":
             tmp_cat = h2[n].copy()
@@ -87,7 +87,7 @@ def null_types(h):
         else:
             raise Exception("Unknown dtype {} in a column {}".format(d, n))
 
-        h2.loc[:, n] = null
+        h2[n] = null
 
     return h2
 

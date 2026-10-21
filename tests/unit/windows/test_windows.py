@@ -2,8 +2,38 @@ from io import StringIO
 
 import pandas as pd
 import pytest
+from pandas.testing import assert_frame_equal
 
 import pyranges as pr
+
+
+@pytest.mark.parametrize("int64", [False, True])
+def test_window_preserves_intervals_strands_and_metadata(int64):
+    gr = pr.PyRanges(
+        chromosomes=["chr1"] * 4,
+        starts=[3, 10, 20, 30],
+        ends=[8, 14, 21, 30],
+        strands=["+"] * 4,
+        int64=int64,
+    )
+    gr.Name = ["partial", "exact", "short", "empty"]
+    original = gr.df.copy(deep=True)
+
+    result = gr.window(2).df
+
+    assert list(result.Start) == [3, 5, 7, 10, 12, 20, 30]
+    assert list(result.End) == [5, 7, 8, 12, 14, 21, 30]
+    assert list(result.Name) == ["partial"] * 3 + ["exact"] * 2 + ["short", "empty"]
+    assert list(result.Strand) == ["+"] * 7
+    assert result.Start.dtype == original.Start.dtype
+    assert_frame_equal(gr.df, original)
+
+
+@pytest.mark.parametrize("window_size", [0, -1])
+def test_window_rejects_nonpositive_size(window_size):
+    gr = pr.PyRanges(chromosomes=["chr1"], starts=[3], ends=[8])
+    with pytest.raises(ValueError, match="window_size must be positive"):
+        gr.window(window_size)
 
 
 @pytest.fixture

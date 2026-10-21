@@ -79,7 +79,7 @@ def _gtf(df, mapping):
     pr_col2gff_col = {v: k for k, v in mapping.items()}
 
     df = df.rename(columns=pr_col2gff_col)  # copying here
-    df.loc[:, "start"] = df.start + 1
+    df["start"] = df.start + 1
     all_columns = _ordered_gtf_columns[:-1]
     columns = list(df.columns)
 
@@ -97,7 +97,7 @@ def _gtf(df, mapping):
             isnull = col.isnull()
             col = col.astype(str).str.replace("nan", "")
             new_val = c + ' "' + col + '";'
-            rest_df.loc[:, c] = rest_df[c].astype(str)
+            rest_df[c] = rest_df[c].astype(str)
             rest_df.loc[~isnull, c] = new_val
             rest_df.loc[isnull, c] = ""
 
@@ -270,7 +270,7 @@ def _gff3(df, mapping):
     pr_col2gff_col = {v: k for k, v in mapping.items()}
 
     df = df.rename(columns=pr_col2gff_col)  # copying here
-    df.loc[:, "start"] = df.start + 1
+    df["start"] = df.start + 1
     all_columns = _ordered_gff3_columns[:-1]
     columns = list(df.columns)
 
@@ -294,7 +294,7 @@ def _gff3(df, mapping):
                 new_val = c + "=" + col + ";"
             else:
                 new_val = c + "=" + col
-            rest_df.loc[:, c] = rest_df[c].astype(str)
+            rest_df[c] = rest_df[c].astype(str)
             rest_df.loc[~isnull, c] = new_val
             rest_df.loc[isnull, c] = ""
 

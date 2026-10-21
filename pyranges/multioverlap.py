@@ -91,7 +91,7 @@ def count_overlaps(grs, features=None, strandedness=None, how=None, nb_cpu=1):
     >>> pr.count_overlaps(grs)
     +--------------+-----------+-----------+-----------+-----------+-----------+
     | Chromosome   | Start     | End       | a         | b         | c         |
-    | (object)     | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   |
+    | (str)        | (int64)   | (int64)   | (int64)   | (int64)   | (int64)   |
     |--------------+-----------+-----------+-----------+-----------+-----------|
     | chr1         | 6         | 8         | 1         | 0         | 0         |
     | chr1         | 8         | 10        | 1         | 0         | 1         |

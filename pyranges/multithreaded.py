@@ -388,8 +388,8 @@ def _tss(df, **kwargs):
     starts = starts - slack
     starts = np.where(starts < 0, 0, starts)
 
-    df.loc[:, "Start"] = starts.astype(dtype)
-    df.loc[:, "End"] = ends.astype(dtype)
+    df["Start"] = starts.astype(dtype)
+    df["End"] = ends.astype(dtype)
 
     return df
 
@@ -404,8 +404,8 @@ def _tes(df, **kwargs):
     starts = starts - slack
     starts = np.where(starts < 0, 0, starts)
 
-    df.loc[:, "Start"] = starts.astype(dtype)
-    df.loc[:, "End"] = ends.astype(dtype)
+    df["Start"] = starts.astype(dtype)
+    df["End"] = ends.astype(dtype)
 
     return df
 
@@ -418,7 +418,7 @@ def _extend(df, **kwargs):
     assert isinstance(slack, (int, dict)), "Extend parameter must be integer or dict, is {}".format(type(slack))
 
     if isinstance(slack, int):
-        df.loc[:, "Start"] = df.Start - slack
+        df["Start"] = df.Start - slack
         df.loc[df.Start < 0, "Start"] = 0
         df.End = df.End + slack
     else:
@@ -427,14 +427,14 @@ def _extend(df, **kwargs):
         three_end_slack = slack.get("3")
 
         if five_end_slack and strand == "+":
-            df.loc[:, "Start"] -= five_end_slack
+            df["Start"] -= five_end_slack
         elif five_end_slack and strand == "-":
-            df.loc[:, "End"] += five_end_slack
+            df["End"] += five_end_slack
 
         if three_end_slack and strand == "-":
-            df.loc[:, "Start"] -= three_end_slack
+            df["Start"] -= three_end_slack
         elif three_end_slack and strand == "+":
-            df.loc[:, "End"] += three_end_slack
+            df["End"] += three_end_slack
 
     df = df.astype({"Start": dtype, "End": dtype})
 
@@ -497,7 +497,7 @@ def pyrange_apply_chunks(function, self, as_pyranges, **kwargs):
     lengths = []
     results = []
     for k, v in self.items():
-        dfs = np.array_split(v, nb_cpu)
+        dfs = [v.iloc[ix] for ix in np.array_split(np.arange(len(v)), nb_cpu)]
         lengths.append(len(dfs))
         results.extend([call_f_single(function, nparams, df, **kwargs) for df in dfs])
         keys.append(k)

@@ -29,13 +29,12 @@ unstranded_features = features.unstrand()
 
 
 def test_strand_vs_strand_same():
-    expected_result = pr.from_string(
-        """Chromosome Start End Strand a b c
+    expected = """Chromosome Start End Strand a b c
 chr1  0 10  + 1 0 1
 chr1 10 20  + 2 2 1
 chr1 20 30  + 0 2 0
 chr1 30 40  - 0 0 1"""
-    )
+    expected_result = pr.from_string(expected)
 
     res = pr.count_overlaps(grs, features, strandedness="same")
     res = res.apply(lambda df: df.astype({"a": np.int64, "b": np.int64, "c": np.int64}))

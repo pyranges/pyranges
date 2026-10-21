@@ -41,7 +41,7 @@ def concat(pyranges, strand=None):
         new_res = {}
         for k, v in res.items():
             if "." not in v.Strand.cat.categories:
-                v.loc[:, "Strand"] = v.Strand.cat.add_categories(["."])
+                v["Strand"] = v.Strand.cat.add_categories(["."])
             new_res[k] = v.assign(Strand=v.Strand.fillna("."))
         res = pr.PyRanges(new_res)
         res.Strand = res.Strand

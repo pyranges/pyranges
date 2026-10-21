@@ -45,8 +45,8 @@ def _intersection(scdf, ocdf, **kwargs):
     )
 
     pd.options.mode.chained_assignment = None  # default='warn'
-    scdf.loc[:, "Start"] = new_starts
-    scdf.loc[:, "End"] = new_ends
+    scdf["Start"] = new_starts
+    scdf["End"] = new_ends
     pd.options.mode.chained_assignment = "warn"
 
     if not scdf.empty:
@@ -92,7 +92,7 @@ def _count_overlaps(scdf, ocdf, **kwargs):
 
     vc = pd.Series(idx, dtype=np.int32).value_counts(sort=False)
 
-    sx.loc[vc.index, 0] = vc.values
+    sx.loc[vc.index, 0] = vc.values.astype(np.int32)
 
     scdf.insert(scdf.shape[1], kwargs["name"], sx)
 

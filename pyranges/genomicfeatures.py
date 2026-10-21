@@ -32,38 +32,38 @@ class GenomicFeaturesMethods:
 
         >>> gr = pr.data.ensembl_gtf()[["Source", "Feature"]]
         >>> gr
-        +--------------+------------+--------------+-----------+-----------+--------------+
-        | Chromosome   | Source     | Feature      | Start     | End       | Strand       |
-        | (category)   | (object)   | (category)   | (int64)   | (int64)   | (category)   |
-        |--------------+------------+--------------+-----------+-----------+--------------|
-        | 1            | havana     | gene         | 11868     | 14409     | +            |
-        | 1            | havana     | transcript   | 11868     | 14409     | +            |
-        | 1            | havana     | exon         | 11868     | 12227     | +            |
-        | 1            | havana     | exon         | 12612     | 12721     | +            |
-        | ...          | ...        | ...          | ...       | ...       | ...          |
-        | 1            | havana     | gene         | 1173055   | 1179555   | -            |
-        | 1            | havana     | transcript   | 1173055   | 1179555   | -            |
-        | 1            | havana     | exon         | 1179364   | 1179555   | -            |
-        | 1            | havana     | exon         | 1173055   | 1176396   | -            |
-        +--------------+------------+--------------+-----------+-----------+--------------+
+        +--------------+----------+--------------+-----------+-----------+--------------+
+        | Chromosome   | Source   | Feature      | Start     | End       | Strand       |
+        | (category)   | (str)    | (category)   | (int64)   | (int64)   | (category)   |
+        |--------------+----------+--------------+-----------+-----------+--------------|
+        | 1            | havana   | gene         | 11868     | 14409     | +            |
+        | 1            | havana   | transcript   | 11868     | 14409     | +            |
+        | 1            | havana   | exon         | 11868     | 12227     | +            |
+        | 1            | havana   | exon         | 12612     | 12721     | +            |
+        | ...          | ...      | ...          | ...       | ...       | ...          |
+        | 1            | havana   | gene         | 1173055   | 1179555   | -            |
+        | 1            | havana   | transcript   | 1173055   | 1179555   | -            |
+        | 1            | havana   | exon         | 1179364   | 1179555   | -            |
+        | 1            | havana   | exon         | 1173055   | 1176396   | -            |
+        +--------------+----------+--------------+-----------+-----------+--------------+
         Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
         >>> gr.features.tss()
-        +--------------+------------+------------+-----------+-----------+--------------+
-        | Chromosome   | Source     | Feature    | Start     | End       | Strand       |
-        | (category)   | (object)   | (object)   | (int64)   | (int64)   | (category)   |
-        |--------------+------------+------------+-----------+-----------+--------------|
-        | 1            | havana     | tss        | 11868     | 11869     | +            |
-        | 1            | havana     | tss        | 12009     | 12010     | +            |
-        | 1            | havana     | tss        | 29553     | 29554     | +            |
-        | 1            | havana     | tss        | 30266     | 30267     | +            |
-        | ...          | ...        | ...        | ...       | ...       | ...          |
-        | 1            | havana     | tss        | 1092812   | 1092813   | -            |
-        | 1            | havana     | tss        | 1116086   | 1116087   | -            |
-        | 1            | havana     | tss        | 1116088   | 1116089   | -            |
-        | 1            | havana     | tss        | 1179554   | 1179555   | -            |
-        +--------------+------------+------------+-----------+-----------+--------------+
+        +--------------+----------+-----------+-----------+-----------+--------------+
+        | Chromosome   | Source   | Feature   | Start     | End       | Strand       |
+        | (category)   | (str)    | (str)     | (int64)   | (int64)   | (category)   |
+        |--------------+----------+-----------+-----------+-----------+--------------|
+        | 1            | havana   | tss       | 11868     | 11869     | +            |
+        | 1            | havana   | tss       | 12009     | 12010     | +            |
+        | 1            | havana   | tss       | 29553     | 29554     | +            |
+        | 1            | havana   | tss       | 30266     | 30267     | +            |
+        | ...          | ...      | ...       | ...       | ...       | ...          |
+        | 1            | havana   | tss       | 1092812   | 1092813   | -            |
+        | 1            | havana   | tss       | 1116086   | 1116087   | -            |
+        | 1            | havana   | tss       | 1116088   | 1116089   | -            |
+        | 1            | havana   | tss       | 1179554   | 1179555   | -            |
+        +--------------+----------+-----------+-----------+-----------+--------------+
         Stranded PyRanges object has 280 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
@@ -96,38 +96,38 @@ class GenomicFeaturesMethods:
 
         >>> gr = pr.data.ensembl_gtf()[["Source", "Feature"]]
         >>> gr
-        +--------------+------------+--------------+-----------+-----------+--------------+
-        | Chromosome   | Source     | Feature      | Start     | End       | Strand       |
-        | (category)   | (object)   | (category)   | (int64)   | (int64)   | (category)   |
-        |--------------+------------+--------------+-----------+-----------+--------------|
-        | 1            | havana     | gene         | 11868     | 14409     | +            |
-        | 1            | havana     | transcript   | 11868     | 14409     | +            |
-        | 1            | havana     | exon         | 11868     | 12227     | +            |
-        | 1            | havana     | exon         | 12612     | 12721     | +            |
-        | ...          | ...        | ...          | ...       | ...       | ...          |
-        | 1            | havana     | gene         | 1173055   | 1179555   | -            |
-        | 1            | havana     | transcript   | 1173055   | 1179555   | -            |
-        | 1            | havana     | exon         | 1179364   | 1179555   | -            |
-        | 1            | havana     | exon         | 1173055   | 1176396   | -            |
-        +--------------+------------+--------------+-----------+-----------+--------------+
+        +--------------+----------+--------------+-----------+-----------+--------------+
+        | Chromosome   | Source   | Feature      | Start     | End       | Strand       |
+        | (category)   | (str)    | (category)   | (int64)   | (int64)   | (category)   |
+        |--------------+----------+--------------+-----------+-----------+--------------|
+        | 1            | havana   | gene         | 11868     | 14409     | +            |
+        | 1            | havana   | transcript   | 11868     | 14409     | +            |
+        | 1            | havana   | exon         | 11868     | 12227     | +            |
+        | 1            | havana   | exon         | 12612     | 12721     | +            |
+        | ...          | ...      | ...          | ...       | ...       | ...          |
+        | 1            | havana   | gene         | 1173055   | 1179555   | -            |
+        | 1            | havana   | transcript   | 1173055   | 1179555   | -            |
+        | 1            | havana   | exon         | 1179364   | 1179555   | -            |
+        | 1            | havana   | exon         | 1173055   | 1176396   | -            |
+        +--------------+----------+--------------+-----------+-----------+--------------+
         Stranded PyRanges object has 2,446 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
         >>> gr.features.tes()
-        +--------------+------------+------------+-----------+-----------+--------------+
-        | Chromosome   | Source     | Feature    | Start     | End       | Strand       |
-        | (category)   | (object)   | (object)   | (int64)   | (int64)   | (category)   |
-        |--------------+------------+------------+-----------+-----------+--------------|
-        | 1            | havana     | tes        | 14408     | 14409     | +            |
-        | 1            | havana     | tes        | 13669     | 13670     | +            |
-        | 1            | havana     | tes        | 31096     | 31097     | +            |
-        | 1            | havana     | tes        | 31108     | 31109     | +            |
-        | ...          | ...        | ...        | ...       | ...       | ...          |
-        | 1            | havana     | tes        | 1090405   | 1090406   | -            |
-        | 1            | havana     | tes        | 1091045   | 1091046   | -            |
-        | 1            | havana     | tes        | 1091499   | 1091500   | -            |
-        | 1            | havana     | tes        | 1173055   | 1173056   | -            |
-        +--------------+------------+------------+-----------+-----------+--------------+
+        +--------------+----------+-----------+-----------+-----------+--------------+
+        | Chromosome   | Source   | Feature   | Start     | End       | Strand       |
+        | (category)   | (str)    | (str)     | (int64)   | (int64)   | (category)   |
+        |--------------+----------+-----------+-----------+-----------+--------------|
+        | 1            | havana   | tes       | 14408     | 14409     | +            |
+        | 1            | havana   | tes       | 13669     | 13670     | +            |
+        | 1            | havana   | tes       | 31096     | 31097     | +            |
+        | 1            | havana   | tes       | 31108     | 31109     | +            |
+        | ...          | ...      | ...       | ...       | ...       | ...          |
+        | 1            | havana   | tes       | 1090405   | 1090406   | -            |
+        | 1            | havana   | tes       | 1091045   | 1091046   | -            |
+        | 1            | havana   | tes       | 1091499   | 1091500   | -            |
+        | 1            | havana   | tes       | 1173055   | 1173056   | -            |
+        +--------------+----------+-----------+-----------+-----------+--------------+
         Stranded PyRanges object has 280 rows and 6 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
@@ -170,7 +170,7 @@ class GenomicFeaturesMethods:
         >>> gr
         +--------------+--------------+-----------+-----------+--------------+-----------------+-----------------+
         | Chromosome   | Feature      | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
+        | (category)   | (category)   | (int64)   | (int64)   | (category)   | (str)           | (str)           |
         |--------------+--------------+-----------+-----------+--------------+-----------------+-----------------|
         | 1            | gene         | 11868     | 14409     | +            | ENSG00000223972 | nan             |
         | 1            | transcript   | 11868     | 14409     | +            | ENSG00000223972 | ENST00000456328 |
@@ -186,38 +186,38 @@ class GenomicFeaturesMethods:
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
         >>> gr.features.introns(by="gene")
-        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
-        | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (object)     | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
-        |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
-        | 1            | intron     | 1173926   | 1174265   | +            | ENSG00000162571 | nan             |
-        | 1            | intron     | 1174321   | 1174423   | +            | ENSG00000162571 | nan             |
-        | 1            | intron     | 1174489   | 1174520   | +            | ENSG00000162571 | nan             |
-        | 1            | intron     | 1175034   | 1179188   | +            | ENSG00000162571 | nan             |
-        | ...          | ...        | ...       | ...       | ...          | ...             | ...             |
-        | 1            | intron     | 874591    | 875046    | -            | ENSG00000283040 | nan             |
-        | 1            | intron     | 875155    | 875525    | -            | ENSG00000283040 | nan             |
-        | 1            | intron     | 875625    | 876526    | -            | ENSG00000283040 | nan             |
-        | 1            | intron     | 876611    | 876754    | -            | ENSG00000283040 | nan             |
-        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
+        +--------------+-----------+-----------+-----------+--------------+-----------------+-----------------+
+        | Chromosome   | Feature   | Start     | End       | Strand       | gene_id         | transcript_id   |
+        | (str)        | (str)     | (int64)   | (int64)   | (category)   | (str)           | (str)           |
+        |--------------+-----------+-----------+-----------+--------------+-----------------+-----------------|
+        | 1            | intron    | 1173926   | 1174265   | +            | ENSG00000162571 | nan             |
+        | 1            | intron    | 1174321   | 1174423   | +            | ENSG00000162571 | nan             |
+        | 1            | intron    | 1174489   | 1174520   | +            | ENSG00000162571 | nan             |
+        | 1            | intron    | 1175034   | 1179188   | +            | ENSG00000162571 | nan             |
+        | ...          | ...       | ...       | ...       | ...          | ...             | ...             |
+        | 1            | intron    | 874591    | 875046    | -            | ENSG00000283040 | nan             |
+        | 1            | intron    | 875155    | 875525    | -            | ENSG00000283040 | nan             |
+        | 1            | intron    | 875625    | 876526    | -            | ENSG00000283040 | nan             |
+        | 1            | intron    | 876611    | 876754    | -            | ENSG00000283040 | nan             |
+        +--------------+-----------+-----------+-----------+--------------+-----------------+-----------------+
         Stranded PyRanges object has 311 rows and 7 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
 
         >>> gr.features.introns(by="transcript")
-        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
-        | Chromosome   | Feature    | Start     | End       | Strand       | gene_id         | transcript_id   |
-        | (object)     | (object)   | (int64)   | (int64)   | (category)   | (object)        | (object)        |
-        |--------------+------------+-----------+-----------+--------------+-----------------+-----------------|
-        | 1            | intron     | 818202    | 818722    | +            | ENSG00000177757 | ENST00000326734 |
-        | 1            | intron     | 960800    | 961292    | +            | ENSG00000187961 | ENST00000338591 |
-        | 1            | intron     | 961552    | 961628    | +            | ENSG00000187961 | ENST00000338591 |
-        | 1            | intron     | 961750    | 961825    | +            | ENSG00000187961 | ENST00000338591 |
-        | ...          | ...        | ...       | ...       | ...          | ...             | ...             |
-        | 1            | intron     | 732207    | 732980    | -            | ENSG00000230021 | ENST00000648019 |
-        | 1            | intron     | 168165    | 169048    | -            | ENSG00000241860 | ENST00000655252 |
-        | 1            | intron     | 165942    | 167958    | -            | ENSG00000241860 | ENST00000662089 |
-        | 1            | intron     | 168165    | 169048    | -            | ENSG00000241860 | ENST00000662089 |
-        +--------------+------------+-----------+-----------+--------------+-----------------+-----------------+
+        +--------------+-----------+-----------+-----------+--------------+-----------------+-----------------+
+        | Chromosome   | Feature   | Start     | End       | Strand       | gene_id         | transcript_id   |
+        | (str)        | (str)     | (int64)   | (int64)   | (category)   | (str)           | (str)           |
+        |--------------+-----------+-----------+-----------+--------------+-----------------+-----------------|
+        | 1            | intron    | 818202    | 818722    | +            | ENSG00000177757 | ENST00000326734 |
+        | 1            | intron    | 960800    | 961292    | +            | ENSG00000187961 | ENST00000338591 |
+        | 1            | intron    | 961552    | 961628    | +            | ENSG00000187961 | ENST00000338591 |
+        | 1            | intron    | 961750    | 961825    | +            | ENSG00000187961 | ENST00000338591 |
+        | ...          | ...       | ...       | ...       | ...          | ...             | ...             |
+        | 1            | intron    | 732207    | 732980    | -            | ENSG00000230021 | ENST00000648019 |
+        | 1            | intron    | 168165    | 169048    | -            | ENSG00000241860 | ENST00000655252 |
+        | 1            | intron    | 165942    | 167958    | -            | ENSG00000241860 | ENST00000662089 |
+        | 1            | intron    | 168165    | 169048    | -            | ENSG00000241860 | ENST00000662089 |
+        +--------------+-----------+-----------+-----------+--------------+-----------------+-----------------+
         Stranded PyRanges object has 1,043 rows and 7 columns from 1 chromosomes.
         For printing, the PyRanges was sorted on Chromosome and Strand.
         """
@@ -479,7 +479,7 @@ def tile_genome(genome, tile_size, tile_last=False):
 def _keep_transcript_with_most_exons(df):
     transcripts_with_most_exons = []
 
-    for _, gdf in df.groupby("gene_id", observed=False):
+    for _, gdf in df.groupby("gene_id", observed=True):
         max_exon = gdf.exon_number.max()
         max_transcript = gdf.loc[gdf.exon_number == max_exon].Transcript.iloc[0]
 
@@ -502,7 +502,7 @@ def _tss(df, slack=0):
     tss_neg = df.loc[df.Strand == "-"].copy()
 
     # pd.options.mode.chained_assignment = None
-    tss_neg.loc[:, "Start"] = tss_neg.End - 1
+    tss_neg["Start"] = tss_neg.End - 1
 
     # pd.options.mode.chained_assignment = "warn"
     tss = pd.concat([tss_pos, tss_neg], sort=False)
@@ -527,7 +527,7 @@ def _tes(df, slack=0):
     tes_neg = df.loc[df.Strand == "-"].copy()
 
     # pd.options.mode.chained_assignment = None
-    tes_neg.loc[:, "End"] = tes_neg.Start + 1
+    tes_neg["End"] = tes_neg.Start + 1
 
     # pd.options.mode.chained_assignment = "warn"
     tes = pd.concat([tes_pos, tes_neg], sort=False)
@@ -620,13 +620,13 @@ def _introns2(df, exons, **kwargs):
         ["__temp__"] + [c for c in original_ids.columns if c.endswith("_drop")], axis=1
     ).sort_values("by_id")
     introns = introns.drop(columns=["by_id"])  # to allow for different dtype assignment
-    introns.loc[:, "by_id"] = original_ids[id_column].to_numpy()
+    introns["by_id"] = original_ids[id_column].to_numpy()
     introns = introns.merge(df, left_on="by_id", right_on=id_column, suffixes=("", "_dropme"))
     introns = introns.drop([c for c in introns.columns if c.endswith("_dropme")], axis=1)
 
     if introns.Feature.dtype.name == "category" and "intron" not in introns.Feature.cat.categories:
         introns.Feature.cat.add_categories(["intron"])
-    introns.loc[:, "Feature"] = "intron"
+    introns["Feature"] = "intron"
 
     introns = introns[original_order]
 

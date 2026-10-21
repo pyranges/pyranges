@@ -9,14 +9,14 @@ Examples
 --------
 
 >>> pr.data.f1()
-+--------------+-----------+-----------+------------+-----------+--------------+
-| Chromosome   |     Start |       End | Name       |     Score | Strand       |
-| (category)   |   (int64) |   (int64) | (object)   |   (int64) | (category)   |
-|--------------+-----------+-----------+------------+-----------+--------------|
-| chr1         |         3 |         6 | interval1  |         0 | +            |
-| chr1         |         8 |         9 | interval3  |         0 | +            |
-| chr1         |         5 |         7 | interval2  |         0 | -            |
-+--------------+-----------+-----------+------------+-----------+--------------+
++--------------+-----------+-----------+-----------+-----------+--------------+
+| Chromosome   |     Start |       End | Name      |     Score | Strand       |
+| (category)   |   (int64) |   (int64) | (str)     |   (int64) | (category)   |
+|--------------+-----------+-----------+-----------+-----------+--------------|
+| chr1         |         3 |         6 | interval1 |         0 | +            |
+| chr1         |         8 |         9 | interval3 |         0 | +            |
+| chr1         |         5 |         7 | interval2 |         0 | -            |
++--------------+-----------+-----------+-----------+-----------+--------------+
 Stranded PyRanges object has 3 rows and 6 columns from 1 chromosomes.
 For printing, the PyRanges was sorted on Chromosome and Strand.
 """
