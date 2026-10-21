@@ -1,6 +1,7 @@
 """Statistics useful for genomics."""
 
 from collections import defaultdict
+from importlib.metadata import version
 from math import sqrt
 
 import numpy as np
@@ -112,6 +113,8 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
 
     ``((tp + pseudocount) / (fp + pseudocount)) / ((fn + pseudocount) / (tn + pseudocount))``
 
+    With fisher >= 0.2, counts must be between 0 and 2**32 - 1.
+
     Returns
     -------
     pandas.DataFrame
@@ -149,10 +152,19 @@ def fisher_exact(tp, fp, fn, tn, pseudocount=0):
         )
         sys.exit(-1)
 
-    tp = np.array(tp, dtype=np.uint)
-    fp = np.array(fp, dtype=np.uint)
-    fn = np.array(fn, dtype=np.uint)
-    tn = np.array(tn, dtype=np.uint)
+    # fisher 0.2 switched its Cython interface from native unsigned integers
+    # to explicitly sized uint32 arrays.
+    fisher_version = tuple(int(v) for v in version("fisher").split(".")[:2])
+    dtype = np.uint32 if fisher_version >= (0, 2) else np.uint
+    if dtype == np.uint32:
+        for counts in (tp, fp, fn, tn):
+            values = np.asarray(counts)
+            if ((values < 0) | (values > np.iinfo(dtype).max)).any():
+                raise ValueError("fisher >= 0.2 requires counts between 0 and 2**32 - 1")
+    tp = np.array(tp, dtype=dtype)
+    fp = np.array(fp, dtype=dtype)
+    fn = np.array(fn, dtype=dtype)
+    tn = np.array(tn, dtype=dtype)
 
     left, right, twosided = pvalue_npy(tp, fp, fn, tn)
 
@@ -724,7 +736,7 @@ class StatisticsMethods:
 
         >>> gr, gr2 = pr.data.chipseq(), pr.data.chipseq_background()
         >>> chromsizes = pr.data.chromsizes()
-        >>> gr.stats.forbes(gr2, chromsizes=chromsizes)
+        >>> float(gr.stats.forbes(gr2, chromsizes=chromsizes))
         1.7168314674978278"""
 
         chromsizes = chromsizes_as_int(chromsizes)
@@ -783,7 +795,7 @@ class StatisticsMethods:
 
         >>> gr, gr2 = pr.data.chipseq(), pr.data.chipseq_background()
         >>> chromsizes = pr.data.chromsizes()
-        >>> gr.stats.jaccard(gr2, chromsizes=chromsizes)
+        >>> float(gr.stats.jaccard(gr2, chromsizes=chromsizes))
         6.657941988519211e-05"""
 
         self = self.pr

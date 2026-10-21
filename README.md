@@ -9,6 +9,8 @@ Version 1 will soon replace version 0. We encourage existing v0 users to migrate
 
 Version 0.1.6 supports pandas 3 (pandas 1.5 and 2.x are still supported). With pandas 3, `to_rle` and coverage need pyrle >= 0.0.45. See [CHANGELOG.txt](CHANGELOG.txt) for all changes.
 
+Install coverage support with `pip install 'pyranges[coverage]'`.
+
 ## Introduction
 
 PyRanges is a Python library specifically designed for efficient and intuitive manipulation of genomics data,

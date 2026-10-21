@@ -4,6 +4,9 @@
 - Fix join, to_gff3, features.introns, count_overlaps and apply_chunks under pandas 3
 - Doctests now show pandas 3 output (string columns print as `(str)`); they run on pandas >= 2.3
 - to_rle/coverage on pandas 3 requires pyrle >= 0.0.45
+- Add a coverage extra requiring pyrle >= 0.0.45
+- Fix window with sorted_nearest 0.0.41 and fisher_exact with fisher 0.2, retaining support for older fisher versions
+- Fix remaining string dtype and NumPy scalar representations in doctests
 
 # 0.0.136 (11.03.2025)
 - Fix regression on importlib.metadata that create an AttributeError on py<3.13
