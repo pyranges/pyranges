@@ -28,9 +28,9 @@ jobs:
       - run: pip install pytest
       - name: doctests
         env:
-          GITHUB_ACTIONS: true
+          COLUMNS: "80"
         run: |
-          pytest --doctest-modules pyranges
+          env -u GITHUB_ACTIONS pytest --doctest-modules pyranges
       - name: unittests
         env:
           GITHUB_ACTIONS: true
