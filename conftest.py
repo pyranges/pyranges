@@ -8,6 +8,14 @@ _PANDAS_VERSION = tuple(int(v) for v in pd.__version__.split(".")[:2])
 _EMULATE_STR_DTYPE = (2, 3) <= _PANDAS_VERSION < (3, 0)
 
 
+@pytest.fixture(autouse=True)
+def doctest_terminal_width(request, monkeypatch):
+    # Match the full-width tables in doctests even in a narrow terminal or a
+    # headless package build. Keep ordinary tests' display settings untouched.
+    if isinstance(request.node, DoctestItem):
+        monkeypatch.setenv("COLUMNS", "250")
+
+
 def pytest_collection_modifyitems(config, items):
     if _PANDAS_VERSION >= (2, 3):
         return
